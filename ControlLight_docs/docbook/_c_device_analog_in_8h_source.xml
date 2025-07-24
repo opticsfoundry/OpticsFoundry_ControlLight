@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__c_device_analog_in_8h_source" xml:lang="en-US">
+<title>CDeviceAnalogIn.h</title>
+<indexterm><primary>CDeviceAnalogIn.h</primary></indexterm>
+Go to the documentation of this file.<programlisting linenumbering="unnumbered">1 <emphasis role="preprocessor">#pragma&#32;once</emphasis>
+2 
+3 <emphasis role="preprocessor">#include&#32;&quot;<link linkend="__c_device_8h">CDevice.h</link>&quot;</emphasis>
+4 
+5 
+6 <emphasis role="keyword">class&#32;</emphasis><link linkend="_class_c_device_analog_in12bit_1adcab5cd92d1fd5e0872b9c044c8ce553">CDeviceAnalogIn12bit</link>&#32;:&#32;<emphasis role="keyword">public</emphasis>&#32;<link linkend="_class_c_device_1ab2a002fb6c828f07e8aebcd7dbf2cd00">CDevice</link>
+7 {
+8 <emphasis role="keyword">public</emphasis>:
+9 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;<link linkend="_class_c_device_analog_in12bit_1ac129cca94769f9e87b6ccee42daa00b8">signedValue</link>;
+10 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">double</emphasis>&#32;<link linkend="_class_c_device_analog_in12bit_1aeeefb664609d6a8a75816f820bc9168f">minVoltage</link>;
+11 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">double</emphasis>&#32;<link linkend="_class_c_device_analog_in12bit_1a29a978eac3fb07993337b8e6c520b227">maxVoltage</link>;
+12 <emphasis role="keyword">private</emphasis>:
+13 &#32;&#32;&#32;&#32;uint8_t&#32;ChannelNumber;
+14 &#32;&#32;&#32;&#32;uint32_t&#32;NumberOfDataPoints;
+15 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">double</emphasis>&#32;DelayBetweenDataPoints_in_ms;
+16 <emphasis role="keyword">public</emphasis>:
+17 &#32;&#32;&#32;&#32;<link linkend="_class_c_device_analog_in12bit_1adcab5cd92d1fd5e0872b9c044c8ce553">CDeviceAnalogIn12bit</link>(
+18 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="_class_c_device_sequencer">CDeviceSequencer</link>*&#32;_MySequencer,
+19 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">int</emphasis>&#32;_chipSelect,
+20 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;_signedValue,
+21 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordtype">double</emphasis>&#32;_minVoltage,
+22 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordtype">double</emphasis>&#32;_maxVoltage
+23 &#32;&#32;&#32;&#32;);
+24 &#32;&#32;&#32;&#32;<emphasis role="keyword">virtual</emphasis>&#32;<link linkend="_class_c_device_analog_in12bit_1abc133cd42f064d7fc7b07adc72a1c86c">~CDeviceAnalogIn12bit</link>()&#32;=&#32;<emphasis role="keywordflow">default</emphasis>;
+25 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;<link linkend="_class_c_device_analog_in12bit_1afc45da4231e770e88b4964da2315c818">SetValue</link>(<emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">int</emphasis>&amp;&#32;SubAddress,&#32;<emphasis role="keyword">const</emphasis>&#32;uint8_t*&#32;Data,&#32;<emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">long</emphasis>&amp;&#32;DataLength_in_bit,&#32;<emphasis role="keyword">const</emphasis>&#32;uint8_t&amp;&#32;StartBit);
+26 &#32;&#32;&#32;&#32;<emphasis role="comment">//virtual&#32;bool&#32;GetValue(unsigned&#32;int&#32;SubAddress,&#32;uint8_t*&#32;Data,&#32;unsigned&#32;long&#32;DataLength);</emphasis>
+27 &#32;&#32;&#32;&#32;<emphasis role="comment">//virtual&#32;bool&#32;Configure();</emphasis>
+28 };
+</programlisting></section>

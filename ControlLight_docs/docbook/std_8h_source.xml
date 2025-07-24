@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_std_8h_source" xml:lang="en-US">
+<title>std.h</title>
+<indexterm><primary>std.h</primary></indexterm>
+Go to the documentation of this file.<programlisting linenumbering="unnumbered">1 <emphasis role="preprocessor">#pragma&#32;once</emphasis>
+2 <emphasis role="preprocessor">#include&#32;&lt;afxwin.h&gt;</emphasis>
+3 <emphasis role="comment">//#include&#32;&lt;afxext.h&gt;&#32;&#32;&#32;//&#32;if&#32;you&#32;use&#32;MFC&#32;extensions</emphasis>
+4 
+5 
+6 <emphasis role="keyword">extern</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_std_8h_1a9d4e8a9f53a0a08989bbe151c57367cc">AddErrorMessageCString</link>(<emphasis role="keyword">const</emphasis>&#32;CString&#32;&amp;lpszText);
+7 
+8 <emphasis role="keyword">extern</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_std_8h_1aa752cb67c9e6f0f04da507b710d34e35">ControlMessageBox</link>(<emphasis role="keyword">const</emphasis>&#32;CString&amp;&#32;lpszText,&#32;UINT&#32;nType&#32;=&#32;MB_OK,&#32;UINT&#32;nIDHelp&#32;=&#32;0);
+</programlisting></section>

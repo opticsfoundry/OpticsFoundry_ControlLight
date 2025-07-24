@@ -1,0 +1,136 @@
+\doxysection{Ethernet\+Controller\+Firefly.\+h}
+\hypertarget{_ethernet_controller_firefly_8h_source}{}\label{_ethernet_controller_firefly_8h_source}\index{EthernetControllerFirefly.h@{EthernetControllerFirefly.h}}
+\mbox{\hyperlink{_ethernet_controller_firefly_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_network_client_8h}{NetworkClient.h}}"{}}\ \ \ \textcolor{comment}{//\ Added\ by\ ClassView}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_ethernet_controller_firefly_8h}{EthernetControllerFirefly.h}}"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <functional>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{keyword}{typedef}\ function<bool(\textcolor{keywordtype}{void})>\ tBoolFunction;}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_c_device_sequencer}{CDeviceSequencer}};}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{keyword}{class\ }CEthernetControllerFirefly\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_c_network_client}{CNetworkClient}}}
+\DoxyCodeLine{00016\ \{}
+\DoxyCodeLine{00017\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ SequencerCommandListSize;}
+\DoxyCodeLine{00019\ \ \ \ \ uint32\_t*\ SequencerCommandList;}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ MyMultiIO;}
+\DoxyCodeLine{00021\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{bool}\ Connected;}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordtype}{bool}\ DebugBufferOn;}
+\DoxyCodeLine{00024\ \ \ \ \ ofstream*\ DebugBufferFile;}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{bool}\ ExternalTrigger0;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{bool}\ ExternalTrigger1;}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{double}\ PeriodicTriggerPeriod\_in\_s;}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{double}\ PeriodicTriggerAllowedWait\_in\_s;}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{bool}\ ExternalClock0;}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keywordtype}{bool}\ ExternalClock1;}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{comment}{//double\ BusFrequency;}}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ FPGAClockToBusClockRatio;}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{double}\ FPGAClockFrequencyInHz;}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{bool}\ FPGAUseExternalClock;}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{bool}\ FPGAUseStrobeGenerator;}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \ \textcolor{keywordtype}{long}\ StartTickCounts;}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{comment}{//uint32\_t*\ FPGABuffer;}}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{comment}{//uint32\_t*\ FPGAAbsoluteTime;}}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{comment}{//uint32\_t\ FPGABufferUsed;}}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{comment}{//COutput*\ myOutput;}}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{double}\ LastPeriodicTriggerPeriod\_in\_s;}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{bool}\ DebugModeOn;}
+\DoxyCodeLine{00043\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{bool}\ core\_option\_LED;\ }
+\DoxyCodeLine{00045\ \ \ \ \ uint8\_t\ core\_option\_SPI\_CS;}
+\DoxyCodeLine{00046\ \ \ \ \ uint8\_t\ core\_option\_dig\_out;\ \ }
+\DoxyCodeLine{00047\ \ \ \ \ uint8\_t\ core\_option\_PL\_to\_PS;}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{bool}\ SetPeriodicTriggerAtBeginningOfNextSequence;}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{bool}\ WaitForPeriodicTriggerAtBeginningOfSequence;}
+\DoxyCodeLine{00050\ \ \ \ \ uint32\_t*\ previous\_command\_buffer;}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ previous\_command\_buffer\_length;}
+\DoxyCodeLine{00052\ \ \ \ \ CDeviceSequencer*\ MySequencer;}
+\DoxyCodeLine{00053\ \ \ \ \ uint8\_t*\ previous\_command\_buffer\_ptr;}
+\DoxyCodeLine{00054\ \ \ \ \ std::string\ DebugFilename;}
+\DoxyCodeLine{00055\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{void}\ StartXADCAnalogInAcquisition(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ channel\_nr,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ number\_of\_datapoints,\ \textcolor{keywordtype}{double}\ delay\_between\_datapoints\_in\_ms);}
+\DoxyCodeLine{00057\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordtype}{void}\ StartSPIAnalogInAcquisition(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ channel\_nr,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ number\_of\_datapoints,\ \textcolor{keywordtype}{double}\ delay\_between\_datapoints\_in\_ms);}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{void}\ AddCommandAnalogInOut(uint8\_t\ adc\_register\_address,\ uint8\_t\ adc\_write\_enable,\ \textcolor{keywordtype}{unsigned}\ \_\_int16\ adc\_programming\_out,\ uint8\_t\ dont\_execute\_now,\ uint8\_t\ only\_read\_write,\ uint32\_t\ wait\_time);}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{void}\ AddCommandSetCoreOption\_LED(\textcolor{keywordtype}{bool}\ a\_core\_option\_LED);}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{void}\ AddCommandSetCoreOption\_SPI\_CS(uint8\_t\ a\_core\_option\_SPI\_CS);}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{void}\ AddCommandSetCoreOption\_dig\_out(uint8\_t\ a\_core\_option\_dig\_out);}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{void}\ AddCommandSetCoreOption\_PL\_to\_PS(uint8\_t\ a\_core\_option\_PL\_to\_PS);}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{void}\ AddCommandSetCoreOptions();}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{void}\ AddCommandWait(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ Wait\_in\_FPGA\_clock\_cycles);}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{void}\ AddCommandSetPLToPSCommand(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ PLToPSCommand);}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{bool}\ DoTransmitOnlyDifferenceBetweenCommandSequenceIfPossible;}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{bool}\ AttemptNetworkCommand(tBoolFunction\ fCommand);}
+\DoxyCodeLine{00069\ \textcolor{keyword}{public}:\ }
+\DoxyCodeLine{00070\ \ \ \ \ CEthernetControllerFirefly(CDeviceSequencer*\ \_MySequencer);}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~CEthernetControllerFirefly();}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{bool}\ SendSequenceToFPGA(uint32\_t*\ buffer);}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{void}\ AddSequencerCommandToSequenceList(uint32\_t\ high\_buffer,\ uint32\_t\ low\_buffer);}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordtype}{void}\ StartAnalogInAcquisition(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ channel\_nr,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ number\_of\_datapooints,\ \textcolor{keywordtype}{double}\ delay\_between\_datapoints);}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{void}\ WriteReadSPI(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ chip\_select,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ number\_of\_bits\_out,\ \textcolor{keywordtype}{unsigned}\ \_\_int64\ data\_high,\ \textcolor{keywordtype}{unsigned}\ \_\_int64\ data\_low,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ number\_of\_bits\_in);}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{comment}{//bool\ AddData(uint32\_t*\ BusData,\ uint32\_t*\ Spacing,\ /*uint32\_t*\ AbsoluteTime,*/\ unsigned\ long\ Count);}}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{bool}\ AddSequencePreamble();}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordtype}{bool}\ GetAktWaveformPoint(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{long}\&\ DataPointsWritten,\ \textcolor{keywordtype}{bool}\ \&running);}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordtype}{bool}\ GetNextCycleNumber(\textcolor{keywordtype}{long}\&\ NextCycleNumber);}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordtype}{bool}\ ResetCycleNumber();}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{bool}\ CheckReady(\textcolor{keywordtype}{double}\ timeout\_in\_s\ =\ 1);}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{bool}\ Reset();}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{_control_a_p_i_8cpp_ae11c2f457429ac307cee5322e091eb7c}{WaitTillEndOfSequenceThenGetInputData}}(uint8\_t*\&\ buffer,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\&\ buffer\_length,\ \textcolor{keywordtype}{unsigned}\ \ \textcolor{keywordtype}{long}\&\ EndTimeOfCycle,\ \textcolor{keywordtype}{double}\ timeout\_in\_s\ =\ 10);}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{void}\ AddProgramLineToSequenceList(uint8\_t\ command,\ uint32\_t\ data,\ uint32\_t\ delay);}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{void}\ AddProgramLine(\ uint8\_t\ command,\ uint32\_t\ data,\ uint32\_t\ delay);}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{comment}{//void\ AddCommandStep(uint32\_t\ data,\ uint32\_t\ delay);}}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{void}\ SetStrobeOptions(\ uint8\_t\ strobe\_choice,\ uint8\_t\ strobe\_low\_length,\ uint8\_t\ strobe\_high\_length);}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{void}\ SetTriggerOptions(\ \textcolor{keywordtype}{bool}\ ExternalTrigger0,\ \textcolor{keywordtype}{bool}\ ExternalTrigger1);}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordtype}{void}\ AddExternalTrigger(\ \textcolor{keywordtype}{bool}\ ExternalTrigger0,\ \textcolor{keywordtype}{bool}\ ExternalTrigger1,\ \textcolor{keywordtype}{bool}\ FPGASoftwareTrigger\ );}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordtype}{void}\ WriteBufferToFile(uint32\_t*\ buffer,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ length);}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_c_network_client_ad966282c40b32a48a700e2ae1bd15842}{ConnectSocket}}(LPCTSTR\ lpszAddress,\ UINT\ port,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ aFPGAClockToBusClockRatio,\ \textcolor{keywordtype}{double}\ aFPGAClockFrequencyInHz,\ \textcolor{keywordtype}{bool}\ aFPGAUseExternalClock,\ \textcolor{keywordtype}{bool}\ aFPGAUseStrobeGenerator,\ \textcolor{keywordtype}{bool}\ ExternalTrigger);}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keywordtype}{double}\ GetBusFrequency();}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordtype}{bool}\ WaitTillFinished();}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{bool}\ Start();}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{bool}\ Stop();}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordtype}{bool}\ CloseConnection();}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{comment}{//void\ ResetProgramBuffer()\ \{\ FPGABufferUsed\ =\ 0;\ \}}}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{_control_a_p_i_8cpp_adebc9e720e4b0afda1c4b980fbc11459}{SetFrequency}}(\textcolor{keywordtype}{double}\ Frequency);}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{bool}\ GetFrequency(\textcolor{keywordtype}{double}\&\ Frequency);}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{bool}\ GetPeriodicTriggerError(\textcolor{keywordtype}{bool}\&\ Error);}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordtype}{void}\ SetExternalTrigger(\textcolor{keywordtype}{bool}\ aExternalTrigger0,\ \textcolor{keywordtype}{bool}\ aExternalTrigger1);}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{void}\ SetPeriodicTrigger(\textcolor{keywordtype}{double}\ aPeriodicTriggerPeriod\_in\_s,\ \textcolor{keywordtype}{double}\ aPeriodicTriggerAllowedWaitTime\_in\_s);}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{void}\ WaitForPeriodicTrigger(\textcolor{keywordtype}{bool}\ aWaitForPeriodicTriggerAtBeginningOfSequence);}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordtype}{bool}\ SetExternalClock(\textcolor{keywordtype}{bool}\ ExternalClock0,\ \textcolor{keywordtype}{bool}\ ExternalClock1);}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{void}\ DebugBuffer(CString\ filename);}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{void}\ AddSequencerCommandToBuffer(uint32\_t*\ buffer,\ uint32\_t\ n,\ uint32\_t\ high\_buffer,\ uint32\_t\ low\_buffer);}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{void}\ ClearSequencerCommandList();}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordtype}{void}\ AddSequencerCommand(uint32\_t\ high\_word,\ uint32\_t\ low\_word);}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{_control_a_p_i_8cpp_a3186ff65e19d503d7e7d346f3179f08e}{SwitchDebugMode}}(\textcolor{keywordtype}{bool}\ OnOff,\ \textcolor{keyword}{const}\ std::string\&\ aFilename);}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordtype}{void}\ SwitchDebugLED(\textcolor{keywordtype}{bool}\ OnOff);}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordtype}{void}\ IgnoreTCPIP(\textcolor{keywordtype}{bool}\ OnOff);}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordtype}{void}\ AddMarker(uint8\_t\ Marker);}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordtype}{void}\ AddCommandWriteSystemTimeToInputMemory();}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keywordtype}{void}\ AddCommandWriteInputBuffer(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ input\_buf\_mem\_data,\ \textcolor{keywordtype}{bool}\ write\_next\_address\ =\ 1,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ input\_buf\_mem\_address\ =\ 0);}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordtype}{void}\ TransmitOnlyDifferenceBetweenCommandSequenceIfPossible(\textcolor{keywordtype}{bool}\ OnOff);}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{double}\ MeasureEthernetBandwidth(uint32\_t\ DataSize\ =\ 1024\ *\ 1024,\ \textcolor{keywordtype}{double}\ MinimumExpected\ =\ -\/1);}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordtype}{bool}\ OptimizedCommand(CString\ CommandString);}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordtype}{bool}\ AttemptGetAktWaveformPoint(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{long}\&\ DataPointsWritten,\ \textcolor{keywordtype}{bool}\&\ running);}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordtype}{bool}\ ModifySequence(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ differences,\ uint32\_t\ difference\_index\_table[],\ uint32\_t\ difference\_command\_table[]);}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keywordtype}{bool}\ AttemptModifySequence(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ differences,\ uint32\_t\ difference\_index\_table[],\ uint32\_t\ difference\_command\_table[]);}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keywordtype}{bool}\ SendSequence(uint32\_t\ DataSize,\ uint32\_t*\ buffer);}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordtype}{bool}\ AttemptSendSequence(uint32\_t\ DataSize,\ uint32\_t*\ buffer);}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordtype}{bool}\ AttemptGetNextCycleNumber(\textcolor{keywordtype}{long}\&\ NextCycleNumber);}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{bool}\ AttemptSetFrequency(\textcolor{keywordtype}{double}\ Frequency);}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keywordtype}{bool}\ AttemptGetFrequency(\textcolor{keywordtype}{double}\&\ Frequency);}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordtype}{bool}\ AttemptGetPeriodicTriggerError(\textcolor{keywordtype}{bool}\&\ Error);}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordtype}{bool}\ AttemptWaitTillEndOfSequenceThenGetInputData(uint8\_t*\&\ buffer,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\&\ buffer\_length,\ \textcolor{keywordtype}{unsigned}\ \ \textcolor{keywordtype}{long}\&\ EndTimeOfCycle,\ \textcolor{keywordtype}{double}\ timeout\_in\_s);}
+\DoxyCodeLine{00130\ \};}
+
+\end{DoxyCode}

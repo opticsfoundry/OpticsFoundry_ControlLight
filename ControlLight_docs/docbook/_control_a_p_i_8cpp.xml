@@ -1,0 +1,2929 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__control_a_p_i_8cpp" xml:lang="en-US">
+<title>ControlAPI.cpp File Reference</title>
+<indexterm><primary>ControlAPI.cpp</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &lt;afxwin.h&gt;<?linebreak?>#include &lt;tchar.h&gt;<?linebreak?>#include &quot;std.h&quot;<?linebreak?>#include &lt;afxsock.h&gt;<?linebreak?>#include &lt;afx.h&gt;<?linebreak?>#include &lt;iostream&gt;<?linebreak?>#include &lt;fstream&gt;<?linebreak?>#include &quot;include\json.hpp&quot;<?linebreak?>#include &quot;ControlAPI.h&quot;<?linebreak?>#include &quot;CDeviceSequencer.h&quot;<?linebreak?>#include &quot;CDeviceAnalogOut.h&quot;<?linebreak?>#include &quot;CDeviceAnalogIn.h&quot;<?linebreak?>#include &quot;CDeviceAD9854.h&quot;<?linebreak?>#include &quot;CDeviceDigitalOut.h&quot;<?linebreak?>#include &quot;CDeviceAD9858.h&quot;<?linebreak?>#include &lt;format&gt;<?linebreak?>#include &lt;string&gt;<?linebreak?>#include &lt;sstream&gt;<?linebreak?></programlisting><simplesect>
+    <title>Macros    </title>
+        <itemizedlist>
+            <listitem><para>#define <link linkend="__control_a_p_i_8cpp_1a72cc69751765d28544d94e2a93da4412">_AFXDLL</link></para>
+</listitem>
+            <listitem><para>#define <link linkend="__control_a_p_i_8cpp_1afbdc02a711f64ab690682fc7f2f4ca61">CATCH_MFC_EX_S</link>&#160;&#160;&#160;;</para>
+</listitem>
+            <listitem><para>#define <link linkend="__control_a_p_i_8cpp_1a43f2c2ec639e77aebf3d3bb3ed74a4bf">CATCH_MFC_EX_E</link>&#160;&#160;&#160;;</para>
+</listitem>
+            <listitem><para>#define <link linkend="__control_a_p_i_8cpp_1af0cecfd13ff9e46b8796d1f0196253ac">API_LOCK_GUARD</link></para>
+</listitem>
+            <listitem><para>#define <link linkend="__control_a_p_i_8cpp_1aac5bb9fa5586c05110861c055e94858c">API_UNLOCK</link></para>
+</listitem>
+            <listitem><para>#define <link linkend="__control_a_p_i_8cpp_1aba779b84fff44abd2f6bcd31071b15a5">API_UNLOCK_RETURN_ERROR</link>(success,  error_message)</para>
+</listitem>
+            <listitem><para>#define <link linkend="__control_a_p_i_8cpp_1ab60d460931c003c9f26348344486d8d2">RETURN_ERROR</link>(success,  error_message)</para>
+</listitem>
+            <listitem><para>#define <link linkend="__control_a_p_i_8cpp_1a39190b1fe9115d037538d033de326d1b">GET_VALUE</link>(key,  default_val)</para>
+</listitem>
+            <listitem><para>#define <link linkend="__control_a_p_i_8cpp_1aed6156c5d13eb583b60f20b2ce02b28e">LOAD_VALUE</link>(target,  key,  default_val)</para>
+</listitem>
+            <listitem><para>#define <link linkend="__control_a_p_i_8cpp_1a13a74e3fac4e8356e3aafd590daa8dfe">GET_CONFIG_VALUE</link>(key,  default_val)</para>
+</listitem>
+            <listitem><para>#define <link linkend="__control_a_p_i_8cpp_1ae2c08197dc05d00f3f24e121019cbe6c">LOAD_CONFIG_VALUE</link>(target,  key,  default_val)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Typedefs    </title>
+        <itemizedlist>
+            <listitem><para>using <link linkend="__control_a_p_i_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d">json</link> = nlohmann::json</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>bool <link linkend="__control_a_p_i_8cpp_1a3d614e6de58d0c549bf54f6d5ff257d0">CLA_InitializeMFC</link> (bool InitializeAfx, bool InitializeAfxSocket)</para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8cpp_1ab4216036d280f0e2357f4895feae00b3">AddErrorMessage</link> (const std::string &amp;error_message)</para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> bool <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1ad0f0f525900c7042af9735df225b5bb4">DidErrorOccur</link> ()</para>
+
+<para>Check if an error has occurred since the last call to GetLastError. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> const char *<link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1ae2c09044776f2f9cc07d3be713ed0ecf">GetLastError</link> ()</para>
+
+<para>returns the last error messages </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a2d2fa043e1432b195756a9b7476d14b6">Create</link> (bool InitializeAfx, bool InitializeAfxSocket)</para>
+
+<para>Initializes the ControlAPI. If you use a bare function C API, then this function must be called before using any other functions in the API. If you didn&apos;t load MFC yet (which is the case if you use Qt), then set. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> void <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1aa969e43b23ebfb657bee5e58271cfffd">Cleanup</link> ()</para>
+
+<para>This function must be called when you are finished using the API. The class wrapped version of this API calls this function in its destructor. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> void <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a9f8b440cc01917e60b5d4d3e9f274f2d">Configure</link> (bool _DisplayErrors)</para>
+
+<para>Configures if the ControlAPI should display error messages. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1ad867e66c5ee033c10c2b19bda54ef936">Initialize</link> ()</para>
+
+<para>After Configuring the hardware, e.g. by loading a json configuration file, this function must be called to initialize the hardware. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a8d65f99963c14d7859b47abddc82070f">IsReady</link> ()</para>
+
+<para>Checks if the ControlAPI is ready to be used. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> void <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a3186ff65e19d503d7e7d346f3179f08e">SwitchDebugMode</link> (bool OnOff, const char *FileName)</para>
+
+<para>Switches Debug mode on. In Debug mode, the sequence of each FPGA sequencer is written to a human readable ASCII file before being sent to the FPGA. In addition, the FPGA sequencers display more information on their USB-UART port, being slowed down a bit by that. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> void <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a5f131f6edd5d984d6469eefda7fa2950">StartAssemblingSequence</link> ()</para>
+
+<para>Starts assembling a sequence. Clears any previous sequence. Must be called before adding commands to the sequence. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> void <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1abeddda80e86e53e54428d759a8a7936c">ExecuteSequence</link> ()</para>
+
+<para>Executes the sequence that was previously assembled. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1ae827da631cb9135289137a331bc3e3a9">GetSequenceExecutionStatus</link> (bool &amp;running, unsigned long long &amp;DataPointsWritten)</para>
+
+<para>Get the current status of the sequence execution. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1ae11c2f457429ac307cee5322e091eb7c">WaitTillEndOfSequenceThenGetInputData</link> (uint8_t *&amp;buffer, unsigned long &amp;buffer_length, unsigned long &amp;EndTimeOfCycle, double timeout_in_s)</para>
+
+<para>Waits until the sequence is finished, then gets the input data from the FPGA sequencer. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a6ae5f98b269cf285416e23dbd2928946">SetTimeDebtGuard_in_ms</link> (const double &amp;MaxTimeDebt_in_ms)</para>
+
+<para>Sets a guard time. If sequencer commands make the time advance more than the guard time beyond what&apos;s allowed by Wait_ms, an error will be recorded (check with <link linkend="__control_a_p_i_8h_1a140351e5a8172134e8eff160d1b558e3">DidErrorOccur()</link> if that happened) or thrown. </para>
+</listitem>
+            <listitem><para><link linkend="_class_c_device_sequencer">CDeviceSequencer</link> * <link linkend="__control_a_p_i_8cpp_1a2fc82efd87606cc01ea99648f0c6e607">GetSequencer</link> (const unsigned int &amp;Sequencer)</para>
+</listitem>
+            <listitem><para><link linkend="_class_c_device_sequencer">CDeviceSequencer</link> * <link linkend="__control_a_p_i_8cpp_1a7ed3a20121246963b6eb35390d98e6f8">GetSequencerBeforeInitialization</link> (const unsigned int &amp;Sequencer)</para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a6946fdb3fdd2440bd73aee6f72b0501e">SequencerStartAnalogInAcquisition</link> (const unsigned int &amp;Sequencer, const uint8_t &amp;ChannelNumber, const uint32_t &amp;NumberOfDataPoints, const double &amp;DelayBetweenDataPoints_in_ms)</para>
+
+<para>Start analog acquisition on the specified channel. This function places a commandto for the FPGA in the sequencer buffer. The analog in acquisition will start when this command is executed by the FPGA. Only one analog in acquisition can hapen at each moment. A new one can start right after the previous one is finished. The data will be returned at the end of a sequence when using CLA_WaitTillEndOfSequenceThenGetInputData. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1acdff3dba475709add5fd0048e7f4a949">SequencerWriteInputMemory</link> (const unsigned int &amp;Sequencer, unsigned long input_buf_mem_data, bool write_next_address, unsigned long input_buf_mem_address)</para>
+
+<para>Writes a value to the input memory of the sequencer. This is useful to mark the start or end of a data acquisition, or to mark the type of experimental run in the full fledged version of the ControlAPI, which can cycle sequences automatically in the background. To execute this function, a command for the FPGA must be placed in the sequencer buffer. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a4984974edc2acf116b3d5921e909b6fd">SequencerWriteSystemTimeToInputMemory</link> (const unsigned int &amp;Sequencer)</para>
+
+<para>Writes the current FPGA clock ticks to the input memory of the sequencer. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1ae7807aa91bd081ff8dd83522fbddff94">SequencerSwitchDebugLED</link> (const unsigned int &amp;Sequencer, unsigned int OnOff)</para>
+
+<para>Switches the debug LED of the FPGA on or off. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a72f33e9b346a9b89489678dca5e7908f">SequencerIgnoreTCPIP</link> (const unsigned int &amp;Sequencer, bool OnOff)</para>
+
+<para>Switches the sequencer to ignore TCP/IP commands. This is useful to prevent the sequencer from being interrupted by TCP/IP commands while executing a timing critical task, such as transferring input data from the FPGA BRAM to the DDR. This can be useful if lots of data is acquired at a high rate. Lot&apos;s of meaning: more than the size of the BRAM input buffer. How much that is depends how you configured the Vivado project that generates the FPGA sequencer firmware. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a5fd6294ae4f463293e5b4ac8ca5f5f29">SequencerAddMarker</link> (const unsigned int &amp;Sequencer, unsigned char marker)</para>
+
+<para>Places a marker in the sequencer buffer. The FPGA SOM&apos;s CPU will see this marker and can react to it, e.g. write it to the USB-UART for debugging. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1abad197bb4342619e8483e132c918a48c">SetRegister</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, const unsigned int &amp;SubAddress, const uint8_t *Data, const unsigned long &amp;DataLength_in_bit, const uint8_t &amp;StartBit)</para>
+
+<para>This function sets a register for a device on the sequencer. What this means depends on the device type. This function gives us an easy way to add new functionality to a device without having to programm new DLL functions. SetRegister maps to the register map given in the device&apos;s datasheet. Note: this is not currently implemented in the API. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a5f8a2790ef4d7b1539b711a4964a6b10">SetValue</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, const unsigned int &amp;SubAddress, const uint8_t *Data, const unsigned long &amp;DataLength_in_bit, const uint8_t &amp;StartBit)</para>
+
+<para>This function sets a value for a device on the sequencer. What this means depends on the device type. This function gives us an easy way to add new functionality to a device without having to programm new DLL functions. In contrast to SetRegister, SetValue can execute more complex operations, such as calculating a DDS frequency tuning word from the given frequency and then programming that. There can be several SetValue functions for the same SetRegister function. There can be SetValue functions that set some parameter, or that trigger some action, not even necessarily related to the registers of the device. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a94fc2280ca22d053f9b135338a3d291c">SetValueSerialDevice</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, const unsigned int &amp;SubAddress, const uint8_t *Data, const unsigned long &amp;DataLength_in_bit, const uint8_t &amp;StartBit)</para>
+
+<para>As SetValue, but for serial devices. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1ab7171666e35ae8e3f4cfeca2c3ed4385">SetRegisterSerialDevice</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, const unsigned int &amp;SubAddress, const uint8_t *Data, const unsigned long &amp;DataLength_in_bit, const uint8_t &amp;StartBit)</para>
+
+<para>As SetRegister, but for serial devices. </para>
+</listitem>
+            <listitem><para><link linkend="_class_c_device">CDevice</link> * <link linkend="__control_a_p_i_8cpp_1aafeaa288e7ac08c08666b94cf5437984">GetParallelBusDevice</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address)</para>
+</listitem>
+            <listitem><para><link linkend="_class_c_device">CDevice</link> * <link linkend="__control_a_p_i_8cpp_1a9e790d4bd142ff7805168df98fc230d7">GetSerialBusDevice</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address)</para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a94082ed5fabf2e2f1fdb9ddff5e3f927">SetVoltage</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, double Voltage)</para>
+
+<para>Sets the voltage of an analog output device. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1aafc22ae54400ca0dac7c5ae2c9a5323e">SetDigitalOutput</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, uint8_t BitNr, bool OnOff)</para>
+
+<para>Sets a digital output to high or low. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1aeaefe9e4f0c4d23e645cdbd5ee32ce0a">SetStartFrequency</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, double Frequency)</para>
+
+<para>Sets the start frequency of a DDS (for now a AD9854 DDS). </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1ad489aba20c7cdadcc9686fe4a7491e2d">SetStopFrequency</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, double Frequency)</para>
+
+<para>Sets the stop frequency of a DDS (for now a AD9854 DDS). </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a0949f1333682c8a43913831669155d65">SetModulationFrequency</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, double Frequency)</para>
+
+<para>Sets the modulation frequency of a DDS (for now a AD9854 DDS). </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a0bf8ab1ba1ef75a7ffe7a6cf9122b30d">SetPower</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, double Power)</para>
+
+<para>Sets the power of a DDS (for now a AD9854 DDS). </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a3dd0fc517153ec5ba8507c7e799942aa">SetAttenuation</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, double Attenuation)</para>
+
+<para>Sets the attenuation of a DDS (for now a AD9854 DDS). </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a9bd59aedb811a015970e0be2bea8b124">SetStartFrequencyTuningWord</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, uint64_t FrequencyTuningWord)</para>
+
+<para>Sets the start frequency tuning word of a DDS (for now a AD9854 DDS). </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a644830db2c0da6c7eb0008bff6cd025a">SetStopFrequencyTuningWord</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, uint64_t FrequencyTuningWord)</para>
+
+<para>Sets the stop frequency tuning word of a DDS (for now a AD9854 DDS). </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a04caf38d2f875d81db071c501665bd52">SetFSKMode</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, uint8_t mode)</para>
+
+<para>Sets the FKS mode of a DDS (for now a AD9854 DDS). </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a45c53df7b4c759187b6d3f5981056a09">SetRampRateClock</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, uint8_t rate)</para>
+
+<para>Sets the ramp rate clock of a DDS (for now a AD9854 DDS). </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1adf175ebeaa66ad48a1d628fc80709d1a">SetClearACC1</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, bool OnOff)</para>
+
+<para>Clears the ACC1 bit of a DDS (for now a AD9854 DDS). </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1ade90a369329eaf77f7f4611f05ca093b">SetTriangleBit</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, bool OnOff)</para>
+
+<para>Sets the triangle bit of a DDS (for now a AD9854 DDS). </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a13fdb690bdb322e5d8d90d0d4cb5ea2d">SetFSKBit</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, bool OnOff)</para>
+
+<para>Sets the FSK bit of a DDS (for now a AD9854 DDS). </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1adebc9e720e4b0afda1c4b980fbc11459">SetFrequency</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, double Frequency)</para>
+
+<para>Sets the frequency of a DDS. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a4deeeed623c85a57469dae267fc009e9">SetFrequencyTuningWord</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, uint64_t FrequencyTuningWord)</para>
+
+<para>Sets the frequency tuning word of a DDS. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a36fa5bbf98b9f2680225d630a3319636">SetFrequencyOfChannel</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, uint8_t channel, double Frequency)</para>
+
+<para>Sets the frequency of a multi channel DDS (for now the AD9958). </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1ab864571d668680c9096085c5ed337592">SetFrequencyTuningWordOfChannel</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, uint8_t channel, uint64_t FrequencyTuningWord)</para>
+
+<para>Sets the frequency tuning word of a multi channel DDS (for now the AD9958). </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a3d8f917be9190e50af5d548416f9fcd7">SetPhaseOfChannel</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, uint8_t channel, double Phase)</para>
+
+<para>Sets the phase of a multi channel DDS (for now the AD9958). </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a561caef491d5510871c71610620cd317">SetPowerOfChannel</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, uint8_t channel, double Power)</para>
+
+<para>Sets the phase of a multi channel DDS (for now the AD9958). </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a559c22b0fee213f47cc2bcfac3570138">Wait_ms</link> (double time_in_ms)</para>
+
+<para>Wait for a given time in ms. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a221429e81929d758713b37ef122e6675">GetTime_ms</link> (double &amp;time_in_ms)</para>
+
+<para>Get the current time in the currently assembled sequence ms. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a21be816bc7405b76d68549abf1837ebd">GetTimeOfSequencer_ms</link> (const unsigned int &amp;Sequencer, double &amp;time_in_ms)</para>
+
+<para>Get the current time of a specific sequencer in the currently assembled sequence ms. </para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a659cc537a03ff9e172efbfee6b8f29fe">GetTimeDebtOfSequencer_ms</link> (const unsigned int &amp;Sequencer, double &amp;time_debt_in_ms)</para>
+
+<para>Get the time debtof a specific sequencer in the currently assembled sequence ms. </para>
+</listitem>
+            <listitem><para>bool <link linkend="__control_a_p_i_8cpp_1a77d9e13e203a444396fa248385ee454b">CLA_AddDeviceAD9854FromJSON</link> (const <link linkend="__control_a_p_i_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d">json</link> &amp;device_json)</para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1af2e5d254aaad92f36a124ff029994fec">AddDeviceAD9854</link> (unsigned int sequencer, unsigned int address, unsigned int version, double externalClockFrequency, uint8_t PLLReferenceMultiplier, unsigned int frequencyMultiplier)</para>
+
+<para>Add a AD9854 device to the sequencer. </para>
+</listitem>
+            <listitem><para>bool <link linkend="__control_a_p_i_8cpp_1a575684463f77af913488d0ec8f81475b">CLA_AddDeviceAD9858FromJSON</link> (const <link linkend="__control_a_p_i_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d">json</link> &amp;device_json)</para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1acdbe85dfdbc1ba43905be7c1e63334d2">AddDeviceAD9858</link> (unsigned int sequencer, unsigned int address, double externalClockFrequency, unsigned int frequencyMultiplier)</para>
+
+<para>Add a AD9858 device to the sequencer. </para>
+</listitem>
+            <listitem><para>bool <link linkend="__control_a_p_i_8cpp_1ac7fdaa52d93b4d2eae368cd238008764">CLA_AddDeviceDigitalOutFromJSON</link> (const <link linkend="__control_a_p_i_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d">json</link> &amp;device_json)</para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1ac4890589c0e5b5b4cb59d7ccd3f5606c">AddDeviceDigitalOut</link> (unsigned int sequencer, unsigned int address, unsigned int numberChannels)</para>
+
+<para>Add a digital output device to the sequencer. </para>
+</listitem>
+            <listitem><para>bool <link linkend="__control_a_p_i_8cpp_1a09ef774bd8091a37a8db290e7fab8876">CLA_AddDeviceAnalogIn12bitFromJSON</link> (const <link linkend="__control_a_p_i_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d">json</link> &amp;device_json)</para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1aa6f77c364b5e13820a3b84cd7a9e517e">AddDeviceAnalogIn12bit</link> (unsigned int sequencer, unsigned int chipSelect, bool signedValue, double minVoltage, double maxVoltage)</para>
+
+<para>Add a 12 bit analog input device to the sequencer. </para>
+</listitem>
+            <listitem><para>bool <link linkend="__control_a_p_i_8cpp_1a0352d73cbcabbc2e0502ddc101a1cbbb">CLA_AddDeviceAnalogOut16bitFromJSON</link> (const <link linkend="__control_a_p_i_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d">json</link> &amp;device_json)</para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a9b9d47663058740484d1b6c772967567">AddDeviceAnalogOut16bit</link> (unsigned int sequencer, unsigned int startAddress, unsigned int numberChannels, bool signedValue, double minVoltage, double maxVoltage)</para>
+
+<para>Add a 16 bit analog output device to the sequencer. </para>
+</listitem>
+            <listitem><para>bool <link linkend="__control_a_p_i_8cpp_1a0fa386cbcdd115c828c316fe6916b870">CLA_AddDeviceSequencerFromJSON</link> (const <link linkend="__control_a_p_i_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d">json</link> &amp;device_json)</para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a83ca1191c0cd2236753caccbc688ccc8">AddDeviceSequencer</link> (unsigned int id, const char *type, const char *ip, unsigned int port, bool master, unsigned int startDelay, double clockFrequency, unsigned long FPGAClockToBusClockRatio, bool useExternalClock, bool useStrobeGenerator, bool connect)</para>
+
+<para>Add a device sequencer to the list. </para>
+</listitem>
+            <listitem><para>bool <link linkend="__control_a_p_i_8cpp_1a11d466dd020b09a700b9c2742fe88624">CLA_LoadFromJSON</link> (const <link linkend="__control_a_p_i_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d">json</link> &amp;config)</para>
+</listitem>
+            <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a2ccba55530e6bf0416c9402ec5554a27">LoadFromJSONFile</link> (const const char *filename)</para>
+
+<para>Load a configuration from a JSON file. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Variables    </title>
+        <itemizedlist>
+            <listitem><para><link linkend="_class_c_device_sequencer">CDeviceSequencer</link> * <link linkend="__control_a_p_i_8cpp_1a3afc18884ae31455bf3ebfe2ae5521b5">SequencerList</link> [MaxSequencers] = {}</para>
+</listitem>
+            <listitem><para><link linkend="_class_c_device_sequencer">CDeviceSequencer</link> * <link linkend="__control_a_p_i_8cpp_1a7f811f3895468f02ceb13a39be77f753">ShortSequencerList</link> [MaxSequencers] = {}</para>
+</listitem>
+            <listitem><para><link linkend="_class_c_device_sequencer">CDeviceSequencer</link> * <link linkend="__control_a_p_i_8cpp_1a51b4c51d4f7f6b04ee1c8b59656d37cc">MasterSequencer</link> = nullptr</para>
+</listitem>
+            <listitem><para>unsigned int <link linkend="__control_a_p_i_8cpp_1a96b19f87e619ac3db7574bb46b4d7208">NrSequencers</link> = 0</para>
+</listitem>
+            <listitem><para>unsigned long <link linkend="__control_a_p_i_8cpp_1a3642b68105a22054c01a38ee1399e066">PCBufferSize_in_bytes</link> = 0</para>
+</listitem>
+            <listitem><para>std::string <link linkend="__control_a_p_i_8cpp_1a07fad7113820175ba98f0d9d26815c52">ConfigurationName</link> = &quot;&quot;</para>
+</listitem>
+            <listitem><para>double <link linkend="__control_a_p_i_8cpp_1a145cf88f867422cb06e82209135c93cf">LineFrequency</link> = 0</para>
+</listitem>
+            <listitem><para>std::string <link linkend="__control_a_p_i_8cpp_1a7d8ab587f73458e320154369f6a74c01">LastError</link> [<link linkend="__control_a_p_i_8h_1ab0e1cf239ac3e235992bc858f58e7ea9">MaxLastError</link>] = {}</para>
+</listitem>
+            <listitem><para>int <link linkend="__control_a_p_i_8cpp_1aa8c7d164d3b3d02712b59520ac38b9e3">LastErrorIndex</link> = 0</para>
+</listitem>
+            <listitem><para>bool <link linkend="__control_a_p_i_8cpp_1a679deb1765f3544a100264eebb793da3">ErrorListWrapAround</link> = false</para>
+</listitem>
+            <listitem><para>bool <link linkend="__control_a_p_i_8cpp_1a83167769808fb0c540358799b53422db">NewErrorOccured</link> = false</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Macro Definition Documentation</title>
+<anchor xml:id="__control_a_p_i_8cpp_1a72cc69751765d28544d94e2a93da4412"/><section>
+    <title>_AFXDLL</title>
+<indexterm><primary>_AFXDLL</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>_AFXDLL</secondary></indexterm>
+<para><computeroutput>#define _AFXDLL</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1af0cecfd13ff9e46b8796d1f0196253ac"/><section>
+    <title>API_LOCK_GUARD</title>
+<indexterm><primary>API_LOCK_GUARD</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>API_LOCK_GUARD</secondary></indexterm>
+<para><computeroutput>#define API_LOCK_GUARD</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1aac5bb9fa5586c05110861c055e94858c"/><section>
+    <title>API_UNLOCK</title>
+<indexterm><primary>API_UNLOCK</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>API_UNLOCK</secondary></indexterm>
+<para><computeroutput>#define API_UNLOCK</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1aba779b84fff44abd2f6bcd31071b15a5"/><section>
+    <title>API_UNLOCK_RETURN_ERROR</title>
+<indexterm><primary>API_UNLOCK_RETURN_ERROR</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>API_UNLOCK_RETURN_ERROR</secondary></indexterm>
+<para><computeroutput>#define API_UNLOCK_RETURN_ERROR( success,  error_message)</computeroutput></para><emphasis role="strong">Value:</emphasis><programlisting linenumbering="unnumbered">&#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;__ret&#32;=&#32;(success)&#32;?&#32;<emphasis role="keyword">true</emphasis>&#32;:&#32;<link linkend="__control_a_p_i_8cpp_1ab4216036d280f0e2357f4895feae00b3">AddErrorMessage</link>(error_message);&#32;\
+&#32;&#32;&#32;&#32;<link linkend="__control_a_p_i_8cpp_1aac5bb9fa5586c05110861c055e94858c">API_UNLOCK</link>;&#32;\
+&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;__ret;
+</programlisting></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a43f2c2ec639e77aebf3d3bb3ed74a4bf"/><section>
+    <title>CATCH_MFC_EX_E</title>
+<indexterm><primary>CATCH_MFC_EX_E</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>CATCH_MFC_EX_E</secondary></indexterm>
+<para><computeroutput>#define CATCH_MFC_EX_E&#160;&#160;&#160;;</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1afbdc02a711f64ab690682fc7f2f4ca61"/><section>
+    <title>CATCH_MFC_EX_S</title>
+<indexterm><primary>CATCH_MFC_EX_S</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>CATCH_MFC_EX_S</secondary></indexterm>
+<para><computeroutput>#define CATCH_MFC_EX_S&#160;&#160;&#160;;</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a13a74e3fac4e8356e3aafd590daa8dfe"/><section>
+    <title>GET_CONFIG_VALUE</title>
+<indexterm><primary>GET_CONFIG_VALUE</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>GET_CONFIG_VALUE</secondary></indexterm>
+<para><computeroutput>#define GET_CONFIG_VALUE( key,  default_val)</computeroutput></para><emphasis role="strong">Value:</emphasis><programlisting linenumbering="unnumbered">((config.contains(key))&#32;?&#32;config[key]&#32;:&#32;default_val)
+</programlisting></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a39190b1fe9115d037538d033de326d1b"/><section>
+    <title>GET_VALUE</title>
+<indexterm><primary>GET_VALUE</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>GET_VALUE</secondary></indexterm>
+<para><computeroutput>#define GET_VALUE( key,  default_val)</computeroutput></para><emphasis role="strong">Value:</emphasis><programlisting linenumbering="unnumbered">((device_json.contains(key))&#32;?&#32;device_json[key]&#32;:&#32;default_val)
+</programlisting></section>
+<anchor xml:id="__control_a_p_i_8cpp_1ae2c08197dc05d00f3f24e121019cbe6c"/><section>
+    <title>LOAD_CONFIG_VALUE</title>
+<indexterm><primary>LOAD_CONFIG_VALUE</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>LOAD_CONFIG_VALUE</secondary></indexterm>
+<para><computeroutput>#define LOAD_CONFIG_VALUE( target,  key,  default_val)</computeroutput></para><emphasis role="strong">Value:</emphasis><programlisting linenumbering="unnumbered"><emphasis role="keywordflow">if</emphasis>&#32;(config.contains(key))&#32;target&#32;=&#32;config[key];&#32;<emphasis role="keywordflow">else</emphasis>&#32;target&#32;=&#32;default_val;
+</programlisting></section>
+<anchor xml:id="__control_a_p_i_8cpp_1aed6156c5d13eb583b60f20b2ce02b28e"/><section>
+    <title>LOAD_VALUE</title>
+<indexterm><primary>LOAD_VALUE</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>LOAD_VALUE</secondary></indexterm>
+<para><computeroutput>#define LOAD_VALUE( target,  key,  default_val)</computeroutput></para><emphasis role="strong">Value:</emphasis><programlisting linenumbering="unnumbered"><emphasis role="keywordflow">if</emphasis>&#32;(device_json.contains(key))&#32;target&#32;=&#32;device_json[key];&#32;<emphasis role="keywordflow">else</emphasis>&#32;target&#32;=&#32;default_val;
+</programlisting></section>
+<anchor xml:id="__control_a_p_i_8cpp_1ab60d460931c003c9f26348344486d8d2"/><section>
+    <title>RETURN_ERROR</title>
+<indexterm><primary>RETURN_ERROR</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>RETURN_ERROR</secondary></indexterm>
+<para><computeroutput>#define RETURN_ERROR( success,  error_message)</computeroutput></para><emphasis role="strong">Value:</emphasis><programlisting linenumbering="unnumbered">&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;(success)&#32;?&#32;true&#32;:&#32;<link linkend="__control_a_p_i_8cpp_1ab4216036d280f0e2357f4895feae00b3">AddErrorMessage</link>(error_message);&#32;\
+</programlisting></section>
+</section>
+<section>
+<title>Typedef Documentation</title>
+<anchor xml:id="__control_a_p_i_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d"/><section>
+    <title>json</title>
+<indexterm><primary>json</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>json</secondary></indexterm>
+<para><computeroutput>using <link linkend="__control_a_p_i_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d">json</link> = nlohmann::json</computeroutput></para></section>
+</section>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="__control_a_p_i_8cpp_1af2e5d254aaad92f36a124ff029994fec"/><section>
+    <title>AddDeviceAD9854()</title>
+<indexterm><primary>AddDeviceAD9854</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>AddDeviceAD9854</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> AddDeviceAD9854 (unsigned int sequencer, unsigned int address, unsigned int version, double externalClockFrequency, uint8_t PLLReferenceMultiplier, unsigned int frequencyMultiplier)</computeroutput></para><para>
+
+<para>Add a AD9854 device to the sequencer. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>address</entry><entry>
+<para>the address of the device to add. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>version</entry><entry>
+<para>the version of the device to add. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>externalClockFrequency</entry><entry>
+<para>the external clock frequency of the device to add. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>PLLReferenceMultiplier</entry><entry>
+<para>the PLL reference multiplier of the device to add. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>frequencyMultiplier</entry><entry>
+<para>the frequency multiplier of the device to add. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1acdbe85dfdbc1ba43905be7c1e63334d2"/><section>
+    <title>AddDeviceAD9858()</title>
+<indexterm><primary>AddDeviceAD9858</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>AddDeviceAD9858</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> AddDeviceAD9858 (unsigned int sequencer, unsigned int address, double externalClockFrequency, unsigned int frequencyMultiplier)</computeroutput></para><para>
+
+<para>Add a AD9858 device to the sequencer. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>address</entry><entry>
+<para>the address of the device to add. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>externalClockFrequency</entry><entry>
+<para>the external clock frequency of the device to add. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>frequencyMultiplier</entry><entry>
+<para>the frequency multiplier of the device to add. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1aa6f77c364b5e13820a3b84cd7a9e517e"/><section>
+    <title>AddDeviceAnalogIn12bit()</title>
+<indexterm><primary>AddDeviceAnalogIn12bit</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>AddDeviceAnalogIn12bit</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> AddDeviceAnalogIn12bit (unsigned int sequencer, unsigned int chipSelect, bool signedValue, double minVoltage, double maxVoltage)</computeroutput></para><para>
+
+<para>Add a 12 bit analog input device to the sequencer. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>chipSelect</entry><entry>
+<para>the chip select of the device to add. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>signedValue</entry><entry>
+<para>true if the device is signed, false if it is unsigned. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>minVoltage</entry><entry>
+<para>the minimum voltage of the device to add. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>maxVoltage</entry><entry>
+<para>the maximum voltage of the device to add. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a9b9d47663058740484d1b6c772967567"/><section>
+    <title>AddDeviceAnalogOut16bit()</title>
+<indexterm><primary>AddDeviceAnalogOut16bit</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>AddDeviceAnalogOut16bit</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> AddDeviceAnalogOut16bit (unsigned int sequencer, unsigned int startAddress, unsigned int numberChannels, bool signedValue, double minVoltage, double maxVoltage)</computeroutput></para><para>
+
+<para>Add a 16 bit analog output device to the sequencer. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>startAddress</entry><entry>
+<para>the start address of the device to add. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>numberChannels</entry><entry>
+<para>the number of channels of the device to add. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>signedValue</entry><entry>
+<para>true if the device is signed, false if it is unsigned. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>minVoltage</entry><entry>
+<para>the minimum voltage of the device to add. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>maxVoltage</entry><entry>
+<para>the maximum voltage of the device to add. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1ac4890589c0e5b5b4cb59d7ccd3f5606c"/><section>
+    <title>AddDeviceDigitalOut()</title>
+<indexterm><primary>AddDeviceDigitalOut</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>AddDeviceDigitalOut</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> AddDeviceDigitalOut (unsigned int sequencer, unsigned int address, unsigned int numberChannels)</computeroutput></para><para>
+
+<para>Add a digital output device to the sequencer. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>address</entry><entry>
+<para>the address of the device to add. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>numberChannels</entry><entry>
+<para>the number of channels of the device to add. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a83ca1191c0cd2236753caccbc688ccc8"/><section>
+    <title>AddDeviceSequencer()</title>
+<indexterm><primary>AddDeviceSequencer</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>AddDeviceSequencer</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> AddDeviceSequencer (unsigned int id, const char * type, const char * ip, unsigned int port, bool master, unsigned int startDelay, double clockFrequency, unsigned long FPGAClockToBusClockRatio, bool useExternalClock, bool useStrobeGenerator, bool connect)</computeroutput></para><para>
+
+<para>Add a device sequencer to the list. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>id</entry><entry>
+<para>the id of the device sequencer to add (this is the number that all other commands are using when sending data to a device on this sequencer). </para>
+</entry>
+                            </row>
+                            <row>
+<entry>type</entry><entry>
+<para>the type of the device sequencer to add. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>ip</entry><entry>
+<para>the ip address of the device sequencer to add. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>port</entry><entry>
+<para>the port of the device sequencer to add. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>master</entry><entry>
+<para>true if the device sequencer is a master, false if it is a slave. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>startDelay</entry><entry>
+<para>the start delay of the device sequencer to add. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>clockFrequency</entry><entry>
+<para>the clock frequency of the device sequencer to add. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>FPGAClockToBusClockRatio</entry><entry>
+<para>the FPGA clock to bus clock ratio of the device sequencer to add. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>useExternalClock</entry><entry>
+<para>true if the device sequencer should use an external clock, false if it should use the internal clock. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>useStrobeGenerator</entry><entry>
+<para>true if the device sequencer should use a strobe generator, false if it should not. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>connect</entry><entry>
+<para>true if the device sequencer should connect to the device, false if it should not. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1ab4216036d280f0e2357f4895feae00b3"/><section>
+    <title>AddErrorMessage()</title>
+<indexterm><primary>AddErrorMessage</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>AddErrorMessage</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> AddErrorMessage (const std::string &amp; error_message)</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a77d9e13e203a444396fa248385ee454b"/><section>
+    <title>CLA_AddDeviceAD9854FromJSON()</title>
+<indexterm><primary>CLA_AddDeviceAD9854FromJSON</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>CLA_AddDeviceAD9854FromJSON</secondary></indexterm>
+<para><computeroutput>bool CLA_AddDeviceAD9854FromJSON (const <link linkend="__control_a_p_i_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d">json</link> &amp; device_json)</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a575684463f77af913488d0ec8f81475b"/><section>
+    <title>CLA_AddDeviceAD9858FromJSON()</title>
+<indexterm><primary>CLA_AddDeviceAD9858FromJSON</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>CLA_AddDeviceAD9858FromJSON</secondary></indexterm>
+<para><computeroutput>bool CLA_AddDeviceAD9858FromJSON (const <link linkend="__control_a_p_i_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d">json</link> &amp; device_json)</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a09ef774bd8091a37a8db290e7fab8876"/><section>
+    <title>CLA_AddDeviceAnalogIn12bitFromJSON()</title>
+<indexterm><primary>CLA_AddDeviceAnalogIn12bitFromJSON</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>CLA_AddDeviceAnalogIn12bitFromJSON</secondary></indexterm>
+<para><computeroutput>bool CLA_AddDeviceAnalogIn12bitFromJSON (const <link linkend="__control_a_p_i_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d">json</link> &amp; device_json)</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a0352d73cbcabbc2e0502ddc101a1cbbb"/><section>
+    <title>CLA_AddDeviceAnalogOut16bitFromJSON()</title>
+<indexterm><primary>CLA_AddDeviceAnalogOut16bitFromJSON</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>CLA_AddDeviceAnalogOut16bitFromJSON</secondary></indexterm>
+<para><computeroutput>bool CLA_AddDeviceAnalogOut16bitFromJSON (const <link linkend="__control_a_p_i_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d">json</link> &amp; device_json)</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1ac7fdaa52d93b4d2eae368cd238008764"/><section>
+    <title>CLA_AddDeviceDigitalOutFromJSON()</title>
+<indexterm><primary>CLA_AddDeviceDigitalOutFromJSON</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>CLA_AddDeviceDigitalOutFromJSON</secondary></indexterm>
+<para><computeroutput>bool CLA_AddDeviceDigitalOutFromJSON (const <link linkend="__control_a_p_i_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d">json</link> &amp; device_json)</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a0fa386cbcdd115c828c316fe6916b870"/><section>
+    <title>CLA_AddDeviceSequencerFromJSON()</title>
+<indexterm><primary>CLA_AddDeviceSequencerFromJSON</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>CLA_AddDeviceSequencerFromJSON</secondary></indexterm>
+<para><computeroutput>bool CLA_AddDeviceSequencerFromJSON (const <link linkend="__control_a_p_i_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d">json</link> &amp; device_json)</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a3d614e6de58d0c549bf54f6d5ff257d0"/><section>
+    <title>CLA_InitializeMFC()</title>
+<indexterm><primary>CLA_InitializeMFC</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>CLA_InitializeMFC</secondary></indexterm>
+<para><computeroutput>bool CLA_InitializeMFC (bool InitializeAfx, bool InitializeAfxSocket)</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a11d466dd020b09a700b9c2742fe88624"/><section>
+    <title>CLA_LoadFromJSON()</title>
+<indexterm><primary>CLA_LoadFromJSON</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>CLA_LoadFromJSON</secondary></indexterm>
+<para><computeroutput>bool CLA_LoadFromJSON (const <link linkend="__control_a_p_i_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d">json</link> &amp; config)</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1aa969e43b23ebfb657bee5e58271cfffd"/><section>
+    <title>Cleanup()</title>
+<indexterm><primary>Cleanup</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>Cleanup</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> void <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> Cleanup ( )</computeroutput></para><para>
+
+<para>This function must be called when you are finished using the API. The class wrapped version of this API calls this function in its destructor. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>&lt;br&gt;</entry><entry>
+<para></para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a9f8b440cc01917e60b5d4d3e9f274f2d"/><section>
+    <title>Configure()</title>
+<indexterm><primary>Configure</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>Configure</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> void <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> Configure (bool _DisplayErrors)</computeroutput></para><para>
+
+<para>Configures if the ControlAPI should display error messages. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>_DisplayErrors</entry><entry>
+<para>true to display error messages, false to suppress them. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a2d2fa043e1432b195756a9b7476d14b6"/><section>
+    <title>Create()</title>
+<indexterm><primary>Create</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>Create</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> Create (bool InitializeAfx, bool InitializeAfxSocket)</computeroutput></para><para>
+
+<para>Initializes the ControlAPI. If you use a bare function C API, then this function must be called before using any other functions in the API. If you didn&apos;t load MFC yet (which is the case if you use Qt), then set. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>InitializeAfx</entry><entry>
+<para>to true to initialize MFC core </para>
+</entry>
+                            </row>
+                            <row>
+<entry>InitializeAfxSocket</entry><entry>
+<para>to true to initialize MFC socket layer The class wrapped version of this API calls this function in its constructor. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>&lt;br&gt;</entry><entry>
+<para></para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1ad0f0f525900c7042af9735df225b5bb4"/><section>
+    <title>DidErrorOccur()</title>
+<indexterm><primary>DidErrorOccur</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>DidErrorOccur</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> bool <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> DidErrorOccur ( )</computeroutput></para><para>
+
+<para>Check if an error has occurred since the last call to GetLastError. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>&lt;br&gt;</entry><entry>
+<para></para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para>true if an error has occurred since the last call to GetLastError </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1abeddda80e86e53e54428d759a8a7936c"/><section>
+    <title>ExecuteSequence()</title>
+<indexterm><primary>ExecuteSequence</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>ExecuteSequence</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> void <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> ExecuteSequence ( )</computeroutput></para><para>
+
+<para>Executes the sequence that was previously assembled. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>&lt;br&gt;</entry><entry>
+<para></para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1ae2c09044776f2f9cc07d3be713ed0ecf"/><section>
+    <title>GetLastError()</title>
+<indexterm><primary>GetLastError</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>GetLastError</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> const char *<link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> GetLastError ( )</computeroutput></para><para>
+
+<para>returns the last error messages </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>&lt;br&gt;</entry><entry>
+<para></para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1aafeaa288e7ac08c08666b94cf5437984"/><section>
+    <title>GetParallelBusDevice()</title>
+<indexterm><primary>GetParallelBusDevice</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>GetParallelBusDevice</secondary></indexterm>
+<para><computeroutput><link linkend="_class_c_device">CDevice</link> * GetParallelBusDevice (const unsigned int &amp; Sequencer, const unsigned int &amp; Address)<computeroutput>[inline]</computeroutput></computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1ae827da631cb9135289137a331bc3e3a9"/><section>
+    <title>GetSequenceExecutionStatus()</title>
+<indexterm><primary>GetSequenceExecutionStatus</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>GetSequenceExecutionStatus</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> GetSequenceExecutionStatus (bool &amp; running, unsigned long long &amp; DataPointsWritten)</computeroutput></para><para>
+
+<para>Get the current status of the sequence execution. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>running</entry><entry>
+<para>returns true if the sequence is running, false if it is not. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>DataPointsWritten</entry><entry>
+<para>returns number of data points that were already written out by the FPGA sequencer(s). </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a2fc82efd87606cc01ea99648f0c6e607"/><section>
+    <title>GetSequencer()</title>
+<indexterm><primary>GetSequencer</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>GetSequencer</secondary></indexterm>
+<para><computeroutput><link linkend="_class_c_device_sequencer">CDeviceSequencer</link> * GetSequencer (const unsigned int &amp; Sequencer)<computeroutput>[inline]</computeroutput></computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a7ed3a20121246963b6eb35390d98e6f8"/><section>
+    <title>GetSequencerBeforeInitialization()</title>
+<indexterm><primary>GetSequencerBeforeInitialization</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>GetSequencerBeforeInitialization</secondary></indexterm>
+<para><computeroutput><link linkend="_class_c_device_sequencer">CDeviceSequencer</link> * GetSequencerBeforeInitialization (const unsigned int &amp; Sequencer)<computeroutput>[inline]</computeroutput></computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a9e790d4bd142ff7805168df98fc230d7"/><section>
+    <title>GetSerialBusDevice()</title>
+<indexterm><primary>GetSerialBusDevice</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>GetSerialBusDevice</secondary></indexterm>
+<para><computeroutput><link linkend="_class_c_device">CDevice</link> * GetSerialBusDevice (const unsigned int &amp; Sequencer, const unsigned int &amp; Address)<computeroutput>[inline]</computeroutput></computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a221429e81929d758713b37ef122e6675"/><section>
+    <title>GetTime_ms()</title>
+<indexterm><primary>GetTime_ms</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>GetTime_ms</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> GetTime_ms (double &amp; time_in_ms)</computeroutput></para><para>
+
+<para>Get the current time in the currently assembled sequence ms. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>time_in_ms</entry><entry>
+<para>the current time in ms. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a659cc537a03ff9e172efbfee6b8f29fe"/><section>
+    <title>GetTimeDebtOfSequencer_ms()</title>
+<indexterm><primary>GetTimeDebtOfSequencer_ms</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>GetTimeDebtOfSequencer_ms</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> GetTimeDebtOfSequencer_ms (const unsigned int &amp; Sequencer, double &amp; time_debt_in_ms)</computeroutput></para><para>
+
+<para>Get the time debtof a specific sequencer in the currently assembled sequence ms. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>time_debt_in_ms</entry><entry>
+<para>the current time in ms. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a21be816bc7405b76d68549abf1837ebd"/><section>
+    <title>GetTimeOfSequencer_ms()</title>
+<indexterm><primary>GetTimeOfSequencer_ms</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>GetTimeOfSequencer_ms</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> GetTimeOfSequencer_ms (const unsigned int &amp; Sequencer, double &amp; time_in_ms)</computeroutput></para><para>
+
+<para>Get the current time of a specific sequencer in the currently assembled sequence ms. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>time_in_ms</entry><entry>
+<para>the current time in ms. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1ad867e66c5ee033c10c2b19bda54ef936"/><section>
+    <title>Initialize()</title>
+<indexterm><primary>Initialize</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>Initialize</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> Initialize ( )</computeroutput></para><para>
+
+<para>After Configuring the hardware, e.g. by loading a json configuration file, this function must be called to initialize the hardware. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>&lt;br&gt;</entry><entry>
+<para></para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a8d65f99963c14d7859b47abddc82070f"/><section>
+    <title>IsReady()</title>
+<indexterm><primary>IsReady</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>IsReady</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> IsReady ( )</computeroutput></para><para>
+
+<para>Checks if the ControlAPI is ready to be used. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>IsReady</entry><entry>
+<para>true if the ControlAPI is ready to be used, false otherwise. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a2ccba55530e6bf0416c9402ec5554a27"/><section>
+    <title>LoadFromJSONFile()</title>
+<indexterm><primary>LoadFromJSONFile</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>LoadFromJSONFile</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> LoadFromJSONFile (const const char * filename)</computeroutput></para><para>
+
+<para>Load a configuration from a JSON file. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>filename</entry><entry>
+<para>the name of the file to load the configuration from. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a5fd6294ae4f463293e5b4ac8ca5f5f29"/><section>
+    <title>SequencerAddMarker()</title>
+<indexterm><primary>SequencerAddMarker</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SequencerAddMarker</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SequencerAddMarker (const unsigned int &amp; Sequencer, unsigned char marker)</computeroutput></para><para>
+
+<para>Places a marker in the sequencer buffer. The FPGA SOM&apos;s CPU will see this marker and can react to it, e.g. write it to the USB-UART for debugging. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>&lt;br&gt;</entry><entry>
+<para></para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a72f33e9b346a9b89489678dca5e7908f"/><section>
+    <title>SequencerIgnoreTCPIP()</title>
+<indexterm><primary>SequencerIgnoreTCPIP</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SequencerIgnoreTCPIP</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SequencerIgnoreTCPIP (const unsigned int &amp; Sequencer, bool OnOff)</computeroutput></para><para>
+
+<para>Switches the sequencer to ignore TCP/IP commands. This is useful to prevent the sequencer from being interrupted by TCP/IP commands while executing a timing critical task, such as transferring input data from the FPGA BRAM to the DDR. This can be useful if lots of data is acquired at a high rate. Lot&apos;s of meaning: more than the size of the BRAM input buffer. How much that is depends how you configured the Vivado project that generates the FPGA sequencer firmware. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>&lt;br&gt;</entry><entry>
+<para></para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a6946fdb3fdd2440bd73aee6f72b0501e"/><section>
+    <title>SequencerStartAnalogInAcquisition()</title>
+<indexterm><primary>SequencerStartAnalogInAcquisition</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SequencerStartAnalogInAcquisition</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SequencerStartAnalogInAcquisition (const unsigned int &amp; Sequencer, const uint8_t &amp; ChannelNumber, const uint32_t &amp; NumberOfDataPoints, const double &amp; DelayBetweenDataPoints_in_ms)</computeroutput></para><para>
+
+<para>Start analog acquisition on the specified channel. This function places a commandto for the FPGA in the sequencer buffer. The analog in acquisition will start when this command is executed by the FPGA. Only one analog in acquisition can hapen at each moment. A new one can start right after the previous one is finished. The data will be returned at the end of a sequence when using CLA_WaitTillEndOfSequenceThenGetInputData. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>ChannelNumber</entry><entry>
+<para>the channel number to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>NumberOfDataPoints</entry><entry>
+<para>the number of data points to acquire. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>DelayBetweenDataPoints_in_ms</entry><entry>
+<para>the delay between data points in ms. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1ae7807aa91bd081ff8dd83522fbddff94"/><section>
+    <title>SequencerSwitchDebugLED()</title>
+<indexterm><primary>SequencerSwitchDebugLED</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SequencerSwitchDebugLED</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SequencerSwitchDebugLED (const unsigned int &amp; Sequencer, unsigned int OnOff)</computeroutput></para><para>
+
+<para>Switches the debug LED of the FPGA on or off. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Squencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>OnOff</entry><entry>
+<para>true to switch on the LED, false to switch it off. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1acdff3dba475709add5fd0048e7f4a949"/><section>
+    <title>SequencerWriteInputMemory()</title>
+<indexterm><primary>SequencerWriteInputMemory</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SequencerWriteInputMemory</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SequencerWriteInputMemory (const unsigned int &amp; Sequencer, unsigned long input_buf_mem_data, bool write_next_address = <computeroutput>1</computeroutput>
+, unsigned long input_buf_mem_address = <computeroutput>0</computeroutput>
+)</computeroutput></para><para>
+
+<para>Writes a value to the input memory of the sequencer. This is useful to mark the start or end of a data acquisition, or to mark the type of experimental run in the full fledged version of the ControlAPI, which can cycle sequences automatically in the background. To execute this function, a command for the FPGA must be placed in the sequencer buffer. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>input_buf_mem_data</entry><entry>
+<para>the data to write to the input memory. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>write_next_address</entry><entry>
+<para>true to write the next address, false to write the address given. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>input_buf_mem_address</entry><entry>
+<para>the address to write to, if write_next_address is false. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a4984974edc2acf116b3d5921e909b6fd"/><section>
+    <title>SequencerWriteSystemTimeToInputMemory()</title>
+<indexterm><primary>SequencerWriteSystemTimeToInputMemory</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SequencerWriteSystemTimeToInputMemory</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SequencerWriteSystemTimeToInputMemory (const unsigned int &amp; Sequencer)</computeroutput></para><para>
+
+<para>Writes the current FPGA clock ticks to the input memory of the sequencer. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a3dd0fc517153ec5ba8507c7e799942aa"/><section>
+    <title>SetAttenuation()</title>
+<indexterm><primary>SetAttenuation</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetAttenuation</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetAttenuation (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, double Attenuation)</computeroutput></para><para>
+
+<para>Sets the attenuation of a DDS (for now a AD9854 DDS). </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the attenuation for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Attenuation</entry><entry>
+<para>the attenuation to set in dB (-xxx ... 0). </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1adf175ebeaa66ad48a1d628fc80709d1a"/><section>
+    <title>SetClearACC1()</title>
+<indexterm><primary>SetClearACC1</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetClearACC1</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetClearACC1 (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, bool OnOff)</computeroutput></para><para>
+
+<para>Clears the ACC1 bit of a DDS (for now a AD9854 DDS). </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the ACC1 bit for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>OnOff</entry><entry>
+<para>true to set the ACC1 bit, false to clear it. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1aafc22ae54400ca0dac7c5ae2c9a5323e"/><section>
+    <title>SetDigitalOutput()</title>
+<indexterm><primary>SetDigitalOutput</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetDigitalOutput</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetDigitalOutput (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, uint8_t BitNr, bool OnOff)</computeroutput></para><para>
+
+<para>Sets a digital output to high or low. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the digital output for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>BitNr</entry><entry>
+<para>the bit number of the digital output to set. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>OnOff</entry><entry>
+<para>true to set the output to high, false to set it to low. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1adebc9e720e4b0afda1c4b980fbc11459"/><section>
+    <title>SetFrequency()</title>
+<indexterm><primary>SetFrequency</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetFrequency</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetFrequency (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, double Frequency)</computeroutput></para><para>
+
+<para>Sets the frequency of a DDS. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the frequency for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Frequency</entry><entry>
+<para>the frequency to set. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a36fa5bbf98b9f2680225d630a3319636"/><section>
+    <title>SetFrequencyOfChannel()</title>
+<indexterm><primary>SetFrequencyOfChannel</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetFrequencyOfChannel</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetFrequencyOfChannel (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, uint8_t channel, double Frequency)</computeroutput></para><para>
+
+<para>Sets the frequency of a multi channel DDS (for now the AD9958). </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the frequency for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>channel</entry><entry>
+<para>the channel number to set the frequency for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Frequency</entry><entry>
+<para>the frequency to set. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a4deeeed623c85a57469dae267fc009e9"/><section>
+    <title>SetFrequencyTuningWord()</title>
+<indexterm><primary>SetFrequencyTuningWord</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetFrequencyTuningWord</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetFrequencyTuningWord (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, uint64_t FrequencyTuningWord)</computeroutput></para><para>
+
+<para>Sets the frequency tuning word of a DDS. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the frequency tuning word for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>FrequencyTuningWord</entry><entry>
+<para>the frequency tuning word to set. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1ab864571d668680c9096085c5ed337592"/><section>
+    <title>SetFrequencyTuningWordOfChannel()</title>
+<indexterm><primary>SetFrequencyTuningWordOfChannel</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetFrequencyTuningWordOfChannel</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetFrequencyTuningWordOfChannel (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, uint8_t channel, uint64_t FrequencyTuningWord)</computeroutput></para><para>
+
+<para>Sets the frequency tuning word of a multi channel DDS (for now the AD9958). </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the frequency tuning word for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>channel</entry><entry>
+<para>the channel number to set the frequency tuning word for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>FrequencyTuningWord</entry><entry>
+<para>the frequency tuning word to set. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a13fdb690bdb322e5d8d90d0d4cb5ea2d"/><section>
+    <title>SetFSKBit()</title>
+<indexterm><primary>SetFSKBit</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetFSKBit</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetFSKBit (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, bool OnOff)</computeroutput></para><para>
+
+<para>Sets the FSK bit of a DDS (for now a AD9854 DDS). </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the FSK bit for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>OnOff</entry><entry>
+<para>true to set the FSK bit, false to clear it. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a04caf38d2f875d81db071c501665bd52"/><section>
+    <title>SetFSKMode()</title>
+<indexterm><primary>SetFSKMode</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetFSKMode</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetFSKMode (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, uint8_t mode)</computeroutput></para><para>
+
+<para>Sets the FKS mode of a DDS (for now a AD9854 DDS). </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the FKS mode for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>mode</entry><entry>
+<para>the FKS mode to set (0..4). </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a0949f1333682c8a43913831669155d65"/><section>
+    <title>SetModulationFrequency()</title>
+<indexterm><primary>SetModulationFrequency</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetModulationFrequency</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetModulationFrequency (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, double Frequency)</computeroutput></para><para>
+
+<para>Sets the modulation frequency of a DDS (for now a AD9854 DDS). </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the modulation frequency for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Frequency</entry><entry>
+<para>the frequency to set. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a3d8f917be9190e50af5d548416f9fcd7"/><section>
+    <title>SetPhaseOfChannel()</title>
+<indexterm><primary>SetPhaseOfChannel</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetPhaseOfChannel</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetPhaseOfChannel (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, uint8_t channel, double Phase)</computeroutput></para><para>
+
+<para>Sets the phase of a multi channel DDS (for now the AD9958). </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the phase for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>channel</entry><entry>
+<para>the channel number to set the phase for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Phase</entry><entry>
+<para>the phase to set. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a0bf8ab1ba1ef75a7ffe7a6cf9122b30d"/><section>
+    <title>SetPower()</title>
+<indexterm><primary>SetPower</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetPower</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetPower (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, double Power)</computeroutput></para><para>
+
+<para>Sets the power of a DDS (for now a AD9854 DDS). </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the power for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Power</entry><entry>
+<para>the power to set in % (0...100). </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a561caef491d5510871c71610620cd317"/><section>
+    <title>SetPowerOfChannel()</title>
+<indexterm><primary>SetPowerOfChannel</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetPowerOfChannel</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetPowerOfChannel (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, uint8_t channel, double Power)</computeroutput></para><para>
+
+<para>Sets the phase of a multi channel DDS (for now the AD9958). </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the phase for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>channel</entry><entry>
+<para>the channel number to set the phase for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Phase</entry><entry>
+<para>the phase to set. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a45c53df7b4c759187b6d3f5981056a09"/><section>
+    <title>SetRampRateClock()</title>
+<indexterm><primary>SetRampRateClock</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetRampRateClock</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetRampRateClock (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, uint8_t rate)</computeroutput></para><para>
+
+<para>Sets the ramp rate clock of a DDS (for now a AD9854 DDS). </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the ramp rate clock for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>rate</entry><entry>
+<para>the ramp rate clock to set (1...1048576). </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1abad197bb4342619e8483e132c918a48c"/><section>
+    <title>SetRegister()</title>
+<indexterm><primary>SetRegister</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetRegister</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetRegister (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, const unsigned int &amp; SubAddress, const uint8_t * Data, const unsigned long &amp; DataLength_in_bit, const uint8_t &amp; StartBit = <computeroutput>0</computeroutput>
+)</computeroutput></para><para>
+
+<para>This function sets a register for a device on the sequencer. What this means depends on the device type. This function gives us an easy way to add new functionality to a device without having to programm new DLL functions. SetRegister maps to the register map given in the device&apos;s datasheet. Note: this is not currently implemented in the API. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the value for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>SubAddress</entry><entry>
+<para>the subaddress of the device to set the value for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Data</entry><entry>
+<para>the data to set. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>DataLength_in_bit</entry><entry>
+<para>the length of the data in bits. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>StartBit</entry><entry>
+<para>the start bit of the data to set. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>&lt;br&gt;</entry><entry>
+<para></para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1ab7171666e35ae8e3f4cfeca2c3ed4385"/><section>
+    <title>SetRegisterSerialDevice()</title>
+<indexterm><primary>SetRegisterSerialDevice</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetRegisterSerialDevice</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetRegisterSerialDevice (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, const unsigned int &amp; SubAddress, const uint8_t * Data, const unsigned long &amp; DataLength_in_bit, const uint8_t &amp; StartBit = <computeroutput>0</computeroutput>
+)</computeroutput></para><para>
+
+<para>As SetRegister, but for serial devices. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the value for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>SubAddress</entry><entry>
+<para>the subaddress of the device to set the value for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Data</entry><entry>
+<para>the data to set. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>DataLength_in_bit</entry><entry>
+<para>the length of the data in bits. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>StartBit</entry><entry>
+<para>the start bit of the data to set. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1aeaefe9e4f0c4d23e645cdbd5ee32ce0a"/><section>
+    <title>SetStartFrequency()</title>
+<indexterm><primary>SetStartFrequency</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetStartFrequency</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetStartFrequency (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, double Frequency)</computeroutput></para><para>
+
+<para>Sets the start frequency of a DDS (for now a AD9854 DDS). </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the start frequency for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Frequency</entry><entry>
+<para>the frequency to set. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a9bd59aedb811a015970e0be2bea8b124"/><section>
+    <title>SetStartFrequencyTuningWord()</title>
+<indexterm><primary>SetStartFrequencyTuningWord</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetStartFrequencyTuningWord</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetStartFrequencyTuningWord (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, uint64_t FrequencyTuningWord)</computeroutput></para><para>
+
+<para>Sets the start frequency tuning word of a DDS (for now a AD9854 DDS). </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the start frequency tuning word for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>FrequencyTuningWord</entry><entry>
+<para>the frequency tuning word to set. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1ad489aba20c7cdadcc9686fe4a7491e2d"/><section>
+    <title>SetStopFrequency()</title>
+<indexterm><primary>SetStopFrequency</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetStopFrequency</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetStopFrequency (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, double Frequency)</computeroutput></para><para>
+
+<para>Sets the stop frequency of a DDS (for now a AD9854 DDS). </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the stop frequency for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Frequency</entry><entry>
+<para>the frequency to set. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a644830db2c0da6c7eb0008bff6cd025a"/><section>
+    <title>SetStopFrequencyTuningWord()</title>
+<indexterm><primary>SetStopFrequencyTuningWord</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetStopFrequencyTuningWord</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetStopFrequencyTuningWord (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, uint64_t FrequencyTuningWord)</computeroutput></para><para>
+
+<para>Sets the stop frequency tuning word of a DDS (for now a AD9854 DDS). </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the stop frequency tuning word for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>FrequencyTuningWord</entry><entry>
+<para>the frequency tuning word to set. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a6ae5f98b269cf285416e23dbd2928946"/><section>
+    <title>SetTimeDebtGuard_in_ms()</title>
+<indexterm><primary>SetTimeDebtGuard_in_ms</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetTimeDebtGuard_in_ms</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetTimeDebtGuard_in_ms (const double &amp; MaxTimeDebt_in_ms)</computeroutput></para><para>
+
+<para>Sets a guard time. If sequencer commands make the time advance more than the guard time beyond what&apos;s allowed by Wait_ms, an error will be recorded (check with <link linkend="__control_a_p_i_8h_1a140351e5a8172134e8eff160d1b558e3">DidErrorOccur()</link> if that happened) or thrown. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>MaxTimeDebt_in_ms</entry><entry>
+<para>maximum time debt in ms. If the sequencer commands make the time advance more than this, the sequencer will stop and wait for the next command. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1ade90a369329eaf77f7f4611f05ca093b"/><section>
+    <title>SetTriangleBit()</title>
+<indexterm><primary>SetTriangleBit</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetTriangleBit</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetTriangleBit (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, bool OnOff)</computeroutput></para><para>
+
+<para>Sets the triangle bit of a DDS (for now a AD9854 DDS). </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the triangle bit for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>OnOff</entry><entry>
+<para>true to set the triangle bit, false to clear it. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a5f8a2790ef4d7b1539b711a4964a6b10"/><section>
+    <title>SetValue()</title>
+<indexterm><primary>SetValue</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetValue</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetValue (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, const unsigned int &amp; SubAddress, const uint8_t * Data, const unsigned long &amp; DataLength_in_bit, const uint8_t &amp; StartBit = <computeroutput>0</computeroutput>
+)</computeroutput></para><para>
+
+<para>This function sets a value for a device on the sequencer. What this means depends on the device type. This function gives us an easy way to add new functionality to a device without having to programm new DLL functions. In contrast to SetRegister, SetValue can execute more complex operations, such as calculating a DDS frequency tuning word from the given frequency and then programming that. There can be several SetValue functions for the same SetRegister function. There can be SetValue functions that set some parameter, or that trigger some action, not even necessarily related to the registers of the device. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the value for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>SubAddress</entry><entry>
+<para>the subaddress of the device to set the value for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Data</entry><entry>
+<para>the data to set. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>DataLength_in_bit</entry><entry>
+<para>the length of the data in bits. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>StartBit</entry><entry>
+<para>the start bit of the data to set. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>&lt;br&gt;</entry><entry>
+<para></para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a94fc2280ca22d053f9b135338a3d291c"/><section>
+    <title>SetValueSerialDevice()</title>
+<indexterm><primary>SetValueSerialDevice</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetValueSerialDevice</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetValueSerialDevice (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, const unsigned int &amp; SubAddress, const uint8_t * Data, const unsigned long &amp; DataLength_in_bit, const uint8_t &amp; StartBit = <computeroutput>0</computeroutput>
+)</computeroutput></para><para>
+
+<para>As SetValue, but for serial devices. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the value for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>SubAddress</entry><entry>
+<para>the subaddress of the device to set the value for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Data</entry><entry>
+<para>the data to set. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>DataLength_in_bit</entry><entry>
+<para>the length of the data in bits. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>StartBit</entry><entry>
+<para>the start bit of the data to set. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a94082ed5fabf2e2f1fdb9ddff5e3f927"/><section>
+    <title>SetVoltage()</title>
+<indexterm><primary>SetVoltage</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SetVoltage</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetVoltage (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, double Voltage)</computeroutput></para><para>
+
+<para>Sets the voltage of an analog output device. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>Sequencer</entry><entry>
+<para>the sequencer to use. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Address</entry><entry>
+<para>the address of the device to set the voltage for. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>Voltage</entry><entry>
+<para>the voltage to set. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a5f131f6edd5d984d6469eefda7fa2950"/><section>
+    <title>StartAssemblingSequence()</title>
+<indexterm><primary>StartAssemblingSequence</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>StartAssemblingSequence</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> void <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> StartAssemblingSequence ( )</computeroutput></para><para>
+
+<para>Starts assembling a sequence. Clears any previous sequence. Must be called before adding commands to the sequence. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>&lt;br&gt;</entry><entry>
+<para></para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a3186ff65e19d503d7e7d346f3179f08e"/><section>
+    <title>SwitchDebugMode()</title>
+<indexterm><primary>SwitchDebugMode</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SwitchDebugMode</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> void <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SwitchDebugMode (bool OnOff, const char * FileName)</computeroutput></para><para>
+
+<para>Switches Debug mode on. In Debug mode, the sequence of each FPGA sequencer is written to a human readable ASCII file before being sent to the FPGA. In addition, the FPGA sequencers display more information on their USB-UART port, being slowed down a bit by that. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>OnOff</entry><entry>
+<para>true to switch on debug mode, false to switch it off. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>FileName</entry><entry>
+<para>the name of the file to write the debug information to without filename extension. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1a559c22b0fee213f47cc2bcfac3570138"/><section>
+    <title>Wait_ms()</title>
+<indexterm><primary>Wait_ms</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>Wait_ms</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> Wait_ms (double time_in_ms)</computeroutput></para><para>
+
+<para>Wait for a given time in ms. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>time_in_ms</entry><entry>
+<para>the time to wait in ms. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para></para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="__control_a_p_i_8cpp_1ae11c2f457429ac307cee5322e091eb7c"/><section>
+    <title>WaitTillEndOfSequenceThenGetInputData()</title>
+<indexterm><primary>WaitTillEndOfSequenceThenGetInputData</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>WaitTillEndOfSequenceThenGetInputData</secondary></indexterm>
+<para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> WaitTillEndOfSequenceThenGetInputData (uint8_t *&amp; buffer, unsigned long &amp; buffer_length, unsigned long &amp; EndTimeOfCycle, double timeout_in_s)</computeroutput></para><para>
+
+<para>Waits until the sequence is finished, then gets the input data from the FPGA sequencer. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>buffer</entry><entry>
+<para>pointer to the input data buffer. Don&apos;t delete this buffer, it is managed by the API. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>buffer_length</entry><entry>
+<para>length of the input data buffer in bytes. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>EndTimeOfCycle</entry><entry>
+<para>returns the end time of the cycle in ms. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>timeout_in_s</entry><entry>
+<para>timeout in seconds. If the sequence is not finished within this time, the function returns false or throws an exception (depending on mode selected mode when compiling API). </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+</section>
+<section>
+<title>Variable Documentation</title>
+<anchor xml:id="__control_a_p_i_8cpp_1a07fad7113820175ba98f0d9d26815c52"/><section>
+    <title>ConfigurationName</title>
+<indexterm><primary>ConfigurationName</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>ConfigurationName</secondary></indexterm>
+<para><computeroutput>std::string ConfigurationName = &quot;&quot;</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a679deb1765f3544a100264eebb793da3"/><section>
+    <title>ErrorListWrapAround</title>
+<indexterm><primary>ErrorListWrapAround</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>ErrorListWrapAround</secondary></indexterm>
+<para><computeroutput>bool ErrorListWrapAround = false</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a7d8ab587f73458e320154369f6a74c01"/><section>
+    <title>LastError</title>
+<indexterm><primary>LastError</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>LastError</secondary></indexterm>
+<para><computeroutput>std::string LastError[<link linkend="__control_a_p_i_8h_1ab0e1cf239ac3e235992bc858f58e7ea9">MaxLastError</link>] = {}</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1aa8c7d164d3b3d02712b59520ac38b9e3"/><section>
+    <title>LastErrorIndex</title>
+<indexterm><primary>LastErrorIndex</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>LastErrorIndex</secondary></indexterm>
+<para><computeroutput>int LastErrorIndex = 0</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a145cf88f867422cb06e82209135c93cf"/><section>
+    <title>LineFrequency</title>
+<indexterm><primary>LineFrequency</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>LineFrequency</secondary></indexterm>
+<para><computeroutput>double LineFrequency = 0</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a51b4c51d4f7f6b04ee1c8b59656d37cc"/><section>
+    <title>MasterSequencer</title>
+<indexterm><primary>MasterSequencer</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>MasterSequencer</secondary></indexterm>
+<para><computeroutput><link linkend="_class_c_device_sequencer">CDeviceSequencer</link>* MasterSequencer = nullptr</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a83167769808fb0c540358799b53422db"/><section>
+    <title>NewErrorOccured</title>
+<indexterm><primary>NewErrorOccured</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>NewErrorOccured</secondary></indexterm>
+<para><computeroutput>bool NewErrorOccured = false</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a96b19f87e619ac3db7574bb46b4d7208"/><section>
+    <title>NrSequencers</title>
+<indexterm><primary>NrSequencers</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>NrSequencers</secondary></indexterm>
+<para><computeroutput>unsigned int NrSequencers = 0</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a3642b68105a22054c01a38ee1399e066"/><section>
+    <title>PCBufferSize_in_bytes</title>
+<indexterm><primary>PCBufferSize_in_bytes</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>PCBufferSize_in_bytes</secondary></indexterm>
+<para><computeroutput>unsigned long PCBufferSize_in_bytes = 0</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a3afc18884ae31455bf3ebfe2ae5521b5"/><section>
+    <title>SequencerList</title>
+<indexterm><primary>SequencerList</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>SequencerList</secondary></indexterm>
+<para><computeroutput><link linkend="_class_c_device_sequencer">CDeviceSequencer</link>* SequencerList[MaxSequencers] = {}</computeroutput></para></section>
+<anchor xml:id="__control_a_p_i_8cpp_1a7f811f3895468f02ceb13a39be77f753"/><section>
+    <title>ShortSequencerList</title>
+<indexterm><primary>ShortSequencerList</primary><secondary>ControlAPI.cpp</secondary></indexterm>
+<indexterm><primary>ControlAPI.cpp</primary><secondary>ShortSequencerList</secondary></indexterm>
+<para><computeroutput><link linkend="_class_c_device_sequencer">CDeviceSequencer</link>* ShortSequencerList[MaxSequencers] = {}</computeroutput></para></section>
+</section>
+</section>

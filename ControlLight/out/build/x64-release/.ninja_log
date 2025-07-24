@@ -1,0 +1,26 @@
+# ninja log v6
+104	2052	7716052675317341	CMakeFiles/ControlLight.dir/std.cpp.obj	46a466171a86460
+14	266	7716055031671370	build.ninja	216f30e4f3e29749
+99	2264	7716052675267362	CMakeFiles/ControlLight.dir/network.cpp.obj	739f06d9f635c354
+81	2031	7716052675086378	CMakeFiles/ControlLight.dir/ControlLight.cpp.obj	2a41b3d1ab939c07
+43	1979	7716052674706359	CMakeFiles/ControlLight.dir/CDevice.cpp.obj	f22f1a9547df86e1
+35	2072	7716052674626317	CMakeFiles/ControlLight.dir/AD9858.cpp.obj	49506bdee64830ce
+96	2198	7716052675237353	CMakeFiles/ControlLight.dir/NetworkClient.cpp.obj	162aac8b946f2e11
+66	2207	7716052674936309	CMakeFiles/ControlLight.dir/CDeviceDigitalOut.cpp.obj	6e34a3eb7848d6cd
+31	2062	7716052674586316	CMakeFiles/ControlLight.dir/AD9852.cpp.obj	aca4ecaa92046a64
+85	2295	7716052675126376	CMakeFiles/ControlLight.dir/EthernetControllerFirefly.cpp.obj	3f3402f4445c024d
+109	4033	7716052675367408	CMakeFiles/control_light_api.dir/bindings/ControlAPI_Python.cpp.obj	5a99724c803b7d36
+47	2140	7716052674746323	CMakeFiles/ControlLight.dir/CDeviceAD9854.cpp.obj	ea77680fbcf2bb9
+5	21	7716052543161503	clean	8c45b54705a541e8
+3264	3398	7716052708044655	ControlLight.lib	f562d320b3b375cd
+50	2223	7716052674776324	CMakeFiles/ControlLight.dir/CDeviceAD9858.cpp.obj	befce3693349bc2f
+71	2216	7716052674986314	CMakeFiles/ControlLight.dir/CDeviceSequencer.cpp.obj	3102816f129bb0fa
+62	2151	7716052674896328	CMakeFiles/ControlLight.dir/CDeviceAnalogOut.cpp.obj	d3b37461c9a06756
+58	2229	7716052674856325	CMakeFiles/ControlLight.dir/CDeviceAnalogIn.cpp.obj	eb218ef0b650d2ae
+76	3264	7716052675036431	CMakeFiles/ControlLight.dir/ControlAPI.cpp.obj	f4dc6cd3597cc920
+89	610	7716052675166378	CMakeFiles/ControlLight.dir/MultiWriteDevice.cpp.obj	95470d2ab7fe6580
+93	2105	7716052675206377	CMakeFiles/ControlLight.dir/MultiWriteDeviceSPI.cpp.obj	e5357b4264922dbc
+39	2130	7716052674666327	CMakeFiles/ControlLight.dir/AD9958.cpp.obj	2373f78556f139a
+53	2185	7716052674806337	CMakeFiles/ControlLight.dir/CDeviceAD9958.cpp.obj	6b4382a28e3e7e0d
+3264	3398	7716052708044655	ControlLight.dll	f562d320b3b375cd
+4034	5474	7716052714615711	control_light_api.cp310-win_amd64.pyd	a82be75262287d9f

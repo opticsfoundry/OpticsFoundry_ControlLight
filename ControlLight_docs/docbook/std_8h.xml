@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_std_8h" xml:lang="en-US">
+<title>std.h File Reference</title>
+<indexterm><primary>std.h</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &lt;afxwin.h&gt;<?linebreak?></programlisting><simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="_std_8h_1a9d4e8a9f53a0a08989bbe151c57367cc">AddErrorMessageCString</link> (const CString &amp;lpszText)</para>
+</listitem>
+            <listitem><para>void <link linkend="_std_8h_1aa752cb67c9e6f0f04da507b710d34e35">ControlMessageBox</link> (const CString &amp;lpszText, UINT nType=MB_OK, UINT nIDHelp=0)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="_std_8h_1a9d4e8a9f53a0a08989bbe151c57367cc"/><section>
+    <title>AddErrorMessageCString()</title>
+<indexterm><primary>AddErrorMessageCString</primary><secondary>std.h</secondary></indexterm>
+<indexterm><primary>std.h</primary><secondary>AddErrorMessageCString</secondary></indexterm>
+<para><computeroutput>void AddErrorMessageCString (const CString &amp; lpszText)<computeroutput>[extern]</computeroutput></computeroutput></para></section>
+<anchor xml:id="_std_8h_1aa752cb67c9e6f0f04da507b710d34e35"/><section>
+    <title>ControlMessageBox()</title>
+<indexterm><primary>ControlMessageBox</primary><secondary>std.h</secondary></indexterm>
+<indexterm><primary>std.h</primary><secondary>ControlMessageBox</secondary></indexterm>
+<para><computeroutput>void ControlMessageBox (const CString &amp; lpszText, UINT nType = <computeroutput>MB_OK</computeroutput>
+, UINT nIDHelp = <computeroutput>0</computeroutput>
+)<computeroutput>[extern]</computeroutput></computeroutput></para></section>
+</section>
+</section>

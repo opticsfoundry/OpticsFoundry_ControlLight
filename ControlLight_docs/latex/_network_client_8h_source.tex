@@ -1,0 +1,50 @@
+\doxysection{Network\+Client.\+h}
+\hypertarget{_network_client_8h_source}{}\label{_network_client_8h_source}\index{NetworkClient.h@{NetworkClient.h}}
+\mbox{\hyperlink{_network_client_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{comment}{//\#define\ \_AFXDLL}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <afxwin.h>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{network_8h}{Network.h}}"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_c_network_client_a61cfe49126cdac8b353ed6608e79f178}{CNetworkClient}}\ :\ \textcolor{keyword}{public}\ CObject}
+\DoxyCodeLine{00011\ \{}
+\DoxyCodeLine{00012\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keywordtype}{int}\ mode;}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keywordtype}{bool}\ DebugOn;}
+\DoxyCodeLine{00015\ \ \ \ \ CString\ DebugFileName;}
+\DoxyCodeLine{00016\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00017\ \ \ \ \ \mbox{\hyperlink{class_c_network}{CNetwork}}*\ \mbox{\hyperlink{class_c_network_client_a1410e8c5240e0304ed027391c406b74f}{Network}};}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_c_network_client_a8910ea6eed68c564400450d5862630e7}{DebugStop}}();}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_c_network_client_a6c889743e59a17d585b1c14cc046a89f}{DebugStart}}(CString\ Filename);}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_c_network_client_a5818c4d0f1aaa69b2bc491d0cf9dd7ae}{StopFastWrite}}();}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_c_network_client_a123998444e8b94e06afa8123e9e0ff85}{StartFastWrite}}();}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_c_network_client_abc51ae065d8ddbe4f1a6043b5e3a834d}{FastWrite}};}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_c_network_client_a17f3a63ba6ba201dfb151df2321a2779}{Flush}}();}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_c_network_client_afbfb4cf24f716bb407ea9c81492d7d43}{Ready}}();}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_c_network_client_ad966282c40b32a48a700e2ae1bd15842}{ConnectSocket}}(LPCTSTR\ lpszAddress,UINT\ port,CString\ SocketName);}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_c_network_client_a1eb667906194cfc5bf02c6bfc0cf1931}{ReadDouble}}(\textcolor{keywordtype}{double}\ \&Value);}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_c_network_client_a078404ce92a9be5365035b7c2a04a307}{ReadBool}}(\textcolor{keywordtype}{bool}\&\ Value);}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_c_network_client_a775fc0bec345b23432709469e62eeb4b}{ReadInt}}(\textcolor{keywordtype}{int}\&\ Value,\ \textcolor{keywordtype}{double}\ timeout\_in\_seconds\ =\ 5);}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_c_network_client_ae4d8e702728214f13bd25b970248544f}{ReadLong}}(\textcolor{keywordtype}{long}\&\ Value);}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_c_network_client_a2a50ebd0407f16f71833f1da86df58d0}{ReadInt64}}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{long}\&\ Value);}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_c_network_client_ad0e3a1bcb3c054fff461fa8cdbbb98e7}{SendCommand}}(\textcolor{keyword}{const}\ CString\ \&comand);}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_c_network_client_a1a53a146f98ae702831a7294a2c6106d}{SendData}}(uint8\_t*\ Data,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ Size);}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_c_network_client_a45f8d92bbc28c4f6e810c61aa2c69bd0}{WriteDouble}}(\textcolor{keywordtype}{double}\ d);}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_c_network_client_a3f15a752b8819c02939a66e93c85cf05}{WriteInteger}}(\textcolor{keywordtype}{long}\ i);}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_c_network_client_a090cea8ba6a390bef4ba1e6b1d07dc24}{WriteBoolean}}(\textcolor{keywordtype}{bool}\ b);}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_c_network_client_a8192fdd2fd91542acb36d7b55db8850f}{WriteString}}(CString\ s);}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_c_network_client_a4bc6c43fd50b859143384f2263e320b9}{WriteChar}}(\textcolor{keywordtype}{char}\ c);}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_c_network_client_afdb6aa09963fa6c9a14fd8ce2c87e443}{Command}}(CString\ comand,\ \textcolor{keywordtype}{bool}\ DontWaitForReady\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_c_network_client_aeb17cdfc50e41e6ce6059018c4a2658b}{AttemptCommand}}(CString\ CommandString);}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_c_network_client_ac843dfb3b55b53870f6ccc0ee4d6cdad}{GetCommand}}(CString\ \&\mbox{\hyperlink{class_c_network_client_afdb6aa09963fa6c9a14fd8ce2c87e443}{Command}},\ \textcolor{keywordtype}{double}\ timeout\_in\_seconds\ =\ 5);}
+\DoxyCodeLine{00041\ \ \ \ \ \mbox{\hyperlink{class_c_network_client_a61cfe49126cdac8b353ed6608e79f178}{CNetworkClient}}(\textcolor{keywordtype}{int}\ amode,\ \textcolor{keywordtype}{bool}\ aFastWrite\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{class_c_network_client_ae8b3e254e2b1d51d99b1c3960184f2e6}{\string~CNetworkClient}}();}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_c_network_client_a9e9c5da89122342364e1b2698aabbf92}{Debug}}(CString\ filename);}
+\DoxyCodeLine{00044\ \};}
+
+\end{DoxyCode}

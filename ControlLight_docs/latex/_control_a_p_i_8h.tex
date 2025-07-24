@@ -1,0 +1,1400 @@
+\doxysection{Control\+API.\+h File Reference}
+\hypertarget{_control_a_p_i_8h}{}\label{_control_a_p_i_8h}\index{ControlAPI.h@{ControlAPI.h}}
+{\ttfamily \#include $<$afxwin.\+h$>$}\newline
+{\ttfamily \#include $<$fstream$>$}\newline
+{\ttfamily \#include $<$cstdint$>$}\newline
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{_control_a_p_i_8h_a72cc69751765d28544d94e2a93da4412}{\+\_\+\+AFXDLL}}
+\item 
+\#define \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}}
+\item 
+\#define \mbox{\hyperlink{_control_a_p_i_8h_a1c3cf2d9d1101f8bf1e704b2bae1455a}{API\+\_\+\+EXPORT\+\_\+\+CLASS}}
+\item 
+\#define \mbox{\hyperlink{_control_a_p_i_8h_a1c3cf2d9d1101f8bf1e704b2bae1455a}{API\+\_\+\+EXPORT\+\_\+\+CLASS}}
+\item 
+\#define \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}}~bool
+\item 
+\#define \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}}(name)
+\item 
+\#define \mbox{\hyperlink{_control_a_p_i_8h_ae89d33bd59c5669016e4694ae249bd0c}{CLA\+\_\+\+FNDEF}}(name)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_ab4216036d280f0e2357f4895feae00b3}{Add\+Error\+Message}} (const std\+::string \&error\+\_\+message)
+\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a8c0341f25801b401f242fef403355076}{Create}} (bool Initialize\+Afx, bool Initialize\+Afx\+Socket)
+\begin{DoxyCompactList}\small\item\em Initializes the Control\+API. If you use a bare function C API, then this function must be called before using any other functions in the API. If you didn\textquotesingle{}t load MFC yet (which is the case if you use Qt), then set. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} void \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a506a69f4a65cdc24f90c45593af69e14}{Cleanup}} ()
+\begin{DoxyCompactList}\small\item\em This function must be called when you are finished using the API. The class wrapped version of this API calls this function in its destructor. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} bool \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a140351e5a8172134e8eff160d1b558e3}{Did\+Error\+Occur}} ()
+\begin{DoxyCompactList}\small\item\em Check if an error has occurred since the last call to Get\+Last\+Error. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} const char \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a0844f20c11e7006267c9d1f324aa0972}{Get\+Last\+Error}} ()
+\begin{DoxyCompactList}\small\item\em returns the last error messages \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} void \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a6d7a0dc42a60c601ca861bda69a816e6}{Configure}} (bool \+\_\+\+Display\+Errors)
+\begin{DoxyCompactList}\small\item\em Configures if the Control\+API should display error messages. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_ab07d444b997590d8bb7cbd82dd2036b9}{Load\+From\+JSONFile}} (const char \texorpdfstring{$\ast$}{*}filename)
+\begin{DoxyCompactList}\small\item\em Loads a configuration from a JSON file. Before you can use the control system, you either must read a json configuration file, or define the devices in the API. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a60e38637677508109aefb6af4780f92c}{Initialize}} ()
+\begin{DoxyCompactList}\small\item\em After Configuring the hardware, e.\+g. by loading a json configuration file, this function must be called to initialize the hardware. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} void \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a7ea429f67ff65d764dfe65e89db76f76}{Switch\+Debug\+Mode}} (bool On\+Off, const char \texorpdfstring{$\ast$}{*}File\+Name)
+\begin{DoxyCompactList}\small\item\em Switches Debug mode on. In Debug mode, the sequence of each FPGA sequencer is written to a human readable ASCII file before being sent to the FPGA. In addition, the FPGA sequencers display more information on their USB-\/\+UART port, being slowed down a bit by that. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_aa882c8edaa867e2f92e6626956eb9569}{Is\+Ready}} ()
+\begin{DoxyCompactList}\small\item\em Checks if the Control\+API is ready to be used. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} void \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a5b051278563acf5ea4fa65465679b785}{Start\+Assembling\+Sequence}} ()
+\begin{DoxyCompactList}\small\item\em Starts assembling a sequence. Clears any previous sequence. Must be called before adding commands to the sequence. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_af357426cac3b146e775198deb3e7879f}{Set\+Register}} (const unsigned int \&Sequencer, const unsigned int \&Address, const unsigned int \&Sub\+Address, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}Data, const unsigned long \&Data\+Length\+\_\+in\+\_\+bit, const uint8\+\_\+t \&Start\+Bit=0)
+\begin{DoxyCompactList}\small\item\em This function sets a register for a device on the sequencer. What this means depends on the device type. This function gives us an easy way to add new functionality to a device without having to programm new DLL functions. Set\+Register maps to the register map given in the device\textquotesingle{}s datasheet. Note\+: this is not currently implemented in the API. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a262189e7099cc79d968f8ea9c66524e8}{Set\+Value}} (const unsigned int \&Sequencer, const unsigned int \&Address, const unsigned int \&Sub\+Address, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}Data, const unsigned long \&Data\+Length\+\_\+in\+\_\+bit, const uint8\+\_\+t \&Start\+Bit=0)
+\begin{DoxyCompactList}\small\item\em This function sets a value for a device on the sequencer. What this means depends on the device type. This function gives us an easy way to add new functionality to a device without having to programm new DLL functions. In contrast to Set\+Register, Set\+Value can execute more complex operations, such as calculating a DDS frequency tuning word from the given frequency and then programming that. There can be several Set\+Value functions for the same Set\+Register function. There can be Set\+Value functions that set some parameter, or that trigger some action, not even necessarily related to the registers of the device. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_abf975f1bca00f331a47c6c49154b3349}{Set\+Value\+Serial\+Device}} (const unsigned int \&Sequencer, const unsigned int \&Address, const unsigned int \&Sub\+Address, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}Data, const unsigned long \&Data\+Length\+\_\+in\+\_\+bit, const uint8\+\_\+t \&Start\+Bit=0)
+\begin{DoxyCompactList}\small\item\em As Set\+Value, but for serial devices. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_adaa14ea09a4c22a39531fc3fa21de7f7}{Set\+Register\+Serial\+Device}} (const unsigned int \&Sequencer, const unsigned int \&Address, const unsigned int \&Sub\+Address, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}Data, const unsigned long \&Data\+Length\+\_\+in\+\_\+bit, const uint8\+\_\+t \&Start\+Bit=0)
+\begin{DoxyCompactList}\small\item\em As Set\+Register, but for serial devices. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a525a56e7c7e0b7db2190a537777d75b9}{Wait\+\_\+ms}} (double time\+\_\+in\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Wait for a given time in ms. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a11d0b9d417e50889b6a266ef4747a523}{Get\+Time\+\_\+ms}} (double \&time\+\_\+in\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Get the current time in the currently assembled sequence ms. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_ae89d33bd59c5669016e4694ae249bd0c}{CLA\+\_\+\+FNDEF}} \mbox{\hyperlink{_control_a_p_i_8h_a21be816bc7405b76d68549abf1837ebd}{Get\+Time\+Of\+Sequencer\+\_\+ms}} (const unsigned int \&Sequencer, double \&time\+\_\+in\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Get the current time of a specific sequencer in the currently assembled sequence ms. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_ae89d33bd59c5669016e4694ae249bd0c}{CLA\+\_\+\+FNDEF}} \mbox{\hyperlink{_control_a_p_i_8h_a659cc537a03ff9e172efbfee6b8f29fe}{Get\+Time\+Debt\+Of\+Sequencer\+\_\+ms}} (const unsigned int \&Sequencer, double \&time\+\_\+debt\+\_\+in\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Get the time debtof a specific sequencer in the currently assembled sequence ms. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_afb0d59c570ca8cc10b8a6e6b0f36afb7}{Set\+Voltage}} (const unsigned int \&Sequencer, const unsigned int \&Address, double Voltage)
+\begin{DoxyCompactList}\small\item\em Sets the voltage of an analog output device. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a972d0eaa0ae7789d098a1aa41b6c0f3e}{Set\+Digital\+Output}} (const unsigned int \&Sequencer, const unsigned int \&Address, uint8\+\_\+t Bit\+Nr, bool On\+Off)
+\begin{DoxyCompactList}\small\item\em Sets a digital output to high or low. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a704875336c6dfc8d3c1b1dc85f821461}{Set\+Start\+Frequency}} (const unsigned int \&Sequencer, const unsigned int \&Address, double Frequency)
+\begin{DoxyCompactList}\small\item\em Sets the start frequency of a DDS (for now a AD9854 DDS). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a05b2d6a3d280298732b5e46c4ab34449}{Set\+Stop\+Frequency}} (const unsigned int \&Sequencer, const unsigned int \&Address, double Frequency)
+\begin{DoxyCompactList}\small\item\em Sets the stop frequency of a DDS (for now a AD9854 DDS). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a4a0a9d4c9b90bf999f291dccc7e97f6a}{Set\+Modulation\+Frequency}} (const unsigned int \&Sequencer, const unsigned int \&Address, double Frequency)
+\begin{DoxyCompactList}\small\item\em Sets the modulation frequency of a DDS (for now a AD9854 DDS). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a995d2ebe492ff95b2e5ca713d71ea3ea}{Set\+Power}} (const unsigned int \&Sequencer, const unsigned int \&Address, double Power)
+\begin{DoxyCompactList}\small\item\em Sets the power of a DDS (for now a AD9854 DDS). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_ae5b181a30828ff1db990df2100f38c56}{Set\+Attenuation}} (const unsigned int \&Sequencer, const unsigned int \&Address, double Attenuation)
+\begin{DoxyCompactList}\small\item\em Sets the attenuation of a DDS (for now a AD9854 DDS). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_ae932bdaf96d78340127ff60240a595e0}{Set\+Start\+Frequency\+Tuning\+Word}} (const unsigned int \&Sequencer, const unsigned int \&Address, uint64\+\_\+t Frequency\+Tuning\+Word)
+\begin{DoxyCompactList}\small\item\em Sets the start frequency tuning word of a DDS (for now a AD9854 DDS). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a00b425d7071880267fffe6a58a0d64e4}{Set\+Stop\+Frequency\+Tuning\+Word}} (const unsigned int \&Sequencer, const unsigned int \&Address, uint64\+\_\+t Frequency\+Tuning\+Word)
+\begin{DoxyCompactList}\small\item\em Sets the stop frequency tuning word of a DDS (for now a AD9854 DDS). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a0efa8afc5430b7f6e777ff3a9cc74a1a}{Set\+FSKMode}} (const unsigned int \&Sequencer, const unsigned int \&Address, uint8\+\_\+t mode)
+\begin{DoxyCompactList}\small\item\em Sets the FKS mode of a DDS (for now a AD9854 DDS). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a5757bdd84e00fbd3229f252fb4d84b82}{Set\+Ramp\+Rate\+Clock}} (const unsigned int \&Sequencer, const unsigned int \&Address, uint8\+\_\+t rate)
+\begin{DoxyCompactList}\small\item\em Sets the ramp rate clock of a DDS (for now a AD9854 DDS). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_ac1542771adae2b534c5eb8bac19160e6}{Set\+Clear\+ACC1}} (const unsigned int \&Sequencer, const unsigned int \&Address, bool On\+Off)
+\begin{DoxyCompactList}\small\item\em Clears the ACC1 bit of a DDS (for now a AD9854 DDS). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_ac2f32fe5d2acb13ca0a5c70099a18382}{Set\+Triangle\+Bit}} (const unsigned int \&Sequencer, const unsigned int \&Address, bool On\+Off)
+\begin{DoxyCompactList}\small\item\em Sets the triangle bit of a DDS (for now a AD9854 DDS). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a406078e2dbdff83bce00352ce7295308}{Set\+FSKBit}} (const unsigned int \&Sequencer, const unsigned int \&Address, bool On\+Off)
+\begin{DoxyCompactList}\small\item\em Sets the FSK bit of a DDS (for now a AD9854 DDS). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_aa9a12a5ee9d3cf416b5fa5a3c3d62839}{Set\+Frequency}} (const unsigned int \&Sequencer, const unsigned int \&Address, double Frequency)
+\begin{DoxyCompactList}\small\item\em Sets the frequency of a DDS. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_ac09c6a84884d6a56eb93aad09a7f272a}{Set\+Frequency\+Tuning\+Word}} (const unsigned int \&Sequencer, const unsigned int \&Address, uint64\+\_\+t Frequency\+Tuning\+Word)
+\begin{DoxyCompactList}\small\item\em Sets the frequency tuning word of a DDS. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a2f4fb297ff61349527cb71ddfa7b06eb}{Set\+Frequency\+Of\+Channel}} (const unsigned int \&Sequencer, const unsigned int \&Address, uint8\+\_\+t channel, double Frequency)
+\begin{DoxyCompactList}\small\item\em Sets the frequency of a multi channel DDS (for now the AD9958). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_aaf7bc23add42d0d456497d052dd98635}{Set\+Frequency\+Tuning\+Word\+Of\+Channel}} (const unsigned int \&Sequencer, const unsigned int \&Address, uint8\+\_\+t channel, uint64\+\_\+t Frequency\+Tuning\+Word)
+\begin{DoxyCompactList}\small\item\em Sets the frequency tuning word of a multi channel DDS (for now the AD9958). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_ac5867ffeebf13a6eda3d22d33e9dd40c}{Set\+Phase\+Of\+Channel}} (const unsigned int \&Sequencer, const unsigned int \&Address, uint8\+\_\+t channel, double Phase)
+\begin{DoxyCompactList}\small\item\em Sets the phase of a multi channel DDS (for now the AD9958). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a7a1ed99c5492fa69e87a5f7e64816307}{Set\+Power\+Of\+Channel}} (const unsigned int \&Sequencer, const unsigned int \&Address, uint8\+\_\+t channel, double Power)
+\begin{DoxyCompactList}\small\item\em Sets the phase of a multi channel DDS (for now the AD9958). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} void \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a478fffdf8106582d696c10d2023b5898}{Execute\+Sequence}} ()
+\begin{DoxyCompactList}\small\item\em Executes the sequence that was previously assembled. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a4157a77b339f2fb16d91ee4b419d0fb6}{Get\+Sequence\+Execution\+Status}} (bool \&running, unsigned long long \&Data\+Points\+Written)
+\begin{DoxyCompactList}\small\item\em Get the current status of the sequence execution. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a4b5993bcf640e03ace021ec5dfb6285c}{Wait\+Till\+End\+Of\+Sequence\+Then\+Get\+Input\+Data}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}\&buffer, unsigned long \&buffer\+\_\+length, unsigned long \&End\+Time\+Of\+Cycle, double timeout\+\_\+in\+\_\+s)
+\begin{DoxyCompactList}\small\item\em Waits until the sequence is finished, then gets the input data from the FPGA sequencer. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_aa0a620a75128414aa8099d943bd5d9d4}{Set\+Time\+Debt\+Guard\+\_\+in\+\_\+ms}} (const double \&Max\+Time\+Debt\+\_\+in\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Sets a guard time. If sequencer commands make the time advance more than the guard time beyond what\textquotesingle{}s allowed by Wait\+\_\+ms, an error will be recorded (check with \doxylink{_control_a_p_i_8h_a140351e5a8172134e8eff160d1b558e3}{Did\+Error\+Occur()} if that happened) or thrown. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a8180b4eff4abd9f3802a40744645f503}{Sequencer\+Start\+Analog\+In\+Acquisition}} (const unsigned int \&Sequencer, const uint8\+\_\+t \&Channel\+Number, const uint32\+\_\+t \&Number\+Of\+Data\+Points, const double \&Delay\+Between\+Data\+Points\+\_\+in\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Start analog acquisition on the specified channel. This function places a commandto for the FPGA in the sequencer buffer. The analog in acquisition will start when this command is executed by the FPGA. Only one analog in acquisition can hapen at each moment. A new one can start right after the previous one is finished. The data will be returned at the end of a sequence when using CLA\+\_\+\+Wait\+Till\+End\+Of\+Sequence\+Then\+Get\+Input\+Data. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_ac47ac7dbb536bdcfc283840b85510f3b}{Sequencer\+Write\+Input\+Memory}} (const unsigned int \&Sequencer, unsigned long input\+\_\+buf\+\_\+mem\+\_\+data, bool write\+\_\+next\+\_\+address=1, unsigned long input\+\_\+buf\+\_\+mem\+\_\+address=0)
+\begin{DoxyCompactList}\small\item\em Writes a value to the input memory of the sequencer. This is useful to mark the start or end of a data acquisition, or to mark the type of experimental run in the full fledged version of the Control\+API, which can cycle sequences automatically in the background. To execute this function, a command for the FPGA must be placed in the sequencer buffer. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_af54b376ddf0332e9c7dbbe4e3fe606d7}{Sequencer\+Write\+System\+Time\+To\+Input\+Memory}} (const unsigned int \&Sequencer)
+\begin{DoxyCompactList}\small\item\em Writes the current FPGA clock ticks to the input memory of the sequencer. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_aedd28ad11cec9bd57ba8962e8ebf2714}{Sequencer\+Switch\+Debug\+LED}} (const unsigned int \&Sequencer, unsigned int On\+Off)
+\begin{DoxyCompactList}\small\item\em Switches the debug LED of the FPGA on or off. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a8ac5cffc47f6f36ee7f83f0f2d307175}{Sequencer\+Ignore\+TCPIP}} (const unsigned int \&Sequencer, bool On\+Off)
+\begin{DoxyCompactList}\small\item\em Switches the sequencer to ignore TCP/\+IP commands. This is useful to prevent the sequencer from being interrupted by TCP/\+IP commands while executing a timing critical task, such as transferring input data from the FPGA BRAM to the DDR. This can be useful if lots of data is acquired at a high rate. Lot\textquotesingle{}s of meaning\+: more than the size of the BRAM input buffer. How much that is depends how you configured the Vivado project that generates the FPGA sequencer firmware. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a98b5ba4b0487fb3d829d871534d8c9d4}{Sequencer\+Add\+Marker}} (const unsigned int \&Sequencer, unsigned char marker)
+\begin{DoxyCompactList}\small\item\em Places a marker in the sequencer buffer. The FPGA SOM\textquotesingle{}s CPU will see this marker and can react to it, e.\+g. write it to the USB-\/\+UART for debugging. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a7604d75152e18653c770cb8c19c56a5c}{Add\+Device\+Sequencer}} (unsigned int id, const char \texorpdfstring{$\ast$}{*}type, const char \texorpdfstring{$\ast$}{*}ip, unsigned int port, bool master, unsigned int start\+Delay, double clock\+Frequency, unsigned long FPGAClock\+To\+Bus\+Clock\+Ratio, bool use\+External\+Clock, bool use\+Strobe\+Generator, bool connect)
+\begin{DoxyCompactList}\small\item\em Add a device sequencer to the list. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a71a0d5c1b0de45c8b69527862e5835eb}{Add\+Device\+Analog\+Out16bit}} (unsigned int sequencer, unsigned int start\+Address, unsigned int number\+Channels, bool signed\+Value, double min\+Voltage, double max\+Voltage)
+\begin{DoxyCompactList}\small\item\em Add a 16 bit analog output device to the sequencer. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a3f0671a3b48f566b3c66e06cd0736af1}{Add\+Device\+Digital\+Out}} (unsigned int sequencer, unsigned int address, unsigned int number\+Channels)
+\begin{DoxyCompactList}\small\item\em Add a digital output device to the sequencer. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a73eb61a9f1e259fac768b58d589e3953}{Add\+Device\+AD9854}} (unsigned int sequencer, unsigned int address, unsigned int version, double external\+Clock\+Frequency, uint8\+\_\+t PLLReference\+Multiplier, unsigned int frequency\+Multiplier)
+\begin{DoxyCompactList}\small\item\em Add a AD9854 device to the sequencer. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a4563741200adaeb834ed18bfdba93770}{Add\+Device\+AD9858}} (unsigned int sequencer, unsigned int address, double external\+Clock\+Frequency, unsigned int frequency\+Multiplier)
+\begin{DoxyCompactList}\small\item\em Add a AD9858 device to the sequencer. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} \mbox{\hyperlink{_control_a_p_i_8h_a055304a3b5adbb19b63d6a22734a8f11}{Add\+Device\+Analog\+In12bit}} (unsigned int sequencer, unsigned int chip\+Select, bool signed\+Value, double min\+Voltage, double max\+Voltage)
+\begin{DoxyCompactList}\small\item\em Add a 12 bit analog input device to the sequencer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+constexpr int \mbox{\hyperlink{_control_a_p_i_8h_ab0e1cf239ac3e235992bc858f58e7ea9}{Max\+Last\+Error}} = 10
+\item 
+std\+::string \mbox{\hyperlink{_control_a_p_i_8h_a7d8ab587f73458e320154369f6a74c01}{Last\+Error}} \mbox{[}\mbox{\hyperlink{_control_a_p_i_8h_ab0e1cf239ac3e235992bc858f58e7ea9}{Max\+Last\+Error}}\mbox{]}
+\item 
+int \mbox{\hyperlink{_control_a_p_i_8h_aa8c7d164d3b3d02712b59520ac38b9e3}{Last\+Error\+Index}}
+\item 
+bool \mbox{\hyperlink{_control_a_p_i_8h_a679deb1765f3544a100264eebb793da3}{Error\+List\+Wrap\+Around}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{_control_a_p_i_8h_a72cc69751765d28544d94e2a93da4412}\index{ControlAPI.h@{ControlAPI.h}!\_AFXDLL@{\_AFXDLL}}
+\index{\_AFXDLL@{\_AFXDLL}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{\_AFXDLL}{\_AFXDLL}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a72cc69751765d28544d94e2a93da4412} 
+\#define \+\_\+\+AFXDLL}
+
+\Hypertarget{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}\index{ControlAPI.h@{ControlAPI.h}!API\_EXPORT@{API\_EXPORT}}
+\index{API\_EXPORT@{API\_EXPORT}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{API\_EXPORT}{API\_EXPORT}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0} 
+\#define API\+\_\+\+EXPORT}
+
+\Hypertarget{_control_a_p_i_8h_a1c3cf2d9d1101f8bf1e704b2bae1455a}\index{ControlAPI.h@{ControlAPI.h}!API\_EXPORT\_CLASS@{API\_EXPORT\_CLASS}}
+\index{API\_EXPORT\_CLASS@{API\_EXPORT\_CLASS}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{API\_EXPORT\_CLASS}{API\_EXPORT\_CLASS}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a1c3cf2d9d1101f8bf1e704b2bae1455a} 
+\#define API\+\_\+\+EXPORT\+\_\+\+CLASS}
+
+\Hypertarget{_control_a_p_i_8h_a1c3cf2d9d1101f8bf1e704b2bae1455a}\index{ControlAPI.h@{ControlAPI.h}!API\_EXPORT\_CLASS@{API\_EXPORT\_CLASS}}
+\index{API\_EXPORT\_CLASS@{API\_EXPORT\_CLASS}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{API\_EXPORT\_CLASS}{API\_EXPORT\_CLASS}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a1c3cf2d9d1101f8bf1e704b2bae1455a} 
+\#define API\+\_\+\+EXPORT\+\_\+\+CLASS}
+
+\Hypertarget{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}\index{ControlAPI.h@{ControlAPI.h}!CLA\_FN@{CLA\_FN}}
+\index{CLA\_FN@{CLA\_FN}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{CLA\_FN}{CLA\_FN}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38} 
+\#define CLA\+\_\+\+FN(\begin{DoxyParamCaption}\item[{}]{name}{}\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{CLA\_\#\#name}
+
+\end{DoxyCode}
+\Hypertarget{_control_a_p_i_8h_ae89d33bd59c5669016e4694ae249bd0c}\index{ControlAPI.h@{ControlAPI.h}!CLA\_FNDEF@{CLA\_FNDEF}}
+\index{CLA\_FNDEF@{CLA\_FNDEF}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{CLA\_FNDEF}{CLA\_FNDEF}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_ae89d33bd59c5669016e4694ae249bd0c} 
+\#define CLA\+\_\+\+FNDEF(\begin{DoxyParamCaption}\item[{}]{name}{}\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{CLA\_\#\#name}
+
+\end{DoxyCode}
+\Hypertarget{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}\index{ControlAPI.h@{ControlAPI.h}!ERROR\_CODE\_TYPE@{ERROR\_CODE\_TYPE}}
+\index{ERROR\_CODE\_TYPE@{ERROR\_CODE\_TYPE}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{ERROR\_CODE\_TYPE}{ERROR\_CODE\_TYPE}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995} 
+\#define ERROR\+\_\+\+CODE\+\_\+\+TYPE~bool}
+
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{_control_a_p_i_8h_a73eb61a9f1e259fac768b58d589e3953}\index{ControlAPI.h@{ControlAPI.h}!AddDeviceAD9854@{AddDeviceAD9854}}
+\index{AddDeviceAD9854@{AddDeviceAD9854}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{AddDeviceAD9854()}{AddDeviceAD9854()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a73eb61a9f1e259fac768b58d589e3953} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Add\+Device\+AD9854 (\begin{DoxyParamCaption}\item[{unsigned int}]{sequencer}{, }\item[{unsigned int}]{address}{, }\item[{unsigned int}]{version}{, }\item[{double}]{external\+Clock\+Frequency}{, }\item[{uint8\+\_\+t}]{PLLReference\+Multiplier}{, }\item[{unsigned int}]{frequency\+Multiplier}{}\end{DoxyParamCaption})}
+
+
+
+Add a AD9854 device to the sequencer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em sequencer} & the sequencer to use. \\
+\hline
+{\em address} & the address of the device to add. \\
+\hline
+{\em version} & the version of the device to add. \\
+\hline
+{\em external\+Clock\+Frequency} & the external clock frequency of the device to add. \\
+\hline
+{\em PLLReference\+Multiplier} & the PLL reference multiplier of the device to add. \\
+\hline
+{\em frequency\+Multiplier} & the frequency multiplier of the device to add. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a4563741200adaeb834ed18bfdba93770}\index{ControlAPI.h@{ControlAPI.h}!AddDeviceAD9858@{AddDeviceAD9858}}
+\index{AddDeviceAD9858@{AddDeviceAD9858}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{AddDeviceAD9858()}{AddDeviceAD9858()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a4563741200adaeb834ed18bfdba93770} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Add\+Device\+AD9858 (\begin{DoxyParamCaption}\item[{unsigned int}]{sequencer}{, }\item[{unsigned int}]{address}{, }\item[{double}]{external\+Clock\+Frequency}{, }\item[{unsigned int}]{frequency\+Multiplier}{}\end{DoxyParamCaption})}
+
+
+
+Add a AD9858 device to the sequencer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em sequencer} & the sequencer to use. \\
+\hline
+{\em address} & the address of the device to add. \\
+\hline
+{\em external\+Clock\+Frequency} & the external clock frequency of the device to add. \\
+\hline
+{\em frequency\+Multiplier} & the frequency multiplier of the device to add. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a055304a3b5adbb19b63d6a22734a8f11}\index{ControlAPI.h@{ControlAPI.h}!AddDeviceAnalogIn12bit@{AddDeviceAnalogIn12bit}}
+\index{AddDeviceAnalogIn12bit@{AddDeviceAnalogIn12bit}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{AddDeviceAnalogIn12bit()}{AddDeviceAnalogIn12bit()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a055304a3b5adbb19b63d6a22734a8f11} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Add\+Device\+Analog\+In12bit (\begin{DoxyParamCaption}\item[{unsigned int}]{sequencer}{, }\item[{unsigned int}]{chip\+Select}{, }\item[{bool}]{signed\+Value}{, }\item[{double}]{min\+Voltage}{, }\item[{double}]{max\+Voltage}{}\end{DoxyParamCaption})}
+
+
+
+Add a 12 bit analog input device to the sequencer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em sequencer} & the sequencer to use. \\
+\hline
+{\em chip\+Select} & the chip select of the device to add. \\
+\hline
+{\em signed\+Value} & true if the device is signed, false if it is unsigned. \\
+\hline
+{\em min\+Voltage} & the minimum voltage of the device to add. \\
+\hline
+{\em max\+Voltage} & the maximum voltage of the device to add. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a71a0d5c1b0de45c8b69527862e5835eb}\index{ControlAPI.h@{ControlAPI.h}!AddDeviceAnalogOut16bit@{AddDeviceAnalogOut16bit}}
+\index{AddDeviceAnalogOut16bit@{AddDeviceAnalogOut16bit}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{AddDeviceAnalogOut16bit()}{AddDeviceAnalogOut16bit()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a71a0d5c1b0de45c8b69527862e5835eb} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Add\+Device\+Analog\+Out16bit (\begin{DoxyParamCaption}\item[{unsigned int}]{sequencer}{, }\item[{unsigned int}]{start\+Address}{, }\item[{unsigned int}]{number\+Channels}{, }\item[{bool}]{signed\+Value}{, }\item[{double}]{min\+Voltage}{, }\item[{double}]{max\+Voltage}{}\end{DoxyParamCaption})}
+
+
+
+Add a 16 bit analog output device to the sequencer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em sequencer} & the sequencer to use. \\
+\hline
+{\em start\+Address} & the start address of the device to add. \\
+\hline
+{\em number\+Channels} & the number of channels of the device to add. \\
+\hline
+{\em signed\+Value} & true if the device is signed, false if it is unsigned. \\
+\hline
+{\em min\+Voltage} & the minimum voltage of the device to add. \\
+\hline
+{\em max\+Voltage} & the maximum voltage of the device to add. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a3f0671a3b48f566b3c66e06cd0736af1}\index{ControlAPI.h@{ControlAPI.h}!AddDeviceDigitalOut@{AddDeviceDigitalOut}}
+\index{AddDeviceDigitalOut@{AddDeviceDigitalOut}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{AddDeviceDigitalOut()}{AddDeviceDigitalOut()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a3f0671a3b48f566b3c66e06cd0736af1} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Add\+Device\+Digital\+Out (\begin{DoxyParamCaption}\item[{unsigned int}]{sequencer}{, }\item[{unsigned int}]{address}{, }\item[{unsigned int}]{number\+Channels}{}\end{DoxyParamCaption})}
+
+
+
+Add a digital output device to the sequencer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em sequencer} & the sequencer to use. \\
+\hline
+{\em address} & the address of the device to add. \\
+\hline
+{\em number\+Channels} & the number of channels of the device to add. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a7604d75152e18653c770cb8c19c56a5c}\index{ControlAPI.h@{ControlAPI.h}!AddDeviceSequencer@{AddDeviceSequencer}}
+\index{AddDeviceSequencer@{AddDeviceSequencer}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{AddDeviceSequencer()}{AddDeviceSequencer()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a7604d75152e18653c770cb8c19c56a5c} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Add\+Device\+Sequencer (\begin{DoxyParamCaption}\item[{unsigned int}]{id}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{type}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{ip}{, }\item[{unsigned int}]{port}{, }\item[{bool}]{master}{, }\item[{unsigned int}]{start\+Delay}{, }\item[{double}]{clock\+Frequency}{, }\item[{unsigned long}]{FPGAClock\+To\+Bus\+Clock\+Ratio}{, }\item[{bool}]{use\+External\+Clock}{, }\item[{bool}]{use\+Strobe\+Generator}{, }\item[{bool}]{connect}{}\end{DoxyParamCaption})}
+
+
+
+Add a device sequencer to the list. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em id} & the id of the device sequencer to add (this is the number that all other commands are using when sending data to a device on this sequencer). \\
+\hline
+{\em type} & the type of the device sequencer to add. \\
+\hline
+{\em ip} & the ip address of the device sequencer to add. \\
+\hline
+{\em port} & the port of the device sequencer to add. \\
+\hline
+{\em master} & true if the device sequencer is a master, false if it is a slave. \\
+\hline
+{\em start\+Delay} & the start delay of the device sequencer to add. \\
+\hline
+{\em clock\+Frequency} & the clock frequency of the device sequencer to add. \\
+\hline
+{\em FPGAClock\+To\+Bus\+Clock\+Ratio} & the FPGA clock to bus clock ratio of the device sequencer to add. \\
+\hline
+{\em use\+External\+Clock} & true if the device sequencer should use an external clock, false if it should use the internal clock. \\
+\hline
+{\em use\+Strobe\+Generator} & true if the device sequencer should use a strobe generator, false if it should not. \\
+\hline
+{\em connect} & true if the device sequencer should connect to the device, false if it should not. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_ab4216036d280f0e2357f4895feae00b3}\index{ControlAPI.h@{ControlAPI.h}!AddErrorMessage@{AddErrorMessage}}
+\index{AddErrorMessage@{AddErrorMessage}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{AddErrorMessage()}{AddErrorMessage()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_ab4216036d280f0e2357f4895feae00b3} 
+\mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} Add\+Error\+Message (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{error\+\_\+message}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_control_a_p_i_8h_a506a69f4a65cdc24f90c45593af69e14}\index{ControlAPI.h@{ControlAPI.h}!Cleanup@{Cleanup}}
+\index{Cleanup@{Cleanup}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{Cleanup()}{Cleanup()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a506a69f4a65cdc24f90c45593af69e14} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} void \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Cleanup (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+This function must be called when you are finished using the API. The class wrapped version of this API calls this function in its destructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em $<$br$>$} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a6d7a0dc42a60c601ca861bda69a816e6}\index{ControlAPI.h@{ControlAPI.h}!Configure@{Configure}}
+\index{Configure@{Configure}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{Configure()}{Configure()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a6d7a0dc42a60c601ca861bda69a816e6} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} void \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Configure (\begin{DoxyParamCaption}\item[{bool}]{\+\_\+\+Display\+Errors}{}\end{DoxyParamCaption})}
+
+
+
+Configures if the Control\+API should display error messages. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \+\_\+\+Display\+Errors} & true to display error messages, false to suppress them. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a8c0341f25801b401f242fef403355076}\index{ControlAPI.h@{ControlAPI.h}!Create@{Create}}
+\index{Create@{Create}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{Create()}{Create()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a8c0341f25801b401f242fef403355076} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Create (\begin{DoxyParamCaption}\item[{bool}]{Initialize\+Afx}{, }\item[{bool}]{Initialize\+Afx\+Socket}{}\end{DoxyParamCaption})}
+
+
+
+Initializes the Control\+API. If you use a bare function C API, then this function must be called before using any other functions in the API. If you didn\textquotesingle{}t load MFC yet (which is the case if you use Qt), then set. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Initialize\+Afx} & to true to initialize MFC core \\
+\hline
+{\em Initialize\+Afx\+Socket} & to true to initialize MFC socket layer The class wrapped version of this API calls this function in its constructor. \\
+\hline
+{\em $<$br$>$} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a140351e5a8172134e8eff160d1b558e3}\index{ControlAPI.h@{ControlAPI.h}!DidErrorOccur@{DidErrorOccur}}
+\index{DidErrorOccur@{DidErrorOccur}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{DidErrorOccur()}{DidErrorOccur()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a140351e5a8172134e8eff160d1b558e3} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} bool \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Did\+Error\+Occur (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Check if an error has occurred since the last call to Get\+Last\+Error. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em $<$br$>$} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if an error has occurred since the last call to Get\+Last\+Error 
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a478fffdf8106582d696c10d2023b5898}\index{ControlAPI.h@{ControlAPI.h}!ExecuteSequence@{ExecuteSequence}}
+\index{ExecuteSequence@{ExecuteSequence}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{ExecuteSequence()}{ExecuteSequence()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a478fffdf8106582d696c10d2023b5898} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} void \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Execute\+Sequence (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Executes the sequence that was previously assembled. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em $<$br$>$} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a0844f20c11e7006267c9d1f324aa0972}\index{ControlAPI.h@{ControlAPI.h}!GetLastError@{GetLastError}}
+\index{GetLastError@{GetLastError}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{GetLastError()}{GetLastError()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a0844f20c11e7006267c9d1f324aa0972} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} const char \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Get\+Last\+Error (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+returns the last error messages 
+
+
+\begin{DoxyParams}{Parameters}
+{\em $<$br$>$} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a4157a77b339f2fb16d91ee4b419d0fb6}\index{ControlAPI.h@{ControlAPI.h}!GetSequenceExecutionStatus@{GetSequenceExecutionStatus}}
+\index{GetSequenceExecutionStatus@{GetSequenceExecutionStatus}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{GetSequenceExecutionStatus()}{GetSequenceExecutionStatus()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a4157a77b339f2fb16d91ee4b419d0fb6} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Get\+Sequence\+Execution\+Status (\begin{DoxyParamCaption}\item[{bool \&}]{running}{, }\item[{unsigned long long \&}]{Data\+Points\+Written}{}\end{DoxyParamCaption})}
+
+
+
+Get the current status of the sequence execution. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em running} & returns true if the sequence is running, false if it is not. \\
+\hline
+{\em Data\+Points\+Written} & returns number of data points that were already written out by the FPGA sequencer(s). \\
+\hline
+\end{DoxyParams}
+\Hypertarget{_control_a_p_i_8h_a11d0b9d417e50889b6a266ef4747a523}\index{ControlAPI.h@{ControlAPI.h}!GetTime\_ms@{GetTime\_ms}}
+\index{GetTime\_ms@{GetTime\_ms}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{GetTime\_ms()}{GetTime\_ms()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a11d0b9d417e50889b6a266ef4747a523} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Get\+Time\+\_\+ms (\begin{DoxyParamCaption}\item[{double \&}]{time\+\_\+in\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Get the current time in the currently assembled sequence ms. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em time\+\_\+in\+\_\+ms} & the current time in ms. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a659cc537a03ff9e172efbfee6b8f29fe}\index{ControlAPI.h@{ControlAPI.h}!GetTimeDebtOfSequencer\_ms@{GetTimeDebtOfSequencer\_ms}}
+\index{GetTimeDebtOfSequencer\_ms@{GetTimeDebtOfSequencer\_ms}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{GetTimeDebtOfSequencer\_ms()}{GetTimeDebtOfSequencer\_ms()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a659cc537a03ff9e172efbfee6b8f29fe} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_ae89d33bd59c5669016e4694ae249bd0c}{CLA\+\_\+\+FNDEF}} Get\+Time\+Debt\+Of\+Sequencer\+\_\+ms (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{double \&}]{time\+\_\+debt\+\_\+in\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Get the time debtof a specific sequencer in the currently assembled sequence ms. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em time\+\_\+debt\+\_\+in\+\_\+ms} & the current time in ms. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a21be816bc7405b76d68549abf1837ebd}\index{ControlAPI.h@{ControlAPI.h}!GetTimeOfSequencer\_ms@{GetTimeOfSequencer\_ms}}
+\index{GetTimeOfSequencer\_ms@{GetTimeOfSequencer\_ms}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{GetTimeOfSequencer\_ms()}{GetTimeOfSequencer\_ms()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a21be816bc7405b76d68549abf1837ebd} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_ae89d33bd59c5669016e4694ae249bd0c}{CLA\+\_\+\+FNDEF}} Get\+Time\+Of\+Sequencer\+\_\+ms (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{double \&}]{time\+\_\+in\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Get the current time of a specific sequencer in the currently assembled sequence ms. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em time\+\_\+in\+\_\+ms} & the current time in ms. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a60e38637677508109aefb6af4780f92c}\index{ControlAPI.h@{ControlAPI.h}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{Initialize()}{Initialize()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a60e38637677508109aefb6af4780f92c} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Initialize (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+After Configuring the hardware, e.\+g. by loading a json configuration file, this function must be called to initialize the hardware. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em $<$br$>$} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_aa882c8edaa867e2f92e6626956eb9569}\index{ControlAPI.h@{ControlAPI.h}!IsReady@{IsReady}}
+\index{IsReady@{IsReady}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{IsReady()}{IsReady()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_aa882c8edaa867e2f92e6626956eb9569} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Is\+Ready (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Checks if the Control\+API is ready to be used. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Is\+Ready} & true if the Control\+API is ready to be used, false otherwise. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{_control_a_p_i_8h_ab07d444b997590d8bb7cbd82dd2036b9}\index{ControlAPI.h@{ControlAPI.h}!LoadFromJSONFile@{LoadFromJSONFile}}
+\index{LoadFromJSONFile@{LoadFromJSONFile}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{LoadFromJSONFile()}{LoadFromJSONFile()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_ab07d444b997590d8bb7cbd82dd2036b9} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Load\+From\+JSONFile (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{filename}{}\end{DoxyParamCaption})}
+
+
+
+Loads a configuration from a JSON file. Before you can use the control system, you either must read a json configuration file, or define the devices in the API. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & the name of the json file to load. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{_control_a_p_i_8h_a98b5ba4b0487fb3d829d871534d8c9d4}\index{ControlAPI.h@{ControlAPI.h}!SequencerAddMarker@{SequencerAddMarker}}
+\index{SequencerAddMarker@{SequencerAddMarker}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SequencerAddMarker()}{SequencerAddMarker()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a98b5ba4b0487fb3d829d871534d8c9d4} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Sequencer\+Add\+Marker (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{unsigned char}]{marker}{}\end{DoxyParamCaption})}
+
+
+
+Places a marker in the sequencer buffer. The FPGA SOM\textquotesingle{}s CPU will see this marker and can react to it, e.\+g. write it to the USB-\/\+UART for debugging. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em $<$br$>$} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a8ac5cffc47f6f36ee7f83f0f2d307175}\index{ControlAPI.h@{ControlAPI.h}!SequencerIgnoreTCPIP@{SequencerIgnoreTCPIP}}
+\index{SequencerIgnoreTCPIP@{SequencerIgnoreTCPIP}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SequencerIgnoreTCPIP()}{SequencerIgnoreTCPIP()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a8ac5cffc47f6f36ee7f83f0f2d307175} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Sequencer\+Ignore\+TCPIP (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{bool}]{On\+Off}{}\end{DoxyParamCaption})}
+
+
+
+Switches the sequencer to ignore TCP/\+IP commands. This is useful to prevent the sequencer from being interrupted by TCP/\+IP commands while executing a timing critical task, such as transferring input data from the FPGA BRAM to the DDR. This can be useful if lots of data is acquired at a high rate. Lot\textquotesingle{}s of meaning\+: more than the size of the BRAM input buffer. How much that is depends how you configured the Vivado project that generates the FPGA sequencer firmware. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em $<$br$>$} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a8180b4eff4abd9f3802a40744645f503}\index{ControlAPI.h@{ControlAPI.h}!SequencerStartAnalogInAcquisition@{SequencerStartAnalogInAcquisition}}
+\index{SequencerStartAnalogInAcquisition@{SequencerStartAnalogInAcquisition}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SequencerStartAnalogInAcquisition()}{SequencerStartAnalogInAcquisition()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a8180b4eff4abd9f3802a40744645f503} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Sequencer\+Start\+Analog\+In\+Acquisition (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const uint8\+\_\+t \&}]{Channel\+Number}{, }\item[{const uint32\+\_\+t \&}]{Number\+Of\+Data\+Points}{, }\item[{const double \&}]{Delay\+Between\+Data\+Points\+\_\+in\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Start analog acquisition on the specified channel. This function places a commandto for the FPGA in the sequencer buffer. The analog in acquisition will start when this command is executed by the FPGA. Only one analog in acquisition can hapen at each moment. A new one can start right after the previous one is finished. The data will be returned at the end of a sequence when using CLA\+\_\+\+Wait\+Till\+End\+Of\+Sequence\+Then\+Get\+Input\+Data. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Channel\+Number} & the channel number to use. \\
+\hline
+{\em Number\+Of\+Data\+Points} & the number of data points to acquire. \\
+\hline
+{\em Delay\+Between\+Data\+Points\+\_\+in\+\_\+ms} & the delay between data points in ms. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{_control_a_p_i_8h_aedd28ad11cec9bd57ba8962e8ebf2714}\index{ControlAPI.h@{ControlAPI.h}!SequencerSwitchDebugLED@{SequencerSwitchDebugLED}}
+\index{SequencerSwitchDebugLED@{SequencerSwitchDebugLED}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SequencerSwitchDebugLED()}{SequencerSwitchDebugLED()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_aedd28ad11cec9bd57ba8962e8ebf2714} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Sequencer\+Switch\+Debug\+LED (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{unsigned int}]{On\+Off}{}\end{DoxyParamCaption})}
+
+
+
+Switches the debug LED of the FPGA on or off. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Squencer} & the sequencer to use. \\
+\hline
+{\em On\+Off} & true to switch on the LED, false to switch it off. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_ac47ac7dbb536bdcfc283840b85510f3b}\index{ControlAPI.h@{ControlAPI.h}!SequencerWriteInputMemory@{SequencerWriteInputMemory}}
+\index{SequencerWriteInputMemory@{SequencerWriteInputMemory}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SequencerWriteInputMemory()}{SequencerWriteInputMemory()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_ac47ac7dbb536bdcfc283840b85510f3b} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Sequencer\+Write\+Input\+Memory (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{unsigned long}]{input\+\_\+buf\+\_\+mem\+\_\+data}{, }\item[{bool}]{write\+\_\+next\+\_\+address}{ = {\ttfamily 1}, }\item[{unsigned long}]{input\+\_\+buf\+\_\+mem\+\_\+address}{ = {\ttfamily 0}}\end{DoxyParamCaption})}
+
+
+
+Writes a value to the input memory of the sequencer. This is useful to mark the start or end of a data acquisition, or to mark the type of experimental run in the full fledged version of the Control\+API, which can cycle sequences automatically in the background. To execute this function, a command for the FPGA must be placed in the sequencer buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em input\+\_\+buf\+\_\+mem\+\_\+data} & the data to write to the input memory. \\
+\hline
+{\em write\+\_\+next\+\_\+address} & true to write the next address, false to write the address given. \\
+\hline
+{\em input\+\_\+buf\+\_\+mem\+\_\+address} & the address to write to, if write\+\_\+next\+\_\+address is false. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{_control_a_p_i_8h_af54b376ddf0332e9c7dbbe4e3fe606d7}\index{ControlAPI.h@{ControlAPI.h}!SequencerWriteSystemTimeToInputMemory@{SequencerWriteSystemTimeToInputMemory}}
+\index{SequencerWriteSystemTimeToInputMemory@{SequencerWriteSystemTimeToInputMemory}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SequencerWriteSystemTimeToInputMemory()}{SequencerWriteSystemTimeToInputMemory()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_af54b376ddf0332e9c7dbbe4e3fe606d7} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Sequencer\+Write\+System\+Time\+To\+Input\+Memory (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{}\end{DoxyParamCaption})}
+
+
+
+Writes the current FPGA clock ticks to the input memory of the sequencer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{_control_a_p_i_8h_ae5b181a30828ff1db990df2100f38c56}\index{ControlAPI.h@{ControlAPI.h}!SetAttenuation@{SetAttenuation}}
+\index{SetAttenuation@{SetAttenuation}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetAttenuation()}{SetAttenuation()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_ae5b181a30828ff1db990df2100f38c56} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Attenuation (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{double}]{Attenuation}{}\end{DoxyParamCaption})}
+
+
+
+Sets the attenuation of a DDS (for now a AD9854 DDS). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the attenuation for. \\
+\hline
+{\em Attenuation} & the attenuation to set in dB (-\/xxx ... 0). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_ac1542771adae2b534c5eb8bac19160e6}\index{ControlAPI.h@{ControlAPI.h}!SetClearACC1@{SetClearACC1}}
+\index{SetClearACC1@{SetClearACC1}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetClearACC1()}{SetClearACC1()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_ac1542771adae2b534c5eb8bac19160e6} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Clear\+ACC1 (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{bool}]{On\+Off}{}\end{DoxyParamCaption})}
+
+
+
+Clears the ACC1 bit of a DDS (for now a AD9854 DDS). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the ACC1 bit for. \\
+\hline
+{\em On\+Off} & true to set the ACC1 bit, false to clear it. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a972d0eaa0ae7789d098a1aa41b6c0f3e}\index{ControlAPI.h@{ControlAPI.h}!SetDigitalOutput@{SetDigitalOutput}}
+\index{SetDigitalOutput@{SetDigitalOutput}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetDigitalOutput()}{SetDigitalOutput()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a972d0eaa0ae7789d098a1aa41b6c0f3e} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Digital\+Output (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{uint8\+\_\+t}]{Bit\+Nr}{, }\item[{bool}]{On\+Off}{}\end{DoxyParamCaption})}
+
+
+
+Sets a digital output to high or low. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the digital output for. \\
+\hline
+{\em Bit\+Nr} & the bit number of the digital output to set. \\
+\hline
+{\em On\+Off} & true to set the output to high, false to set it to low. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{_control_a_p_i_8h_aa9a12a5ee9d3cf416b5fa5a3c3d62839}\index{ControlAPI.h@{ControlAPI.h}!SetFrequency@{SetFrequency}}
+\index{SetFrequency@{SetFrequency}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetFrequency()}{SetFrequency()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_aa9a12a5ee9d3cf416b5fa5a3c3d62839} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Frequency (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{double}]{Frequency}{}\end{DoxyParamCaption})}
+
+
+
+Sets the frequency of a DDS. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the frequency for. \\
+\hline
+{\em Frequency} & the frequency to set. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a2f4fb297ff61349527cb71ddfa7b06eb}\index{ControlAPI.h@{ControlAPI.h}!SetFrequencyOfChannel@{SetFrequencyOfChannel}}
+\index{SetFrequencyOfChannel@{SetFrequencyOfChannel}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetFrequencyOfChannel()}{SetFrequencyOfChannel()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a2f4fb297ff61349527cb71ddfa7b06eb} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Frequency\+Of\+Channel (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{uint8\+\_\+t}]{channel}{, }\item[{double}]{Frequency}{}\end{DoxyParamCaption})}
+
+
+
+Sets the frequency of a multi channel DDS (for now the AD9958). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the frequency for. \\
+\hline
+{\em channel} & the channel number to set the frequency for. \\
+\hline
+{\em Frequency} & the frequency to set. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_ac09c6a84884d6a56eb93aad09a7f272a}\index{ControlAPI.h@{ControlAPI.h}!SetFrequencyTuningWord@{SetFrequencyTuningWord}}
+\index{SetFrequencyTuningWord@{SetFrequencyTuningWord}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetFrequencyTuningWord()}{SetFrequencyTuningWord()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_ac09c6a84884d6a56eb93aad09a7f272a} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Frequency\+Tuning\+Word (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{uint64\+\_\+t}]{Frequency\+Tuning\+Word}{}\end{DoxyParamCaption})}
+
+
+
+Sets the frequency tuning word of a DDS. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the frequency tuning word for. \\
+\hline
+{\em Frequency\+Tuning\+Word} & the frequency tuning word to set. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_aaf7bc23add42d0d456497d052dd98635}\index{ControlAPI.h@{ControlAPI.h}!SetFrequencyTuningWordOfChannel@{SetFrequencyTuningWordOfChannel}}
+\index{SetFrequencyTuningWordOfChannel@{SetFrequencyTuningWordOfChannel}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetFrequencyTuningWordOfChannel()}{SetFrequencyTuningWordOfChannel()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_aaf7bc23add42d0d456497d052dd98635} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Frequency\+Tuning\+Word\+Of\+Channel (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{uint8\+\_\+t}]{channel}{, }\item[{uint64\+\_\+t}]{Frequency\+Tuning\+Word}{}\end{DoxyParamCaption})}
+
+
+
+Sets the frequency tuning word of a multi channel DDS (for now the AD9958). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the frequency tuning word for. \\
+\hline
+{\em channel} & the channel number to set the frequency tuning word for. \\
+\hline
+{\em Frequency\+Tuning\+Word} & the frequency tuning word to set. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a406078e2dbdff83bce00352ce7295308}\index{ControlAPI.h@{ControlAPI.h}!SetFSKBit@{SetFSKBit}}
+\index{SetFSKBit@{SetFSKBit}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetFSKBit()}{SetFSKBit()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a406078e2dbdff83bce00352ce7295308} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+FSKBit (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{bool}]{On\+Off}{}\end{DoxyParamCaption})}
+
+
+
+Sets the FSK bit of a DDS (for now a AD9854 DDS). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the FSK bit for. \\
+\hline
+{\em On\+Off} & true to set the FSK bit, false to clear it. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a0efa8afc5430b7f6e777ff3a9cc74a1a}\index{ControlAPI.h@{ControlAPI.h}!SetFSKMode@{SetFSKMode}}
+\index{SetFSKMode@{SetFSKMode}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetFSKMode()}{SetFSKMode()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a0efa8afc5430b7f6e777ff3a9cc74a1a} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+FSKMode (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{uint8\+\_\+t}]{mode}{}\end{DoxyParamCaption})}
+
+
+
+Sets the FKS mode of a DDS (for now a AD9854 DDS). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the FKS mode for. \\
+\hline
+{\em mode} & the FKS mode to set (0..4). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a4a0a9d4c9b90bf999f291dccc7e97f6a}\index{ControlAPI.h@{ControlAPI.h}!SetModulationFrequency@{SetModulationFrequency}}
+\index{SetModulationFrequency@{SetModulationFrequency}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetModulationFrequency()}{SetModulationFrequency()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a4a0a9d4c9b90bf999f291dccc7e97f6a} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Modulation\+Frequency (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{double}]{Frequency}{}\end{DoxyParamCaption})}
+
+
+
+Sets the modulation frequency of a DDS (for now a AD9854 DDS). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the modulation frequency for. \\
+\hline
+{\em Frequency} & the frequency to set. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_ac5867ffeebf13a6eda3d22d33e9dd40c}\index{ControlAPI.h@{ControlAPI.h}!SetPhaseOfChannel@{SetPhaseOfChannel}}
+\index{SetPhaseOfChannel@{SetPhaseOfChannel}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetPhaseOfChannel()}{SetPhaseOfChannel()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_ac5867ffeebf13a6eda3d22d33e9dd40c} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Phase\+Of\+Channel (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{uint8\+\_\+t}]{channel}{, }\item[{double}]{Phase}{}\end{DoxyParamCaption})}
+
+
+
+Sets the phase of a multi channel DDS (for now the AD9958). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the phase for. \\
+\hline
+{\em channel} & the channel number to set the phase for. \\
+\hline
+{\em Phase} & the phase to set. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a995d2ebe492ff95b2e5ca713d71ea3ea}\index{ControlAPI.h@{ControlAPI.h}!SetPower@{SetPower}}
+\index{SetPower@{SetPower}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetPower()}{SetPower()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a995d2ebe492ff95b2e5ca713d71ea3ea} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Power (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{double}]{Power}{}\end{DoxyParamCaption})}
+
+
+
+Sets the power of a DDS (for now a AD9854 DDS). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the power for. \\
+\hline
+{\em Power} & the power to set in \% (0...100). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a7a1ed99c5492fa69e87a5f7e64816307}\index{ControlAPI.h@{ControlAPI.h}!SetPowerOfChannel@{SetPowerOfChannel}}
+\index{SetPowerOfChannel@{SetPowerOfChannel}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetPowerOfChannel()}{SetPowerOfChannel()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a7a1ed99c5492fa69e87a5f7e64816307} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Power\+Of\+Channel (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{uint8\+\_\+t}]{channel}{, }\item[{double}]{Power}{}\end{DoxyParamCaption})}
+
+
+
+Sets the phase of a multi channel DDS (for now the AD9958). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the phase for. \\
+\hline
+{\em channel} & the channel number to set the phase for. \\
+\hline
+{\em Phase} & the phase to set. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a5757bdd84e00fbd3229f252fb4d84b82}\index{ControlAPI.h@{ControlAPI.h}!SetRampRateClock@{SetRampRateClock}}
+\index{SetRampRateClock@{SetRampRateClock}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetRampRateClock()}{SetRampRateClock()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a5757bdd84e00fbd3229f252fb4d84b82} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Ramp\+Rate\+Clock (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{uint8\+\_\+t}]{rate}{}\end{DoxyParamCaption})}
+
+
+
+Sets the ramp rate clock of a DDS (for now a AD9854 DDS). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the ramp rate clock for. \\
+\hline
+{\em rate} & the ramp rate clock to set (1...1048576). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_af357426cac3b146e775198deb3e7879f}\index{ControlAPI.h@{ControlAPI.h}!SetRegister@{SetRegister}}
+\index{SetRegister@{SetRegister}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetRegister()}{SetRegister()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_af357426cac3b146e775198deb3e7879f} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Register (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{const unsigned int \&}]{Sub\+Address}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{Data}{, }\item[{const unsigned long \&}]{Data\+Length\+\_\+in\+\_\+bit}{, }\item[{const uint8\+\_\+t \&}]{Start\+Bit}{ = {\ttfamily 0}}\end{DoxyParamCaption})}
+
+
+
+This function sets a register for a device on the sequencer. What this means depends on the device type. This function gives us an easy way to add new functionality to a device without having to programm new DLL functions. Set\+Register maps to the register map given in the device\textquotesingle{}s datasheet. Note\+: this is not currently implemented in the API. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the value for. \\
+\hline
+{\em Sub\+Address} & the subaddress of the device to set the value for. \\
+\hline
+{\em Data} & the data to set. \\
+\hline
+{\em Data\+Length\+\_\+in\+\_\+bit} & the length of the data in bits. \\
+\hline
+{\em Start\+Bit} & the start bit of the data to set. \\
+\hline
+{\em $<$br$>$} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_adaa14ea09a4c22a39531fc3fa21de7f7}\index{ControlAPI.h@{ControlAPI.h}!SetRegisterSerialDevice@{SetRegisterSerialDevice}}
+\index{SetRegisterSerialDevice@{SetRegisterSerialDevice}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetRegisterSerialDevice()}{SetRegisterSerialDevice()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_adaa14ea09a4c22a39531fc3fa21de7f7} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Register\+Serial\+Device (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{const unsigned int \&}]{Sub\+Address}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{Data}{, }\item[{const unsigned long \&}]{Data\+Length\+\_\+in\+\_\+bit}{, }\item[{const uint8\+\_\+t \&}]{Start\+Bit}{ = {\ttfamily 0}}\end{DoxyParamCaption})}
+
+
+
+As Set\+Register, but for serial devices. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the value for. \\
+\hline
+{\em Sub\+Address} & the subaddress of the device to set the value for. \\
+\hline
+{\em Data} & the data to set. \\
+\hline
+{\em Data\+Length\+\_\+in\+\_\+bit} & the length of the data in bits. \\
+\hline
+{\em Start\+Bit} & the start bit of the data to set. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{_control_a_p_i_8h_a704875336c6dfc8d3c1b1dc85f821461}\index{ControlAPI.h@{ControlAPI.h}!SetStartFrequency@{SetStartFrequency}}
+\index{SetStartFrequency@{SetStartFrequency}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetStartFrequency()}{SetStartFrequency()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a704875336c6dfc8d3c1b1dc85f821461} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Start\+Frequency (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{double}]{Frequency}{}\end{DoxyParamCaption})}
+
+
+
+Sets the start frequency of a DDS (for now a AD9854 DDS). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the start frequency for. \\
+\hline
+{\em Frequency} & the frequency to set. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_ae932bdaf96d78340127ff60240a595e0}\index{ControlAPI.h@{ControlAPI.h}!SetStartFrequencyTuningWord@{SetStartFrequencyTuningWord}}
+\index{SetStartFrequencyTuningWord@{SetStartFrequencyTuningWord}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetStartFrequencyTuningWord()}{SetStartFrequencyTuningWord()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_ae932bdaf96d78340127ff60240a595e0} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Start\+Frequency\+Tuning\+Word (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{uint64\+\_\+t}]{Frequency\+Tuning\+Word}{}\end{DoxyParamCaption})}
+
+
+
+Sets the start frequency tuning word of a DDS (for now a AD9854 DDS). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the start frequency tuning word for. \\
+\hline
+{\em Frequency\+Tuning\+Word} & the frequency tuning word to set. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a05b2d6a3d280298732b5e46c4ab34449}\index{ControlAPI.h@{ControlAPI.h}!SetStopFrequency@{SetStopFrequency}}
+\index{SetStopFrequency@{SetStopFrequency}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetStopFrequency()}{SetStopFrequency()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a05b2d6a3d280298732b5e46c4ab34449} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Stop\+Frequency (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{double}]{Frequency}{}\end{DoxyParamCaption})}
+
+
+
+Sets the stop frequency of a DDS (for now a AD9854 DDS). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the stop frequency for. \\
+\hline
+{\em Frequency} & the frequency to set. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a00b425d7071880267fffe6a58a0d64e4}\index{ControlAPI.h@{ControlAPI.h}!SetStopFrequencyTuningWord@{SetStopFrequencyTuningWord}}
+\index{SetStopFrequencyTuningWord@{SetStopFrequencyTuningWord}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetStopFrequencyTuningWord()}{SetStopFrequencyTuningWord()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a00b425d7071880267fffe6a58a0d64e4} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Stop\+Frequency\+Tuning\+Word (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{uint64\+\_\+t}]{Frequency\+Tuning\+Word}{}\end{DoxyParamCaption})}
+
+
+
+Sets the stop frequency tuning word of a DDS (for now a AD9854 DDS). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the stop frequency tuning word for. \\
+\hline
+{\em Frequency\+Tuning\+Word} & the frequency tuning word to set. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_aa0a620a75128414aa8099d943bd5d9d4}\index{ControlAPI.h@{ControlAPI.h}!SetTimeDebtGuard\_in\_ms@{SetTimeDebtGuard\_in\_ms}}
+\index{SetTimeDebtGuard\_in\_ms@{SetTimeDebtGuard\_in\_ms}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetTimeDebtGuard\_in\_ms()}{SetTimeDebtGuard\_in\_ms()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_aa0a620a75128414aa8099d943bd5d9d4} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Time\+Debt\+Guard\+\_\+in\+\_\+ms (\begin{DoxyParamCaption}\item[{const double \&}]{Max\+Time\+Debt\+\_\+in\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Sets a guard time. If sequencer commands make the time advance more than the guard time beyond what\textquotesingle{}s allowed by Wait\+\_\+ms, an error will be recorded (check with \doxylink{_control_a_p_i_8h_a140351e5a8172134e8eff160d1b558e3}{Did\+Error\+Occur()} if that happened) or thrown. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Max\+Time\+Debt\+\_\+in\+\_\+ms} & maximum time debt in ms. If the sequencer commands make the time advance more than this, the sequencer will stop and wait for the next command. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_ac2f32fe5d2acb13ca0a5c70099a18382}\index{ControlAPI.h@{ControlAPI.h}!SetTriangleBit@{SetTriangleBit}}
+\index{SetTriangleBit@{SetTriangleBit}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetTriangleBit()}{SetTriangleBit()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_ac2f32fe5d2acb13ca0a5c70099a18382} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Triangle\+Bit (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{bool}]{On\+Off}{}\end{DoxyParamCaption})}
+
+
+
+Sets the triangle bit of a DDS (for now a AD9854 DDS). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the triangle bit for. \\
+\hline
+{\em On\+Off} & true to set the triangle bit, false to clear it. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a262189e7099cc79d968f8ea9c66524e8}\index{ControlAPI.h@{ControlAPI.h}!SetValue@{SetValue}}
+\index{SetValue@{SetValue}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetValue()}{SetValue()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a262189e7099cc79d968f8ea9c66524e8} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Value (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{const unsigned int \&}]{Sub\+Address}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{Data}{, }\item[{const unsigned long \&}]{Data\+Length\+\_\+in\+\_\+bit}{, }\item[{const uint8\+\_\+t \&}]{Start\+Bit}{ = {\ttfamily 0}}\end{DoxyParamCaption})}
+
+
+
+This function sets a value for a device on the sequencer. What this means depends on the device type. This function gives us an easy way to add new functionality to a device without having to programm new DLL functions. In contrast to Set\+Register, Set\+Value can execute more complex operations, such as calculating a DDS frequency tuning word from the given frequency and then programming that. There can be several Set\+Value functions for the same Set\+Register function. There can be Set\+Value functions that set some parameter, or that trigger some action, not even necessarily related to the registers of the device. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the value for. \\
+\hline
+{\em Sub\+Address} & the subaddress of the device to set the value for. \\
+\hline
+{\em Data} & the data to set. \\
+\hline
+{\em Data\+Length\+\_\+in\+\_\+bit} & the length of the data in bits. \\
+\hline
+{\em Start\+Bit} & the start bit of the data to set. \\
+\hline
+{\em $<$br$>$} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_abf975f1bca00f331a47c6c49154b3349}\index{ControlAPI.h@{ControlAPI.h}!SetValueSerialDevice@{SetValueSerialDevice}}
+\index{SetValueSerialDevice@{SetValueSerialDevice}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetValueSerialDevice()}{SetValueSerialDevice()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_abf975f1bca00f331a47c6c49154b3349} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Value\+Serial\+Device (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{const unsigned int \&}]{Sub\+Address}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{Data}{, }\item[{const unsigned long \&}]{Data\+Length\+\_\+in\+\_\+bit}{, }\item[{const uint8\+\_\+t \&}]{Start\+Bit}{ = {\ttfamily 0}}\end{DoxyParamCaption})}
+
+
+
+As Set\+Value, but for serial devices. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the value for. \\
+\hline
+{\em Sub\+Address} & the subaddress of the device to set the value for. \\
+\hline
+{\em Data} & the data to set. \\
+\hline
+{\em Data\+Length\+\_\+in\+\_\+bit} & the length of the data in bits. \\
+\hline
+{\em Start\+Bit} & the start bit of the data to set. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_afb0d59c570ca8cc10b8a6e6b0f36afb7}\index{ControlAPI.h@{ControlAPI.h}!SetVoltage@{SetVoltage}}
+\index{SetVoltage@{SetVoltage}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SetVoltage()}{SetVoltage()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_afb0d59c570ca8cc10b8a6e6b0f36afb7} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Set\+Voltage (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sequencer}{, }\item[{const unsigned int \&}]{Address}{, }\item[{double}]{Voltage}{}\end{DoxyParamCaption})}
+
+
+
+Sets the voltage of an analog output device. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Sequencer} & the sequencer to use. \\
+\hline
+{\em Address} & the address of the device to set the voltage for. \\
+\hline
+{\em Voltage} & the voltage to set. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{_control_a_p_i_8h_a5b051278563acf5ea4fa65465679b785}\index{ControlAPI.h@{ControlAPI.h}!StartAssemblingSequence@{StartAssemblingSequence}}
+\index{StartAssemblingSequence@{StartAssemblingSequence}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{StartAssemblingSequence()}{StartAssemblingSequence()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a5b051278563acf5ea4fa65465679b785} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} void \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Start\+Assembling\+Sequence (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Starts assembling a sequence. Clears any previous sequence. Must be called before adding commands to the sequence. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em $<$br$>$} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a7ea429f67ff65d764dfe65e89db76f76}\index{ControlAPI.h@{ControlAPI.h}!SwitchDebugMode@{SwitchDebugMode}}
+\index{SwitchDebugMode@{SwitchDebugMode}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{SwitchDebugMode()}{SwitchDebugMode()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a7ea429f67ff65d764dfe65e89db76f76} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} void \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Switch\+Debug\+Mode (\begin{DoxyParamCaption}\item[{bool}]{On\+Off}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{File\+Name}{}\end{DoxyParamCaption})}
+
+
+
+Switches Debug mode on. In Debug mode, the sequence of each FPGA sequencer is written to a human readable ASCII file before being sent to the FPGA. In addition, the FPGA sequencers display more information on their USB-\/\+UART port, being slowed down a bit by that. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em On\+Off} & true to switch on debug mode, false to switch it off. \\
+\hline
+{\em File\+Name} & the name of the file to write the debug information to without filename extension. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{_control_a_p_i_8h_a525a56e7c7e0b7db2190a537777d75b9}\index{ControlAPI.h@{ControlAPI.h}!Wait\_ms@{Wait\_ms}}
+\index{Wait\_ms@{Wait\_ms}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{Wait\_ms()}{Wait\_ms()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a525a56e7c7e0b7db2190a537777d75b9} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Wait\+\_\+ms (\begin{DoxyParamCaption}\item[{double}]{time\+\_\+in\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Wait for a given time in ms. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em time\+\_\+in\+\_\+ms} & the time to wait in ms. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{_control_a_p_i_8h_a4b5993bcf640e03ace021ec5dfb6285c}\index{ControlAPI.h@{ControlAPI.h}!WaitTillEndOfSequenceThenGetInputData@{WaitTillEndOfSequenceThenGetInputData}}
+\index{WaitTillEndOfSequenceThenGetInputData@{WaitTillEndOfSequenceThenGetInputData}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{WaitTillEndOfSequenceThenGetInputData()}{WaitTillEndOfSequenceThenGetInputData()}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a4b5993bcf640e03ace021ec5dfb6285c} 
+\mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\+\_\+\+EXPORT}} \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\+\_\+\+CODE\+\_\+\+TYPE}} \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\+\_\+\+FN}} Wait\+Till\+End\+Of\+Sequence\+Then\+Get\+Input\+Data (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}\&}]{buffer}{, }\item[{unsigned long \&}]{buffer\+\_\+length}{, }\item[{unsigned long \&}]{End\+Time\+Of\+Cycle}{, }\item[{double}]{timeout\+\_\+in\+\_\+s}{}\end{DoxyParamCaption})}
+
+
+
+Waits until the sequence is finished, then gets the input data from the FPGA sequencer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & pointer to the input data buffer. Don\textquotesingle{}t delete this buffer, it is managed by the API. \\
+\hline
+{\em buffer\+\_\+length} & length of the input data buffer in bytes. \\
+\hline
+{\em End\+Time\+Of\+Cycle} & returns the end time of the cycle in ms. \\
+\hline
+{\em timeout\+\_\+in\+\_\+s} & timeout in seconds. If the sequence is not finished within this time, the function returns false or throws an exception (depending on mode selected mode when compiling API). \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Variable Documentation}
+\Hypertarget{_control_a_p_i_8h_a679deb1765f3544a100264eebb793da3}\index{ControlAPI.h@{ControlAPI.h}!ErrorListWrapAround@{ErrorListWrapAround}}
+\index{ErrorListWrapAround@{ErrorListWrapAround}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{ErrorListWrapAround}{ErrorListWrapAround}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a679deb1765f3544a100264eebb793da3} 
+bool Error\+List\+Wrap\+Around\hspace{0.3cm}{\ttfamily [extern]}}
+
+\Hypertarget{_control_a_p_i_8h_a7d8ab587f73458e320154369f6a74c01}\index{ControlAPI.h@{ControlAPI.h}!LastError@{LastError}}
+\index{LastError@{LastError}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{LastError}{LastError}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_a7d8ab587f73458e320154369f6a74c01} 
+std\+::string Last\+Error\mbox{[}\mbox{\hyperlink{_control_a_p_i_8h_ab0e1cf239ac3e235992bc858f58e7ea9}{Max\+Last\+Error}}\mbox{]}\hspace{0.3cm}{\ttfamily [extern]}}
+
+\Hypertarget{_control_a_p_i_8h_aa8c7d164d3b3d02712b59520ac38b9e3}\index{ControlAPI.h@{ControlAPI.h}!LastErrorIndex@{LastErrorIndex}}
+\index{LastErrorIndex@{LastErrorIndex}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{LastErrorIndex}{LastErrorIndex}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_aa8c7d164d3b3d02712b59520ac38b9e3} 
+int Last\+Error\+Index\hspace{0.3cm}{\ttfamily [extern]}}
+
+\Hypertarget{_control_a_p_i_8h_ab0e1cf239ac3e235992bc858f58e7ea9}\index{ControlAPI.h@{ControlAPI.h}!MaxLastError@{MaxLastError}}
+\index{MaxLastError@{MaxLastError}!ControlAPI.h@{ControlAPI.h}}
+\doxysubsubsection{\texorpdfstring{MaxLastError}{MaxLastError}}
+{\footnotesize\ttfamily \label{_control_a_p_i_8h_ab0e1cf239ac3e235992bc858f58e7ea9} 
+int Max\+Last\+Error = 10\hspace{0.3cm}{\ttfamily [constexpr]}}
+

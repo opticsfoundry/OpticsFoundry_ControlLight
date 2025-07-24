@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_network_8h" xml:lang="en-US">
+<title>network.h File Reference</title>
+<indexterm><primary>network.h</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &lt;WinSock2.h&gt;<?linebreak?>#include &lt;ws2tcpip.h&gt;<?linebreak?>#include &lt;Windows.h&gt;<?linebreak?>#include &lt;afxsock.h&gt;<?linebreak?>#include &lt;fstream&gt;<?linebreak?></programlisting><simplesect>
+    <title>Classes    </title>
+        <itemizedlist>
+            <listitem><para>class <link linkend="_class_c_network">CNetwork</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="_network_8h_1a1c5f76c615ef7fd0ba9e365b63e48e85">Sleep_ms</link> (unsigned long ms)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="_network_8h_1a1c5f76c615ef7fd0ba9e365b63e48e85"/><section>
+    <title>Sleep_ms()</title>
+<indexterm><primary>Sleep_ms</primary><secondary>network.h</secondary></indexterm>
+<indexterm><primary>network.h</primary><secondary>Sleep_ms</secondary></indexterm>
+<para><computeroutput>void Sleep_ms (unsigned long ms)<computeroutput>[extern]</computeroutput></computeroutput></para></section>
+</section>
+</section>

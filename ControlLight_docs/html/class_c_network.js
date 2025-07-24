@@ -1,0 +1,27 @@
+var class_c_network =
+[
+    [ "CNetwork", "class_c_network.html#ae4c6f98dd9b44e1547f7eff0a0799dfc", null ],
+    [ "~CNetwork", "class_c_network.html#a5f8c44eababcef02f4ce7af3592dba37", null ],
+    [ "ConnectSocket", "class_c_network.html#a771eb75b32d2a86f321bd94d15be52a1", null ],
+    [ "DebugStart", "class_c_network.html#a0a279fda933f240e269f9e6410dd2be8", null ],
+    [ "DebugStop", "class_c_network.html#a55be2d3a1d45549c8199b1a4324996d6", null ],
+    [ "DisconnectSocket", "class_c_network.html#ae05676ec152f6b4a5880e51d837ddb80", null ],
+    [ "Flush", "class_c_network.html#abdd54634e4dcfb17515ed74dd3e0b64c", null ],
+    [ "GetMessage", "class_c_network.html#a63cd36d8c60d6a8e5cc962fead4ab36c", null ],
+    [ "IsConnected", "class_c_network.html#ad6e6c1704cdd7e80e5521e83d6a02362", null ],
+    [ "ReceiveData", "class_c_network.html#a1ebf567f42570a93f29079c14d244e91", null ],
+    [ "ReceiveMsg", "class_c_network.html#a19cf86a9324374a37d710e3a34e72da9", null ],
+    [ "ReceiveString", "class_c_network.html#a52997f0e0a9fcd43ada48a1b3673f9c3", null ],
+    [ "Reconnect", "class_c_network.html#ae0f27ccfb10951f735c0049191c16f1e", null ],
+    [ "ResetConnection", "class_c_network.html#aca17f1229fc5e167fdaad9fff933d70f", null ],
+    [ "SendData", "class_c_network.html#a6487dc24383af3cc9adc7aa94199b971", null ],
+    [ "SendMsg", "class_c_network.html#aa8f487a58a1d73e21e0af9601f9bfcc4", null ],
+    [ "SendString", "class_c_network.html#ad9636a38079916ec660c88092f84ad36", null ],
+    [ "StoreLastMessage", "class_c_network.html#a340cf9706d3627825719d63583959d4d", null ],
+    [ "DebugFile", "class_c_network.html#a187987b13ede6e699546871811d354cd", null ],
+    [ "LastMessage", "class_c_network.html#a8db02b78a8f17f1ec7ccdb6ff5a15f7f", null ],
+    [ "m_lpszAddress", "class_c_network.html#a5f969438f02bc6b805285c3ea03fb431", null ],
+    [ "m_nPort", "class_c_network.html#adf887dc6ef221b9efc2c8292fa4329ab", null ],
+    [ "m_pSocket", "class_c_network.html#a9ff8816febaa3cdd8f3bc2089e5e4547", null ],
+    [ "m_SocketName", "class_c_network.html#aa0527dfb26d50e0720a808800e1b274e", null ]
+];

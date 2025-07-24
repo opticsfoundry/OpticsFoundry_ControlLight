@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_std_8cpp" xml:lang="en-US">
+<title>std.cpp File Reference</title>
+<indexterm><primary>std.cpp</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;std.h&quot;<?linebreak?>#include &lt;afxwin.h&gt;<?linebreak?>#include &quot;ControlAPI.h&quot;<?linebreak?>#include &lt;string&gt;<?linebreak?>#include &lt;atlconv.h&gt;<?linebreak?></programlisting><simplesect>
+    <title>Macros    </title>
+        <itemizedlist>
+            <listitem><para>#define <link linkend="_std_8cpp_1a72cc69751765d28544d94e2a93da4412">_AFXDLL</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="_std_8cpp_1a9d4e8a9f53a0a08989bbe151c57367cc">AddErrorMessageCString</link> (const CString &amp;lpszText)</para>
+</listitem>
+            <listitem><para>void <link linkend="_std_8cpp_1a5ed8ba9482de1f3a4116a7055cd216fc">ControlMessageBox</link> (const CString &amp;lpszText, UINT nType, UINT nIDHelp)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Macro Definition Documentation</title>
+<anchor xml:id="_std_8cpp_1a72cc69751765d28544d94e2a93da4412"/><section>
+    <title>_AFXDLL</title>
+<indexterm><primary>_AFXDLL</primary><secondary>std.cpp</secondary></indexterm>
+<indexterm><primary>std.cpp</primary><secondary>_AFXDLL</secondary></indexterm>
+<para><computeroutput>#define _AFXDLL</computeroutput></para></section>
+</section>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="_std_8cpp_1a9d4e8a9f53a0a08989bbe151c57367cc"/><section>
+    <title>AddErrorMessageCString()</title>
+<indexterm><primary>AddErrorMessageCString</primary><secondary>std.cpp</secondary></indexterm>
+<indexterm><primary>std.cpp</primary><secondary>AddErrorMessageCString</secondary></indexterm>
+<para><computeroutput>void AddErrorMessageCString (const CString &amp; lpszText)</computeroutput></para></section>
+<anchor xml:id="_std_8cpp_1a5ed8ba9482de1f3a4116a7055cd216fc"/><section>
+    <title>ControlMessageBox()</title>
+<indexterm><primary>ControlMessageBox</primary><secondary>std.cpp</secondary></indexterm>
+<indexterm><primary>std.cpp</primary><secondary>ControlMessageBox</secondary></indexterm>
+<para><computeroutput>void ControlMessageBox (const CString &amp; lpszText, UINT nType, UINT nIDHelp)</computeroutput></para></section>
+</section>
+</section>

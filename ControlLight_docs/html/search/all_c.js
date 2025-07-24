@@ -1,0 +1,24 @@
+var searchData=
+[
+  ['m_5flpszaddress_0',['m_lpszAddress',['../class_c_network.html#a5f969438f02bc6b805285c3ea03fb431',1,'CNetwork']]],
+  ['m_5fnport_1',['m_nPort',['../class_c_network.html#adf887dc6ef221b9efc2c8292fa4329ab',1,'CNetwork']]],
+  ['m_5fpsocket_2',['m_pSocket',['../class_c_network.html#a9ff8816febaa3cdd8f3bc2089e5e4547',1,'CNetwork']]],
+  ['m_5fsocketname_3',['m_SocketName',['../class_c_network.html#aa0527dfb26d50e0720a808800e1b274e',1,'CNetwork']]],
+  ['master_4',['master',['../class_c_device_sequencer.html#a2007872507761fc8ab9941a96d58b455',1,'CDeviceSequencer']]],
+  ['masterreset_5',['MasterReset',['../class_c_a_d9852.html#ad70fa3aa0d4b6e072102a166e692caae',1,'CAD9852::MasterReset()'],['../class_c_a_d9858.html#af8a9c8199e91a884fca30e65102d489a',1,'CAD9858::MasterReset()']]],
+  ['mastersequencer_6',['MasterSequencer',['../_control_a_p_i_8cpp.html#a51b4c51d4f7f6b04ee1c8b59656d37cc',1,'ControlAPI.cpp']]],
+  ['maxfpgaprogramlength_7',['MaxFPGAProgramLength',['../_ethernet_controller_firefly_8cpp.html#a57c8759f9f214734142d0552c38101a7',1,'EthernetControllerFirefly.cpp']]],
+  ['maxfrequency_8',['MaxFrequency',['../class_c_a_d9852.html#a07f312edb19ca3689796f4f004512692',1,'CAD9852']]],
+  ['maxlasterror_9',['MaxLastError',['../_control_a_p_i_8h.html#ab0e1cf239ac3e235992bc858f58e7ea9',1,'ControlAPI.h']]],
+  ['maxparallelbusdevices_10',['MaxParallelBusDevices',['../class_c_device_sequencer.html#a442061907ecaaf27c3a7e9171b597e72',1,'CDeviceSequencer']]],
+  ['maxreconnectattempts_11',['MaxReconnectAttempts',['../_ethernet_controller_firefly_8cpp.html#a82a74818c48929b37f9ee15bc09eeaca',1,'MaxReconnectAttempts:&#160;EthernetControllerFirefly.cpp'],['../_network_client_8cpp.html#ac341ec2f068f9ed1428573fd291fd45e',1,'MaxReconnectAttempts:&#160;NetworkClient.cpp']]],
+  ['maxsequencercommandlistsize_12',['MaxSequencerCommandListSize',['../_ethernet_controller_firefly_8cpp.html#ac59104e620232d895bc143503718b004',1,'EthernetControllerFirefly.cpp']]],
+  ['maxserialbusdevices_13',['MaxSerialBusDevices',['../class_c_device_sequencer.html#a5155e6ccb4538489ff41a271344d6631',1,'CDeviceSequencer']]],
+  ['maxvoltage_14',['maxVoltage',['../class_c_device_analog_in12bit.html#a29a978eac3fb07993337b8e6c520b227',1,'CDeviceAnalogIn12bit::maxVoltage'],['../class_c_device_analog_out.html#a4d941520c3ef458a906f788f76c8b617',1,'CDeviceAnalogOut::maxVoltage']]],
+  ['minimizeethernetcommunicationdirectionchanges_15',['MinimizeEthernetCommunicationDirectionChanges',['../_ethernet_controller_firefly_8cpp.html#a433af214488c76fe16b62ba0d0cd55d8',1,'EthernetControllerFirefly.cpp']]],
+  ['minvoltage_16',['minVoltage',['../class_c_device_analog_in12bit.html#aeeefb664609d6a8a75816f820bc9168f',1,'CDeviceAnalogIn12bit::minVoltage'],['../class_c_device_analog_out.html#a2fe9411fc1e80b3b83ecfdd03ffd1348',1,'CDeviceAnalogOut::minVoltage']]],
+  ['myaddress_17',['MyAddress',['../class_c_device.html#a7c5003e9b61986c46f6aa9ffd31324f3',1,'CDevice']]],
+  ['myethernetmultiiocontrollerfirefly_18',['MyEthernetMultiIOControllerFirefly',['../class_c_device_sequencer.html#afe35c16dab9badb1defcbb2644b69d9c',1,'CDeviceSequencer']]],
+  ['mysequencer_19',['MySequencer',['../class_c_device.html#a381f3a4f11fb87aadc77bcdc4524e33f',1,'CDevice']]],
+  ['mytype_20',['MyType',['../class_c_device.html#aaa6670dcb90af191c31aef9d88dbdcce',1,'CDevice']]]
+];

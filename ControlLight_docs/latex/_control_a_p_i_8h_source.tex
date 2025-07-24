@@ -1,0 +1,363 @@
+\doxysection{Control\+API.\+h}
+\hypertarget{_control_a_p_i_8h_source}{}\label{_control_a_p_i_8h_source}\index{ControlAPI.h@{ControlAPI.h}}
+\mbox{\hyperlink{_control_a_p_i_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{comment}{//\#ifndef\ USING\_DLL}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#define\ \_AFXDLL}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <afxwin.h>}\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ MFC\ core\ and\ standard\ components}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <fstream>}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//bool\ InitializeMFC();}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\#endif}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <cstdint>}\ \ \ \ \ \ \textcolor{comment}{//\ for\ uint8\_t,\ uint32\_t,\ etc.}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#ifdef\ PYTHON\_API}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#undef\ C\_API}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ THROW\_EXCEPTIONS}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ API\_CLASS}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ BUILDING\_DLL}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#ifdef\ API\_CLASS}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#undef\ C\_API}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#ifdef\ C\_API}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00027\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#ifdef\ NAMESPACE\_CLA}}
+\DoxyCodeLine{00031\ \textcolor{keyword}{namespace\ }CLA\ \{\ \textcolor{comment}{//optional,\ for\ C++\ APIs,\ use\ namespace\ CLA,\ instead\ of\ preceding\ function\ names\ with\ CLA\_.}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ API\_EXPORT}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#define\ API\_EXPORT\_CLASS}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#ifdef\ API\_CLASS}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#define\ API\_EXPORT}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#ifdef\ BUILDING\_DLL}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#ifdef\ \_WIN32}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#define\ API\_EXPORT\_CLASS\ \_\_declspec(dllexport)}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#define\ API\_EXPORT\_CLASS}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#ifdef\ USING\_DLL\ }}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#ifdef\ \_WIN32}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#define\ API\_EXPORT\_CLASS\ \_\_declspec(dllimport)}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#define\ API\_EXPORT\_CLASS}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#define\ API\_EXPORT\_CLASS}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#ifdef\ BUILDING\_DLL}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#ifdef\ \_WIN32}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#define\ API\_EXPORT\ \_\_declspec(dllexport)}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#define\ API\_EXPORT}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#ifdef\ USING\_DLL\ }}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#ifdef\ \_WIN32}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#define\ API\_EXPORT\ \_\_declspec(dllimport)}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#define\ API\_EXPORT}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#ifdef\ THROW\_EXCEPTIONS}}
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#define\ ERROR\_CODE\_TYPE\ void}}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#include\ <stdexcept>}}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keyword}{class\ }CLA\_Exception\ :\ \textcolor{keyword}{public}\ std::runtime\_error\ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \textcolor{keyword}{explicit}\ CLA\_Exception(\textcolor{keyword}{const}\ std::string\&\ message)}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ :\ std::runtime\_error(message)\ \{\}}
+\DoxyCodeLine{00091\ \ \ \ \ \};}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\#else\ }}
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\#define\ ERROR\_CODE\_TYPE\ bool}}
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{_control_a_p_i_8h_ab0e1cf239ac3e235992bc858f58e7ea9}{MaxLastError}}\ =\ 10;}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keyword}{extern}\ std::string\ \mbox{\hyperlink{_control_a_p_i_8cpp_a7d8ab587f73458e320154369f6a74c01}{LastError}}[\mbox{\hyperlink{_control_a_p_i_8h_ab0e1cf239ac3e235992bc858f58e7ea9}{MaxLastError}}];}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{_control_a_p_i_8cpp_aa8c7d164d3b3d02712b59520ac38b9e3}{LastErrorIndex}};}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{_control_a_p_i_8cpp_a679deb1765f3544a100264eebb793da3}{ErrorListWrapAround}};}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ DisplayErrors\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8cpp_ab4216036d280f0e2357f4895feae00b3}{AddErrorMessage}}(\textcolor{keyword}{const}\ std::string\&\ error\_message);}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\ \ \ \ \#if\ !defined(BUILDING\_DLL)\ \&\&\ defined(USING\_DLL)}}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\ \ \ \ \#define\ API\_EXPORT\ }}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//InitilizeMFC()\ is\ needed\ when\ using\ this\ code\ directly\ in\ an\ exe,\ not\ through\ a\ DLL.\ }}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//If\ you\ don't\ have\ MFC\ already\ initialized,\ you\ need\ to\ call\ this\ function,\ or\ a\ similar\ one\ adapted\ to\ your\ purposes.}}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//This\ is\ not\ exported\ to\ the\ DLL,\ because\ it\ is\ automatically\ called\ in\ the\ DLLMain\ function\ when\ the\ DLL\ is\ loaded.}}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//extern\ bool\ CLA\_InitializeMFC();}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\ \ \ \ \#endif}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \textcolor{preprocessor}{\ \ \ \ \#if\ defined(BUILDING\_DLL)\ ||\ defined(USING\_DLL)}}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ class\ CControlApp\ :\ public\ CObject}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00124\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ public:}}
+\DoxyCodeLine{00125\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CControlApp();}}
+\DoxyCodeLine{00126\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ virtual\ \string~CControlApp();}}
+\DoxyCodeLine{00127\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bool\ Initialize();}}
+\DoxyCodeLine{00128\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ HINSTANCE\ m\_hInstance;}}
+\DoxyCodeLine{00129\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \};}}
+\DoxyCodeLine{00130\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//typedef\ void*\ HControlLightAPI;}}
+\DoxyCodeLine{00134\ \textcolor{preprocessor}{\ \ \ \ \#ifdef\ BUILDING\_DLL}}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ BOOL\ APIENTRY\ DllMain(HMODULE,\ DWORD,\ LPVOID);}
+\DoxyCodeLine{00136\ \textcolor{preprocessor}{\ \ \ \ \#endif}}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00138\ \textcolor{preprocessor}{\ \ \ \ \#endif}}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \textcolor{preprocessor}{\#ifdef\ API\_CLASS}}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \textcolor{preprocessor}{\#define\ CLA\_FN(name)\ name}}
+\DoxyCodeLine{00145\ \textcolor{preprocessor}{\#define\ CLA\_FNDEF(name)\ ControlLight\_API::\#\#name}}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{_control_a_p_i_8h_a1c3cf2d9d1101f8bf1e704b2bae1455a}{API\_EXPORT\_CLASS}}\ ControlLight\_API\ \{}
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ Created;}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ ControlLight\_API(\textcolor{keywordtype}{bool}\ InitializeAfx\ =\ \textcolor{keyword}{true},\ \textcolor{keywordtype}{bool}\ InitializeAfxSocket\ =\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \string~ControlLight\_API();}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ IsCreated();}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00155\ \textcolor{preprocessor}{\#define\ CLA\_FN(name)\ CLA\_\#\#name}}
+\DoxyCodeLine{00156\ \textcolor{preprocessor}{\#define\ CLA\_FNDEF(name)\ CLA\_\#\#name}}
+\DoxyCodeLine{00157\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \textcolor{comment}{//API\_EXPORT\ HControlLightAPI\ CLA\_GetInstance();}}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Call\ these\ functions\ in\ roughly\ this\ order}}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a2d2fa043e1432b195756a9b7476d14b6}{Create}})(\textcolor{keywordtype}{bool}\ InitializeAfx,\ \textcolor{keywordtype}{bool}\ InitializeAfxSocket);\ \textcolor{comment}{//you\ must\ call\ this\ first,\ otherwise\ the\ API\ will\ not\ work}}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_aa969e43b23ebfb657bee5e58271cfffd}{Cleanup}})();\ \textcolor{comment}{//You\ must\ call\ this\ before\ leaving\ your\ program,\ otherwise\ the\ API\ can\ provoke\ errors\ because\ memory\ is\ not\ freed}}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_ad0f0f525900c7042af9735df225b5bb4}{DidErrorOccur}})();}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_ae2c09044776f2f9cc07d3be713ed0ecf}{GetLastError}})();}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a9f8b440cc01917e60b5d4d3e9f274f2d}{Configure}})(\textcolor{keywordtype}{bool}\ \_DisplayErrors);\ \textcolor{comment}{//optional}}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a2ccba55530e6bf0416c9402ec5554a27}{LoadFromJSONFile}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ filename);}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Once\ all\ devices\ have\ been\ declared,\ you\ must\ initialize\ the\ system,\ otherwise\ the\ API\ will\ not\ work}}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_ad867e66c5ee033c10c2b19bda54ef936}{Initialize}})();}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Some\ optional\ commands}}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a3186ff65e19d503d7e7d346f3179f08e}{SwitchDebugMode}})(\textcolor{keywordtype}{bool}\ OnOff,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ FileName);}
+\DoxyCodeLine{00218\ }
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a8d65f99963c14d7859b47abddc82070f}{IsReady}})();}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \textcolor{comment}{//To\ start\ a\ sequence,\ first\ call\ StartAssemblingSequence,\ then\ add\ all\ the\ commands\ you\ want\ to\ execute\ in\ the\ sequence}}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a5f131f6edd5d984d6469eefda7fa2950}{StartAssemblingSequence}})();}
+\DoxyCodeLine{00229\ }
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \textcolor{comment}{//here\ are\ possible\ commands}}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_abad197bb4342619e8483e132c918a48c}{SetRegister}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ SubAddress,\ \textcolor{keyword}{const}\ uint8\_t*\ Data,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\&\ DataLength\_in\_bit,\ \textcolor{keyword}{const}\ uint8\_t\&\ StartBit\ =\ 0);}
+\DoxyCodeLine{00244\ }
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a5f8a2790ef4d7b1539b711a4964a6b10}{SetValue}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ SubAddress,\ \textcolor{keyword}{const}\ uint8\_t*\ Data,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\&\ DataLength\_in\_bit,\ \textcolor{keyword}{const}\ uint8\_t\&\ StartBit\ =\ 0);}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a94fc2280ca22d053f9b135338a3d291c}{SetValueSerialDevice}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ SubAddress,\ \textcolor{keyword}{const}\ uint8\_t*\ Data,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\&\ DataLength\_in\_bit,\ \textcolor{keyword}{const}\ uint8\_t\&\ StartBit\ =\ 0);}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_ab7171666e35ae8e3f4cfeca2c3ed4385}{SetRegisterSerialDevice}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ SubAddress,\ \textcolor{keyword}{const}\ uint8\_t*\ Data,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\&\ DataLength\_in\_bit,\ \textcolor{keyword}{const}\ uint8\_t\&\ StartBit\ =\ 0);}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a559c22b0fee213f47cc2bcfac3570138}{Wait\_ms}})(\textcolor{keywordtype}{double}\ time\_in\_ms);}
+\DoxyCodeLine{00284\ }
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a221429e81929d758713b37ef122e6675}{GetTime\_ms}})(\textcolor{keywordtype}{double}\&\ time\_in\_ms);}
+\DoxyCodeLine{00289\ }
+\DoxyCodeLine{00290\ }
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_ae89d33bd59c5669016e4694ae249bd0c}{CLA\_FNDEF}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a21be816bc7405b76d68549abf1837ebd}{GetTimeOfSequencer\_ms}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keywordtype}{double}\&\ time\_in\_ms);}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_ae89d33bd59c5669016e4694ae249bd0c}{CLA\_FNDEF}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a659cc537a03ff9e172efbfee6b8f29fe}{GetTimeDebtOfSequencer\_ms}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keywordtype}{double}\&\ time\_debt\_in\_ms);}
+\DoxyCodeLine{00302\ }
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \textcolor{comment}{//the\ following\ are\ convenience\ functions,\ which\ allow\ us\ to\ define\ nice\ names\ to\ the\ few\ most\ important\ functions}}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \textcolor{comment}{//You\ can\ add\ as\ many\ convenience\ functions\ as\ you\ like.\ Make\ sure\ to\ copy\ them\ also\ into\ the\ list\ of\ convenience\ functions\ in\ CDevice,\ CDevice.h,\ to\ assure\ they\ can\ always\ be\ called\ in\ any\ device.}}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Then\ define\ them\ in\ the\ device\ that\ provides\ the\ function.\ In\ this\ way\ we\ use\ the\ inheritance\ mechanism\ to\ automatically\ check\ if\ the\ function\ is\ available\ in\ the\ device\ and\ )(optionally)\ produce\ an\ error\ if\ not.}}
+\DoxyCodeLine{00306\ }
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Analog\ out}}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Convenience\ functions\ to\ easily\ access\ the\ most\ important\ functions\ of\ the\ devices}}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Analog\ out}}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a94082ed5fabf2e2f1fdb9ddff5e3f927}{SetVoltage}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ \textcolor{keywordtype}{double}\ Voltage);}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Digital\ out}}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_aafc22ae54400ca0dac7c5ae2c9a5323e}{SetDigitalOutput}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ uint8\_t\ BitNr,\ \textcolor{keywordtype}{bool}\ OnOff);}
+\DoxyCodeLine{00323\ }
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \textcolor{comment}{//AD9854}}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_aeaefe9e4f0c4d23e645cdbd5ee32ce0a}{SetStartFrequency}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ \textcolor{keywordtype}{double}\ Frequency);}
+\DoxyCodeLine{00331\ }
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_ad489aba20c7cdadcc9686fe4a7491e2d}{SetStopFrequency}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ \textcolor{keywordtype}{double}\ Frequency);}
+\DoxyCodeLine{00338\ }
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a0949f1333682c8a43913831669155d65}{SetModulationFrequency}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ \textcolor{keywordtype}{double}\ Frequency);}
+\DoxyCodeLine{00345\ }
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a0bf8ab1ba1ef75a7ffe7a6cf9122b30d}{SetPower}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ \textcolor{keywordtype}{double}\ Power);}
+\DoxyCodeLine{00352\ }
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a3dd0fc517153ec5ba8507c7e799942aa}{SetAttenuation}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ \textcolor{keywordtype}{double}\ Attenuation);}
+\DoxyCodeLine{00359\ }
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a9bd59aedb811a015970e0be2bea8b124}{SetStartFrequencyTuningWord}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ uint64\_t\ FrequencyTuningWord);}
+\DoxyCodeLine{00366\ }
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a644830db2c0da6c7eb0008bff6cd025a}{SetStopFrequencyTuningWord}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ uint64\_t\ FrequencyTuningWord);}
+\DoxyCodeLine{00373\ }
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a04caf38d2f875d81db071c501665bd52}{SetFSKMode}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ uint8\_t\ mode);}
+\DoxyCodeLine{00380\ }
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a45c53df7b4c759187b6d3f5981056a09}{SetRampRateClock}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ uint8\_t\ rate);}
+\DoxyCodeLine{00387\ }
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_adf175ebeaa66ad48a1d628fc80709d1a}{SetClearACC1}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ \textcolor{keywordtype}{bool}\ OnOff);}
+\DoxyCodeLine{00394\ }
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_ade90a369329eaf77f7f4611f05ca093b}{SetTriangleBit}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ \textcolor{keywordtype}{bool}\ OnOff);}
+\DoxyCodeLine{00401\ }
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a13fdb690bdb322e5d8d90d0d4cb5ea2d}{SetFSKBit}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ \textcolor{keywordtype}{bool}\ OnOff);}
+\DoxyCodeLine{00408\ }
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ \textcolor{comment}{//AD9858}}
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_adebc9e720e4b0afda1c4b980fbc11459}{SetFrequency}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ \textcolor{keywordtype}{double}\ Frequency);}
+\DoxyCodeLine{00417\ }
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a4deeeed623c85a57469dae267fc009e9}{SetFrequencyTuningWord}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ uint64\_t\ FrequencyTuningWord);}
+\DoxyCodeLine{00424\ }
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \textcolor{comment}{//those\ two\ functions\ have\ been\ defined\ already\ in\ the\ context\ of\ the\ AD9854,\ so\ we\ don't\ need\ to\ redefine\ them\ here}}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ \textcolor{comment}{//API\_EXPORT\ ERROR\_CODE\_TYPE\ CLA\_FN(SetPower)(const\ unsigned\ int\&\ Sequencer,\ const\ unsigned\ int\&\ Address,\ double\ Power);//same\ as\ for\ AD9854,\ no\ need\ to\ redefine}}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \textcolor{comment}{//API\_EXPORT\ ERROR\_CODE\_TYPE\ CLA\_FN(SetAttenuation)(const\ unsigned\ int\&\ Sequencer,\ const\ unsigned\ int\&\ Address,\ double\ Power);}}
+\DoxyCodeLine{00428\ }
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \textcolor{comment}{//AD9958}}
+\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a36fa5bbf98b9f2680225d630a3319636}{SetFrequencyOfChannel}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ uint8\_t\ channel,\ \textcolor{keywordtype}{double}\ Frequency);}
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_ab864571d668680c9096085c5ed337592}{SetFrequencyTuningWordOfChannel}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ uint8\_t\ channel,\ uint64\_t\ FrequencyTuningWord);}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a3d8f917be9190e50af5d548416f9fcd7}{SetPhaseOfChannel}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ uint8\_t\ channel,\ \textcolor{keywordtype}{double}\ Phase);}
+\DoxyCodeLine{00453\ }
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a561caef491d5510871c71610620cd317}{SetPowerOfChannel}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Address,\ uint8\_t\ channel,\ \textcolor{keywordtype}{double}\ Power);}
+\DoxyCodeLine{00461\ }
+\DoxyCodeLine{00462\ }
+\DoxyCodeLine{00463\ }
+\DoxyCodeLine{00464\ }
+\DoxyCodeLine{00465\ }
+\DoxyCodeLine{00466\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ once\ the\ sequence\ is\ assembled,\ then\ execute\ it\ }}
+\DoxyCodeLine{00470\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_abeddda80e86e53e54428d759a8a7936c}{ExecuteSequence}})();}
+\DoxyCodeLine{00471\ }
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ \textcolor{comment}{//check\ how\ far\ the\ sequence\ has\ been\ executed}}
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_ae827da631cb9135289137a331bc3e3a9}{GetSequenceExecutionStatus}})(\textcolor{keywordtype}{bool}\&\ running,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{long}\&\ DataPointsWritten);}
+\DoxyCodeLine{00477\ }
+\DoxyCodeLine{00478\ \ \ \ \ \ \ \ \ \textcolor{comment}{//Wait\ till\ the\ sequence\ is\ finished,\ and\ get\ the\ data\ from\ the\ input\ devices}}
+\DoxyCodeLine{00484\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_ae11c2f457429ac307cee5322e091eb7c}{WaitTillEndOfSequenceThenGetInputData}})(uint8\_t*\&\ buffer,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\&\ buffer\_length,\ \textcolor{keywordtype}{unsigned}\ \ \textcolor{keywordtype}{long}\&\ EndTimeOfCycle,\ \textcolor{keywordtype}{double}\ timeout\_in\_s);}
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a6ae5f98b269cf285416e23dbd2928946}{SetTimeDebtGuard\_in\_ms}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\&\ MaxTimeDebt\_in\_ms);}
+\DoxyCodeLine{00490\ }
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a6946fdb3fdd2440bd73aee6f72b0501e}{SequencerStartAnalogInAcquisition}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keyword}{const}\ uint8\_t\&\ ChannelNumber,\ \textcolor{keyword}{const}\ uint32\_t\&\ NumberOfDataPoints,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\&\ DelayBetweenDataPoints\_in\_ms);}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00513\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_acdff3dba475709add5fd0048e7f4a949}{SequencerWriteInputMemory}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ input\_buf\_mem\_data,\ \textcolor{keywordtype}{bool}\ write\_next\_address\ =\ 1,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ input\_buf\_mem\_address\ =\ 0);}
+\DoxyCodeLine{00514\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00518\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a4984974edc2acf116b3d5921e909b6fd}{SequencerWriteSystemTimeToInputMemory}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer);}
+\DoxyCodeLine{00519\ }
+\DoxyCodeLine{00524\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_ae7807aa91bd081ff8dd83522fbddff94}{SequencerSwitchDebugLED}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ OnOff);}
+\DoxyCodeLine{00525\ }
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a72f33e9b346a9b89489678dca5e7908f}{SequencerIgnoreTCPIP}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keywordtype}{bool}\ OnOff);}
+\DoxyCodeLine{00534\ }
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a5fd6294ae4f463293e5b4ac8ca5f5f29}{SequencerAddMarker}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ Sequencer,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ marker);}
+\DoxyCodeLine{00539\ }
+\DoxyCodeLine{00540\ }
+\DoxyCodeLine{00541\ }
+\DoxyCodeLine{00542\ }
+\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ \textcolor{comment}{//the\ following\ functions\ are\ used\ to\ add\ devices\ to\ the\ sequencer.\ I\ placed\ them\ here\ to\ aAPI\_EXPORT\ void\ clutter\ above.\ They\ have\ to\ be\ called\ before\ Initialize)().\ \ }}
+\DoxyCodeLine{00557\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a83ca1191c0cd2236753caccbc688ccc8}{AddDeviceSequencer}})(}
+\DoxyCodeLine{00558\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ id,}
+\DoxyCodeLine{00559\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ type,}
+\DoxyCodeLine{00560\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ ip,}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ port,}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ master,}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ startDelay,}
+\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ clockFrequency,}
+\DoxyCodeLine{00565\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ FPGAClockToBusClockRatio,}
+\DoxyCodeLine{00566\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ useExternalClock,}
+\DoxyCodeLine{00567\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ useStrobeGenerator,}
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ connect);}
+\DoxyCodeLine{00569\ }
+\DoxyCodeLine{00578\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_a9b9d47663058740484d1b6c772967567}{AddDeviceAnalogOut16bit}})(}
+\DoxyCodeLine{00579\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ sequencer,}
+\DoxyCodeLine{00580\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ startAddress,}
+\DoxyCodeLine{00581\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ numberChannels,}
+\DoxyCodeLine{00582\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ signedValue,}
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ minVoltage,}
+\DoxyCodeLine{00584\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ maxVoltage);}
+\DoxyCodeLine{00585\ }
+\DoxyCodeLine{00591\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_ac4890589c0e5b5b4cb59d7ccd3f5606c}{AddDeviceDigitalOut}})(}
+\DoxyCodeLine{00592\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ sequencer,}
+\DoxyCodeLine{00593\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ address,}
+\DoxyCodeLine{00594\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ numberChannels);}
+\DoxyCodeLine{00595\ }
+\DoxyCodeLine{00596\ }
+\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_af2e5d254aaad92f36a124ff029994fec}{AddDeviceAD9854}})(}
+\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ sequencer,}
+\DoxyCodeLine{00607\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ address,}
+\DoxyCodeLine{00608\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ version,}
+\DoxyCodeLine{00609\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ externalClockFrequency,}
+\DoxyCodeLine{00610\ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ PLLReferenceMultiplier,}
+\DoxyCodeLine{00611\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ frequencyMultiplier);}
+\DoxyCodeLine{00612\ }
+\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_acdbe85dfdbc1ba43905be7c1e63334d2}{AddDeviceAD9858}})(}
+\DoxyCodeLine{00620\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ sequencer,}
+\DoxyCodeLine{00621\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ address,}
+\DoxyCodeLine{00622\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ externalClockFrequency,}
+\DoxyCodeLine{00623\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ frequencyMultiplier);}
+\DoxyCodeLine{00624\ }
+\DoxyCodeLine{00632\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_control_a_p_i_8h_a5e3652cae8b48c1ad174f0b06bbd06d0}{API\_EXPORT}}\ \mbox{\hyperlink{_control_a_p_i_8h_aeb04e3165c1e12a3653ac311ee466995}{ERROR\_CODE\_TYPE}}\ \mbox{\hyperlink{_control_a_p_i_8h_a508a3fd47b47db49be429d0149e6df38}{CLA\_FN}}(\mbox{\hyperlink{_control_a_p_i_8cpp_aa6f77c364b5e13820a3b84cd7a9e517e}{AddDeviceAnalogIn12bit}})(}
+\DoxyCodeLine{00633\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ sequencer,}
+\DoxyCodeLine{00634\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ chipSelect,}
+\DoxyCodeLine{00635\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ signedValue,}
+\DoxyCodeLine{00636\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ minVoltage,}
+\DoxyCodeLine{00637\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ maxVoltage);}
+\DoxyCodeLine{00638\ }
+\DoxyCodeLine{00639\ }
+\DoxyCodeLine{00640\ \textcolor{preprocessor}{\#ifdef\ API\_CLASS}}
+\DoxyCodeLine{00641\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00642\ }
+\DoxyCodeLine{00643\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00644\ \ \ \ \ }
+\DoxyCodeLine{00645\ }
+\DoxyCodeLine{00646\ \textcolor{preprocessor}{\#ifdef\ C\_API}}
+\DoxyCodeLine{00647\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00648\ \}}
+\DoxyCodeLine{00649\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00650\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00651\ \textcolor{preprocessor}{\#ifdef\ NAMESPACE\_CLA}}
+\DoxyCodeLine{00652\ \ \ \ \ \}\ \textcolor{comment}{//option\ namespace\ CLA}}
+\DoxyCodeLine{00653\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00654\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

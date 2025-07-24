@@ -1,0 +1,506 @@
+\doxysection{CDevice\+Sequencer Class Reference}
+\hypertarget{class_c_device_sequencer}{}\label{class_c_device_sequencer}\index{CDeviceSequencer@{CDeviceSequencer}}
+
+
+{\ttfamily \#include $<$CDevice\+Sequencer.\+h$>$}
+
+Inheritance diagram for CDevice\+Sequencer\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_c_device_sequencer}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{class_c_device_sequencer_aa679902977ccb1859873f2394dea74da}{Is\+Master}} ()
+\item 
+\mbox{\hyperlink{class_c_device_sequencer_aa0d293c8540f4f3ca712f08bd9ef4375}{CDevice\+Sequencer}} (unsigned int \+\_\+id, std\+::string \+\_\+type, std\+::string \+\_\+ip, unsigned int \+\_\+port, bool \+\_\+master, unsigned int \+\_\+start\+Delay, double \+\_\+clock\+Frequency, unsigned int \+\_\+\+FPGAClock\+To\+Bus\+Clock\+Ratio, bool \+\_\+use\+External\+Clock, bool \+\_\+use\+Strobe\+Generator, bool \+\_\+connect)
+\item 
+virtual \mbox{\hyperlink{class_c_device_sequencer_af646da917bbb922c7928dcca66add13c}{\texorpdfstring{$\sim$}{\string~}\+CDevice\+Sequencer}} ()
+\item 
+void \mbox{\hyperlink{class_c_device_sequencer_a081de4aec74b72961b732e32777ae36e}{Initialize}} (unsigned long \+\_\+\+PCBuffer\+Size\+\_\+in\+\_\+u64)
+\item 
+void \mbox{\hyperlink{class_c_device_sequencer_a10854f6a6ca1deec6752a58848bea582}{Switch\+Debug\+Mode}} (bool On\+Off, const std\+::string \&File\+Name)
+\item 
+bool \mbox{\hyperlink{class_c_device_sequencer_a75982403171bb9af945ca0529daec267}{Is\+Sequencer\+Connected}} ()
+\item 
+void \mbox{\hyperlink{class_c_device_sequencer_a5a451f8a11a1da169fff225b927c392d}{Start\+Assembling\+Sequence}} ()
+\item 
+void \mbox{\hyperlink{class_c_device_sequencer_a5ea0e37bc768afd178a0680596d2cb75}{Send\+Sequence\+To\+FPGA}} ()
+\item 
+void \mbox{\hyperlink{class_c_device_sequencer_ae12a1e70fc37e10979ff0acccc3ea12a}{Get\+Buffer\+Length}} (uint32\+\_\+t \&Filled\+Buffer\+Length, uint32\+\_\+t \&Max\+Buffer\+Length)
+\item 
+void \mbox{\hyperlink{class_c_device_sequencer_a1991feaf7cc573121697ccb9b7b9323d}{Send\+Start\+Sequence\+Command}} ()
+\item 
+bool \mbox{\hyperlink{class_c_device_sequencer_a16122a420c693e74ab8868fb1d38895f}{Is\+Sequence\+Running}} (bool \&running, unsigned long long \&Data\+Points\+Written)
+\item 
+bool \mbox{\hyperlink{class_c_device_sequencer_a163c503d4c7e4629e84eeb7eadcd9db8}{Wait\+Till\+End\+Of\+Sequence\+Then\+Get\+Input\+Data}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}\&buffer, unsigned long \&buffer\+\_\+length, unsigned long \&End\+Time\+Of\+Cycle, double timeout\+\_\+in\+\_\+s)
+\item 
+void \mbox{\hyperlink{class_c_device_sequencer_ab352a413fa6d48c9cc03faf57c8cfa32}{Add\+Command\+To\+Sequence}} (const uint32\+\_\+t \&high\+\_\+word, const uint32\+\_\+t \&low\+\_\+word)
+\item 
+void \mbox{\hyperlink{class_c_device_sequencer_acccb21e905a84f6dd954feb4318db086}{Write\+Bus\+Address\+And\+Data\+To\+Buffer}} (const uint16\+\_\+t \&Multi\+IOAddress, const uint16\+\_\+t \&Data)
+\item 
+void \mbox{\hyperlink{class_c_device_sequencer_a9a6701de6951ae59c599bf91edbcf29a}{Add\+Bus\+Command\+And\+Wait}} (uint32\+\_\+t data, uint32\+\_\+t delay)
+\item 
+void \mbox{\hyperlink{class_c_device_sequencer_a9ad684a1cd8866041f8af665851e61fd}{Add\+Bus\+Command\+To\+Sequence}} (const uint32\+\_\+t \&content)
+\item 
+bool \mbox{\hyperlink{class_c_device_sequencer_a325e2daaa28615bc44b27db0a4c3f377}{Set\+Value\+\_\+\+Sequencer}} (const unsigned int \&Address, const unsigned int \&Sub\+Address, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}Data, const unsigned long \&Data\+Length\+\_\+in\+\_\+bit, const uint8\+\_\+t \&Start\+Bit)
+\item 
+bool \mbox{\hyperlink{class_c_device_sequencer_ad9d968a730304e75c9e07255dedd003c}{Set\+Register\+\_\+\+Sequencer}} (const unsigned int \&Address, const unsigned int \&Sub\+Address, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}Data, const unsigned long \&Data\+Length\+\_\+in\+\_\+bit, const uint8\+\_\+t \&Start\+Bit)
+\item 
+bool \mbox{\hyperlink{class_c_device_sequencer_aeca54301a0e2e5b33afb0a5717886092}{Set\+Value\+Serial\+Device\+\_\+\+Sequencer}} (const unsigned int \&Address, const unsigned int \&Sub\+Address, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}Data, const unsigned long \&Data\+Length\+\_\+in\+\_\+bit, const uint8\+\_\+t \&Start\+Bit)
+\item 
+bool \mbox{\hyperlink{class_c_device_sequencer_aca4336ad38174dacb145def7ef35317d}{Set\+Register\+Serial\+Device\+\_\+\+Sequencer}} (const unsigned int \&Address, const unsigned int \&Sub\+Address, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}Data, const unsigned long \&Data\+Length\+\_\+in\+\_\+bit, const uint8\+\_\+t \&Start\+Bit)
+\item 
+bool \mbox{\hyperlink{class_c_device_sequencer_ab83a12612bc8d09574a43c356cc8a9df}{Wait\+\_\+ms}} (double time\+\_\+in\+\_\+ms)
+\item 
+double \mbox{\hyperlink{class_c_device_sequencer_a43d39126fb474e9143569c720af1efea}{Get\+Time\+\_\+ms}} ()
+\item 
+double \mbox{\hyperlink{class_c_device_sequencer_a07ebfe1673db09c97de7b88ed513fe52}{Get\+Time\+Debt\+\_\+ms}} ()
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_sequencer_a0fae9f67b03f5360821e4aee8e0e5f14}{Set\+Value}} (const unsigned int \&Sub\+Address, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}Data, const unsigned long \&Data\+Length\+\_\+in\+\_\+bit, const uint8\+\_\+t \&Start\+Bit)
+\item 
+void \mbox{\hyperlink{class_c_device_sequencer_af4c40f6efe0f315ceafe15c07d8626c2}{Sequencer\+Start\+Analog\+In\+Acquisition}} (const uint8\+\_\+t \&Channel\+Number, const uint32\+\_\+t \&Number\+Of\+Data\+Points, const double \&Delay\+Between\+Data\+Points\+\_\+in\+\_\+ms)
+\item 
+void \mbox{\hyperlink{class_c_device_sequencer_af7ed0331caa0c2b1b59d81b70c23545e}{Sequencer\+Write\+Input\+Memory}} (unsigned long input\+\_\+buf\+\_\+mem\+\_\+data, bool write\+\_\+next\+\_\+address=1, unsigned long input\+\_\+buf\+\_\+mem\+\_\+address=0)
+\item 
+void \mbox{\hyperlink{class_c_device_sequencer_a22f66dda6b836fe5c7b24ade065888ae}{Sequencer\+Write\+System\+Time\+To\+Input\+Memory}} ()
+\item 
+void \mbox{\hyperlink{class_c_device_sequencer_a1f4dc1ed13ba3cb5d9687f930163ec53}{Sequencer\+Switch\+Debug\+LED}} (unsigned int On\+Off)
+\item 
+void \mbox{\hyperlink{class_c_device_sequencer_af45d2dcd8aaa3ddf081c9d88d4d60938}{Sequencer\+Ignore\+TCPIP}} (bool On\+Off)
+\item 
+void \mbox{\hyperlink{class_c_device_sequencer_ae9c5f92c61a044f962942fcabcbb06c9}{Sequencer\+Add\+Marker}} (unsigned char marker)
+\item 
+void \mbox{\hyperlink{class_c_device_sequencer_a65193d6c01cceaad58fac3eba624dac0}{Sequencer\+Set\+Time\+Debt\+Guard\+\_\+in\+\_\+ms}} (const double \&Max\+Time\+Debt\+\_\+in\+\_\+ms)
+\item 
+\mbox{\hyperlink{class_c_device}{CDevice}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_c_device_sequencer_a042e1078c71ca62771140acb4b60f7e7}{Get\+Parallel\+Bus\+Device}} (const unsigned int \&Address)
+\item 
+\mbox{\hyperlink{class_c_device}{CDevice}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_c_device_sequencer_ada57fb75303e4b7cf363e9a2e685cac7}{Get\+Serial\+Bus\+Device}} (const unsigned int \&Address)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_c_device}{CDevice}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_c_device_ab2a002fb6c828f07e8aebcd7dbf2cd00}{CDevice}} (\mbox{\hyperlink{class_c_device_sequencer}{CDevice\+Sequencer}} \texorpdfstring{$\ast$}{*}\+\_\+\+My\+Sequencer=nullptr, unsigned long \+\_\+\+My\+Address=0, const std\+::string \+\_\+\+My\+Type="{}"{})
+\item 
+virtual \mbox{\hyperlink{class_c_device_aa3ec8544aad768caa0c45b53c8915e0f}{\texorpdfstring{$\sim$}{\string~}\+CDevice}} ()=default
+\item 
+void \mbox{\hyperlink{class_c_device_ae264c8d243df334f353bae8efb99c614}{Notify\+Error}} (const std\+::string \&Error\+Message)
+\item 
+void \mbox{\hyperlink{class_c_device_abad094121bde679b4a68858b1a0e1c32}{Clear\+Error}} ()
+\item 
+bool \mbox{\hyperlink{class_c_device_acaaa125920dec9e7f9f6b3d6a2225058}{Error\+Occured}} ()
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_aed9d8c451787c53bf398292a57b20a99}{Set\+Register}} (const unsigned int \&Sub\+Address, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}Data, const unsigned long \&Data\+Length\+\_\+in\+\_\+bit, const uint8\+\_\+t \&Start\+Bit)
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_a157c99b6b8d061e54ab2920a89711e6f}{Set\+Voltage}} (double Voltage)
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_a671cf9349a711df3da9e655dc2928a84}{Set\+Digital\+Output}} (uint8\+\_\+t Bit\+Nr, bool On\+Off)
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_aaa3e13859985f358428c4d51bafc37d3}{Set\+Start\+Frequency}} (double Frequency)
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_af0ac58636967e468139ea4ec7776b912}{Set\+Stop\+Frequency}} (double Frequency)
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_ac9f2d8bc4810171cc290332dcf5aea77}{Set\+Modulation\+Frequency}} (double Frequency)
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_a896e79990b77c5702bcacf217ebd8180}{Set\+Power}} (double Power)
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_abb0dc967e558b1e3218fb00c368e927f}{Set\+Attenuation}} (double Attenuation)
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_a266d2caa2f23ebc437e9cb26bf2ec3ad}{Set\+Start\+Frequency\+Tuning\+Word}} (uint64\+\_\+t)
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_a60446e9222919ecb7f7c8f9e7c72ee43}{Set\+Stop\+Frequency\+Tuning\+Word}} (uint64\+\_\+t)
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_a5201f16fcc101d6594d33d0463664519}{Set\+FSKMode}} (uint8\+\_\+t mode)
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_a8e233a94cc5c177260a319ae158c3504}{Set\+Ramp\+Rate\+Clock}} (int rate)
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_a7dc7cc4daab1c6e27468d7366a449e85}{Set\+Clear\+ACC1}} (bool)
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_aa19bf3d0655119902bac344b8c4c5a2c}{Set\+Triangle\+Bit}} (bool)
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_acef2ccddac12d4203fb363c1b18fdbe9}{Set\+FSKBit}} (bool)
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_ae8204d9f4edb81f19af2ceaeee04d65e}{Set\+Frequency}} (double Frequency)
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_a2f948d164b6177a355b9f47a39d3a758}{Set\+Frequency\+Tuning\+Word}} (uint64\+\_\+t Frequency\+Tuning\+Word)
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_a537b4320f28a041f7c792cd8ee980489}{Set\+Frequency}} (uint8\+\_\+t channel, double Frequency)
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_a20124b1ebdce4ad278e9441c33a25df6}{Set\+Frequency\+Tuning\+Word}} (uint8\+\_\+t channel, uint64\+\_\+t Frequency\+Tuning\+Word)
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_a4972e649a5c5e33b1e2b19d4d977be1b}{Set\+Phase}} (uint8\+\_\+t channel, double Phase)
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_af08e809e1fe88612656716fef5055256}{Set\+Power}} (uint8\+\_\+t channel, double Power)
+\item 
+virtual bool \mbox{\hyperlink{class_c_device_ad5976661247c2d2a64fe6800be5ae0bc}{Set\+Attenuation}} (uint8\+\_\+t channel, double Power)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+unsigned int \mbox{\hyperlink{class_c_device_sequencer_a501dfd73602558e66977641d6296adfc}{id}}
+\item 
+std\+::string \mbox{\hyperlink{class_c_device_sequencer_a325e75933aa20ab3f46db3ef1c015bfc}{type}}
+\item 
+std\+::string \mbox{\hyperlink{class_c_device_sequencer_ab872c2285452d0aa858d14c14c057faa}{ip}}
+\item 
+unsigned int \mbox{\hyperlink{class_c_device_sequencer_a0249d89b3c0f35de38e51be006c1c777}{port}}
+\item 
+bool \mbox{\hyperlink{class_c_device_sequencer_a2007872507761fc8ab9941a96d58b455}{master}}
+\item 
+unsigned int \mbox{\hyperlink{class_c_device_sequencer_a5589062e5cd2525cb7e6567628127365}{start\+Delay}}
+\item 
+double \mbox{\hyperlink{class_c_device_sequencer_ad0b4a49fd334a754d3d3da62b7ee81d8}{clock\+Frequency}}
+\item 
+unsigned int \mbox{\hyperlink{class_c_device_sequencer_a97daacafd5c7147b4726fa9817e245c3}{FPGAClock\+To\+Bus\+Clock\+Ratio}}
+\item 
+bool \mbox{\hyperlink{class_c_device_sequencer_ae48a0da4e027ca8607a769630d5bc33d}{use\+External\+Clock}}
+\item 
+bool \mbox{\hyperlink{class_c_device_sequencer_af7614e368a833c743117573138080ae6}{use\+Strobe\+Generator}}
+\item 
+bool \mbox{\hyperlink{class_c_device_sequencer_a52584ca67a417eeeb50310541f79bca8}{connect}}
+\item 
+double \mbox{\hyperlink{class_c_device_sequencer_a55f9a66604df2870ae37aff441e7c4a1}{Bus\+Frequency}}
+\item 
+CEthernet\+Controller\+Firefly \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_c_device_sequencer_afe35c16dab9badb1defcbb2644b69d9c}{My\+Ethernet\+Multi\+IOController\+Firefly}}
+\item 
+\mbox{\hyperlink{class_c_device}{CDevice}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_c_device_sequencer_a7e74050c18cc7e9e8015f88861b2e454}{Parallel\+Bus\+Device\+List}} \mbox{[}\mbox{\hyperlink{class_c_device_sequencer_a442061907ecaaf27c3a7e9171b597e72}{Max\+Parallel\+Bus\+Devices}}\mbox{]}
+\item 
+\mbox{\hyperlink{class_c_device}{CDevice}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_c_device_sequencer_acf65ed8d96c6f6c5afce93ced1693a85}{Serial\+Bus\+Device\+List}} \mbox{[}\mbox{\hyperlink{class_c_device_sequencer_a5155e6ccb4538489ff41a271344d6631}{Max\+Serial\+Bus\+Devices}}\mbox{]}
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes inherited from \mbox{\hyperlink{class_c_device}{CDevice}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_c_device_sequencer}{CDevice\+Sequencer}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_c_device_a381f3a4f11fb87aadc77bcdc4524e33f}{My\+Sequencer}}
+\item 
+unsigned long \mbox{\hyperlink{class_c_device_a7c5003e9b61986c46f6aa9ffd31324f3}{My\+Address}}
+\item 
+std\+::string \mbox{\hyperlink{class_c_device_aaa6670dcb90af191c31aef9d88dbdcce}{My\+Type}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const unsigned int \mbox{\hyperlink{class_c_device_sequencer_a442061907ecaaf27c3a7e9171b597e72}{Max\+Parallel\+Bus\+Devices}} = 8 \texorpdfstring{$\ast$}{*} 256 + 1
+\item 
+static const unsigned int \mbox{\hyperlink{class_c_device_sequencer_a5155e6ccb4538489ff41a271344d6631}{Max\+Serial\+Bus\+Devices}} = 8
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_c_device_sequencer_aa0d293c8540f4f3ca712f08bd9ef4375}\index{CDeviceSequencer@{CDeviceSequencer}!CDeviceSequencer@{CDeviceSequencer}}
+\index{CDeviceSequencer@{CDeviceSequencer}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{CDeviceSequencer()}{CDeviceSequencer()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_aa0d293c8540f4f3ca712f08bd9ef4375} 
+CDevice\+Sequencer\+::\+CDevice\+Sequencer (\begin{DoxyParamCaption}\item[{unsigned int}]{\+\_\+id}{, }\item[{std\+::string}]{\+\_\+type}{, }\item[{std\+::string}]{\+\_\+ip}{, }\item[{unsigned int}]{\+\_\+port}{, }\item[{bool}]{\+\_\+master}{, }\item[{unsigned int}]{\+\_\+start\+Delay}{, }\item[{double}]{\+\_\+clock\+Frequency}{, }\item[{unsigned int}]{\+\_\+\+FPGAClock\+To\+Bus\+Clock\+Ratio}{, }\item[{bool}]{\+\_\+use\+External\+Clock}{, }\item[{bool}]{\+\_\+use\+Strobe\+Generator}{, }\item[{bool}]{\+\_\+connect}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_af646da917bbb922c7928dcca66add13c}\index{CDeviceSequencer@{CDeviceSequencer}!````~CDeviceSequencer@{\texorpdfstring{$\sim$}{\string~}CDeviceSequencer}}
+\index{````~CDeviceSequencer@{\texorpdfstring{$\sim$}{\string~}CDeviceSequencer}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}CDeviceSequencer()}{\string~CDeviceSequencer()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_af646da917bbb922c7928dcca66add13c} 
+CDevice\+Sequencer\+::\texorpdfstring{$\sim$}{\string~}\+CDevice\+Sequencer (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_c_device_sequencer_a9a6701de6951ae59c599bf91edbcf29a}\index{CDeviceSequencer@{CDeviceSequencer}!AddBusCommandAndWait@{AddBusCommandAndWait}}
+\index{AddBusCommandAndWait@{AddBusCommandAndWait}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{AddBusCommandAndWait()}{AddBusCommandAndWait()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a9a6701de6951ae59c599bf91edbcf29a} 
+void CDevice\+Sequencer\+::\+Add\+Bus\+Command\+And\+Wait (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{data}{, }\item[{uint32\+\_\+t}]{delay}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_a9ad684a1cd8866041f8af665851e61fd}\index{CDeviceSequencer@{CDeviceSequencer}!AddBusCommandToSequence@{AddBusCommandToSequence}}
+\index{AddBusCommandToSequence@{AddBusCommandToSequence}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{AddBusCommandToSequence()}{AddBusCommandToSequence()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a9ad684a1cd8866041f8af665851e61fd} 
+void CDevice\+Sequencer\+::\+Add\+Bus\+Command\+To\+Sequence (\begin{DoxyParamCaption}\item[{const uint32\+\_\+t \&}]{content}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_ab352a413fa6d48c9cc03faf57c8cfa32}\index{CDeviceSequencer@{CDeviceSequencer}!AddCommandToSequence@{AddCommandToSequence}}
+\index{AddCommandToSequence@{AddCommandToSequence}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{AddCommandToSequence()}{AddCommandToSequence()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_ab352a413fa6d48c9cc03faf57c8cfa32} 
+void CDevice\+Sequencer\+::\+Add\+Command\+To\+Sequence (\begin{DoxyParamCaption}\item[{const uint32\+\_\+t \&}]{high\+\_\+word}{, }\item[{const uint32\+\_\+t \&}]{low\+\_\+word}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_ae12a1e70fc37e10979ff0acccc3ea12a}\index{CDeviceSequencer@{CDeviceSequencer}!GetBufferLength@{GetBufferLength}}
+\index{GetBufferLength@{GetBufferLength}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{GetBufferLength()}{GetBufferLength()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_ae12a1e70fc37e10979ff0acccc3ea12a} 
+void CDevice\+Sequencer\+::\+Get\+Buffer\+Length (\begin{DoxyParamCaption}\item[{uint32\+\_\+t \&}]{Filled\+Buffer\+Length}{, }\item[{uint32\+\_\+t \&}]{Max\+Buffer\+Length}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_a042e1078c71ca62771140acb4b60f7e7}\index{CDeviceSequencer@{CDeviceSequencer}!GetParallelBusDevice@{GetParallelBusDevice}}
+\index{GetParallelBusDevice@{GetParallelBusDevice}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{GetParallelBusDevice()}{GetParallelBusDevice()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a042e1078c71ca62771140acb4b60f7e7} 
+\mbox{\hyperlink{class_c_device}{CDevice}} \texorpdfstring{$\ast$}{*} CDevice\+Sequencer\+::\+Get\+Parallel\+Bus\+Device (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Address}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_c_device_sequencer_ada57fb75303e4b7cf363e9a2e685cac7}\index{CDeviceSequencer@{CDeviceSequencer}!GetSerialBusDevice@{GetSerialBusDevice}}
+\index{GetSerialBusDevice@{GetSerialBusDevice}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{GetSerialBusDevice()}{GetSerialBusDevice()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_ada57fb75303e4b7cf363e9a2e685cac7} 
+\mbox{\hyperlink{class_c_device}{CDevice}} \texorpdfstring{$\ast$}{*} CDevice\+Sequencer\+::\+Get\+Serial\+Bus\+Device (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Address}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_c_device_sequencer_a43d39126fb474e9143569c720af1efea}\index{CDeviceSequencer@{CDeviceSequencer}!GetTime\_ms@{GetTime\_ms}}
+\index{GetTime\_ms@{GetTime\_ms}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{GetTime\_ms()}{GetTime\_ms()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a43d39126fb474e9143569c720af1efea} 
+double CDevice\+Sequencer\+::\+Get\+Time\+\_\+ms (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_a07ebfe1673db09c97de7b88ed513fe52}\index{CDeviceSequencer@{CDeviceSequencer}!GetTimeDebt\_ms@{GetTimeDebt\_ms}}
+\index{GetTimeDebt\_ms@{GetTimeDebt\_ms}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{GetTimeDebt\_ms()}{GetTimeDebt\_ms()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a07ebfe1673db09c97de7b88ed513fe52} 
+double CDevice\+Sequencer\+::\+Get\+Time\+Debt\+\_\+ms (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_c_device_sequencer_a081de4aec74b72961b732e32777ae36e}\index{CDeviceSequencer@{CDeviceSequencer}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{Initialize()}{Initialize()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a081de4aec74b72961b732e32777ae36e} 
+void CDevice\+Sequencer\+::\+Initialize (\begin{DoxyParamCaption}\item[{unsigned long}]{\+\_\+\+PCBuffer\+Size\+\_\+in\+\_\+u64}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_aa679902977ccb1859873f2394dea74da}\index{CDeviceSequencer@{CDeviceSequencer}!IsMaster@{IsMaster}}
+\index{IsMaster@{IsMaster}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{IsMaster()}{IsMaster()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_aa679902977ccb1859873f2394dea74da} 
+bool CDevice\+Sequencer\+::\+Is\+Master (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_c_device_sequencer_a75982403171bb9af945ca0529daec267}\index{CDeviceSequencer@{CDeviceSequencer}!IsSequencerConnected@{IsSequencerConnected}}
+\index{IsSequencerConnected@{IsSequencerConnected}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{IsSequencerConnected()}{IsSequencerConnected()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a75982403171bb9af945ca0529daec267} 
+bool CDevice\+Sequencer\+::\+Is\+Sequencer\+Connected (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_a16122a420c693e74ab8868fb1d38895f}\index{CDeviceSequencer@{CDeviceSequencer}!IsSequenceRunning@{IsSequenceRunning}}
+\index{IsSequenceRunning@{IsSequenceRunning}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{IsSequenceRunning()}{IsSequenceRunning()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a16122a420c693e74ab8868fb1d38895f} 
+bool CDevice\+Sequencer\+::\+Is\+Sequence\+Running (\begin{DoxyParamCaption}\item[{bool \&}]{running}{, }\item[{unsigned long long \&}]{Data\+Points\+Written}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_a5ea0e37bc768afd178a0680596d2cb75}\index{CDeviceSequencer@{CDeviceSequencer}!SendSequenceToFPGA@{SendSequenceToFPGA}}
+\index{SendSequenceToFPGA@{SendSequenceToFPGA}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{SendSequenceToFPGA()}{SendSequenceToFPGA()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a5ea0e37bc768afd178a0680596d2cb75} 
+void CDevice\+Sequencer\+::\+Send\+Sequence\+To\+FPGA (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_a1991feaf7cc573121697ccb9b7b9323d}\index{CDeviceSequencer@{CDeviceSequencer}!SendStartSequenceCommand@{SendStartSequenceCommand}}
+\index{SendStartSequenceCommand@{SendStartSequenceCommand}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{SendStartSequenceCommand()}{SendStartSequenceCommand()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a1991feaf7cc573121697ccb9b7b9323d} 
+void CDevice\+Sequencer\+::\+Send\+Start\+Sequence\+Command (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_ae9c5f92c61a044f962942fcabcbb06c9}\index{CDeviceSequencer@{CDeviceSequencer}!SequencerAddMarker@{SequencerAddMarker}}
+\index{SequencerAddMarker@{SequencerAddMarker}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{SequencerAddMarker()}{SequencerAddMarker()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_ae9c5f92c61a044f962942fcabcbb06c9} 
+void CDevice\+Sequencer\+::\+Sequencer\+Add\+Marker (\begin{DoxyParamCaption}\item[{unsigned char}]{marker}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_af45d2dcd8aaa3ddf081c9d88d4d60938}\index{CDeviceSequencer@{CDeviceSequencer}!SequencerIgnoreTCPIP@{SequencerIgnoreTCPIP}}
+\index{SequencerIgnoreTCPIP@{SequencerIgnoreTCPIP}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{SequencerIgnoreTCPIP()}{SequencerIgnoreTCPIP()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_af45d2dcd8aaa3ddf081c9d88d4d60938} 
+void CDevice\+Sequencer\+::\+Sequencer\+Ignore\+TCPIP (\begin{DoxyParamCaption}\item[{bool}]{On\+Off}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_a65193d6c01cceaad58fac3eba624dac0}\index{CDeviceSequencer@{CDeviceSequencer}!SequencerSetTimeDebtGuard\_in\_ms@{SequencerSetTimeDebtGuard\_in\_ms}}
+\index{SequencerSetTimeDebtGuard\_in\_ms@{SequencerSetTimeDebtGuard\_in\_ms}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{SequencerSetTimeDebtGuard\_in\_ms()}{SequencerSetTimeDebtGuard\_in\_ms()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a65193d6c01cceaad58fac3eba624dac0} 
+void CDevice\+Sequencer\+::\+Sequencer\+Set\+Time\+Debt\+Guard\+\_\+in\+\_\+ms (\begin{DoxyParamCaption}\item[{const double \&}]{Max\+Time\+Debt\+\_\+in\+\_\+ms}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_c_device_sequencer_af4c40f6efe0f315ceafe15c07d8626c2}\index{CDeviceSequencer@{CDeviceSequencer}!SequencerStartAnalogInAcquisition@{SequencerStartAnalogInAcquisition}}
+\index{SequencerStartAnalogInAcquisition@{SequencerStartAnalogInAcquisition}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{SequencerStartAnalogInAcquisition()}{SequencerStartAnalogInAcquisition()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_af4c40f6efe0f315ceafe15c07d8626c2} 
+void CDevice\+Sequencer\+::\+Sequencer\+Start\+Analog\+In\+Acquisition (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t \&}]{Channel\+Number}{, }\item[{const uint32\+\_\+t \&}]{Number\+Of\+Data\+Points}{, }\item[{const double \&}]{Delay\+Between\+Data\+Points\+\_\+in\+\_\+ms}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_a1f4dc1ed13ba3cb5d9687f930163ec53}\index{CDeviceSequencer@{CDeviceSequencer}!SequencerSwitchDebugLED@{SequencerSwitchDebugLED}}
+\index{SequencerSwitchDebugLED@{SequencerSwitchDebugLED}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{SequencerSwitchDebugLED()}{SequencerSwitchDebugLED()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a1f4dc1ed13ba3cb5d9687f930163ec53} 
+void CDevice\+Sequencer\+::\+Sequencer\+Switch\+Debug\+LED (\begin{DoxyParamCaption}\item[{unsigned int}]{On\+Off}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_af7ed0331caa0c2b1b59d81b70c23545e}\index{CDeviceSequencer@{CDeviceSequencer}!SequencerWriteInputMemory@{SequencerWriteInputMemory}}
+\index{SequencerWriteInputMemory@{SequencerWriteInputMemory}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{SequencerWriteInputMemory()}{SequencerWriteInputMemory()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_af7ed0331caa0c2b1b59d81b70c23545e} 
+void CDevice\+Sequencer\+::\+Sequencer\+Write\+Input\+Memory (\begin{DoxyParamCaption}\item[{unsigned long}]{input\+\_\+buf\+\_\+mem\+\_\+data}{, }\item[{bool}]{write\+\_\+next\+\_\+address}{ = {\ttfamily 1}, }\item[{unsigned long}]{input\+\_\+buf\+\_\+mem\+\_\+address}{ = {\ttfamily 0}}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_a22f66dda6b836fe5c7b24ade065888ae}\index{CDeviceSequencer@{CDeviceSequencer}!SequencerWriteSystemTimeToInputMemory@{SequencerWriteSystemTimeToInputMemory}}
+\index{SequencerWriteSystemTimeToInputMemory@{SequencerWriteSystemTimeToInputMemory}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{SequencerWriteSystemTimeToInputMemory()}{SequencerWriteSystemTimeToInputMemory()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a22f66dda6b836fe5c7b24ade065888ae} 
+void CDevice\+Sequencer\+::\+Sequencer\+Write\+System\+Time\+To\+Input\+Memory (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_ad9d968a730304e75c9e07255dedd003c}\index{CDeviceSequencer@{CDeviceSequencer}!SetRegister\_Sequencer@{SetRegister\_Sequencer}}
+\index{SetRegister\_Sequencer@{SetRegister\_Sequencer}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{SetRegister\_Sequencer()}{SetRegister\_Sequencer()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_ad9d968a730304e75c9e07255dedd003c} 
+bool CDevice\+Sequencer\+::\+Set\+Register\+\_\+\+Sequencer (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Address}{, }\item[{const unsigned int \&}]{Sub\+Address}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{Data}{, }\item[{const unsigned long \&}]{Data\+Length\+\_\+in\+\_\+bit}{, }\item[{const uint8\+\_\+t \&}]{Start\+Bit}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_aca4336ad38174dacb145def7ef35317d}\index{CDeviceSequencer@{CDeviceSequencer}!SetRegisterSerialDevice\_Sequencer@{SetRegisterSerialDevice\_Sequencer}}
+\index{SetRegisterSerialDevice\_Sequencer@{SetRegisterSerialDevice\_Sequencer}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{SetRegisterSerialDevice\_Sequencer()}{SetRegisterSerialDevice\_Sequencer()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_aca4336ad38174dacb145def7ef35317d} 
+bool CDevice\+Sequencer\+::\+Set\+Register\+Serial\+Device\+\_\+\+Sequencer (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Address}{, }\item[{const unsigned int \&}]{Sub\+Address}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{Data}{, }\item[{const unsigned long \&}]{Data\+Length\+\_\+in\+\_\+bit}{, }\item[{const uint8\+\_\+t \&}]{Start\+Bit}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_a0fae9f67b03f5360821e4aee8e0e5f14}\index{CDeviceSequencer@{CDeviceSequencer}!SetValue@{SetValue}}
+\index{SetValue@{SetValue}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{SetValue()}{SetValue()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a0fae9f67b03f5360821e4aee8e0e5f14} 
+bool CDevice\+Sequencer\+::\+Set\+Value (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Sub\+Address}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{Data}{, }\item[{const unsigned long \&}]{Data\+Length\+\_\+in\+\_\+bit}{, }\item[{const uint8\+\_\+t \&}]{Start\+Bit}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_c_device_a8e4c8e7c256a149d08debc49e190b27e}{CDevice}}.
+
+\Hypertarget{class_c_device_sequencer_a325e2daaa28615bc44b27db0a4c3f377}\index{CDeviceSequencer@{CDeviceSequencer}!SetValue\_Sequencer@{SetValue\_Sequencer}}
+\index{SetValue\_Sequencer@{SetValue\_Sequencer}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{SetValue\_Sequencer()}{SetValue\_Sequencer()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a325e2daaa28615bc44b27db0a4c3f377} 
+bool CDevice\+Sequencer\+::\+Set\+Value\+\_\+\+Sequencer (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Address}{, }\item[{const unsigned int \&}]{Sub\+Address}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{Data}{, }\item[{const unsigned long \&}]{Data\+Length\+\_\+in\+\_\+bit}{, }\item[{const uint8\+\_\+t \&}]{Start\+Bit}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_aeca54301a0e2e5b33afb0a5717886092}\index{CDeviceSequencer@{CDeviceSequencer}!SetValueSerialDevice\_Sequencer@{SetValueSerialDevice\_Sequencer}}
+\index{SetValueSerialDevice\_Sequencer@{SetValueSerialDevice\_Sequencer}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{SetValueSerialDevice\_Sequencer()}{SetValueSerialDevice\_Sequencer()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_aeca54301a0e2e5b33afb0a5717886092} 
+bool CDevice\+Sequencer\+::\+Set\+Value\+Serial\+Device\+\_\+\+Sequencer (\begin{DoxyParamCaption}\item[{const unsigned int \&}]{Address}{, }\item[{const unsigned int \&}]{Sub\+Address}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{Data}{, }\item[{const unsigned long \&}]{Data\+Length\+\_\+in\+\_\+bit}{, }\item[{const uint8\+\_\+t \&}]{Start\+Bit}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_a5a451f8a11a1da169fff225b927c392d}\index{CDeviceSequencer@{CDeviceSequencer}!StartAssemblingSequence@{StartAssemblingSequence}}
+\index{StartAssemblingSequence@{StartAssemblingSequence}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{StartAssemblingSequence()}{StartAssemblingSequence()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a5a451f8a11a1da169fff225b927c392d} 
+void CDevice\+Sequencer\+::\+Start\+Assembling\+Sequence (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_a10854f6a6ca1deec6752a58848bea582}\index{CDeviceSequencer@{CDeviceSequencer}!SwitchDebugMode@{SwitchDebugMode}}
+\index{SwitchDebugMode@{SwitchDebugMode}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{SwitchDebugMode()}{SwitchDebugMode()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a10854f6a6ca1deec6752a58848bea582} 
+void CDevice\+Sequencer\+::\+Switch\+Debug\+Mode (\begin{DoxyParamCaption}\item[{bool}]{On\+Off}{, }\item[{const std\+::string \&}]{File\+Name}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_ab83a12612bc8d09574a43c356cc8a9df}\index{CDeviceSequencer@{CDeviceSequencer}!Wait\_ms@{Wait\_ms}}
+\index{Wait\_ms@{Wait\_ms}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{Wait\_ms()}{Wait\_ms()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_ab83a12612bc8d09574a43c356cc8a9df} 
+bool CDevice\+Sequencer\+::\+Wait\+\_\+ms (\begin{DoxyParamCaption}\item[{double}]{time\+\_\+in\+\_\+ms}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_a163c503d4c7e4629e84eeb7eadcd9db8}\index{CDeviceSequencer@{CDeviceSequencer}!WaitTillEndOfSequenceThenGetInputData@{WaitTillEndOfSequenceThenGetInputData}}
+\index{WaitTillEndOfSequenceThenGetInputData@{WaitTillEndOfSequenceThenGetInputData}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{WaitTillEndOfSequenceThenGetInputData()}{WaitTillEndOfSequenceThenGetInputData()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a163c503d4c7e4629e84eeb7eadcd9db8} 
+bool CDevice\+Sequencer\+::\+Wait\+Till\+End\+Of\+Sequence\+Then\+Get\+Input\+Data (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}\&}]{buffer}{, }\item[{unsigned long \&}]{buffer\+\_\+length}{, }\item[{unsigned long \&}]{End\+Time\+Of\+Cycle}{, }\item[{double}]{timeout\+\_\+in\+\_\+s}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_c_device_sequencer_acccb21e905a84f6dd954feb4318db086}\index{CDeviceSequencer@{CDeviceSequencer}!WriteBusAddressAndDataToBuffer@{WriteBusAddressAndDataToBuffer}}
+\index{WriteBusAddressAndDataToBuffer@{WriteBusAddressAndDataToBuffer}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{WriteBusAddressAndDataToBuffer()}{WriteBusAddressAndDataToBuffer()}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_acccb21e905a84f6dd954feb4318db086} 
+void CDevice\+Sequencer\+::\+Write\+Bus\+Address\+And\+Data\+To\+Buffer (\begin{DoxyParamCaption}\item[{const uint16\+\_\+t \&}]{Multi\+IOAddress}{, }\item[{const uint16\+\_\+t \&}]{Data}{}\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_c_device_sequencer_a55f9a66604df2870ae37aff441e7c4a1}\index{CDeviceSequencer@{CDeviceSequencer}!BusFrequency@{BusFrequency}}
+\index{BusFrequency@{BusFrequency}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{BusFrequency}{BusFrequency}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a55f9a66604df2870ae37aff441e7c4a1} 
+double CDevice\+Sequencer\+::\+Bus\+Frequency}
+
+\Hypertarget{class_c_device_sequencer_ad0b4a49fd334a754d3d3da62b7ee81d8}\index{CDeviceSequencer@{CDeviceSequencer}!clockFrequency@{clockFrequency}}
+\index{clockFrequency@{clockFrequency}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{clockFrequency}{clockFrequency}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_ad0b4a49fd334a754d3d3da62b7ee81d8} 
+double CDevice\+Sequencer\+::clock\+Frequency}
+
+\Hypertarget{class_c_device_sequencer_a52584ca67a417eeeb50310541f79bca8}\index{CDeviceSequencer@{CDeviceSequencer}!connect@{connect}}
+\index{connect@{connect}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{connect}{connect}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a52584ca67a417eeeb50310541f79bca8} 
+bool CDevice\+Sequencer\+::connect}
+
+\Hypertarget{class_c_device_sequencer_a97daacafd5c7147b4726fa9817e245c3}\index{CDeviceSequencer@{CDeviceSequencer}!FPGAClockToBusClockRatio@{FPGAClockToBusClockRatio}}
+\index{FPGAClockToBusClockRatio@{FPGAClockToBusClockRatio}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{FPGAClockToBusClockRatio}{FPGAClockToBusClockRatio}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a97daacafd5c7147b4726fa9817e245c3} 
+unsigned int CDevice\+Sequencer\+::\+FPGAClock\+To\+Bus\+Clock\+Ratio}
+
+\Hypertarget{class_c_device_sequencer_a501dfd73602558e66977641d6296adfc}\index{CDeviceSequencer@{CDeviceSequencer}!id@{id}}
+\index{id@{id}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a501dfd73602558e66977641d6296adfc} 
+unsigned int CDevice\+Sequencer\+::id}
+
+\Hypertarget{class_c_device_sequencer_ab872c2285452d0aa858d14c14c057faa}\index{CDeviceSequencer@{CDeviceSequencer}!ip@{ip}}
+\index{ip@{ip}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{ip}{ip}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_ab872c2285452d0aa858d14c14c057faa} 
+std\+::string CDevice\+Sequencer\+::ip}
+
+\Hypertarget{class_c_device_sequencer_a2007872507761fc8ab9941a96d58b455}\index{CDeviceSequencer@{CDeviceSequencer}!master@{master}}
+\index{master@{master}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{master}{master}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a2007872507761fc8ab9941a96d58b455} 
+bool CDevice\+Sequencer\+::master}
+
+\Hypertarget{class_c_device_sequencer_a442061907ecaaf27c3a7e9171b597e72}\index{CDeviceSequencer@{CDeviceSequencer}!MaxParallelBusDevices@{MaxParallelBusDevices}}
+\index{MaxParallelBusDevices@{MaxParallelBusDevices}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{MaxParallelBusDevices}{MaxParallelBusDevices}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a442061907ecaaf27c3a7e9171b597e72} 
+const unsigned int CDevice\+Sequencer\+::\+Max\+Parallel\+Bus\+Devices = 8 \texorpdfstring{$\ast$}{*} 256 + 1\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_c_device_sequencer_a5155e6ccb4538489ff41a271344d6631}\index{CDeviceSequencer@{CDeviceSequencer}!MaxSerialBusDevices@{MaxSerialBusDevices}}
+\index{MaxSerialBusDevices@{MaxSerialBusDevices}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{MaxSerialBusDevices}{MaxSerialBusDevices}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a5155e6ccb4538489ff41a271344d6631} 
+const unsigned int CDevice\+Sequencer\+::\+Max\+Serial\+Bus\+Devices = 8\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_c_device_sequencer_afe35c16dab9badb1defcbb2644b69d9c}\index{CDeviceSequencer@{CDeviceSequencer}!MyEthernetMultiIOControllerFirefly@{MyEthernetMultiIOControllerFirefly}}
+\index{MyEthernetMultiIOControllerFirefly@{MyEthernetMultiIOControllerFirefly}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{MyEthernetMultiIOControllerFirefly}{MyEthernetMultiIOControllerFirefly}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_afe35c16dab9badb1defcbb2644b69d9c} 
+CEthernet\+Controller\+Firefly\texorpdfstring{$\ast$}{*} CDevice\+Sequencer\+::\+My\+Ethernet\+Multi\+IOController\+Firefly}
+
+\Hypertarget{class_c_device_sequencer_a7e74050c18cc7e9e8015f88861b2e454}\index{CDeviceSequencer@{CDeviceSequencer}!ParallelBusDeviceList@{ParallelBusDeviceList}}
+\index{ParallelBusDeviceList@{ParallelBusDeviceList}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{ParallelBusDeviceList}{ParallelBusDeviceList}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a7e74050c18cc7e9e8015f88861b2e454} 
+\mbox{\hyperlink{class_c_device}{CDevice}}\texorpdfstring{$\ast$}{*} CDevice\+Sequencer\+::\+Parallel\+Bus\+Device\+List\mbox{[}\mbox{\hyperlink{class_c_device_sequencer_a442061907ecaaf27c3a7e9171b597e72}{Max\+Parallel\+Bus\+Devices}}\mbox{]}}
+
+\Hypertarget{class_c_device_sequencer_a0249d89b3c0f35de38e51be006c1c777}\index{CDeviceSequencer@{CDeviceSequencer}!port@{port}}
+\index{port@{port}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{port}{port}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a0249d89b3c0f35de38e51be006c1c777} 
+unsigned int CDevice\+Sequencer\+::port}
+
+\Hypertarget{class_c_device_sequencer_acf65ed8d96c6f6c5afce93ced1693a85}\index{CDeviceSequencer@{CDeviceSequencer}!SerialBusDeviceList@{SerialBusDeviceList}}
+\index{SerialBusDeviceList@{SerialBusDeviceList}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{SerialBusDeviceList}{SerialBusDeviceList}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_acf65ed8d96c6f6c5afce93ced1693a85} 
+\mbox{\hyperlink{class_c_device}{CDevice}}\texorpdfstring{$\ast$}{*} CDevice\+Sequencer\+::\+Serial\+Bus\+Device\+List\mbox{[}\mbox{\hyperlink{class_c_device_sequencer_a5155e6ccb4538489ff41a271344d6631}{Max\+Serial\+Bus\+Devices}}\mbox{]}}
+
+\Hypertarget{class_c_device_sequencer_a5589062e5cd2525cb7e6567628127365}\index{CDeviceSequencer@{CDeviceSequencer}!startDelay@{startDelay}}
+\index{startDelay@{startDelay}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{startDelay}{startDelay}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a5589062e5cd2525cb7e6567628127365} 
+unsigned int CDevice\+Sequencer\+::start\+Delay}
+
+\Hypertarget{class_c_device_sequencer_a325e75933aa20ab3f46db3ef1c015bfc}\index{CDeviceSequencer@{CDeviceSequencer}!type@{type}}
+\index{type@{type}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{type}{type}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_a325e75933aa20ab3f46db3ef1c015bfc} 
+std\+::string CDevice\+Sequencer\+::type}
+
+\Hypertarget{class_c_device_sequencer_ae48a0da4e027ca8607a769630d5bc33d}\index{CDeviceSequencer@{CDeviceSequencer}!useExternalClock@{useExternalClock}}
+\index{useExternalClock@{useExternalClock}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{useExternalClock}{useExternalClock}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_ae48a0da4e027ca8607a769630d5bc33d} 
+bool CDevice\+Sequencer\+::use\+External\+Clock}
+
+\Hypertarget{class_c_device_sequencer_af7614e368a833c743117573138080ae6}\index{CDeviceSequencer@{CDeviceSequencer}!useStrobeGenerator@{useStrobeGenerator}}
+\index{useStrobeGenerator@{useStrobeGenerator}!CDeviceSequencer@{CDeviceSequencer}}
+\doxysubsubsection{\texorpdfstring{useStrobeGenerator}{useStrobeGenerator}}
+{\footnotesize\ttfamily \label{class_c_device_sequencer_af7614e368a833c743117573138080ae6} 
+bool CDevice\+Sequencer\+::use\+Strobe\+Generator}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_c_device_sequencer_8h}{CDevice\+Sequencer.\+h}}\item 
+\mbox{\hyperlink{_c_device_sequencer_8cpp}{CDevice\+Sequencer.\+cpp}}\end{DoxyCompactItemize}

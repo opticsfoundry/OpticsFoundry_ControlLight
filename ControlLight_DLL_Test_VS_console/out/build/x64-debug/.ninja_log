@@ -1,0 +1,8 @@
+# ninja log v6
+4	1097	7685839422674807	CMakeFiles/ControlLightTest.dir/ControlLightTest.cpp.obj	fce53e6d92dd6ce4
+1098	1479	7685839433625514	bin/ControlLightTest.exe	38f80552fbce9a40
+45	53	7685951946635291	clean	8c45b54705a541e8
+3	1504	7685952105528459	CMakeFiles/ControlLightTest.dir/ControlLightTest.cpp.obj	fce53e6d92dd6ce4
+1504	1797	7685952120544232	bin/ControlLightTest.exe	38f80552fbce9a40
+3	926	7686199087265744	CMakeFiles/ControlLightTest.dir/ControlLightTest.cpp.obj	fce53e6d92dd6ce4
+926	1128	7686199096491346	bin/ControlLightTest.exe	38f80552fbce9a40
