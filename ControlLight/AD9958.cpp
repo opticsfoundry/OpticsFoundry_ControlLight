@@ -53,7 +53,7 @@ uint32_t AD9958WriteReadSPINothing(unsigned int chip_select, unsigned int number
 
 CAD9958::CAD9958(unsigned short aBus, unsigned long aBaseAddress, double aExternalClockSpeed, double aFrequencyMultiplier, CDeviceSequencer* _MyDeviceSequencer)
     : CMultiWriteDeviceSPI(aBus, aBaseAddress, _MyDeviceSequencer) {
-    SetSPIPortBits(/* SPI_CS_bit*/14, /*SPI_MOSI_bit*/ 12, /*SPI_SCLK_bit*/ 13);
+    SetSPIPortBits(/* SPI_CS_bit*/14, /*SDIO_0_bit = SPI_MOSI_bit*/ 12, /*SDIO_1_bit = */ 11, /*SDIO_2_bit */ 10, /*SDIO_3_bit = Sync_IO */ 9, /*SPI_SCLK_bit*/ 13);  //SDIO_3 is the sync_io pin
     BytesToTransmit = 0;
     
     InputClockSpeed = 1E6 * aExternalClockSpeed; //conversion MHz to Hz
@@ -82,7 +82,7 @@ void CAD9958::SetIOUpdate(bool OnOff) {
 }
 
 void CAD9958::SetSDIO_3(bool OnOff) {
-    SetControlRegister(11, 1, (OnOff) ? 1 : 0);
+    SetControlRegister(9, 1, (OnOff) ? 1 : 0);
 }
 
 void CAD9958::SetSDIO_2(bool OnOff) {
@@ -90,11 +90,11 @@ void CAD9958::SetSDIO_2(bool OnOff) {
 }
 
 void CAD9958::SetSDIO_1(bool OnOff) {
-    SetControlRegister(9, 1, (OnOff) ? 1 : 0);
+    SetControlRegister(11, 1, (OnOff) ? 1 : 0);
 }
 
-void CAD9958::SetSyncIO(bool OnOff) {  //identical to SDIO_1
-    SetControlRegister(9, 1, (OnOff) ? 1 : 0);
+void CAD9958::SetSyncIO(bool OnOff) {  //identical to SDIO_3
+    SetControlRegister(2, 1, (OnOff) ? 1 : 0); //ToDo: check this bit, it should probably be 9, not 2.
 }
 
 void CAD9958::SetP0(bool OnOff) {
@@ -117,8 +117,8 @@ void CAD9958::SetReset(bool OnOff) {
     SetControlRegister(4, 1, (OnOff) ? 1 : 0);
 }
 
-void CAD9958::SetPowerDown(bool OnOff) {
-    SetControlRegister(3, 1, (OnOff) ? 1 : 0);
+void CAD9958::SetPowerDown(bool OnOff, bool write_immediately) {
+    SetControlRegister(3, 1, (OnOff) ? 1 : 0, write_immediately);
 }
 
 void CAD9958::SetSpare2(bool OnOff) {
@@ -237,6 +237,16 @@ void CAD9958::SetPhaseOffsetCh1(double phase) {
     SetPhaseOffset_SPI(2, phase); 
 }
 
+void CAD9958::SetQSPIMode(bool OnOff) {
+    /*
+    from datasheet:
+    Note that when programming the device for 4-bit serial mode, it is important to keep the SDIO_3 pin at Logic 0 until the device is
+    programmed out of the single-bit serial mode. Failure to do so can result in the serial I/O port controller being out of sequence.
+    */
+    SetSDIO_3(false);
+    SetRegisterBits(/*RegisterNr*/CSR, /*LowestBitNr*/ 1, /* NrBits*/ 2, (OnOff) ? 3 : 0, /*GetValue*/false, /*DoIOUpdate*/ true, /*ForceWrite*/ false);
+    CMultiWriteDeviceSPI::SetQSPIMode(OnOff);
+}
 
 // Private Functions --------------------------------------------------
 
@@ -330,7 +340,7 @@ void CAD9958::IO_Update_Toggle(void)
 {
     SetIOUpdate(true);
     // Minimum pulse width needs to be > 1 SYNC_CLK period (~160ns)
-    // NEED TO MAKE SURE THIS IS THE CASE FOR YOUR PLATFORM.
+    // ToDo: NEED TO MAKE SURE THIS IS THE CASE FOR YOUR PLATFORM.
     SetIOUpdate(false);
    
 }
@@ -399,7 +409,8 @@ void CAD9958::Disable_SYNC_CLK(void)
 
 void CAD9958::SetFrequency_SPI(uint8_t channel, float frequency)
 {  
-    static uint32_t FTW = calcFTW(frequency);
+    float freq_Hz = (frequency * 1000000.0);
+    uint32_t FTW = calcFTW(freq_Hz);
     SetWriteChannels(channel);
 	SetValueDirect(CFTW0, FTW,/*GetValue*/ false, /*DoIOUpdate*/true);
 }
@@ -423,9 +434,13 @@ void CAD9958::SetIntensity_SPI(uint8_t channel, uint32_t intensity)
 
 void CAD9958::SetPhaseOffset_SPI(uint8_t channel, float phase)
 {
-    static uint32_t POW = calcPOW(phase);
+    uint32_t POW = calcPOW(phase);
     SetWriteChannels(channel);
-	SetValueDirect(CPOW, POW, /*GetValue*/ false, /*DoIOUpdate*/ true);
+	SetValueDirect(CPOW, POW, /*GetValue*/ false, /*DoIOUpdate*/ false);
+    //clear phase accumulators of both channels
+    SetWriteChannels(3);
+    SetValueDirect(CFR, 0x000302, /*GetValue*/ false, /*DoIOUpdate*/ true);
+    SetValueDirect(CFR, 0x000300, /*GetValue*/ false, /*DoIOUpdate*/ true);
 }
 
 #define PWR_DWN_FULL    0x2    //!< Select full power down mode
@@ -455,12 +470,24 @@ void CAD9958::MasterReset() {
     SetReset(false);
     // Set PWR-DWN-CTL pin LOW to disable power-down control
     SetPowerDown(false);
+    SetSyncIO(false);
     // Toggle external power down pin
     // This resets the digital logic in the DDS to ensure SPI comms is possible
     SetPowerState(E_AD9958_PWR_DOWN);
     SetPowerState(E_AD9958_PWR_POWERED);    
+    // Not using multiple DDS devices so not needed
+    Disable_SYNC_CLK();
+
+    //Wait(10);
+    //ToDo: check if SetSyncIO needed, seems not to have been on correct pin
+
+    SetSyncIO(true);
+    //Wait(0.001);
+    //ToDo: check if SetSyncIO needed, seems not to have been on correct pin
     // sync_io low (To enable SPI reception)
     SetSyncIO(false);    
+    //Switch to QSPI mode
+    SetQSPIMode(true);
 }
 
 void CAD9958::SetWriteChannels(bool channel0, bool channel1) {
@@ -472,7 +499,7 @@ void CAD9958::SetWriteChannels(bool channel0, bool channel1) {
 //channels = 2: write to channel 1
 //channels = 3: write to channel 0 and 1
 void CAD9958::SetWriteChannels(uint8_t channels) {
-    SetRegisterBits(/*RegisterNr*/CSR, /*LowestBitNr*/ 6, /* NrBits*/ 2, channels, /*GetValue*/false, /*DoIOUpdate*/ false);
+    SetRegisterBits(/*RegisterNr*/CSR, /*LowestBitNr*/ 6, /* NrBits*/ 2, channels, /*GetValue*/false, /*DoIOUpdate*/ false, /*ForceWrite*/ false);
 }
 
 //RegisterNr in [0..2]: is the control register
@@ -491,7 +518,7 @@ bool CAD9958::SetRegisterBit(unsigned char RegisterNr, unsigned char BitNr, bool
 //RegisterNr in [47..68]: write channel 0 and 1 register map simultaneously. If Value doesn't specify all bits of a register write, the values of channel 0 will be taken to complement Value.
 //RegisterNr = 69: write & read digital out port of this board
 constexpr uint8_t ControlRegisterNr = 69;
-uint32_t CAD9958::SetRegisterBits(unsigned char RegisterNr, unsigned char LowestBitNr, unsigned char NrBits, uint32_t Value, bool GetValue, bool DoIOUpdate)
+uint32_t CAD9958::SetRegisterBits(unsigned char RegisterNr, unsigned char LowestBitNr, unsigned char NrBits, uint32_t Value, bool GetValue, bool DoIOUpdate, bool forceWrite)
 {
     if (!Enabled) return false;
     if (((RegisterNr > ControlRegisterNr) && (!GetValue)) || ((RegisterNr > 46) && (RegisterNr != ControlRegisterNr) && (GetValue))) {
@@ -521,7 +548,7 @@ uint32_t CAD9958::SetRegisterBits(unsigned char RegisterNr, unsigned char Lowest
         uint32_t shiftedmask = mask << LowestBitNr;
         uint32_t invertedmask = ~shiftedmask;
         NewValue = (help & invertedmask) | ((Value & mask) << LowestBitNr);
-        SetValue(RegisterNr, NewValue, false);
+        SetValue(RegisterNr, NewValue, false, DoIOUpdate, forceWrite);
         return Value;
     }
 }
@@ -532,7 +559,7 @@ uint32_t CAD9958::SetRegisterBits(unsigned char RegisterNr, unsigned char Lowest
 //RegisterNr in [25..46]: write & read channel 1 register map
 //RegisterNr in [47..68]: write channel 0 and 1 register map 
 //RegisterNr = 69: write & read digital out port of this board
-uint32_t CAD9958::SetValue(unsigned char RegisterNr, uint32_t Value, bool GetValue, bool DoIOUpdate)
+uint32_t CAD9958::SetValue(unsigned char RegisterNr, uint32_t Value, bool GetValue, bool DoIOUpdate, bool forceWrite)
 {
     if (!Enabled) return 0;
     if ( ((RegisterNr > ControlRegisterNr) && (!GetValue)) || ((RegisterNr > 46) && (RegisterNr!= ControlRegisterNr) && (GetValue)) ) {
@@ -551,7 +578,7 @@ uint32_t CAD9958::SetValue(unsigned char RegisterNr, uint32_t Value, bool GetVal
     }
     else {
         if (RegisterNr < 3) {
-            SetValueDirect(RegisterNr, Value, GetValue, DoIOUpdate);
+            SetValueDirect(RegisterNr, Value, GetValue, DoIOUpdate, forceWrite);
             return 0;
         }
         if (RegisterNr == ControlRegisterNr) {
@@ -565,8 +592,8 @@ uint32_t CAD9958::SetValue(unsigned char RegisterNr, uint32_t Value, bool GetVal
         bool WriteCh0Desired = (RegisterNr <= 24) || (RegisterNr > 46);
         bool WriteCh1Desired = (RegisterNr > 24);
 		bool DoSetWriteChannels = (WriteCh0 != WriteCh0Desired) || (WriteCh1 != WriteCh1Desired);
-        if (DoSetWriteChannels) SetWriteChannels(WriteCh0Desired, WriteCh1Desired);
-        SetValueDirect(WriteRegisterNr, Value, GetValue, DoIOUpdate);
+        if ((WriteRegisterNr > 2) && DoSetWriteChannels) SetWriteChannels(WriteCh0Desired, WriteCh1Desired);
+        SetValueDirect(WriteRegisterNr, Value, GetValue, DoIOUpdate, forceWrite);
     }
     return 0;
 }
@@ -578,7 +605,7 @@ uint32_t CAD9958::SetValue(unsigned char RegisterNr, uint32_t Value, bool GetVal
 //AktValueContents[0..2] is the control register
 //AktValueContents[3..24] is the channel 0 register map. This function allows writing to these registers, which writes to channel 0 and/or 1 depending on bit 6 and 7 of the CSR. When reading it provides values of channel 0
 //AktValueContents[25..46] is the channel 1 register map, and can't be written by this function. When reading it provides values of channel 1
-uint32_t CAD9958::SetValueDirect(unsigned char RegisterNr, uint32_t Value, bool GetValue, bool DoIOUpdate)
+uint32_t CAD9958::SetValueDirect(unsigned char RegisterNr, uint32_t Value, bool GetValue, bool DoIOUpdate, bool forceWrite)
 {
     if (!Enabled) return 0;
     if (((RegisterNr >= 25) && (!GetValue)) || ((RegisterNr >= 47) && (!GetValue))) {
@@ -595,19 +622,25 @@ uint32_t CAD9958::SetValueDirect(unsigned char RegisterNr, uint32_t Value, bool 
         bool WriteCh1 = AktValueContents[0] & 0x80; //bit 7 of CSR is set to 1 if channel 1 is selected
 
         bool doWrite = ForceWriting;
-        if (WriteCh0 && (AktValueContents[RegisterNr] != Value)) {
-            doWrite = true;
+        if (RegisterNr < 3) doWrite = (AktValueContents[RegisterNr] != Value);
+        else {
+            if (WriteCh0 && (AktValueContents[RegisterNr] != Value)) {
+                doWrite = true;
+            }
+            if (WriteCh1 && (AktValueContents[RegisterNr + 22] != Value)) {
+                doWrite = true;
+            }
         }
-        if (WriteCh1 && (AktValueContents[RegisterNr + 22] != Value)) {
-            doWrite = true;
-        }
-        if (doWrite) {
-            if (WriteCh0) AktValueContents[RegisterNr] = Value;
-            if (WriteCh1) AktValueContents[RegisterNr + 22] = Value;
+        if (doWrite || forceWrite) {
+            if (RegisterNr < 3) AktValueContents[RegisterNr] = Value;
+            else {
+                if (WriteCh0) AktValueContents[RegisterNr] = Value;
+                if (WriteCh1) AktValueContents[RegisterNr + 22] = Value;
+            }
             Dev_Select();
             SPI_Transmit_Byte(RegisterNr);
             for (int i = 0; i < AD9958ValueLength[RegisterNr]; i++)
-                SPI_Transmit_Byte(((uint8_t*)&AktValueContents[RegisterNr])[i]);
+                SPI_Transmit_Byte(((uint8_t*)&Value)[i]);
             Dev_Deselect();
             if (DoIOUpdate) IO_Update_Toggle();
         }

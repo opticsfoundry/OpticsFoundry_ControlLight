@@ -1,6 +1,7 @@
 #pragma once
 
 #include "MultiWriteDevice.h"
+//#include <fstream>
 
 class CDeviceSequencer;
 
@@ -21,8 +22,13 @@ private:
 	unsigned long BusBufferLength;
 
 	unsigned char SPI_CS_bit; 
-	unsigned char SPI_MOSI_bit;
+	unsigned char SDIO_0_bit;
+	unsigned char SDIO_1_bit;
+	unsigned char SDIO_2_bit;
+	unsigned char SDIO_3_bit;
 	unsigned char SPI_SCLK_bit;
+	bool QSPIMode;
+	//ofstream* DebugFile;
 public:
 	unsigned short ControlRegisterContent;
 public:		
@@ -30,7 +36,7 @@ public:
 	void WriteAllToBus();
 	CMultiWriteDeviceSPI(unsigned short aBus, unsigned long aBaseAddress, CDeviceSequencer* _MyDeviceSequencer);
 	~CMultiWriteDeviceSPI();
-	void SetSPIPortBits(unsigned char _SPI_CS_bit, unsigned char _SPI_MOSI_bit, unsigned char _SPI_SCLK_bit);
+	void SetSPIPortBits(unsigned char _SPI_CS_bit, unsigned char  _SDIO_0_bit, unsigned char _SDIO_1_bit, unsigned char _SDIO_2_bit, unsigned char _SDIO_3_bit, unsigned char _SPI_SCLK_bit);
 	void AddToBusBuffer(unsigned short value);
 	virtual bool HasSomethingToWriteToBus() { //inline code for speed
 		if (!Enabled) return false;
@@ -42,5 +48,6 @@ public:
 	void SetSPIChipSelect(bool clock);
 	void SetSPIDataOut(bool clock);
 	void WriteSPIBitBanged(unsigned int number_of_bits_out, unsigned __int64 data);
+	virtual void SetQSPIMode(bool OnOff);
 };
 

@@ -68,7 +68,7 @@ public:
     virtual ~CAD9958();
     void SetIOUpdate(bool OnOff);
     void SetReset(bool OnOff);
-    void SetPowerDown(bool OnOff);
+    void SetPowerDown(bool OnOff, bool write_immediately = true);
     void SetSyncIO(bool OnOff);
     void SetP0(bool OnOff);
     void SetP1(bool OnOff);
@@ -83,6 +83,7 @@ public:
 
     void Initialise(void);
     void SyncIO(void);
+    void SetQSPIMode(bool OnOff);
 //    void Initialise_GPIO(void);
     //void TestFunctions(void);
 
@@ -134,13 +135,13 @@ public:
     void SelectChannelCh1() { SetRegisterBits(0, 6, 2, 2); }
     void SelectChannelCh0And1() { SetRegisterBits(0, 6, 2, 3); }
 
-    void SetFrequencyTuningWord(uint32_t ftw) { SetValue(4, ftw); }
+    //void SetFrequencyTuningWord(uint32_t ftw) { SetValue(4, ftw); }
     void SetFrequencyTuningWord(uint8_t channel, uint32_t ftw) { SetWriteChannels(channel);  SetValue(4, ftw); }
     void SetFrequencyTuningWordCh0(uint32_t ftw) {
-        SelectChannelCh0(); SetFrequencyTuningWord(ftw);
+        SetFrequencyTuningWord(1, ftw);
     }
     void SetFrequencyTuningWordCh1(uint32_t ftw) {
-        SelectChannelCh1(); SetFrequencyTuningWord(ftw);
+        SetFrequencyTuningWord(2, ftw);
     }
 
 private:
@@ -171,9 +172,9 @@ public:
     
     //bool SetControlBit(unsigned char RegisterNr, unsigned char BitNr, bool Value, bool GetValue);
     bool SetRegisterBit(unsigned char RegisterNr, unsigned char BitNr, bool Value, bool GetValue = false, bool DoIOUpdate = true);
-    uint32_t SetRegisterBits(unsigned char RegisterNr, unsigned char LowestBitNr, unsigned char NrBits, uint32_t Value, bool GetValue = false, bool DoIOUpdate = true);
-    uint32_t SetValueDirect(unsigned char RegisterNr, uint32_t Value, bool GetValue = false, bool DoIOUpdate = true);
-    uint32_t SetValue(unsigned char RegisterNr, uint32_t Value, bool GetValue = false, bool DoIOUpdate = true);
+    uint32_t SetRegisterBits(unsigned char RegisterNr, unsigned char LowestBitNr, unsigned char NrBits, uint32_t Value, bool GetValue = false, bool DoIOUpdate = true, bool forceWrite= false);
+    uint32_t SetValueDirect(unsigned char RegisterNr, uint32_t Value, bool GetValue = false, bool DoIOUpdate = true, bool forceWrite = false);
+    uint32_t SetValue(unsigned char RegisterNr, uint32_t Value, bool GetValue = false, bool DoIOUpdate = true, bool forceWrite = false);
     //void LoadLatches();
     //void UpdateRegisters();
 };

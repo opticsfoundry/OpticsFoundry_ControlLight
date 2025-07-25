@@ -7,8 +7,6 @@
 #include "AD9858.h"
 #include "ControlAPI.h"
 #include "CDeviceSequencer.h"
-constexpr uint8_t BusBitShift = 0;
-constexpr bool ForceWriting = false;
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -25,16 +23,17 @@ const unsigned long AD9858ValueNotInBusBuffer=99999;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CAD9858::CAD9858(unsigned long aBaseAddress, double aExternalClockSpeed, double aFrequencyMultiplier, CDeviceSequencer* _MyDeviceSequencer)
+CAD9858::CAD9858(unsigned long aBaseAddress, double aExternalClockSpeed, double aFrequencyMultiplier, 
+	CDeviceSequencer* _MyDeviceSequencer)
 {
 	Bus=0;
 	MyDeviceSequencer = _MyDeviceSequencer;
-	InputClockSpeed=1E6*aExternalClockSpeed; //conversion MHz to Hz
+	InputClockSpeed=2*1E6*aExternalClockSpeed; //conversion MHz to Hz
 	FrequencyMultiplier=aFrequencyMultiplier;  //This is the external frequency doubler option
 	ClockSpeed=InputClockSpeed;
 	MaxFrequency=ClockSpeed*0.45E-6;
 	//4294967296=2^32
-	FrequencyScale=4294967296.0*((1.0/FrequencyMultiplier)*1.0E6/ClockSpeed);
+	FrequencyScale=2*4294967296.0*((1.0/FrequencyMultiplier)*1.0E6/ClockSpeed);
 	BaseAddress=aBaseAddress;
 	//MultiIOAddress=Bus+(uint8_t)BaseAddress*4; //this 
 	//MyMultiIO=aMyMultiIO;
@@ -54,10 +53,10 @@ CAD9858::CAD9858(unsigned long aBaseAddress, double aExternalClockSpeed, double 
 	AktSubAddressWritten=0;
 	PS1=false;
 	PS0=false;
-	/*if (aBaseAddress>=64) {
+	/*if (aBaseAddress >= 64) {
 		CString buf;
 		buf.Format("CAD9858::CAD9858 : BaseAdress too high (BaseAddress=%x Bus=%x)",BaseAddress,Bus>>BusBitShift);
-		AddErrorMessageCString(buf);
+		AddErrorMessageString(buf);
 	}*/
 }
 
@@ -88,11 +87,11 @@ bool CAD9858::WriteToBus()
 	
 	if (AktValueNrWritten==14) {
 		MultiIOAddress+=2; //Update output register
-	} else if (AktValueNrWritten==17) MultiIOAddress+=3;//Attenuator
+	} 
+	else if (AktValueNrWritten==17) MultiIOAddress+=3;//Attenuator
 	else if (AktValueNrWritten==15) ;//MultiIOAddress+=0; //Master reset
 	else if (AktValueNrWritten==16) MultiIOAddress+=3; //no additional strobe
-	else MultiIOAddress+=1;	//Load data to buffer
-
+	else MultiIOAddress += 1;	//Load data to buffer
 	uint8_t AktRegisterWritten=AD9858ValueBaseAddress[AktValueNrWritten]+AktSubAddressWritten;
 	if (PS1) AktRegisterWritten+=0x80;	
 	if (PS0) AktRegisterWritten+=0x40;			
@@ -102,7 +101,10 @@ bool CAD9858::WriteToBus()
 		//we produce a "update registers" signal during the same 
 		//bus cycle as the last "Load data into IO buffer" signal and don´t need an additional
 		//bus cycle just for that
-		if ((AktValueNrWritten!=15) && (AktValueNrWritten!=16) && (AktValueNrWritten!=17)) MultiIOAddress+=1; //Update output register
+		
+		if ((AktValueNrWritten != 15) && (AktValueNrWritten != 16) && (AktValueNrWritten != 17)) {
+			MultiIOAddress += 1; //Update output register
+		}
 		AktValueNrWritten=99;
 	}
 	MyDeviceSequencer->WriteBusAddressAndDataToBuffer(MultiIOAddress,AktRegisterWritten + (AktByteWritten<<8));
@@ -128,7 +130,7 @@ double CAD9858::SetModulationFrequency(double ModulationFrequency, bool GetValue
 	} else {
 		if (ModulationFrequency<0) {
 			CString buf;
-			buf.Format("CAD9858::SetModulationFrequency : modulation frequency out of range (BaseAddress=%x Bus=%x) fmodwanted=%.f Hz",BaseAddress,Bus>>BusBitShift,ModulationFrequency);
+			buf.Format("CAD9858::SetModulationFrequency : modulation frequency out of range (BaseAddress=%x) fmodwanted=%.f Hz",BaseAddress,ModulationFrequency);
 			AddErrorMessageCString(buf);			
 			ModulationFrequency=1;
 		}
@@ -136,7 +138,7 @@ double CAD9858::SetModulationFrequency(double ModulationFrequency, bool GetValue
 		FrequencyTuningWord=(__int64)((AktValueContents[8]-AktValueContents[6])*((ModulationFrequency*1E6)/(0.5*ClockSpeed/(AktValueContents[5]+1))));
 		if (FrequencyTuningWord>(4294967296/2)) {
 			CString buf;
-			buf.Format("CAD9858::SetModulationFrequency : frequency out of range (BaseAddress=%x Bus=%x) fwanted=%.f MHz",BaseAddress,Bus>>BusBitShift,ModulationFrequency);
+			buf.Format("CAD9858::SetModulationFrequency : frequency out of range (BaseAddress=%x) fwanted=%.f MHz",BaseAddress,ModulationFrequency);
 			AddErrorMessageCString(buf);			
 		}
 		//Calculate 32bit twos complement
@@ -154,10 +156,10 @@ __int64 CAD9858::SetValue(uint8_t ValueNr, __int64 Value, bool GetValue)
 	if (GetValue) {
 		return AktValueContents[ValueNr];
 	} else {
-		if ((AktValueContents[ValueNr]!=Value) || (ForceWriting)) {
+		if (AktValueContents[ValueNr]!=Value) {
 			if (BusBufferLength>=AD9858MaxBusBuffer) {				
 				CString buf;
-				buf.Format("CAD9858::SetValue : Bus Buffer exceeded (BaseAddress=%x Bus=%x)",BaseAddress,Bus>>BusBitShift);
+				buf.Format("CAD9858::SetValue : Bus Buffer exceeded (BaseAddress=%x)",BaseAddress);
 				AddErrorMessageCString(buf);
 				return 0;
 			}			
@@ -181,7 +183,7 @@ void CAD9858::MasterReset() {
 	if (!Enabled) return;
 	if (BusBufferLength>=AD9858MaxBusBuffer) {		
 		CString buf;
-		buf.Format("CAD9858::SetValue : Bus Buffer exceeded (BaseAddress=%x Bus=%x)",BaseAddress,Bus>>BusBitShift);
+		buf.Format("CAD9858::SetValue : Bus Buffer exceeded (BaseAddress=%x)",BaseAddress);
 		AddErrorMessageCString(buf);
 		return;
 	}	
@@ -212,7 +214,7 @@ void CAD9858::UpdateRegisters() {
 	if (!Enabled) return;
 	if (BusBufferLength>=AD9858MaxBusBuffer) {		
 		CString buf;
-		buf.Format("CAD9858::UpdateRegisters : Bus Buffer exceeded (BaseAddress=%x Bus=%x)",BaseAddress,Bus>>BusBitShift);
+		buf.Format("CAD9858::UpdateRegisters : Bus Buffer exceeded (BaseAddress=%x)",BaseAddress);
 		AddErrorMessageCString(buf);
 		return;
 	}		
@@ -222,7 +224,7 @@ void CAD9858::LoadLatches() {
 	if (!Enabled) return;
 	if (BusBufferLength>=AD9858MaxBusBuffer) {		
 		CString buf;
-		buf.Format("CAD9858::LoadLatches : Bus Buffer exceeded (BaseAddress=%x Bus=%x)",BaseAddress,Bus>>BusBitShift);
+		buf.Format("CAD9858::LoadLatches : Bus Buffer exceeded (BaseAddress=%x)",BaseAddress);
 		AddErrorMessageCString(buf);
 		return;
 	}	
@@ -370,7 +372,7 @@ double CAD9858::SetFrequency0(double Frequency, bool GetValue) {
 	} else {
 		if (Frequency>MaxFrequency) {			
 			CString buf;
-			buf.Format("CAD9858::SetFrequency0 : frequency out of range (BaseAddress=%x Bus=%x) fwanted=%.f MHz fmax=%.f MHz",BaseAddress,Bus>>BusBitShift,Frequency,MaxFrequency);
+			buf.Format("CAD9858::SetFrequency0 : frequency out of range (BaseAddress=%x) fwanted=%.f MHz fmax=%.f MHz",BaseAddress,Frequency,MaxFrequency);
 			AddErrorMessageCString(buf);
 		}		
 		FrequencyTuningWord0=(__int64)(Frequency*FrequencyScale);
@@ -389,7 +391,7 @@ double CAD9858::SetFrequency1(double Frequency, bool GetValue) {
 	} else {
 		if (Frequency>MaxFrequency) {			
 			CString buf;
-			buf.Format("CAD9858::SetFrequency1 : frequency out of range (BaseAddress=%x Bus=%x) fwanted=%.f MHz fmax=%.f MHz",BaseAddress,Bus>>BusBitShift,Frequency,MaxFrequency);
+			buf.Format("CAD9858::SetFrequency1 : frequency out of range (BaseAddress=%x) fwanted=%.f MHz fmax=%.f MHz",BaseAddress,Frequency,MaxFrequency);
 			AddErrorMessageCString(buf);
 		}		
 		FrequencyTuningWord1=(__int64)(Frequency*FrequencyScale);
@@ -408,7 +410,7 @@ double CAD9858::SetFrequency2(double Frequency, bool GetValue) {
 	} else {
 		if (Frequency>MaxFrequency) {			
 			CString buf;
-			buf.Format("CAD9858::SetFrequency2 : frequency out of range (BaseAddress=%x Bus=%x) fwanted=%.f MHz fmax=%.f MHz",BaseAddress,Bus>>BusBitShift,Frequency,MaxFrequency);
+			buf.Format("CAD9858::SetFrequency2 : frequency out of range (BaseAddress=%x) fwanted=%.f MHz fmax=%.f MHz",BaseAddress,Frequency,MaxFrequency);
 			AddErrorMessageCString(buf);
 		}		
 		FrequencyTuningWord2=(__int64)(Frequency*FrequencyScale);
@@ -427,7 +429,7 @@ double CAD9858::SetFrequency3(double Frequency, bool GetValue) {
 	} else {
 		if (Frequency>MaxFrequency) {			
 			CString buf;
-			buf.Format("CAD9858::SetFrequency3 : frequency out of range (BaseAddress=%x Bus=%x) fwanted=%.f MHz fmax=%.f MHz",BaseAddress,Bus>>BusBitShift,Frequency,MaxFrequency);
+			buf.Format("CAD9858::SetFrequency3 : frequency out of range (BaseAddress=%x) fwanted=%.f MHz fmax=%.f MHz",BaseAddress,Frequency,MaxFrequency);
 			AddErrorMessageCString(buf);
 		}		
 		FrequencyTuningWord3=(__int64)(Frequency*FrequencyScale);
@@ -444,7 +446,7 @@ __int64 CAD9858::SetFrequencyTuningWord0(const uint64_t& FrequencyTuningWord, bo
 		return FrequencyTuningWord0;
 	}
 	else {
-		
+
 		FrequencyTuningWord0 = FrequencyTuningWord;
 		SetValue(6, FrequencyTuningWord0, false);
 		return FrequencyTuningWord0;
@@ -493,6 +495,8 @@ __int64 CAD9858::SetFrequencyTuningWord3(const uint64_t& FrequencyTuningWord, bo
 		return FrequencyTuningWord3;
 	}
 }
+
+
 
 unsigned short CAD9858::SetPhaseOffsetWord0(unsigned short aPhaseOffsetWord, bool GetValue) {
 	return (unsigned short)SetValue(7,aPhaseOffsetWord,GetValue);
