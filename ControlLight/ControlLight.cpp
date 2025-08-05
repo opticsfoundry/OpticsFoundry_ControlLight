@@ -805,7 +805,8 @@ void DemoDDSVCO() {
 	*/
 	//convert ADC value of previous conversion into FTW.
 	//for debugging commented out the next line
-	//CLA_SequencerCalcAD9854FrequencyTuningWord(0, FTW0, bit_shift);//calc FTW and put FPGA into mode in which the FTW will be sent out over the next 6 bus cycles, which must be an AD9854 SetFrequency command.
+	CLA_Wait_ms(10);
+	CLA_SequencerCalcAD9854FrequencyTuningWord(0, FTW0, bit_shift);//calc FTW and put FPGA into mode in which the FTW will be sent out over the next 6 bus cycles, which must be an AD9854 SetFrequency command.
 	CLA_SetFrequency(0, AD98450Address, 1000000.0); //the frequency given here will automatically be replaced by the FTW that was just calculated
 	//CLA_SetVoltage(0, AnalogOutBoardStartAddress, 10.0);
 	//set digital output to low to indicate end of FPGA sequence loop
@@ -814,7 +815,8 @@ void DemoDDSVCO() {
 	unsigned long CycleEndBufferPosition;
 	CLA_GetNextBufferPositionOfMasterSequencer(CycleEndBufferPosition);
 	//for debugging, commente out the next line
-	//CLA_SequencerJumpBackward(0, CycleEndBufferPosition - CycleStartBufferPosition);
+	CLA_Wait_ms(10);
+	CLA_SequencerJumpBackward(0, CycleEndBufferPosition - CycleStartBufferPosition);
 	//for debugging, added next line
 	CLA_Wait_ms(10);
 	CLA_ExecuteSequence(); //sends sequence to FPGA and executes it
@@ -823,9 +825,9 @@ void DemoDDSVCO() {
 }
 
 int main() {
-	//DemoFPGASequencer();
+	DemoFPGASequencer();
 	//DemoSmartSequencer();
-	DemoDDSVCO();
+	//DemoDDSVCO();
 	return 0;
 }
 
