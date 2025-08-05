@@ -132,3 +132,6 @@ Makefile
 
 # Output directories
 ControlLight/out/
+/ControlLight/out/build/x64-debug/.ninja_deps
+/ControlLight/out/build/x64-debug/.ninja_log
+/ControlLight/out/build/x64-debug/ControlLight.ilk
