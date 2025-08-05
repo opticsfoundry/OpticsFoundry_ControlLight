@@ -1314,7 +1314,7 @@ bool CEthernetControllerFirefly::SendSequenceToFPGA(uint32_t* buffer) {
 }
 
 double CEthernetControllerFirefly::MeasureEthernetBandwidth(uint32_t DataSize, double MinimumExpected) {
-	bool ok = AttemptCommand("send_sequence"); //cheap way of assuring ethernet is up. Can't overcome outages within the (ok) branch.
+	bool ok = Command("send_sequence");
 	if (ok) {
 		
 		WriteInteger(DataSize);

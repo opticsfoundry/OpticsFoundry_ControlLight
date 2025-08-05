@@ -45,6 +45,8 @@ bool CNetworkClient::ConnectSocket(LPCTSTR lpszAddress,UINT port,CString SocketN
 	Network=new CNetwork();
 	if (DebugOn) Network->DebugStart(DebugFileName);
 	bool Connected=Network->ConnectSocket(lpszAddress,port,SocketName);
+	//we insist that a server is present on program start. If it isn't we ignore that server, gaining speed. The alternative would be to try to reconnect every time, which takes a second or so, if the sever is not present.
+	//if you dont want this, comment out the next four lines
 	if (!Connected) {
 		delete Network;
 		Network=NULL;
@@ -112,12 +114,25 @@ bool CNetworkClient::WriteChar(char c) {
 	return SendCommand(buf);
 }
 
-bool CNetworkClient::ReadDouble(double &Value)
+bool CNetworkClient::ReadDouble(double& Value)
 {
 	if (!Network) return false;
 	CString buf;
-	bool ok=GetCommand(buf);
-	Value=atof(buf);
+	bool ok = GetCommand(buf);
+	//Value=atof(buf);
+	// Convert CString ? const char* safely
+	CT2A narrow(buf);      // Converts to multibyte from Unicode if needed
+	const char* str = narrow;
+	char* endptr = nullptr;
+	Value = std::strtod(str, &endptr);
+	if (endptr == str) {
+		//ControlMessageBox("CNetworkClient::ReadDouble : Conversion error: no digits found in ("+buf+").");
+		return false;
+	}
+	else if (*endptr != '\0') {
+		//ControlMessageBox("CNetworkClient::ReadDouble : Conversion error: leftover characters after number in (" + buf + ").");
+		return false;
+	}
 	return ok;
 }
 
@@ -135,7 +150,20 @@ bool CNetworkClient::ReadInt(int& Value, double timeout_in_seconds)
 	if (!Network) return false;
 	CString buf;
 	bool ok = GetCommand(buf, timeout_in_seconds);
-	Value = atoi(buf);
+	//Value = atoi(buf);
+	// Convert CString ? const char* safely
+	CT2A narrow(buf);      // Converts to multibyte from Unicode if needed
+	const char* str = narrow;
+	char* endptr = nullptr;
+	Value = std::strtol(str, &endptr, 10);
+	if (endptr == str) {
+		//ControlMessageBox("CNetworkClient::ReadInt : Conversion error: no digits found in (" + buf + ").");
+		return false;
+	}
+	else if (*endptr != '\0') {
+		//ControlMessageBox("CNetworkClient::ReadInt : Conversion error: leftover characters after number in (" + buf + ").");
+		return false;
+	}
 	return ok;
 }
 
@@ -144,7 +172,20 @@ bool CNetworkClient::ReadLong(long& Value)
 	if (!Network) return false;
 	CString buf;
 	bool ok = GetCommand(buf);
-	Value = atoi(buf);
+	//Value = atoi(buf);
+	// Convert CString ? const char* safely
+	CT2A narrow(buf);      // Converts to multibyte from Unicode if needed
+	const char* str = narrow;
+	char* endptr = nullptr;
+	Value = std::strtol(str, &endptr, 10);
+	if (endptr == str) {
+		//ControlMessageBox("CNetworkClient::ReadLong : Conversion error: no digits found.");
+		return false;
+	}
+	else if (*endptr != '\0') {
+		//ControlMessageBox("CNetworkClient::ReadLong : Conversion error: leftover characters after number.");
+		return false;
+	}
 	return ok;
 }
 
@@ -153,27 +194,42 @@ bool CNetworkClient::ReadInt64(unsigned long long& Value)
 	if (!Network) return false;
 	CString buf;
 	bool ok = GetCommand(buf);
-	Value = atoi(buf);
+	//Value = atoi(buf);
+
+	// Convert CString ? const char* safely
+	CT2A narrow(buf);      // Converts to multibyte from Unicode if needed
+	const char* str = narrow;
+	char* endptr = nullptr;
+	Value = std::strtoull(str, &endptr, 10);
+	if (endptr == str) {
+		//ControlMessageBox("CNetworkClient::ReadInt64 : Conversion error: no digits found.");
+		return false;
+	}
+	else if (*endptr != '\0') {
+		//ControlMessageBox("CNetworkClient::ReadInt64 : Conversion error: leftover characters after number.");
+		return false;
+	}
 	return ok;
 }
 
 constexpr unsigned int MaxReconnectAttempts = 100;
-bool CNetworkClient::AttemptCommand(CString CommandString) {
+bool CNetworkClient::Command(CString CommandString, bool DontWaitForReady) {
 	unsigned int attempts = 0;
-	while ((attempts < MaxReconnectAttempts) && (!Command(CommandString))) {
+	while ((attempts < MaxReconnectAttempts) && (!AttemptCommand(CommandString, DontWaitForReady))) {
 		Network->ResetConnection();
 		Sleep_ms(100);
 		attempts++;
 	}
+	if (attempts == MaxReconnectAttempts) AddErrorMessageCString("CNetworkClient::Command : Maximum reconnect attempts reached. Command failed: " + CommandString);
 	return (attempts < MaxReconnectAttempts);
 }
 
-bool CNetworkClient::Command(CString comand, bool DontWaitForReady) {  
+bool CNetworkClient::AttemptCommand(CString comand, bool DontWaitForReady) {  
 	if (Network) Network->Flush();
 	SendCommand(comand);
 	if ((FastWrite) || (DontWaitForReady)) return true;
 	if ((!Ready()) && (Network)) {
-		AddErrorMessageCString("CNetworkClient not Ready!\n(Command: "+comand+")");
+		//AddErrorMessageCString("CNetworkClient not Ready!\n(Command: "+comand+")");
 		return false;
 	} else return true;
 }
@@ -187,6 +243,7 @@ bool CNetworkClient::GetCommand(CString &Command, double timeout_in_seconds)
 }
 
 bool CNetworkClient::Ready() {
+	//if (mode == 3) return true;
 	if (Network) {
 		CString buf;
 		if (GetCommand(buf)) return buf=="Ready";

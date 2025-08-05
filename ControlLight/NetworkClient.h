@@ -36,7 +36,7 @@ public:
 	bool WriteString(CString s);
 	bool WriteChar(char c);
 	bool Command(CString comand, bool DontWaitForReady = false);
-	bool AttemptCommand(CString CommandString);
+	bool AttemptCommand(CString CommandString, bool DontWaitForReady = false);
 	bool GetCommand(CString &Command, double timeout_in_seconds = 5);
 	CNetworkClient(int amode, bool aFastWrite = false);
 	virtual ~CNetworkClient();

@@ -56,6 +56,7 @@ void CNetwork::StoreLastMessage(CString Message)
 
 void CNetwork::Flush()
 {
+	FlushInputBuffer();
 	if (LastMessage != "") AddErrorMessageCString("CNetwork::Flush : Message " + LastMessage + " flushed");
 	LastMessage = "";
 }
@@ -76,7 +77,16 @@ void CNetwork::DebugStop() {
 void CNetwork::DisconnectSocket()
 {
 	if (m_pSocket) {
-		m_pSocket->Close();
+		//AddErrorMessageCString("CNetwork::DisconnectSocket : Disconnecting socket ");
+
+		StoreLastMessage("Disconnected");
+		if (CAsyncSocket::LookupHandle(m_pSocket->m_hSocket, FALSE) == NULL) {
+			// Avoid ASSERT by skipping Close and just invalidating the handle
+			m_pSocket->m_hSocket = INVALID_SOCKET;
+		}
+		else {
+			m_pSocket->Close();
+		}
 		delete m_pSocket;
 		m_pSocket = nullptr;
 	}
@@ -90,7 +100,7 @@ void CNetwork::DisconnectSocket()
 #include <winsock2.h> // For select, timeval, etc.
 #include <ws2tcpip.h> // For inet_pton
 
-bool ConnectWithTimeout(CSocket& sock, const CString& ipAddress, UINT port, int timeoutSec = 2)
+bool ConnectWithTimeout(CSocket& sock, const CString& ipAddress, UINT port, bool reconnect, bool showError = true, int timeoutSec = 2)
 {
 	// 1. WSAStartup (only needed once per app, but harmless if called repeatedly)
 	static bool wsaInitialized = false;
@@ -144,7 +154,10 @@ bool ConnectWithTimeout(CSocket& sock, const CString& ipAddress, UINT port, int 
 		int sel = select(0, nullptr, &writeSet, nullptr, &timeout);
 		if (sel <= 0 || !FD_ISSET(sock, &writeSet)) {
 			sock.Close();
-			AddErrorMessageCString(_T("Connection timed out or failed"), /*dothrow*/ false);
+			CString message;
+			message.Format(_T("Connection timed out or failed. IP = %s, port = %u.\n\nIf this is wrong, check the IP address given in ControlHardwareConfigFileCreator.py and run that script again.\n\nIf you don't use ControlHardwareConfig.json to configure control, check the IP given in ControlParam_SystemParamList.txt."),
+				ipAddress, port);
+			if (showError) AddErrorMessageCString(message);
 			return false;
 		}
 	}
@@ -153,11 +166,18 @@ bool ConnectWithTimeout(CSocket& sock, const CString& ipAddress, UINT port, int 
 	u_long blocking = 0;
 	ioctlsocket(sock, FIONBIO, &blocking);
 
+	//if (reconnect) {
+	//	AddErrorMessageCString("CNetwork::ConnectWithTimeout : Reconnecting socket " + sock.m_hSocket);
+	//	//  Re-attach socket to MFC for message handling
+	//	sock.Attach(sock.m_hSocket); // rebinds socket to MFC message system
+	//	sock.AsyncSelect(FD_READ | FD_WRITE | FD_CONNECT | FD_CLOSE);
+	//}
+
 	return true;
 }
 
 
-bool CNetwork::ConnectSocket(LPCTSTR lpszAddress, UINT nPort, CString SocketName)
+bool CNetwork::ConnectSocket(LPCTSTR lpszAddress, UINT nPort, CString SocketName, bool reconnect, int timeout_s)
 {
 	m_lpszAddress = lpszAddress;
 	m_nPort = nPort;
@@ -173,26 +193,29 @@ bool CNetwork::ConnectSocket(LPCTSTR lpszAddress, UINT nPort, CString SocketName
 		return false;
 	}*/
 	
-	if (!ConnectWithTimeout(*m_pSocket, m_lpszAddress, m_nPort)) {	
+	if (!ConnectWithTimeout(*m_pSocket, m_lpszAddress, m_nPort, reconnect, (reconnect) ? false : true, timeout_s)) {
 	//if (!m_pSocket->Connect(m_lpszAddress, m_nPort)) { //Standard CSocket::connect, which has a ~20s timeout
-		int err = m_pSocket->GetLastError();
-		CString msg;
-		msg.Format(_T("Socket connection to IP %s, port %u failed with error %d"), lpszAddress, nPort, err);
-		AddErrorMessageCString(msg);
+		//int err = m_pSocket->GetLastError();
+		//CString msg;
+		//msg.Format(_T("Socket connection to IP %s, port %u failed with error %d"), lpszAddress, nPort, err);
+		//AddErrorMessageCString(msg);
 		delete m_pSocket;
 		m_pSocket = nullptr;
 		return false;
 	}
-	m_lpszAddress = m_lpszAddress;
-	m_nPort = m_nPort;
-	m_SocketName = m_SocketName;
 	return true;
 }
 
-bool CNetwork::ResetConnection() {
+bool CNetwork::ResetConnection(unsigned long sleep_time) {
+	// Keep socket infrastructure alive
+	CAsyncSocket dummy;
+	BOOL bDummyCreated = dummy.Create();
 	DisconnectSocket();
-	Sleep_ms(2000);
-	return Reconnect(/*ShowErrorMessages*/ false);
+	if (sleep_time > 0) Sleep_ms(sleep_time);
+	bool ret = Reconnect(/*maxRetries*/ 4,/*timeout_s*/0,/*delay_ms*/100);
+	if (bDummyCreated)
+		dummy.Close();
+	return ret;
 }
 
 void CNetwork::SendMsg(CString& strText)
@@ -204,9 +227,10 @@ void CNetwork::SendMsg(CString& strText)
 
 bool CNetwork::SendData(const uint8_t* Data, unsigned long Size)
 {
+	if (!m_pSocket)	Reconnect(/*maxRetries*/ 0,/*timeout_s*/1,/*delay_ms*/0);
 	if (!m_pSocket) return false;
 	CString Message;
-	Message.Format(">> SendData %u", Size);
+	Message.Format(_T(">> SendData %u"), Size);
 	StoreLastMessage(Message);
 	int sent = 0;
 	TRY
@@ -223,13 +247,66 @@ bool CNetwork::SendData(const uint8_t* Data, unsigned long Size)
 }
 
 bool CNetwork::SendString(const CString& str) {
+	if (!m_pSocket)	Reconnect(/*maxRetries*/ 0,/*timeout_s*/1,/*delay_ms*/0);
 	if (!m_pSocket) return false;
 	CT2A conv(str);
 	const char* psz = conv;
 	return SendData(reinterpret_cast<const uint8_t*>(psz), (unsigned long)strlen(psz));
 }
 
+bool CNetwork::FlushInputBuffer()
+{
+	if (!m_pSocket)	Reconnect(/*maxRetries*/ 0,/*timeout_s*/1,/*delay_ms*/0);
+	if (!m_pSocket) return false;
+	const int kBufferSize = 4096;
+	char tempBuffer[kBufferSize];
+
+	SOCKET s = m_pSocket->m_hSocket;
+
+	// Set the socket temporarily to non-blocking mode
+	u_long nonBlocking = 1;
+	ioctlsocket(s, FIONBIO, &nonBlocking);
+
+	int bytesRead = 0;
+	do {
+		bytesRead = ::recv(s, tempBuffer, kBufferSize, 0);
+		if (bytesRead > 0) {
+			// Data read and discarded
+			tempBuffer[bytesRead + 1] = 0;
+			CString buf(tempBuffer);
+			StoreLastMessage("Flushed input buffer (" + buf + ")");
+			continue;
+		}
+		else if (bytesRead == 0) {
+			// Connection closed
+			break;
+		}
+		else {
+			int err = WSAGetLastError();
+			if (err == WSAEWOULDBLOCK) {
+				// No more data to read
+				break;
+			}
+			else {
+				CString buf;
+				//buf.Format(_T("CNetwork::FlushInputBuffer :: recv() error %d"), err);
+				Reconnect(/*maxRetries*/ 0,/*timeout_s*/1,/*delay_ms*/0);
+				return true;
+				//ControlMessageBox(buf);
+				break;
+			}
+		}
+	} while (bytesRead > 0);
+
+	// Restore socket to blocking mode
+	nonBlocking = 0;
+	ioctlsocket(s, FIONBIO, &nonBlocking);
+
+	return true;
+}
+
 bool CNetwork::WaitForRead(unsigned long timeout_ms) {
+	if (!m_pSocket)	Reconnect(/*maxRetries*/ 0,/*timeout_s*/1,/*delay_ms*/0);
 	if (!m_pSocket) return false;
 	fd_set readSet;
 	FD_ZERO(&readSet);
@@ -250,7 +327,7 @@ bool CNetwork::ReceiveMsg(char end_character, bool WaitForStartCharacter, char s
 	if (WaitForStartCharacter) {
 		in = '@';
 		unsigned  long start = GetTickCount();
-		while ((GetTickCount() - start) < timeout_ms) {
+		while ((WaitForStartCharacter) && ((GetTickCount() - start) < timeout_ms)) {
 			unsigned long timeLeft = timeout_ms - (GetTickCount() - start);
 			if (!WaitForRead(timeLeft)) break;
 			int nRead = m_pSocket->Receive(&in, 1);
@@ -259,9 +336,12 @@ bool CNetwork::ReceiveMsg(char end_character, bool WaitForStartCharacter, char s
 				return false;
 			}
 			if (in != start_character) {
-				AddErrorMessageCString("CNetwork::ReceiveMsg :: start_character (*) expected");
+				CString buf;
+				buf.Format(_T("CNetwork::ReceiveMsg :: start_character (%c) expected, but %c received."), start_character, in);
+				AddErrorMessageCString(buf);
 				return false;
 			}
+			else WaitForStartCharacter = false;
 		}
 	}
 	in='@';
@@ -274,6 +354,7 @@ bool CNetwork::ReceiveMsg(char end_character, bool WaitForStartCharacter, char s
 
 bool CNetwork::ReceiveString(CString& outStr, double timeout_in_seconds, char endChar)
 {
+	if (!m_pSocket)	Reconnect(/*maxRetries*/ 0,/*timeout_s*/1,/*delay_ms*/100);
 	if (!m_pSocket) return false;
 	outStr.Empty();
 	char ch = 0;
@@ -299,7 +380,7 @@ bool CNetwork::GetMessage(CString& Message, double timeout_in_seconds, int mode)
 		unsigned  long StartTime = GetTickCount();
 		unsigned  long timeout_in_ms = 1000 * timeout_in_seconds;
 		while (((GetTickCount() - StartTime) < timeout_in_ms) && (LastMessage == "")) {
-			if (mode == 1) ReceiveMsg(/*char end_character = */ '#', /*bool WaitForStartCharacter =*/ true, timeout_in_seconds);
+			if (mode == 1) ReceiveMsg(/*char end_character = */ '#', /*bool WaitForStartCharacter =*/ true, /*char start_character =*/ '*', timeout_in_seconds);
 			else ReceiveMsg(/*char end_character =*/ '\n', /*bool WaitForStartCharacter = */false, /*char start_character =*/ '*', timeout_in_seconds);
 		}
 	}
@@ -310,6 +391,7 @@ bool CNetwork::GetMessage(CString& Message, double timeout_in_seconds, int mode)
 
 bool CNetwork::ReceiveData(uint8_t* buffer, unsigned long size, unsigned long timeout_ms)
 {
+	if (!m_pSocket)	Reconnect(/*maxRetries*/ 0,/*timeout_s*/1,/*delay_ms*/0);
 	if (!m_pSocket) return false;
 	unsigned long totalRead = 0;
 	unsigned  long start = GetTickCount();
@@ -340,6 +422,30 @@ bool CNetwork::IsConnected() const {
 	return (m_pSocket && m_pSocket->m_hSocket != INVALID_SOCKET);
 }
 
+bool CNetwork::Reconnect(int maxRetries, int timeout_s, unsigned long delay_ms) {
+
+	// Keep socket infrastructure alive
+	CAsyncSocket dummy;
+	BOOL bDummyCreated = dummy.Create();
+	DisconnectSocket();
+	int tries = 0;
+	while (tries < (maxRetries + 1)) {
+		if (ConnectSocket(m_lpszAddress, m_nPort, m_SocketName, /*reconnect*/true,/*timeout_s*/timeout_s)) {
+			StoreLastMessage("Reconnected");
+			if (bDummyCreated)
+				dummy.Close(); // Close dummy socket if it was created
+			return true;
+		}
+		tries++;
+		Sleep(delay_ms);
+	}
+	if (bDummyCreated)
+		dummy.Close(); // Close dummy socket if it was created
+	return false;
+}
+
+
+/*
 bool CNetwork::Reconnect(int maxRetries, unsigned long delay_ms) {
 	DisconnectSocket();
 	int tries = 0;
@@ -351,6 +457,7 @@ bool CNetwork::Reconnect(int maxRetries, unsigned long delay_ms) {
 	}
 	return false;
 }
+*/
 
 /*
 bool CNetwork::SendDataWithRetry(const uint8_t* data, unsigned long size, int maxRetries, unsigned long delay_ms) {
