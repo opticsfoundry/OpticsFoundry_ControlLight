@@ -259,11 +259,14 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 				ErrorListWrapAround = true;
 			}
 			std::string all_error_messages = PeekLastErrors();
+			NewErrorOccured = true;
 			if (DisplayErrors && dothrow) {
 				CString mfcStr(CA2CT(all_error_messages.c_str()));
 				ControlMessageBox(mfcStr);
+				NewErrorOccured = false;
+				ErrorListWrapAround = false;
+				LastErrorIndex = 0;
 			}
-			NewErrorOccured = true;
 #ifdef THROW_EXCEPTIONS
 			if (dothrow) {
 				NewErrorOccured = false;
@@ -1501,8 +1504,8 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 					success &= CLA_AddDeviceSequencerFromJSON(device_json);
 			}
 			//Add 16-bit analog out boards
-			if (config.contains("AnalogOutBoards")) {
-				for (const auto& device_json : config["AnalogOutBoards"])
+			if (config.contains("AnalogOutBoards16bit")) {
+				for (const auto& device_json : config["AnalogOutBoards16bit"])
 					success &= CLA_AddDeviceAnalogOut16bitFromJSON(device_json);
 			}
 			//Add digital out boards

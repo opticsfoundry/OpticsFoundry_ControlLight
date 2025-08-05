@@ -6,7 +6,7 @@
     {
       "Id": 0,
       "Type": "OpticsFoundrySequencerV1",
-      "IP": "192.168.0.109",
+      "IP": "192.168.0.104",
       "Port": 7,
       "Master": true,
       "StartDelay": 10,
@@ -17,7 +17,7 @@
       "Connect": true
     }
   ],
-  "AnalogOutBoards": [
+  "AnalogOutBoards16bit": [
     {
       "Sequencer": 0,
       "StartAddress": 24,

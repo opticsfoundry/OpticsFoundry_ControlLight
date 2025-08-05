@@ -15,6 +15,8 @@ static char THIS_FILE[] = __FILE__;
 #define new DEBUG_NEW
 #endif
 
+#define ConfigFileName "..\\..\\..\\ControlHardwareConfig.json"
+
 
 #if !defined(BUILDING_DLL) && defined(USING_DLL)
 
@@ -33,7 +35,7 @@ bool LoadControlHardwareInterface() {
 	bool ControlHardwareInterfaceLoadedSuccessfully = false;
 	try {
 		bool success = true;
-		try { CLA.LoadFromJSONFile("D:\\Florian\\Firefly\\FireflyControl\\ControlLight\\ControlHardwareConfig.json"); }
+		try { CLA.LoadFromJSONFile(ConfigFileName); }
 		catch (...) {
 			success = false;
 		}
@@ -192,7 +194,7 @@ bool LoadControlHardwareInterface() {
 	bool ControlHardwareInterfaceLoadedSuccessfully = false;
 	try {
 		bool success = true;
-		try { CLA_LoadFromJSONFile("D:\\Florian\\Firefly\\FireflyControl\\ControlLight\\ControlHardwareConfig.json"); }
+		try { CLA_LoadFromJSONFile(ConfigFileName); }
 		catch (...) {
 			success = false;
 		}
@@ -352,7 +354,7 @@ ControlLight_API CLA;
 bool LoadControlHardwareInterface() {
 	bool ControlHardwareInterfaceLoadedSuccessfully = false;
 	try {
-		bool success = CLA.LoadFromJSONFile("D:\\Florian\\Firefly\\FireflyControl\\ControlLight\\ControlHardwareConfig.json");
+		bool success = CLA.LoadFromJSONFile(ConfigFileName);
 		CLA.Initialize();
 		if (CLA.IsReady()) {
 			if (!success) {
@@ -461,7 +463,7 @@ int main() {
 bool LoadControlHardwareInterface() {
 	bool ControlHardwareInterfaceLoadedSuccessfully = false;
 	try {
-		bool success = CLA_LoadFromJSONFile("D:\\Florian\\Firefly\\FireflyControl\\ControlLight\\ControlHardwareConfig.json");
+		bool success = CLA_LoadFromJSONFile(ConfigFileName);
 		CLA_Initialize();
 		if (CLA_IsReady()) {
 			if (!success) {
@@ -583,7 +585,7 @@ void DemoSmartSequencer() {
 	unsigned int AnalogOutBoardStartAddress = 20;
 	unsigned int DigitalOutAddress = 10;
 
-	CLA_AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.0.109", 7, true, 0, 100000000, 3, false, true, true);
+	CLA_AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.0.104", 7, true, 0, 100000000, 3, false, true, true);
 	CLA_AddDeviceAnalogOut16bit(0, AnalogOutBoardStartAddress, 4, true, -10, 10);
 	CLA_AddDeviceDigitalOut(0, DigitalOutAddress, 16);
 	CLA_AddDeviceAD9854(0, AD98450Address, 2, 300000000, 1, 1);
@@ -802,7 +804,8 @@ void DemoDDSVCO() {
 	31	2147483648	610.3515625	40000000
 	*/
 	//convert ADC value of previous conversion into FTW.
-	CLA_SequencerCalcAD9854FrequencyTuningWord(0, FTW0, bit_shift);//calc FTW and put FPGA into mode in which the FTW will be sent out over the next 6 bus cycles, which must be an AD9854 SetFrequency command.
+	//for debugging commented out the next line
+	//CLA_SequencerCalcAD9854FrequencyTuningWord(0, FTW0, bit_shift);//calc FTW and put FPGA into mode in which the FTW will be sent out over the next 6 bus cycles, which must be an AD9854 SetFrequency command.
 	CLA_SetFrequency(0, AD98450Address, 1000000.0); //the frequency given here will automatically be replaced by the FTW that was just calculated
 	//CLA_SetVoltage(0, AnalogOutBoardStartAddress, 10.0);
 	//set digital output to low to indicate end of FPGA sequence loop
@@ -810,8 +813,10 @@ void DemoDDSVCO() {
 	CLA_SetDigitalOutput(0, DigitalOutAddress, 0, false);
 	unsigned long CycleEndBufferPosition;
 	CLA_GetNextBufferPositionOfMasterSequencer(CycleEndBufferPosition);
-	CLA_SequencerJumpBackward(0, CycleEndBufferPosition - CycleStartBufferPosition);
-	
+	//for debugging, commente out the next line
+	//CLA_SequencerJumpBackward(0, CycleEndBufferPosition - CycleStartBufferPosition);
+	//for debugging, added next line
+	CLA_Wait_ms(10);
 	CLA_ExecuteSequence(); //sends sequence to FPGA and executes it
 
 	CLA_Cleanup();

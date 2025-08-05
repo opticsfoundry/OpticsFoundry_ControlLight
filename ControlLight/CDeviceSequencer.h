@@ -102,8 +102,16 @@ public:
 
 public:
 	//the following functions are used by CControlAPI to find the desired device. Used for convenience functions.
-	CDevice* GetParallelBusDevice(const unsigned int& Address) { if (Address > MaxParallelBusDevices) return nullptr; if (ParallelBusDeviceList[Address] == reinterpret_cast<CDeviceSequencer*>(1)) return nullptr; return ParallelBusDeviceList[Address]; }
-	CDevice* GetSerialBusDevice(const unsigned int& Address) { if (Address > MaxSerialBusDevices) return nullptr; if (SerialBusDeviceList[Address] == reinterpret_cast<CDeviceSequencer*>(1)) return nullptr; return SerialBusDeviceList[Address]; }
+	CDevice* GetParallelBusDevice(const unsigned int& Address) { 
+		if (Address > MaxParallelBusDevices) return nullptr; 
+		if (ParallelBusDeviceList[Address] == reinterpret_cast<CDeviceSequencer*>(1)) return nullptr; 
+		return ParallelBusDeviceList[Address]; 
+	}
+	CDevice* GetSerialBusDevice(const unsigned int& Address) { 
+		if (Address > MaxSerialBusDevices) return nullptr; 
+		if (SerialBusDeviceList[Address] == reinterpret_cast<CDeviceSequencer*>(1)) return nullptr; 
+		return SerialBusDeviceList[Address]; 
+	}
 private:
 	void AdvanceTime();
 };
