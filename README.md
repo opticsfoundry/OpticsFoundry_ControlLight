@@ -236,9 +236,10 @@ branch are still
 
 target_compile_definitions(ControlLight PRIVATE BUILDING_DLL)
 
-target_compile_definitions(ControlLight PRIVATE C_API) target_compile_definitions(ControlLight PRIVATE \_AFXDLL)
+target_compile_definitions(ControlLight PRIVATE C_API) 
 
-# target_compile_definitions(ControlLight PRIVATE API_CLASS)
+target_compile_definitions(ControlLight PRIVATE \_AFXDLL)
+
 
 (note that the definition of API_CLASS is commented out).
 
