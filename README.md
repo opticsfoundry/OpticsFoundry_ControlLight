@@ -66,12 +66,11 @@ The best starting point is to study one of the simple example programs. For conv
 
 &nbsp;
 
+```py
 import sys
 
 main_path = ""
-
 library_path = "lib"
-
 sys.path.append(library_path)
 
 import control_light_api
@@ -79,62 +78,33 @@ import control_light_api
 cla = control_light_api.ControlLightAPI()
 
 print("Created:", cla.is_created())
-
 try:
-
-&nbsp;   cla.configure(display_errors = False)
-
-&nbsp;   cla.load_from_json_file(main_path+r"ControlHardwareConfig.json")
+   cla.configure(display_errors = False)
+   cla.load_from_json_file(main_path+r"ControlHardwareConfig.json")
+except Exception as e:
+   print("Error loading JSON file:", e)
+   sys.exit(1)
+try:
+   cla.initialize()
+   cla.switch_debug_mode(True, "DebugSequence")
+   start_time = 0
+   for i in range(10):
+       cla.start_assembling_sequence()
+       cla.sequencer_start_analog_in_acquisition(0,0,100, 0.1)
+       for j in range(100):
+           cla.set_voltage(0, 24, 10.0 \* j / 100.0)
+           cla.wait_ms(0.1)
+           frequency = 1000.0 \* j / 100.0
+           cla.set_frequency(0, 232, frequency)
+       cla.execute_sequence()
+       input = cla.wait_till_end_of_sequence_then_get_input_data(timeout_in_s = 10)
+       print("Input data length:", input\["length"\]," duration:", input\["end_time_of_cycle"\]-start_time)
+       start_time = input\["end_time_of_cycle"\]
 
 except Exception as e:
-
-&nbsp;   print("Error loading JSON file:", e)
-
-&nbsp;   sys.exit(1)
-
-try:
-
-&nbsp;   cla.initialize()
-
-&nbsp;   cla.switch_debug_mode(True, "DebugSequence")
-
-&nbsp;   start_time = 0
-
-&nbsp;   for i in range(10):
-
-&nbsp;       cla.start_assembling_sequence()
-
-&nbsp;       cla.sequencer_start_analog_in_acquisition(0,0,100, 0.1)
-
-&nbsp;       for j in range(100):
-
-&nbsp;           cla.set_voltage(0, 24, 10.0 \* j / 100.0)
-
-&nbsp;           cla.wait_ms(0.1)
-
-&nbsp;           frequency = 1000.0 \* j / 100.0
-
-&nbsp;           cla.set_frequency(0, 232, frequency)
-
-&nbsp;       cla.execute_sequence()
-
-&nbsp;       input = cla.wait_till_end_of_sequence_then_get_input_data(timeout_in_s = 10)
-
-&nbsp;       print("Input data length:", input\["length"\]," duration:", input\["end_time_of_cycle"\]-start_time)
-
-&nbsp;       start_time = input\["end_time_of_cycle"\]
-
-&nbsp;
-
-except Exception as e:
-
-&nbsp;   print("Error:", e)
-
-&nbsp;   sys.exit(1)
-
-&nbsp;
-
-&nbsp;
+   print("Error:", e)
+   sys.exit(1)
+```
 
 The API interface is documented in
 
@@ -184,50 +154,28 @@ If you want to read the json file, use an editor that understands json syntax, e
 Here an example Python hardware configuration file generator script:
 
 &nbsp;
-
+```py
 if \__name__ == "\__main_\_":
-
-&nbsp;   builder = ConfigBuilder()
-
-&nbsp;   builder.RegisterSequencer(IP="192.168.0.109", Port=7, ClockFrequency=100000000, BusFrequency=2000000, DebugOn = False)
-
-&nbsp;   analog_out_configs = \[
-
-&nbsp;       (24, False, 0, 10),
-
-&nbsp;       (28, True, -10, 10),
-
-&nbsp;       (32, True, 0, 10),
-
-&nbsp;       (36, True, -10, 10),
-
-&nbsp;       (40, True, -10, 10)
-
-&nbsp;   \]
-
-&nbsp;   for addr, signed, minv, maxv in analog_out_configs:
-
-&nbsp;       builder.RegisterAnalogOutBoard16bit(StartAddress=addr, Signed=signed, MinVoltage=minv, MaxVoltage=maxv)
-
-&nbsp;   for addr in \[1, 2, 3, 4, 5, 6\]:
-
-&nbsp;       builder.RegisterDigitalOutBoard(Address=addr)
-
-&nbsp;   for addr in range(132, 172, 4):
-
-&nbsp;       builder.RegisterDDSAD9854Board(Address=addr)
-
-&nbsp;  
-
-&nbsp;   for addr in range(52, 84, 4):
-
-&nbsp;       builder.RegisterDDSAD9858Board(Address=addr)
-
-&nbsp;  
-
-&nbsp;   builder.RegisterDDSAD9958Board(Address=21)
-
-&nbsp;   builder.Save()
+   builder = ConfigBuilder()
+   builder.RegisterSequencer(IP="192.168.0.109", Port=7, ClockFrequency=100000000, BusFrequency=2000000, DebugOn = False)
+   analog_out_configs = \[
+       (24, False, 0, 10),
+       (28, True, -10, 10),
+       (32, True, 0, 10),
+       (36, True, -10, 10),
+       (40, True, -10, 10)
+   \]
+   for addr, signed, minv, maxv in analog_out_configs:
+       builder.RegisterAnalogOutBoard16bit(StartAddress=addr, Signed=signed, MinVoltage=minv, MaxVoltage=maxv)
+   for addr in \[1, 2, 3, 4, 5, 6\]:
+       builder.RegisterDigitalOutBoard(Address=addr)
+   for addr in range(132, 172, 4):
+       builder.RegisterDDSAD9854Board(Address=addr)
+   for addr in range(52, 84, 4):
+       builder.RegisterDDSAD9858Board(Address=addr)
+   builder.RegisterDDSAD9958Board(Address=21)
+   builder.Save()
+```
 
 &nbsp;
 
