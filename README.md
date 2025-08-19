@@ -1,4 +1,4 @@
-**Introduction**
+# Introduction
 
 A simple API for OpticsFoundry's control system, available as code for Visual Studio, as DLL for Qt, Visual Studio and as library for Python.
 
@@ -7,7 +7,7 @@ The library code is contained under [ControlLight](https://github.com/opticsfoun
 The other folders contain example programs using various interfaces to the library.
 
 
-**Overview**
+## Overview
 
 &nbsp;
 
@@ -58,7 +58,7 @@ To install the Python library control_light_api systemwide via pip, use a comman
 
 &nbsp;
 
-**ControlLightAPI interface**
+## ControlLightAPI interface
 
 &nbsp;
 
@@ -155,19 +155,19 @@ Here an example Python hardware configuration file generator script:
 
 &nbsp;
 ```py
-if \__name__ == "\__main_\_":
+if __name__ == "__main__":
    builder = ConfigBuilder()
    builder.RegisterSequencer(IP="192.168.0.109", Port=7, ClockFrequency=100000000, BusFrequency=2000000, DebugOn = False)
-   analog_out_configs = \[
+   analog_out_configs = [
        (24, False, 0, 10),
        (28, True, -10, 10),
        (32, True, 0, 10),
        (36, True, -10, 10),
        (40, True, -10, 10)
-   \]
+   ]
    for addr, signed, minv, maxv in analog_out_configs:
        builder.RegisterAnalogOutBoard16bit(StartAddress=addr, Signed=signed, MinVoltage=minv, MaxVoltage=maxv)
-   for addr in \[1, 2, 3, 4, 5, 6\]:
+   for addr in [1, 2, 3, 4, 5, 6]:
        builder.RegisterDigitalOutBoard(Address=addr)
    for addr in range(132, 172, 4):
        builder.RegisterDDSAD9854Board(Address=addr)
