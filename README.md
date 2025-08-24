@@ -78,9 +78,11 @@ except Exception as e:
 The API interface is documented in  
 _ControlLight_docs\\html\\index.html_
 and therein in -> Files -> ControlAPI.h  
-(This document is created from the docstrings in ControlAPI.h using [Doxygen](https://doxygen.nl/). To obtain the latest version of the documentation, read the docstrings in ControlAPI.h directly, or load the Doxyfile in Control_Light_docs into Doxywizard and recompile.)  
+(This document is created from the docstrings in ControlAPI.h using [Doxygen](https://doxygen.nl/). To obtain the latest version of the documentation, read the docstrings in ControlAPI.h directly, or load the Doxyfile in Control_Light_docs into Doxywizard and recompile.)
 For convenience here the relevant part of the [documentation](ControlLight_docs/ControlLight_API_Documentation.pdf).  
+
 A good way to learn how the API works is to use the EXE mode in the ControlLight in Visual Studio 2022 in Debug mode. Then you can step through the example.  
+
 Please note that all the Python command names are converted into lower case snake names, e.g.  
 _cla.load_from_json_file(main_path+r"ControlHardwareConfig.json")_  
 instead of _LoadFromJSONFile()_. The details are in the binding description in  
@@ -139,9 +141,12 @@ Each of the examples do need access to a hardware configuration file. The path a
 
 If you need/want to update the library, then do the following  
 
-## Use in Python:
 
-\- In the ControlLight Visual Studio project, in CMakeLists.txt, choose the configuration PYD at the location marked with "<-- change this line to switch build…".  
+&nbsp;
+
+## Use in Python
+
+\- In the ControlLight Visual Studio project, in CMakeLists.txt, choose the configuration PYD at the location marked with _"<-- change this line to switch build…"_.  
 \- Safe the CMakeLists.txt file, which automatically will launch CMake and reconfigure Visual Studio.   
 \- For safety, use Build -> Clean All.  
 \- Build as x64 Release.  
@@ -151,19 +156,16 @@ _ControlLight.dll_
 from _ControlLight\\out\\build\\x64-release to ControlLight_DLL_Test_Python\\lib_  
 
 Installing the control_light_api systemwide using pip:  
-Put the new pyd and dll into the _ControlLight_DLL_Test_Python_for_pip\\control_light_api_ folder, rename the pyd file into \__init_\_.pyd, open a console, change to the _ControlLight_DLL_Test_Python_for_pip_ folder, and run "pip install .".  
+Put the new pyd and dll into the _ControlLight_DLL_Test_Python_for_pip\\control_light_api_ folder, rename the pyd file into _\__init_\_.pyd_, open a console, change to the _ControlLight_DLL_Test_Python_for_pip_ folder, and run  
+_pip install ._    
 Uninstalling a pip installed control_light_api: run  
 _pip uninstall control_light_api_  
-
-To install the Python library _control_light_api_ systemwide via pip, use a command prompt, navigate to _ControlLight_DLL_Test_Python_for_pip_ and run  
-_pip install ._  
-The DLL and PYD file need to be in the subdirectory _control_light_api_ and the _pyd_ file needs to be renamed _\__init_\_pyd_.
 
 &nbsp;
 
 ## Use in Visual Studio
 
-\- In the ControlLight Visual Studio project, in CMakeLists.txt, choose the configuration DLL at the location marked with "<-- change this line to switch build…".  
+\- In the ControlLight Visual Studio project, in CMakeLists.txt, choose the configuration DLL at the location marked with _"<-- change this line to switch build…"_.  
 For the specific example given, check that the settings in the  
 _elseif(BUILD_MODE STREQUAL "DLL")_  
 branch are still  
@@ -179,14 +181,15 @@ _target_compile_definitions(ControlLight PRIVATE \_AFXDLL)_
 _ControlAPI.h_
 from _ControlLight_ to _ControlLight_DLL_Test_VS_console\\include_ and rename it to  
 _ControlLight.h_  
+
 Copy the files  
 _ControlLight.lib_  
 _ControlLight.dll_  
 
-For "x64 Debug":  
+for "x64 Debug":  
 from _ControlLight\\out\\build\\x64-debug_ to _ControlLight_DLL_Test_VS_console\\lib_ and _ControlLight_DLL_Test_VS_console\\bin_, respectively.  
 
-For "x64 Release":  
+for "x64 Release":  
 from _ControlLight\\out\\build\\x64-release_ to _ControlLight_DLL_Test_VS_console\\lib_ and _ControlLight_DLL_Test_VS_console\\bin_, respectively.  
 
 &nbsp;
@@ -231,8 +234,8 @@ All CDevice command functions are abstract, they just register an error.
 This means we use the C++ virtual function programing style to check if the commands sent by the user are ok.
 
 What does "registering an error" do?  
-If the user has defined cla.configure(True) an error message will be shown.  
-If Python is used or a C++ DLL compiled with #define THROW_EXCEPTIONS, then a CLA_Exception will be thrown.  
+If the user has called _cla.configure(True)_ an error message will be shown.  
+If Python is used or a C++ DLL compiled with _#define THROW_EXCEPTIONS_, then a _CLA_Exception_ will be thrown.  
 If none of the above, the error message will be added to a list of error messages and a flag will be set showing that an error occurred. 
-The user of the API can use DidErrorOccur() to querry if one occurred. If one occurred GetLastError will return all the ten last error messages as one string.
+The user of the API can use _DidErrorOccur()_ to querry if one occurred. If one occurred GetLastError will return all the ten last error messages as one string.
 
