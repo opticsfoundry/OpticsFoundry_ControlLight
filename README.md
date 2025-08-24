@@ -79,12 +79,9 @@ The API interface is documented in
 _ControlLight_docs\\html\\index.html_
 and therein in -> Files -> ControlAPI.h  
 (This document is created from the docstrings in ControlAPI.h using [Doxygen](https://doxygen.nl/). To obtain the latest version of the documentation, read the docstrings in ControlAPI.h directly, or load the Doxyfile in Control_Light_docs into Doxywizard and recompile.)  
-
-For convenience here the relevant part of the [documentation](ControlLight_API_Documentation.pdf).  
-A good way to learn how the API works is to use the EXE mode in the ControlLight in Visual Studio 2022 in Debug mode. Then you can step through the example.
-
+For convenience here the relevant part of the [documentation](ControlLight_docs/ControlLight_API_Documentation.pdf).  
+A good way to learn how the API works is to use the EXE mode in the ControlLight in Visual Studio 2022 in Debug mode. Then you can step through the example.  
 Please note that all the Python command names are converted into lower case snake names, e.g.  
-
 _cla.load_from_json_file(main_path+r"ControlHardwareConfig.json")_  
 instead of _LoadFromJSONFile()_. The details are in the binding description in  
 _ControlLight\\bindings\\ControlAPI_Python.cpp_
