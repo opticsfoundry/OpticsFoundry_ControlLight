@@ -10,7 +10,7 @@ The other folders contain example programs using various interfaces to the libra
 ## Overview
 
 
-OpticsFoudry's control system can be accessed through three types of software, listed below. This repository contains ControlLightAPI. See repository [OpticsFoundry_Control_AQuRA](https://github.com/opticsfoundry/OpticsFoundry_Control_AQuRA) for the other two versions.
+OpticsFoudry's control system can be accessed through three types of software:
 
 
 1. **ControlLightAPI**  
