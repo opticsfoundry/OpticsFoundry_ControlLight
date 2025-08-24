@@ -210,6 +210,12 @@ _ControlLight_DLL_Test_Qt_GUI\\build\\Desktop_Qt_6_7_2_MinGW_64_bit-Debug\\debug
 
 &nbsp;
 
+## Use with labscript
+
+We are working on a labscript interface. Please contact us if you are interested in it, as we can accelerate its development if there is interest.
+
+&nbsp;
+
 
 ## Basic structure of ControlLightAPI
 
