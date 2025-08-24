@@ -19,9 +19,7 @@ OpticsFoudry's control system can be accessed through three types of software:
 2. **ControlAPI**  
     A fully featured API, see [OpticsFoundry_Control_AQuRA](https://github.com/opticsfoundry/OpticsFoundry_Control_AQuRA), having functions such as complex sequence assembly with "GoBackInTime", "Wavefunctions", and sequence cycling with individual command updates in the background. This is for example used for the [AQuRA clock](https://www.aquraclock.eu/).  
     This API's DLL has been tested with Visual Studio C++ and Qt Creator (with MinGW, see repository [OpticsFoundry_Control_Qt](https://github.com/opticsfoundry/OpticsFoundry_Control_Qt)). The API can also be accessed through TCP/IP, and we provide a Python and a Qt Creator example for that.  
-    (If you need this API directly from Python, then tell us and we can create such a version within a few days.)  
-    ControlAPI can be configured through ASCII files, a simple directory setting txt file, a hardware device configuration json file and a user output definition json file.  
-
+    
 3. **Control.exe** 
     This is a fully featured experiment control system, based on ControlAPI, see [OpticsFoundry_Control_AQuRA](https://github.com/opticsfoundry/OpticsFoundry_Control_AQuRA). Control.exe can be configured through code and/or through configuration files (the latter in the same manner as ControlAPI, on which Control.exe is based). A somewhat outdated introduction and manual is available on [www.strontiumBEC.com](http://www.strontiumBEC.com) -> Control.
 
