@@ -216,6 +216,11 @@ We are working on a labscript interface. Please contact us if you are interested
 
 &nbsp;
 
+## Use with Linux
+
+It would not require much work to adapt this API to Linux. If you need this, please tell us and we can accelerate Linux support.
+
+&nbsp;
 
 ## Basic structure of ControlLightAPI
 
