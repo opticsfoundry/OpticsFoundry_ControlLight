@@ -151,70 +151,7 @@ Each of the examples do need access to a hardware configuration file. The path a
 
 If you need/want to update the library, then do the following  
 
-
-###  Python
-
-- In the ControlLight Visual Studio project, in CMakeLists.txt, choose the configuration PYD at the location marked with "<-- change this line to switch build…".  
-- Safe the CMakeLists.txt file, which automatically will launch CMake and reconfigure Visual Studio.  
-- For safety, use Build -> Clean All.  
-- Build as x64 Release.  
-- Copy the files _control_light_api.cp310-win_amd64.pyd_ and _ControlLight.dll_	from _ControlLight\out\build\x64-release_ to _ControlLight_DLL_Test_Python\lib_.  
-	
-Installing the _control_light_api_ systemwide using pip:    
-Put the new pyd and dll into the ControlLight_DLL_Test_Python_for_pip\control_light_api folder, rename the pyd file into _\__init__.pyd_, open a console, change to the ControlLight_DLL_Test_Python_for_pip folder, and run "pip install .".  
-
-Uninstalling a pip installed control_light_api: run "pip uninstall control_light_api".  
-	
-### Visual Studio 
-	
-- In the ControlLight Visual Studio project, in CMakeLists.txt, choose the configuration DLL at the location marked with "<-- change this line to switch build…".  
-- For the specific example given, check that the settings in the   
-elseif(BUILD_MODE STREQUAL "DLL")  
-branch are still  
-```
-	target_compile_definitions(ControlLight PRIVATE BUILDING_DLL)  
-	target_compile_definitions(ControlLight PRIVATE C_API) target_compile_definitions(ControlLight PRIVATE _AFXDLL)  
-	#target_compile_definitions(ControlLight PRIVATE API_CLASS)  
-```  
-(note that the definition of API_CLASS is commented out).   
-- Safe the CMakeLists.txt file, which automatically will launch CMake and reconfigure Visual Studio.   
-- For safety, use Build -> Clean All.  
-- Build as "x64 Debug" or "x64 Release". The release version is significantly faster, but doesn't provide Visual Studio debug information.  
-- Copy the file  
-_ControlAPI.h_  
-from ControlLight to ControlLight_DLL_Test_VS_console\include and rename it to   
-ControlLight.h  
-Copy the files  
-ControlLight.lib   
-ControlLight.dll  
-
-for "x64 Debug":  
-from ControlLight\out\build\x64-debug to ControlLight_DLL_Test_VS_console\lib and ControlLight_DLL_Test_VS_console\bin, respectively.  
-
-for "x64 Release":  
-from ControlLight\out\build\x64-release to ControlLight_DLL_Test_VS_console\lib and ControlLight_DLL_Test_VS_console\bin, respectively.  
-
-
-### Qt Creator (MinGW)
-
-Recreate the DLL as explained under 2) Visual Studio in x64 release or debug mode and copy it into a folder in which Qt can find it. This could be your source folder or the build folder, e.g.
- 
-For release version, copy ControlLight.dll file from ControlLight\out\build\x64-release to  
-_ControlLight_DLL_Test_Qt_console\build\Desktop_Qt_6_7_2_MinGW_64_bit-Release\release_
-and  
-_ControlLight_DLL_Test_Qt_GUI\build\Desktop_Qt_6_7_2_MinGW_64_bit-Release\release_  
-
-For debug version, copy ControlLight.dll file from from ControlLight\out\build\x64-debug to   
-_ControlLight_DLL_Test_Qt_console\build\Desktop_Qt_6_7_2_MinGW_64_bit-Debug\debug_
-and  
-_ControlLight_DLL_Test_Qt_GUI\build\Desktop_Qt_6_7_2_MinGW_64_bit-Debug\debug_
-
-
-
-
-&nbsp;
-
-## Use in Python
+### Rebuilding for Python
 
 \- In the ControlLight Visual Studio project, in CMakeLists.txt, choose the configuration PYD at the location marked with _"<-- change this line to switch build…"_.  
 \- Safe the CMakeLists.txt file, which automatically will launch CMake and reconfigure Visual Studio.   
@@ -231,9 +168,7 @@ _pip install ._
 Uninstalling a pip installed control_light_api: run  
 _pip uninstall control_light_api_  
 
-&nbsp;
-
-## Use in Visual Studio
+### Rebuilding for Visual Studio
 
 \- In the ControlLight Visual Studio project, in CMakeLists.txt, choose the configuration DLL at the location marked with _"<-- change this line to switch build…"_.  
 For the specific example given, check that the settings in the  
@@ -262,9 +197,7 @@ from _ControlLight\\out\\build\\x64-debug_ to _ControlLight_DLL_Test_VS_console\
 for "x64 Release":  
 from _ControlLight\\out\\build\\x64-release_ to _ControlLight_DLL_Test_VS_console\\lib_ and _ControlLight_DLL_Test_VS_console\\bin_, respectively.  
 
-&nbsp;
-
-## Use in Qt Creator (MinGW C++)  
+### Rebuilding for Qt Creator (MinGW C++)  
    
 \- Recreate the DLL with Visual Studio in x64 release or debug mode (see above).  
 
