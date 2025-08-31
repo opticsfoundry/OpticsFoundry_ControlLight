@@ -123,6 +123,18 @@ if __name__ == "__main__":
 
 &nbsp;
 
+## Use with labscript
+
+We are working on a labscript interface. Please contact us if you are interested in it, as we can accelerate its development if there is interest.
+
+&nbsp;
+
+## Use with Linux
+
+It would not require much work to adapt this API to Linux. If you need this, please tell us and we can accelerate Linux support.
+
+&nbsp;
+
 ## Rebuilding and using ControlLightAPI
 
 The ControlLight API code resides in the folder "ControlLight", which is a Visual Studio C++ 2022 CMake project.  
@@ -138,6 +150,66 @@ You can also modify the API and recreated the DLL, LIB, PYD files as needed for 
 Each of the examples do need access to a hardware configuration file. The path and filename is set in the LoadFromJSONFile() function in C or the cla.load_from_json_file() function in Python. In the demos it’s the ControlHardwareConfig.json file. The structure of this file is explained in the "Hardware configuration file" section below.  
 
 If you need/want to update the library, then do the following  
+
+
+###  Python
+
+- In the ControlLight Visual Studio project, in CMakeLists.txt, choose the configuration PYD at the location marked with "<-- change this line to switch build…".  
+- Safe the CMakeLists.txt file, which automatically will launch CMake and reconfigure Visual Studio.  
+- For safety, use Build -> Clean All.  
+- Build as x64 Release.  
+- Copy the files _control_light_api.cp310-win_amd64.pyd_ and _ControlLight.dll_	from _ControlLight\out\build\x64-release_ to _ControlLight_DLL_Test_Python\lib_.  
+	
+Installing the _control_light_api_ systemwide using pip:    
+Put the new pyd and dll into the ControlLight_DLL_Test_Python_for_pip\control_light_api folder, rename the pyd file into _\__init__.pyd_, open a console, change to the ControlLight_DLL_Test_Python_for_pip folder, and run "pip install .".  
+
+Uninstalling a pip installed control_light_api: run "pip uninstall control_light_api".  
+	
+### Visual Studio 
+	
+- In the ControlLight Visual Studio project, in CMakeLists.txt, choose the configuration DLL at the location marked with "<-- change this line to switch build…".  
+- For the specific example given, check that the settings in the   
+elseif(BUILD_MODE STREQUAL "DLL")  
+branch are still  
+```
+	target_compile_definitions(ControlLight PRIVATE BUILDING_DLL)  
+	target_compile_definitions(ControlLight PRIVATE C_API) target_compile_definitions(ControlLight PRIVATE _AFXDLL)  
+	#target_compile_definitions(ControlLight PRIVATE API_CLASS)  
+```  
+(note that the definition of API_CLASS is commented out).   
+- Safe the CMakeLists.txt file, which automatically will launch CMake and reconfigure Visual Studio.   
+- For safety, use Build -> Clean All.  
+- Build as "x64 Debug" or "x64 Release". The release version is significantly faster, but doesn't provide Visual Studio debug information.  
+- Copy the file  
+_ControlAPI.h_  
+from ControlLight to ControlLight_DLL_Test_VS_console\include and rename it to   
+ControlLight.h  
+Copy the files  
+ControlLight.lib   
+ControlLight.dll  
+
+for "x64 Debug":  
+from ControlLight\out\build\x64-debug to ControlLight_DLL_Test_VS_console\lib and ControlLight_DLL_Test_VS_console\bin, respectively.  
+
+for "x64 Release":  
+from ControlLight\out\build\x64-release to ControlLight_DLL_Test_VS_console\lib and ControlLight_DLL_Test_VS_console\bin, respectively.  
+
+
+### Qt Creator (MinGW)
+
+Recreate the DLL as explained under 2) Visual Studio in x64 release or debug mode and copy it into a folder in which Qt can find it. This could be your source folder or the build folder, e.g.
+ 
+For release version, copy ControlLight.dll file from ControlLight\out\build\x64-release to  
+_ControlLight_DLL_Test_Qt_console\build\Desktop_Qt_6_7_2_MinGW_64_bit-Release\release_
+and  
+_ControlLight_DLL_Test_Qt_GUI\build\Desktop_Qt_6_7_2_MinGW_64_bit-Release\release_  
+
+For debug version, copy ControlLight.dll file from from ControlLight\out\build\x64-debug to   
+_ControlLight_DLL_Test_Qt_console\build\Desktop_Qt_6_7_2_MinGW_64_bit-Debug\debug_
+and  
+_ControlLight_DLL_Test_Qt_GUI\build\Desktop_Qt_6_7_2_MinGW_64_bit-Debug\debug_
+
+
 
 
 &nbsp;
@@ -208,17 +280,7 @@ _ControlLight_DLL_Test_Qt_console\\build\\Desktop_Qt_6_7_2_MinGW_64_bit-Debug\\d
 and  
 _ControlLight_DLL_Test_Qt_GUI\\build\\Desktop_Qt_6_7_2_MinGW_64_bit-Debug\\debug_  
 
-&nbsp;
 
-## Use with labscript
-
-We are working on a labscript interface. Please contact us if you are interested in it, as we can accelerate its development if there is interest.
-
-&nbsp;
-
-## Use with Linux
-
-It would not require much work to adapt this API to Linux. If you need this, please tell us and we can accelerate Linux support.
 
 &nbsp;
 
