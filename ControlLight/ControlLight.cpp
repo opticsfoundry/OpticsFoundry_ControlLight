@@ -491,10 +491,11 @@ bool LoadControlHardwareInterface() {
 void RampVoltage(unsigned int Sequencer, unsigned int Address, double StartVoltage, double TargetVoltage, double Duration_in_ms, double StepSize_in_ms) {
 	unsigned long NumberOfSteps = (unsigned long)(Duration_in_ms / StepSize_in_ms);
 	double StepSize = (TargetVoltage - StartVoltage) / (double)NumberOfSteps;
+	double Voltage = StartVoltage;
 	for (unsigned long i = 0; i < NumberOfSteps; i++) {
-		double Voltage = StartVoltage + i * StepSize;
 		CLA_SetVoltage(Sequencer, Address, Voltage);
 		CLA_Wait_ms(StepSize_in_ms);
+		Voltage += StepSize;
 	}
 	CLA_SetVoltage(Sequencer, Address, TargetVoltage);
 }
