@@ -488,6 +488,17 @@ bool LoadControlHardwareInterface() {
 	return ControlHardwareInterfaceLoadedSuccessfully;
 }
 
+void RampVoltage(unsigned int Sequencer, unsigned int Address, double StartVoltage, double TargetVoltage, double Duration_in_ms, double StepSize_in_ms) {
+	unsigned long NumberOfSteps = (unsigned long)(Duration_in_ms / StepSize_in_ms);
+	double StepSize = (TargetVoltage - StartVoltage) / (double)NumberOfSteps;
+	for (unsigned long i = 0; i < NumberOfSteps; i++) {
+		double Voltage = StartVoltage + i * StepSize;
+		CLA_SetVoltage(Sequencer, Address, Voltage);
+		CLA_Wait_ms(StepSize_in_ms);
+	}
+	CLA_SetVoltage(Sequencer, Address, TargetVoltage);
+}
+
 void DemoFPGASequencer() {
 	cout << "Bare function API, using bool error return value" << endl;
 
@@ -553,6 +564,7 @@ void DemoFPGASequencer() {
 			CLA_SetValue(0, 232, 0, (uint8_t*)&Frequency, 64);
 		}
 		CLA_Wait_ms(10);
+		RampVoltage(/*Sequencer*/ 0, /*Address*/ 24, /*StartVoltage*/ -10, /* TargetVoltage*/ 10, /*Duration_in_ms*/ 100, /*StepSize_in_ms*/ 0.1);
 		CLA_ExecuteSequence();
 		bool running = false;
 		unsigned long long DataPointsWritten = 0;
