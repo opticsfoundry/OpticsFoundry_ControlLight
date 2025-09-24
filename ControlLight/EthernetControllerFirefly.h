@@ -47,6 +47,7 @@ private:
 	uint8_t core_option_PL_to_PS;
 	bool SetPeriodicTriggerAtBeginningOfNextSequence;
 	bool WaitForPeriodicTriggerAtBeginningOfSequence;
+	bool ChangePeriodicTriggerPeriodWhileCycling;
 	uint32_t* previous_command_buffer;
 	unsigned long previous_command_buffer_length;
 	CDeviceSequencer* MySequencer;
