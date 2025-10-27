@@ -4,10 +4,6 @@
 
 
 class CDeviceSequencer;
-//#include "stdafx.h"
-
-//#include <stdint.h>
-//#include <stdbool.h>
 
 /*! typedef enum E_AD9958_PWR
     \brief DDS Power modes.

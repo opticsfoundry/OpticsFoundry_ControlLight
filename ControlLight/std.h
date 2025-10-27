@@ -1,8 +1,28 @@
 #pragma once
-#include <afxwin.h>
-//#include <afxext.h>   // if you use MFC extensions
 
+#include <string>
+#include <chrono>
 
-extern void AddErrorMessageCString(const CString &lpszText, bool dothrow = true);
+typedef std::chrono::high_resolution_clock Clock;
+typedef Clock::duration Duration;
+typedef std::chrono::time_point<Clock> Time;
+double milliSeconds(const Duration& d);
 
-extern void ControlMessageBox(const CString& lpszText, UINT nType = MB_OK, UINT nIDHelp = 0);
+#ifndef WIN32
+	#define _T
+	#define STD_STRING
+
+	#ifndef STD_STRING
+	#include "CStdString.h"
+	typedef CStdString CString;
+	#endif
+#endif
+
+#ifdef STD_STRING
+	typedef std::string CString;
+	#define CStringToStdString(str) str
+#else
+	#define CStringToStdString(str) std::string(str.GetString())
+#endif
+
+extern void ControlMessageBox(const std::string& text);

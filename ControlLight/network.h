@@ -1,6 +1,8 @@
 
 #pragma once
 
+#ifdef WIN32
+
 #ifdef _WINSOCKAPI_
 #undef _WINSOCKAPI_ // Prevent inclusion of Winsock.h
 #endif
@@ -13,23 +15,48 @@
 #include <Windows.h>    // Ensure Windows.h is included after Winsock2.h
 
 #include <afxsock.h>
+#include <afxwin.h> // This is a compatibility layer to define CString, and others
+
+#else // WIN32
+
+#include "std.h"
+#include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/wait.h>
+#include <signal.h>
+#include <netdb.h>
+
+
+#endif // WIN32
 
 #include <fstream>
 using namespace std;
 
-extern void Sleep_ms(unsigned long ms);
-
-class CNetwork : public CObject
+class CNetwork
+#ifdef _WIN32
+: public CObject
+#endif
 {
 // Attributes
 public:
+#ifdef _WIN32
 	CSocket* m_pSocket;
-	LPCTSTR m_lpszAddress;
-	UINT m_nPort; 
-	CString m_SocketName;
+#else
+	int* m_pSocket;
+	int m_socketfd;
+#endif
+	std::string m_host;
+	unsigned int m_nPort;
+	std::string m_SocketName;
 // Operations
 public:
-	bool ConnectSocket(LPCTSTR lpszAddress, UINT nPort,CString SocketName, bool reconnect = false, int timeout_s = 2);
+	bool ConnectSocket(const std::string& host, unsigned int nPort, const std::string& SocketName, bool reconnect = false, int timeout_s = 2);
 	bool ResetConnection(unsigned long sleep_time=2000);
 	bool FlushInputBuffer();
 	void SendMsg(CString& strText);
@@ -41,10 +68,10 @@ public:
 // Implementation
 public:
 	void DebugStop();
-	void DebugStart(CString Filename);
+	void DebugStart(const std::string& Filename);
 	ofstream *DebugFile;
 	void Flush();
-	void StoreLastMessage(CString Message);
+	void StoreLastMessage(const std::string& Message);
 	bool GetMessage(CString &Message, double timeout_in_seconds = 5, int mode = 1);
 	CString LastMessage;
 	CNetwork();

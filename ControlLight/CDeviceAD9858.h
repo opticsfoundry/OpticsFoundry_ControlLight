@@ -1,8 +1,7 @@
 #pragma once
 
 #include "CDevice.h"
-
-
+#include <cmath>
 
 class CAD9858;
 class CDeviceAD9858 : public CDevice

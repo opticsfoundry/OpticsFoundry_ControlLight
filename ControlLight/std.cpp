@@ -1,7 +1,9 @@
 #include "std.h"
 
+#ifdef WIN32
 #define _AFXDLL
 #include <afxwin.h>
+#endif
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -12,19 +14,23 @@ static char THIS_FILE[] = __FILE__;
 #include "ControlAPI.h"
 
 #include <string>
-#include <atlconv.h>
+#include <iostream>
 
-void AddErrorMessageCString(const CString& lpszText, bool dothrow) {
-	USES_CONVERSION; // Required macro in older ATL builds
-	CT2A ascii(lpszText);  // convert wide CString to narrow ANSI string
-	std::string errorMessage(ascii);  // now this should compile
-	AddErrorMessage(errorMessage, dothrow);
+using namespace std;
+
+double milliSeconds(const Duration& d)
+{
+	return chrono::duration_cast<std::chrono::duration<double>>(d).count() * 1000.;
 }
 
-void ControlMessageBox(const CString& lpszText, UINT nType, UINT nIDHelp) {
+void ControlMessageBox(const std::string& text) {
+#ifdef WIN32
 #ifdef _AFXDLL
-	if (DisplayErrors) AfxMessageBox(_T(lpszText), nType, nIDHelp);
+	if (DisplayErrors) AfxMessageBox(text.c_str(), MB_OK, 0);
 #else
-	if (DisplayErrors) MessageBox(NULL, lpszText, L"Control DLL", nType);
+	if (DisplayErrors) MessageBox(NULL, text.c_str(), L"Control DLL", MB_OK);
+#endif
+#else
+	cerr << "MESSAGE BOX: " << text << endl;
 #endif
 }

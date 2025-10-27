@@ -2,15 +2,14 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "std.h"
-#include "control.h"
 #include "AD9958.h"
 #include "MultiWriteDevice.h"
-#include "control.h"
 #include "ControlAPI.h"
 #include "CDeviceSequencer.h"
-
-
+#include "std.h"
+#include <string>
+#include <format>
+#include <cmath>
 
 
 // Register addresses, writing to (MSB is 0 for a write)
@@ -43,7 +42,7 @@ void AD9958DoNothing(bool bit) {}
 
 void AD9958WaitNothing(double time) {}
 
-uint32_t AD9958WriteReadSPINothing(unsigned int chip_select, unsigned int number_of_bits_out, unsigned __int64 data_high, unsigned __int64 data_low, unsigned int number_of_bits_in) { return 0; }
+uint32_t AD9958WriteReadSPINothing(unsigned int chip_select, unsigned int number_of_bits_out, uint64_t data_high, uint64_t data_low, unsigned int number_of_bits_in) { return 0; }
 
 
 
@@ -387,14 +386,14 @@ void CAD9958::Dev_Deselect(bool read, uint8_t number_of_bits_in)
     //AD9958 has MSB first as default mode.
     //the FPGA SPI uses LSB first -> we have to sort the bits
     //As we never transfer more than 4 bytes we can use data_low and set data_high to zero
-    unsigned __int64 data_low = 0;
+    uint64_t data_low = 0;
     for (unsigned char i = 0; i < BytesToTransmit; i++) {
 
         //data_low = data_low | (AD9958reverseBits(SPIBuffer[i]) << (8 * i));
-        unsigned __int64 help = AD9958reverseBits(InvertedSPIBuffer[i]);
+        uint64_t help = AD9958reverseBits(InvertedSPIBuffer[i]);
         data_low |= (help << (8 * i));
     }
-    WriteSPIBitBanged(/*  number_of_bits_out*/BytesToTransmit * 8, /*unsigned __int64*/ data_low);
+    WriteSPIBitBanged(/*  number_of_bits_out*/BytesToTransmit * 8, /*uint64_t*/ data_low);
 }
 
 void CAD9958::Initialise(void)
@@ -522,18 +521,16 @@ uint32_t CAD9958::SetRegisterBits(unsigned char RegisterNr, unsigned char Lowest
 {
     if (!Enabled) return false;
     if (((RegisterNr > ControlRegisterNr) && (!GetValue)) || ((RegisterNr > 46) && (RegisterNr != ControlRegisterNr) && (GetValue))) {
-        CString buf;
-        if (GetValue) buf.Format("CAD9958::SetRegisterBits : RegisterNr (%d) is not in range for reading, [0..46] or 68.", RegisterNr);
-        else buf.Format("CAD9958::SetRegisterBits : RegisterNr (%d) is not in range for writing, [0..68]", RegisterNr);
+        std::string buf;
+        if (GetValue) buf = std::format("CAD9958::SetRegisterBits : RegisterNr ({}) is not in range for reading, [0..46] or 68.", RegisterNr);
+        else buf = std::format("CAD9958::SetRegisterBits : RegisterNr ({}) is not in range for writing, [0..68]", RegisterNr);
         ControlMessageBox(buf);
         return 0;
     }
     uint8_t LengthTableRegisterNr = (RegisterNr < 47) ? RegisterNr : (RegisterNr < 69) ? RegisterNr - 44 : 47;
 
     if (AD9958ValueLength[LengthTableRegisterNr] * 8 < NrBits) {
-        CString buf;
-        buf.Format("CAD9958::SetRegisterBits : NrBits (%d) exceeds RegisterNr (%d) length (%d)", NrBits, RegisterNr, AD9958ValueLength[LengthTableRegisterNr] * 8);
-        ControlMessageBox(buf);
+        ControlMessageBox(std::format("CAD9958::SetRegisterBits : NrBits ({}) exceeds RegisterNr ({}) length ({})", NrBits, RegisterNr, AD9958ValueLength[LengthTableRegisterNr] * 8));
         return 0;
     }
     uint32_t mask = 0xFFFFFFFF >> (32 - NrBits);
@@ -563,9 +560,9 @@ uint32_t CAD9958::SetValue(unsigned char RegisterNr, uint32_t Value, bool GetVal
 {
     if (!Enabled) return 0;
     if ( ((RegisterNr > ControlRegisterNr) && (!GetValue)) || ((RegisterNr > 46) && (RegisterNr!= ControlRegisterNr) && (GetValue)) ) {
-        CString buf;
-        if (GetValue) buf.Format("CAD9958::SetValue : RegisterNr (%d) is not in range for reading, [0..46] or 68.", RegisterNr);
-        else buf.Format("CAD9958::SetValue : RegisterNr (%d) is not in range for writing, [0..68]", RegisterNr);
+        std::string buf;
+        if (GetValue) buf = std::format("CAD9958::SetValue : RegisterNr ({}) is not in range for reading, [0..46] or 68.", RegisterNr);
+        else buf = std::format("CAD9958::SetValue : RegisterNr ({}) is not in range for writing, [0..68]", RegisterNr);
         ControlMessageBox(buf);
         return 0;
     }
@@ -609,9 +606,7 @@ uint32_t CAD9958::SetValueDirect(unsigned char RegisterNr, uint32_t Value, bool 
 {
     if (!Enabled) return 0;
     if (((RegisterNr >= 25) && (!GetValue)) || ((RegisterNr >= 47) && (!GetValue))) {
-        CString buf;
-        buf.Format("CAD9958::SetValueDirect : RegisterNr (%d) exceeds maximum (%d)", RegisterNr, AD9958NumberOfRegisters - 1);
-        ControlMessageBox(buf);
+        ControlMessageBox(std::format("CAD9958::SetValueDirect : RegisterNr ({}) exceeds maximum ({})", RegisterNr, AD9958NumberOfRegisters - 1));
         return 0;
     }
     if (GetValue) {

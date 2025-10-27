@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 
 class CDeviceSequencer;
 
@@ -16,8 +17,8 @@ class CAD9852
 {
 private:	
 	bool SetControlBit(unsigned char RegisterNr, unsigned char BitNr, bool Value, bool GetValue=false);
-	__int64 SetValue(unsigned char ValueNr, __int64 Value, bool GetValue=false);
-	double CalculateModulationFrequencyData(__int64* DeltaFrequencyWord, unsigned int* ClockUpdateSteps);
+	int64_t SetValue(unsigned char ValueNr, int64_t Value, bool GetValue=false);
+	double CalculateModulationFrequencyData(int64_t* DeltaFrequencyWord, unsigned int* ClockUpdateSteps);
 	//PhaseAdjustRegister1:  Base: 0x00 Length: 2 Default: 0     ValueNr: 0 
 	//PhaseAdjustRegister2:  Base: 0x02 Length: 2 Default: 0	 ValueNr: 1
 	//FrequencyTuningWord1:  Base: 0x04 Length: 6 Default: 0	 ValueNr: 2
@@ -45,7 +46,7 @@ public:
 	double SetFrequency2AsBinary(const uint64_t& FrequencyTuningWord, bool GetValue = false);
 	void UpdateFrequencyValues();
 	//void SetWaveformFrequenciesDDSAD9852(unsigned int DDSNumber, double StartFrequency, double StopFrequency, double ModulationFrequency);
-	__int64 SetDeltaFrequencyWord(__int64 aDeltaFrequencyWord, bool GetValue=false);
+	int64_t SetDeltaFrequencyWord(int64_t aDeltaFrequencyWord, bool GetValue=false);
 	unsigned long SetUpdateClock(unsigned long aUpdateClock, bool GetValue=false);
 	unsigned long SetRampRateClock(unsigned long aRampRateClock, bool GetValue=false);
 	unsigned short SetOutputShapeKeyMult(unsigned short aOutputShapeKeyMult, bool GetValue=false);
@@ -90,7 +91,7 @@ public:
 	void SetModeRampedFrequencyShiftKeyingConfiguration();
 	bool UpdateRegistersModeAutomatic;
 
-	__int64 AktValueContents[AD9852MaxValues]; //keeps track of Value, contains value after bus buffer has been finished to be written out
+	int64_t AktValueContents[AD9852MaxValues]; //keeps track of Value, contains value after bus buffer has been finished to be written out
 	
 	double ClockSpeed;
 	double InputClockSpeed;
@@ -108,7 +109,7 @@ private:
 	unsigned long BusBufferEnd;
 	unsigned long BusBufferLength;
 
-	__int64 AktValueContentsWritten;
+	int64_t AktValueContentsWritten;
 	unsigned char AktValueNrWritten;
 	unsigned char AktSubAddressWritten;		
 	unsigned char WritePrecision[AD9852MaxValues];

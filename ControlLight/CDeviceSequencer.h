@@ -75,6 +75,9 @@ public:
 	double GetTime_ms();
 	double GetTimeDebt_ms() { return TimeDebt_in_ms; };
 	unsigned long GetNextBufferPosition() { return BufferPosition; }
+	void SetPeriodicTrigger(double periodicTriggerPeriod_in_s, double periodicTriggerAllowedWaitTime_in_s);
+	void GetNextCycleNumber(long &NextCycleNumber);
+	void ResetCycleNumber();
 	void StartAssemblingCPUCommandSequence();
 	void AddCPUCommand(const char* command);
 	void ExecuteCPUCommandSequence(unsigned long ethernet_check_period_in_ms);
@@ -83,6 +86,7 @@ public:
 	void GetCPUCommandErrorMessages();
 	void PrintCPUCommandErrorMessages();
 	void PrintCPUCommandSequence();
+
 public:
 	//the following are commands to control the sequencer itself
 	virtual bool SetValue(const unsigned int& SubAddress, const uint8_t* Data, const unsigned long& DataLength_in_bit, const uint8_t& StartBit);

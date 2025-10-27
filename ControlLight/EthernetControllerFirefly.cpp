@@ -2,11 +2,17 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#ifdef WIN32
 #include <afxwin.h>
+#endif
 #include "EthernetControllerFirefly.h"
 #include "std.h"
 #include "ControlAPI.h"
 #include "CDeviceSequencer.h"
+#include <thread>
+#include <iostream>
+#include <cmath>
+#include <cstring>
 
 
 #ifdef _DEBUG
@@ -15,9 +21,9 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-
 constexpr uint32_t MaxReconnectAttempts = 100;
 
+using namespace std;
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -73,8 +79,8 @@ CEthernetControllerFirefly::~CEthernetControllerFirefly()
 	if (previous_command_buffer_ptr) delete previous_command_buffer_ptr;
 }
 
-bool CEthernetControllerFirefly::ConnectSocket(LPCTSTR lpszAddress, UINT port, unsigned int aFPGAClockToBusClockRatio, double aFPGAClockFrequencyInHz, bool aFPGAUseExternalClock, bool aFPGAUseStrobeGenerator, bool aExternalTrigger) {
-	Connected = CNetworkClient::ConnectSocket(lpszAddress, port, "EthernetMultiIOController");
+bool CEthernetControllerFirefly::ConnectSocket(const std::string& host, unsigned port, unsigned int aFPGAClockToBusClockRatio, double aFPGAClockFrequencyInHz, bool aFPGAUseExternalClock, bool aFPGAUseStrobeGenerator, bool aExternalTrigger) {
+	Connected = CNetworkClient::ConnectSocket(host, port, "EthernetMultiIOController");
 	//BusFrequency = aBusFrequency;
 	FPGAClockToBusClockRatio = aFPGAClockToBusClockRatio;
 	FPGAClockFrequencyInHz = aFPGAClockFrequencyInHz;
@@ -95,9 +101,7 @@ void CEthernetControllerFirefly::AddSequencerCommandToBuffer(uint32_t* buffer, u
 	buffer[n * 2 + 1] = high_buffer;
 
 	if (DebugBufferFile) {
-		CString buf;
-		buf.Format("%8u CMD %x buffer = %08X %08X ", n, high_buffer, low_buffer);
-		(*DebugBufferFile) << buf << endl;
+		(*DebugBufferFile) << std::format("{:8d} CMD buffer = {:08X} {:08X}", n, high_buffer, low_buffer) << endl;
 	}
 }
 
@@ -107,7 +111,7 @@ void CEthernetControllerFirefly::ClearSequencerCommandList() {
 
 void CEthernetControllerFirefly::AddSequencerCommand(uint32_t high_word, uint32_t low_word) {
 	/*if (SequencerCommandListSize >= MaxSequencerCommandListSize) {
-		AddErrorMessageCString("EthernetMultiIOControllerFirefly.cpp: AddSequencerCommand(): sequencer command list has too little memory, increase MaxSequencerCommandListSize.");
+		AddErrorMessage("EthernetMultiIOControllerFirefly.cpp: AddSequencerCommand(): sequencer command list has too little memory, increase MaxSequencerCommandListSize.");
 		return MaxSequencerCommandListSize - 1;
 	}
 	SequencerCommandList[SequencerCommandListSize * 2] = low_word;
@@ -116,8 +120,7 @@ void CEthernetControllerFirefly::AddSequencerCommand(uint32_t high_word, uint32_
 	SequencerCommandListSize++;
 	return CurrentCommandNr;*/
 	if (DebugBufferFile) {
-		CString buf;
-		buf.Format("data = %08X %08X", high_word, low_word);
+		std::string buf = std::format("data = {:08X} {:08X}", high_word, low_word);
 		(*DebugBufferFile) << buf << endl;
 	}
 	MySequencer->AddCommandToSequence(high_word, low_word);
@@ -125,7 +128,7 @@ void CEthernetControllerFirefly::AddSequencerCommand(uint32_t high_word, uint32_
 
 
 
-void CEthernetControllerFirefly::DebugBuffer(CString filename) {
+void CEthernetControllerFirefly::DebugBuffer(const std::string& filename) {
 	DebugBufferFile = new ofstream(filename, ios::out);
 	DebugBufferOn = true;
 }
@@ -176,7 +179,7 @@ constexpr uint8_t CMD_SAVE_CYCLE_COUNT_SINCE_STARTUP_IN_INPUT_BUF_MEM = 27;
 constexpr unsigned char CMD_CALC_AD9854_FREQUENCY_TUNING_WORD = 28;
 
 constexpr unsigned char NrCommands = 29;
-const CString CommandNames[NrCommands] = { "CMD_STOP", "CMD_STEP", "CMD_STEP_AND_ENTER_FAST_MODE", "CMD_SET_OPTIONS", "CMD_LOAD_REG_LOW", "CMD_LOAD_REG_HIGH", "CMD_LATCH_STATE", "CMD_RESET_WAIT_CYCLES", "CMD_LONG_WAIT", "CMD_SET_STROBE_OPTIONS", "CMD_SET_INPUT_BUF_MEM", "CMD_WAIT_FOR_TRIGGER", "CMD_SET_LOOP_COUNT", "CMD_CONDITIONAL_JUMP_FORWARD", "CMD_CONDITIONAL_JUMP_BACKWARD", "CMD_I2C_OUT", "CMD_SPI_OUT_IN", "CMD_INPUT_REPEATED_OUT_IN", "CMD_SET_PERIODIC_TRIGGER_PERIOD", "CMD_SET_PERIODIC_TRIGGER_ALLOWED_WAIT_TIME", "CMD_WAIT_FOR_PERIODIC_TRIGGER", "CMD_WAIT_FOR_WAIT_CYCLE_NR", "CMD_DIG_IN", "CMD_TRIGGER_SECONDARY_PL_PS_INTERRUPT", "CMD_ANALOG_IN_OUT", "CMD_PL_TO_PS_COMMAND", "CMD_LOAD_COMMAND_BUFFER", "CMD_SAVE_CYCLE_COUNT_SINCE_STARTUP_IN_INPUT_BUF_MEM", "CMD_CALC_AD9854_FREQUENCY_TUNING_WORD" };
+const std::string CommandNames[NrCommands] = { "CMD_STOP", "CMD_STEP", "CMD_STEP_AND_ENTER_FAST_MODE", "CMD_SET_OPTIONS", "CMD_LOAD_REG_LOW", "CMD_LOAD_REG_HIGH", "CMD_LATCH_STATE", "CMD_RESET_WAIT_CYCLES", "CMD_LONG_WAIT", "CMD_SET_STROBE_OPTIONS", "CMD_SET_INPUT_BUF_MEM", "CMD_WAIT_FOR_TRIGGER", "CMD_SET_LOOP_COUNT", "CMD_CONDITIONAL_JUMP_FORWARD", "CMD_CONDITIONAL_JUMP_BACKWARD", "CMD_I2C_OUT", "CMD_SPI_OUT_IN", "CMD_INPUT_REPEATED_OUT_IN", "CMD_SET_PERIODIC_TRIGGER_PERIOD", "CMD_SET_PERIODIC_TRIGGER_ALLOWED_WAIT_TIME", "CMD_WAIT_FOR_PERIODIC_TRIGGER", "CMD_WAIT_FOR_WAIT_CYCLE_NR", "CMD_DIG_IN", "CMD_TRIGGER_SECONDARY_PL_PS_INTERRUPT", "CMD_ANALOG_IN_OUT", "CMD_PL_TO_PS_COMMAND", "CMD_LOAD_COMMAND_BUFFER", "CMD_SAVE_CYCLE_COUNT_SINCE_STARTUP_IN_INPUT_BUF_MEM", "CMD_CALC_AD9854_FREQUENCY_TUNING_WORD" };
 constexpr bool CommandUsesBuffer[NrCommands] = { false   , false     , false                         , true             , false             , false              , false            , false                  , true           , true                    , true                   , true                  , true                , true                          , true                           , true         , true            , true                       , true                             , true                                        , false                          , true                        , true        , false                                  , true               , true                  , false                , false												, true };
 
 void CEthernetControllerFirefly::StartAnalogInAcquisition(unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms) {
@@ -295,8 +298,8 @@ end
 */
 void CEthernetControllerFirefly::AddCommandSetLoopCount(unsigned int loop_count) {
 	unsigned char command = CMD_SET_LOOP_COUNT;
-	unsigned __int32 low_buffer = command;
-	unsigned __int32 high_buffer = (loop_count & 0xFFFFFFFF);
+	uint32_t low_buffer = command;
+	uint32_t high_buffer = (loop_count & 0xFFFFFFFF);
 	AddSequencerCommandToSequenceList(high_buffer, low_buffer);
 }
 
@@ -310,8 +313,8 @@ end
 */
 void CEthernetControllerFirefly::AddCommandJumpForward(unsigned int jump_length, bool unconditional_jump, bool condition_0, bool condition_1, bool condition_PS) {
 	unsigned char command = CMD_CONDITIONAL_JUMP_FORWARD;
-	unsigned __int32 low_buffer = ((jump_length & 0xFF) << 8) | (condition_0 ? 0x100 : 0) | (condition_1 ? 0x200 : 0) | (condition_PS ? 0x400 : 0) | (unconditional_jump ? 0x800 : 0) | command;
-	unsigned __int32 high_buffer = 0;
+	uint32_t low_buffer = ((jump_length & 0xFF) << 8) | (condition_0 ? 0x100 : 0) | (condition_1 ? 0x200 : 0) | (condition_PS ? 0x400 : 0) | (unconditional_jump ? 0x800 : 0) | command;
+	uint32_t high_buffer = 0;
 	AddSequencerCommandToSequenceList(high_buffer, low_buffer);
 }
 
@@ -328,8 +331,8 @@ end
 
 void CEthernetControllerFirefly::AddCommandJumpBackward(unsigned int jump_length, bool unconditional_jump, bool condition_0, bool condition_1, bool condition_PS, bool loop_count_greater_zero) {
 	unsigned char command = CMD_CONDITIONAL_JUMP_BACKWARD;
-	unsigned __int32 low_buffer = ((jump_length & 0xFF) << 8) | (condition_0 ? 0x100 : 0) | (condition_1 ? 0x200 : 0) | (condition_PS ? 0x400 : 0) | (unconditional_jump ? 0x800 : 0) | (loop_count_greater_zero ? 0x1000 : 0) | command;
-	unsigned __int32 high_buffer = 0;
+	uint32_t low_buffer = ((jump_length & 0xFF) << 8) | (condition_0 ? 0x100 : 0) | (condition_1 ? 0x200 : 0) | (condition_PS ? 0x400 : 0) | (unconditional_jump ? 0x800 : 0) | (loop_count_greater_zero ? 0x1000 : 0) | command;
+	uint32_t high_buffer = 0;
 	AddSequencerCommandToSequenceList(high_buffer, low_buffer);
 }
 
@@ -391,8 +394,8 @@ void CEthernetControllerFirefly::AddCommandCalcAD9854FrequencyTuningWord(uint64_
 	unsigned char command = CMD_CALC_AD9854_FREQUENCY_TUNING_WORD;
 	uint16_t help = bit_shift;
 	uint32_t help2 = (ftw0 << 16) & 0xFFFF0000;
-	unsigned __int32 low_buffer = (ftw0 << 16) & (help << 8) & (0x1F & command);
-	unsigned __int32 high_buffer = ftw0 >> 16;
+	uint32_t low_buffer = (ftw0 << 16) & (help << 8) & (0x1F & command);
+	uint32_t high_buffer = ftw0 >> 16;
 	AddSequencerCommandToSequenceList(high_buffer, low_buffer);
 }
 
@@ -407,7 +410,7 @@ void AddCommandAnalogInOut(u8 adc_register_address, u8 adc_write_enable, u16 adc
 }*/
 
 //Vitis command converted to Visual Studio command:
-void CEthernetControllerFirefly::AddCommandAnalogInOut(uint8_t adc_register_address, uint8_t adc_write_enable, unsigned __int16 adc_programming_out, uint8_t dont_execute_now, uint8_t only_read_write, uint32_t wait_time) {
+void CEthernetControllerFirefly::AddCommandAnalogInOut(uint8_t adc_register_address, uint8_t adc_write_enable, uint16_t adc_programming_out, uint8_t dont_execute_now, uint8_t only_read_write, uint32_t wait_time) {
 	
 	
 
@@ -517,7 +520,7 @@ void CEthernetControllerFirefly::AddCommandStop() {
 	AddSequencerCommandToSequenceList(high_buffer, low_buffer);
 }
 
-void CEthernetControllerFirefly::WriteReadSPI(unsigned int chip_select, unsigned int number_of_bits_out, unsigned __int64 data_high, unsigned __int64 data_low, unsigned int number_of_bits_in) {
+void CEthernetControllerFirefly::WriteReadSPI(unsigned int chip_select, unsigned int number_of_bits_out, uint64_t data_high, uint64_t data_low, unsigned int number_of_bits_in) {
 
 	//total data length can be up to 128-(2*5) = 118 bits (because we need 2x 5 bits for the two load commands).
 	uint8_t command = CMD_LOAD_REG_LOW;
@@ -710,9 +713,7 @@ void CEthernetControllerFirefly::AddProgramLine( uint8_t command, uint32_t data,
 
 
 	/*if (DebugBufferFile) {
-		CString buf;
-		buf.Format("%8u CMD %x data = %08X wait = %08X", command, data, delay);
-		(*DebugBufferFile) << buf << endl;
+		(*DebugBufferFile) << std::format("%8u CMD %x data = {:08X} wait = {:08X}", command, data, delay) << endl;
 	}*/
 }
 
@@ -727,9 +728,7 @@ void CEthernetControllerFirefly::AddProgramLine( uint8_t command, uint32_t data,
 //	uint32_t high_buffer = ((bus_data_mask & data) << 4) | ((delay >> 27) & delay_mask_high);
 //	
 //	if (DebugBufferFile) {
-//		CString buf;
-//		buf.Format("step data = %08X %08X", high_buffer, low_buffer);
-//		(*DebugBufferFile) << buf << endl;
+//		(*DebugBufferFile) << std::format("step data = {:08X} {:08X}", high_buffer, low_buffer) << endl;
 //	}
 //	MySequencer->AddCommandStepToSequence(high_word, low_word);
 //
@@ -784,7 +783,7 @@ void CEthernetControllerFirefly::SetTriggerOptions( bool ExternalTrigger0, bool 
 		//CMD_SET_PERIODIC_TRIGGER_PERIOD: begin
 		//	periodic_trigger_period <= command[55:8]; // >>8 =  [47:0] = 48 bit;  55:32 = 23:0 = 24 bit 
 		//end
-		unsigned __int64 PeriodicTriggerPeriod = floor(PeriodicTriggerPeriod_in_s * FPGAClockFrequencyInHz / 1000);
+		uint64_t PeriodicTriggerPeriod = floor(PeriodicTriggerPeriod_in_s * FPGAClockFrequencyInHz / 1000);
 		const uint8_t command_mask = 0x1F;  //5 bit
 		uint8_t command = CMD_SET_PERIODIC_TRIGGER_PERIOD;
 		low_buffer = ((PeriodicTriggerPeriod & 0xFFFFFF) << 8) | (command_mask & CMD_LOAD_COMMAND_BUFFER);  //low 24 bit << 8
@@ -797,7 +796,7 @@ void CEthernetControllerFirefly::SetTriggerOptions( bool ExternalTrigger0, bool 
 		//CMD_SET_PERIODIC_TRIGGER_ALLOWED_WAIT_TIME: begin 
 		//	periodic_trigger_allowed_wait_cycles <= command[55:8]; // >>8 =  [47:0] = 48 bit;  55:32 = 23:0 = 24 bit 
 		//end
-		unsigned __int64 PeriodicTriggerAllowedWaitCycles = floor(PeriodicTriggerAllowedWait_in_s * FPGAClockFrequencyInHz / 1000);
+		uint64_t PeriodicTriggerAllowedWaitCycles = floor(PeriodicTriggerAllowedWait_in_s * FPGAClockFrequencyInHz / 1000);
 		command = CMD_SET_PERIODIC_TRIGGER_ALLOWED_WAIT_TIME;
 		low_buffer = ((PeriodicTriggerAllowedWaitCycles & 0xFFFFFF) << 8) | (command_mask & CMD_LOAD_COMMAND_BUFFER);  //low 24 bit << 8
 		high_buffer = (PeriodicTriggerAllowedWaitCycles >> 24) & 0xFFFFFF; // high 24 bit
@@ -894,19 +893,19 @@ void CEthernetControllerFirefly::WriteBufferToFile(uint32_t* buffer, unsigned lo
 	ofstream out;
 	std::string result = DebugFilename + "_" + std::to_string(MySequencer->id) + ".txt";
 	out.open(result);// , CFile::modeCreate | CFile::modeWrite);
-	CString buf;
+	std::string buf;
 	double time = 0;
 	uint32_t low_command_buffer = 0;
 	uint32_t high_command_buffer = 0;
 
 	for (unsigned long n = 0; n < length; n++) {
 		//buf.Format("%05lu: ", n);
-		buf.Format("%05X: t= % 04.5f ms ", n, time);
+		buf = std::format("{:05X}: t= {:04.5f} ms ", n, time);
 		out << buf;
 		uint32_t low_buffer = buffer[2 * n];
 		uint32_t high_buffer = buffer[2 * n + 1];
 		uint8_t command = low_buffer & 0x1F;
-		buf.Format("%08X %08X %s", high_buffer, low_buffer, CommandNames[command]);
+		buf = std::format("{:08X} {:08X} {}", high_buffer, low_buffer, CommandNames[command]);
 		out << buf;
 		buf = "";
 		if (command == CMD_LOAD_COMMAND_BUFFER) {
@@ -929,7 +928,7 @@ void CEthernetControllerFirefly::WriteBufferToFile(uint32_t* buffer, unsigned lo
 			*/
 			uint32_t delay_low = ((high_buffer & 0xF) << (32 - 5)) | (low_buffer >> 5);
 			uint32_t bus_data = high_buffer >> 4;
-			buf.Format(" bus = %07X ; delay = %08X", bus_data, delay_low);
+			buf = std::format(" bus = {:07X} ; delay = {:08X}", bus_data, delay_low);
 			time += delay_low * 10 * 0.000001;
 		}
 		else if (command == CMD_INPUT_REPEATED_OUT_IN) {
@@ -954,7 +953,7 @@ void CEthernetControllerFirefly::WriteBufferToFile(uint32_t* buffer, unsigned lo
                     if (INPUT_REPEAT_command[2] == 1) ANA_IN_state <= ANA_IN_START;
 			*/
 
-			buf.Format(" repeats = %u ; wait = %u * 10ns ; trigger_secondary_interrupt_when_finished = %01X ; command = %01X", repeats, wait, trigger_secondary_interrupt_when_finished, command);
+			buf = std::format(" repeats = {} ; wait = {} * 10ns ; trigger_secondary_interrupt_when_finished = {:01X} ; command = {:01X}", repeats, wait, trigger_secondary_interrupt_when_finished, command);
 		}
 		else if (command == CMD_SET_PERIODIC_TRIGGER_PERIOD) {
 			/*
@@ -963,7 +962,7 @@ void CEthernetControllerFirefly::WriteBufferToFile(uint32_t* buffer, unsigned lo
 			end
 			*/
 			uint32_t periodic_trigger_period = (low_buffer >> 8) & 0xFFFFFF;
-			buf.Format(" periodic_trigger_period = %06X%06X", high_buffer, periodic_trigger_period);
+			buf = std::format(" periodic_trigger_period = {:06X}{:06X}", high_buffer, periodic_trigger_period);
 		}
 		else if (command == CMD_SET_PERIODIC_TRIGGER_ALLOWED_WAIT_TIME) {
 			/*
@@ -972,7 +971,7 @@ void CEthernetControllerFirefly::WriteBufferToFile(uint32_t* buffer, unsigned lo
 			end
 			*/
 			uint32_t periodic_trigger_allowed_wait_cycles = (low_buffer >> 8) & 0xFFFFFF;
-			buf.Format(" periodic_trigger_allowed_wait_cycles = %06X%06X", high_buffer, periodic_trigger_allowed_wait_cycles);
+			buf = std::format(" periodic_trigger_allowed_wait_cycles = {:06X}{:06X}", high_buffer, periodic_trigger_allowed_wait_cycles);
 		}
 		else if (command == CMD_SPI_OUT_IN) {
 			/*
@@ -989,7 +988,7 @@ void CEthernetControllerFirefly::WriteBufferToFile(uint32_t* buffer, unsigned lo
 			uint32_t SPI_IN_length = (low_buffer >> 16) & 0x1F;
 			uint32_t SPI_SEL_next = (low_buffer >> 24) & 0x07;
 			uint32_t start_now = (high_buffer >> 8) & 0x01;
-			buf.Format(" SPI_OUT_length = %02X ; SPI_IN_length = %02X ; SPI_SEL_next = %01X ; start_now = %01X", SPI_OUT_length, SPI_IN_length, SPI_SEL_next, start_now);
+			buf = std::format(" SPI_OUT_length = {:02X} ; SPI_IN_length = {:02X} ; SPI_SEL_next = {:01X} ; start_now = {:01X}", SPI_OUT_length, SPI_IN_length, SPI_SEL_next, start_now);
 		}
 		else if (command == CMD_ANALOG_IN_OUT) {
 			/*
@@ -1012,7 +1011,7 @@ void CEthernetControllerFirefly::WriteBufferToFile(uint32_t* buffer, unsigned lo
 			uint32_t wait_time = (low_buffer >> 2) & 0x3FFF;
 			uint32_t start_now = (high_buffer) & 0x01;
 			uint32_t adc_conversion = (high_buffer >> 1) & 0x01;
-			buf.Format(" adc_register_address = %02X ; adc_write_enable = %01X ; adc_programming_out = %04X ; wait_time = %04X ; start_now = %01X ; adc_conversion = %01X", adc_register_address, adc_write_enable, adc_programming_out, wait_time, start_now, adc_conversion);
+			buf = std::format(" adc_register_address = {:02X} ; adc_write_enable = {:01X} ; adc_programming_out = {:04X} ; wait_time = {:04X} ; start_now = {:01X} ; adc_conversion = {:01X}", adc_register_address, adc_write_enable, adc_programming_out, wait_time, start_now, adc_conversion);
 		}
 		else if (command == CMD_SET_STROBE_OPTIONS) {
 			/*
@@ -1025,7 +1024,7 @@ void CEthernetControllerFirefly::WriteBufferToFile(uint32_t* buffer, unsigned lo
 			uint32_t strobe_choice = (low_buffer >> 8) & 0x07;
 			uint32_t strobe_low_length = (low_buffer >> 16) & 0xFF;
 			uint32_t strobe_high_length = (low_buffer >> 24) & 0xFF;
-			buf.Format(" strobe_choice = %01X ; strobe_low_length = %02X ; strobe_high_length = %02X", strobe_choice, strobe_low_length, strobe_high_length);
+			buf = std::format(" strobe_choice = {:01X} ; strobe_low_length = {:02X} ; strobe_high_length = {:02X}", strobe_choice, strobe_low_length, strobe_high_length);
 		}
 		else if (command == CMD_LOAD_REG_LOW) {
 			/*
@@ -1034,7 +1033,7 @@ void CEthernetControllerFirefly::WriteBufferToFile(uint32_t* buffer, unsigned lo
 						end
 			*/
 			uint32_t register_data = (low_buffer >> 5) & 0x7FFFFFFFF;
-			buf.Format(" register_data = %010X", register_data);
+			buf = std::format(" register_data = {:010X}", register_data);
 		}
 		else if (command == CMD_LOAD_REG_HIGH) {
 			/*
@@ -1043,7 +1042,7 @@ void CEthernetControllerFirefly::WriteBufferToFile(uint32_t* buffer, unsigned lo
 						end
 			*/
 			uint32_t register_data = (low_buffer >> 5) & 0x7FFFFFFFF;
-			buf.Format(" register_data = %010X", register_data);
+			buf = std::format(" register_data = {:010X}", register_data);
 		}
 		else if (command == CMD_WAIT_FOR_TRIGGER) {
 			/*
@@ -1054,7 +1053,7 @@ void CEthernetControllerFirefly::WriteBufferToFile(uint32_t* buffer, unsigned lo
 			uint32_t trigger0 = (low_buffer >> 8) & 0x01;
 			uint32_t trigger1 = (low_buffer >> 9) & 0x01;
 			uint32_t trigger_PS = (low_buffer >> 10) & 0x01;
-			buf.Format(" trigger0 = %01X ; trigger1 = %01X ; trigger_PS = %01X", trigger0, trigger1, trigger_PS);
+			buf = std::format(" trigger0 = {:01X} ; trigger1 = {:01X} ; trigger_PS = {:01X}", trigger0, trigger1, trigger_PS);
 		}
 		else if (command == CMD_SET_LOOP_COUNT) {
 			/*
@@ -1062,7 +1061,7 @@ void CEthernetControllerFirefly::WriteBufferToFile(uint32_t* buffer, unsigned lo
 							loop_count <= command[63:32];
 						end
 			*/
-			buf.Format(" loop_count = %06X", high_buffer);
+			buf = std::format(" loop_count = {:06X}", high_buffer);
 		}
 		else if (command == CMD_CONDITIONAL_JUMP_FORWARD) {
 			/*
@@ -1077,7 +1076,7 @@ void CEthernetControllerFirefly::WriteBufferToFile(uint32_t* buffer, unsigned lo
 			uint32_t condition_PS = (low_buffer >> 10) & 0x01;
 			uint32_t condition = (low_buffer >> 11) & 0x01;
 			uint32_t jump = (low_buffer >> 8) & 0xFF;
-			buf.Format(" condition0 = %01X ; condition1 = %01X ; condition_PS = %01X ; condition = %01X ; jump = %02X", condition0, condition1, condition_PS, condition, jump);
+			buf = std::format(" condition0 = {:01X} ; condition1 = {:01X} ; condition_PS = {:01X} ; condition = {:01X} ; jump = {:02X}", condition0, condition1, condition_PS, condition, jump);
 		}
 		out << buf << endl;
 	}
@@ -1110,7 +1109,7 @@ bool CEthernetControllerFirefly::ModifySequence(unsigned long differences, uint3
 	unsigned int attempts = 0;
 	while ((attempts < MaxReconnectAttempts) && (!AttemptModifySequence(differences, difference_index_table, difference_command_table))) {
 		Network->ResetConnection();
-		Sleep_ms(100);
+		this_thread::sleep_for(100ms);
 		attempts++;
 	}
 	return (attempts < MaxReconnectAttempts);
@@ -1137,7 +1136,7 @@ bool CEthernetControllerFirefly::SendSequence(uint32_t DataSize, uint32_t* buffe
 	unsigned int attempts = 0;
 	while ((attempts < MaxReconnectAttempts) && (!AttemptSendSequence(DataSize, buffer))) {
 		Network->ResetConnection();
-		Sleep_ms(100);
+		this_thread::sleep_for(100ms);
 		attempts++;
 	}
 	return (attempts < MaxReconnectAttempts);
@@ -1168,9 +1167,7 @@ bool CEthernetControllerFirefly::AddSequencePreamble() {
 	uint32_t PostProgramLines = 11;  //make sure you put the number of program lines in the preamble here
 	//uint32_t DataSize = (PreambleProgramLines + PostProgramLines + Count) * 8; //data size in byte
 
-	//CString buf;
-	//buf.Format("CNetwork::ReceiveMsg :: sending  %u bytes", DataSize);
-	//ControlMessageBox(buf);
+	//ControlMessageBox(std::format("CNetwork::ReceiveMsg :: sending  {} bytes", DataSize));
 
 	//uint32_t* buffer = new uint32_t[(PreambleProgramLines + PostProgramLines + Count + MaxSequencerCommandListSize) * 4];
 
@@ -1186,6 +1183,7 @@ bool CEthernetControllerFirefly::AddSequencePreamble() {
 	SetTriggerOptions(  ExternalTrigger0, ExternalTrigger1); // this command fills 6 command lines
 
 	//end of preamble
+	return true;
 
 }
 
@@ -1291,8 +1289,7 @@ bool CEthernetControllerFirefly::SendSequenceToFPGA(uint32_t* buffer) {
 	////Timestamp.Mark("send_sequence");
 	bool ok = SendSequence(DataSize, buffer);
 	if (ok) {
-		CString buf;
-		buf.Format("send data, %u bytes sent", DataSize);
+		std::string buf = std::format("send data, {} bytes sent", DataSize);
 		////Timestamp.Mark(buf);
 		//if (previous_command_buffer) {
 		//	delete previous_command_buffer;
@@ -1317,21 +1314,18 @@ double CEthernetControllerFirefly::MeasureEthernetBandwidth(uint32_t DataSize, d
 		for (uint32_t n = 0; n < DataSize; n++) {
 			buffer[n] = 0;
 		}
-		unsigned  long StartTickCount = GetTickCount();
+		Time StartTickCount = Clock::now();
 		SendData((uint8_t*)buffer, DataSize);
 		CheckReady(10);
-		unsigned  long EndTickCount = GetTickCount();
+		Time EndTickCount = Clock::now();
 		delete buffer;
-		double Bandwidth = 0.000001*DataSize * 8 / ((EndTickCount - StartTickCount) / 1000.0); //in Mbit/s
+		double Bandwidth = 0.000001*DataSize * 8 / (milliSeconds(EndTickCount - StartTickCount) / 1000.0); //in Mbit/s
 		if (Bandwidth < MinimumExpected) {
-			CString message;
-			message.Format("CEthernetControllerFirefly::MeasureEthernetBandwidth : Ethernet Bandwidth = %.1f MBit/s is lower than expected. Check ethernet connection.", Bandwidth);
-			
-			AddErrorMessageCString(message);
+			AddErrorMessage(std::format("CEthernetControllerFirefly::MeasureEthernetBandwidth : Ethernet Bandwidth = {:.1f} MBit/s is lower than expected. Check ethernet connection.", Bandwidth));
 		}
 		return Bandwidth;
 	}
-	if (MinimumExpected > 0) AddErrorMessageCString("CEthernetControllerFirefly::MeasureEthernetBandwidth : No ethernet connection to FPGA.");
+	if (MinimumExpected > 0) AddErrorMessage("CEthernetControllerFirefly::MeasureEthernetBandwidth : No ethernet connection to FPGA.");
 	return -1;
 }
 
@@ -1340,7 +1334,7 @@ bool CEthernetControllerFirefly::GetAktWaveformPoint(unsigned long long& DataPoi
 	unsigned int attempts = 0;
 	while ((attempts < MaxReconnectAttempts) && (!AttemptGetAktWaveformPoint(DataPointsWritten, running))) {
 		Network->ResetConnection();
-		Sleep_ms(100);
+		this_thread::sleep_for(100ms);
 		attempts++;
 	}
 	return (attempts < MaxReconnectAttempts);
@@ -1367,7 +1361,7 @@ bool CEthernetControllerFirefly::AttemptNetworkCommand(tBoolFunction fCommand) {
 	unsigned int attempts = 0;
 	while ((attempts < MaxReconnectAttempts) && (!fCommand())) {
 		Network->ResetConnection();
-		Sleep_ms(100);
+		this_thread::sleep_for(100ms);
 		attempts++;
 	}
 	return (attempts < MaxReconnectAttempts);
@@ -1378,7 +1372,7 @@ bool CEthernetControllerFirefly::GetNextCycleNumber(long& NextCycleNumber) {
 	unsigned int attempts = 0;
 	while ((attempts < MaxReconnectAttempts) && (!AttemptGetNextCycleNumber(NextCycleNumber))) {
 		Network->ResetConnection();
-		Sleep_ms(100);
+		this_thread::sleep_for(100ms);
 		attempts++;
 	}
 	return (attempts < MaxReconnectAttempts);
@@ -1417,7 +1411,7 @@ bool CEthernetControllerFirefly::WaitTillFinished() {
 
 bool CEthernetControllerFirefly::Start() {
 	if (!Connected) return false;
-	StartTickCounts = GetTickCount();
+	StartTickCounts = Clock::now();
 	////Timestamp.Mark("CEthernetControllerFirefly::Start");
 	return AttemptNetworkCommand([this]() {return Command("start"); });
 }
@@ -1434,7 +1428,7 @@ bool CEthernetControllerFirefly::SetFrequency(double Frequency) {
 	unsigned int attempts = 0;
 	while ((attempts < MaxReconnectAttempts) && (!AttemptSetFrequency(Frequency))) {
 		Network->ResetConnection();
-		Sleep_ms(100);
+		this_thread::sleep_for(100ms);
 		attempts++;
 	}
 	return (attempts < MaxReconnectAttempts);
@@ -1480,17 +1474,17 @@ bool CEthernetControllerFirefly::GetCPUCommandErrorMessages() {
 	long NrErrorMessages;
 	bool ok = ReadLong(NrErrorMessages);
 	if (!ok) {
-		AddErrorMessageCString("GetCPUCommandErrorMessages : couldn't get number of error messages");
+		AddErrorMessage("GetCPUCommandErrorMessages : couldn't get number of error messages");
 		return false;
 	}
 	if (NrErrorMessages > 0) {
-		CString allErrorMessages = "";
+		std::string allErrorMessages = "";
 		for (long n = 0; n < NrErrorMessages; n++) {
 			CString ErrorMessage;
 			if (!GetCommand(ErrorMessage)) return false;
-			allErrorMessages += ErrorMessage + "\n";
+			allErrorMessages += CStringToStdString(ErrorMessage) + "\n";
 		}
-		AddErrorMessageCString(allErrorMessages);
+		AddErrorMessage(allErrorMessages);
 	}
 	return true;
 }
@@ -1540,7 +1534,7 @@ bool CEthernetControllerFirefly::GetFrequency(double &Frequency) {
 	unsigned int attempts = 0;
 	while ((attempts < MaxReconnectAttempts) && (!AttemptGetFrequency(Frequency))) {
 		Network->ResetConnection();
-		Sleep_ms(100);
+		this_thread::sleep_for(100ms);
 		attempts++;
 	}
 	return (attempts < MaxReconnectAttempts);
@@ -1558,7 +1552,7 @@ bool CEthernetControllerFirefly::GetPeriodicTriggerError(bool& Error) {
 	unsigned int attempts = 0;
 	while ((attempts < MaxReconnectAttempts) && (!AttemptGetPeriodicTriggerError(Error))) {
 		Network->ResetConnection();
-		Sleep_ms(100);
+		this_thread::sleep_for(100ms);
 		attempts++;
 	}
 	return (attempts < MaxReconnectAttempts);
@@ -1582,7 +1576,7 @@ bool CEthernetControllerFirefly::WaitTillEndOfSequenceThenGetInputData(uint8_t*&
 	unsigned int attempts = 0;
 	while ((attempts < MaxReconnectAttempts) && (!AttemptWaitTillEndOfSequenceThenGetInputData(buffer, buffer_length, EndTimeOfCycle, timeout_in_s))) {
 		Network->ResetConnection();
-		Sleep_ms(100);
+		this_thread::sleep_for(100ms);
 		attempts++;
 	}
 	return (attempts < MaxReconnectAttempts);
@@ -1602,7 +1596,11 @@ bool CEthernetControllerFirefly::AttemptWaitTillEndOfSequenceThenGetInputData(ui
 	
 	int PeriodicTriggerError;
 	if (!ReadInt(PeriodicTriggerError, timeout_in_s)) return false;
+#ifdef WIN32
 	EndTimeOfCycle = GetTickCount();
+#else
+	/// @todo portable equivalent of GetTickCount() ??
+#endif
 	//int InputBufferContentOriginSequence;
 	//ReadInt(InputBufferContentOriginSequence);
 	//int InputBufferContentsLength;

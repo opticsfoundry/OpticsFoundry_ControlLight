@@ -1,13 +1,12 @@
+#include "std.h"
+#ifdef WIN32
 #define _AFXDLL
 #include <afxwin.h>         // MFC core and standard components
-#include <tchar.h>   // _T macro
-#include "std.h"
 #include <afxsock.h>      // MFC socket extensions
 #include <afx.h>
-#include <iostream>
-#include <fstream>
+#endif
 
-#include "include\json.hpp"
+#include "include/json.hpp"
 using json = nlohmann::json;
 
 #include "ControlAPI.h"
@@ -20,13 +19,13 @@ using json = nlohmann::json;
 #include "CDeviceAD9858.h"
 #include "CDeviceAD9958.h"
 
+#include <format>
+#include <string>
+#include <sstream>
+#include <iostream>
+#include <fstream>
 
 using namespace std;
-#include <format>
-using namespace std;
-#include <string>
-using namespace std;
-#include <sstream>
 
 #define CATCH_MFC_EX_S ;
 #define CATCH_MFC_EX_E ;
@@ -74,6 +73,8 @@ throw std::runtime_error(CT2A(errorMsg));  \
 
 //trick to start AfxWinInit in a good way inside the DLL (ChatGPT recommended)
 
+#ifdef WIN32
+
 class CControlLightApp : public CWinApp {
 public:
 	virtual BOOL InitInstance() {
@@ -83,11 +84,12 @@ public:
 
 CControlLightApp theApp;  // Static object that initializes MFC
 
-
+#endif
 
 #endif
 
 bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
+#ifdef WIN32
 	// Initialize MFC and print and error on failure
 //#ifdef USING_DLL  //Debug comment: in the full version of the ControlAPI this is done in the equivalent of CLA_Create()
 	if (InitializeAfx) {
@@ -101,11 +103,12 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 //	//Debug comment: in the full version of the ControlAPI this is done in the equivalent of CLA_Create()
 	if (InitializeAfxSocket) {
 		if (!AfxSocketInit()) {  //Debug comment: in the full version of the ControlAPI this is done in DLLMain()
-			ControlMessageBox(_T("Failed to initialize Windows Sockets."));
+			ControlMessageBox("Failed to initialize Windows Sockets.");
 			return false;
 		}
 	}
-	//AddErrorMessageCString(_T("Successfully initialized Windows Sockets."));
+	//AddErrorMessage("Successfully initialized Windows Sockets.");
+#endif
 	return true;
 }
 
@@ -179,7 +182,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 #endif // USE_IDLE_TICKER
 
 #if defined(BUILDING_DLL) || defined(USING_DLL)
-
+#ifdef WIN32
 	BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 	{
 		switch (ul_reason_for_call)
@@ -197,7 +200,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 		}
 		return TRUE;
 	}
-
+#endif
 #endif
 
 	//CControlAPI internal variables, not exported
@@ -261,8 +264,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			std::string all_error_messages = PeekLastErrors();
 			NewErrorOccured = true;
 			if (DisplayErrors && dothrow) {
-				CString mfcStr(CA2CT(all_error_messages.c_str()));
-				ControlMessageBox(mfcStr);
+				ControlMessageBox(all_error_messages);
 				NewErrorOccured = false;
 				ErrorListWrapAround = false;
 				LastErrorIndex = 0;
@@ -356,8 +358,8 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 				}
 				created = true;
 				bool success = CLA_InitializeMFC(InitializeAfx, InitializeAfxSocket);
-				//if (success) AfxMessageBox(_T("ControlAPI DLL loaded successfully and MFC initialized."));
-				//else AfxMessageBox(_T("ControlAPI DLL loaded successfully, but MFC not initialized."));
+				//if (success) AfxMessageBox("ControlAPI DLL loaded successfully and MFC initialized.");
+				//else AfxMessageBox("ControlAPI DLL loaded successfully, but MFC not initialized.");
 				for (unsigned int i = 0; i < MaxSequencers; i++) {
 					SequencerList[i] = nullptr;
 					ShortSequencerList[i] = nullptr;
@@ -1045,7 +1047,6 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "GetTimeDebtOfSequencer_ms: error");
 		}
 
-		
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(GetNextBufferPositionOfMasterSequencer)(unsigned long& next_buffer_position) {
 			API_LOCK_GUARD;
 			if (!MasterSequencer) {
@@ -1055,6 +1056,34 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			next_buffer_position = MasterSequencer->GetNextBufferPosition();
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "GetNextBufferPositionOfMasterSequencer: error");
 		}
+
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SetPeriodicTrigger)(double PeriodicTriggerPeriod_in_s, double PeriodicTriggerAllowedWaitTime_in_s) {
+			API_LOCK_GUARD;
+			if (!MasterSequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "SetPeriodicTrigger: no master sequencer not found");
+			}
+			MasterSequencer->SetPeriodicTrigger(PeriodicTriggerPeriod_in_s, PeriodicTriggerAllowedWaitTime_in_s);
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "SetPeriodicTrigger: error");
+		}
+
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(GetNextCycleNumber)(long& NextCycleNumber) {
+			API_LOCK_GUARD;
+			if (!MasterSequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "GetNextCycleNumber: no master sequencer not found");
+			}
+			MasterSequencer->GetNextCycleNumber(NextCycleNumber);
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "GetNextCycleNumber: error");
+		}
+
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(ResetCycleNumber)() {
+			API_LOCK_GUARD;
+			if (!MasterSequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "ResetCycleNumber: no master sequencer not found");
+			}
+			MasterSequencer->ResetCycleNumber();
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "ResetCycleNumber: error");
+		}
+
 
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(StartAssemblingCPUCommandSequence)() {
 			API_LOCK_GUARD;
@@ -1487,7 +1516,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 				test = config["ConfigurationName"];
 			}
 			catch (json::exception& e) {
-				AddErrorMessageCString(_T("JSON parse error"));
+				AddErrorMessage("JSON parse error");
 				return false;
 			}*/
 
@@ -1540,7 +1569,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 		/// @brief Load a configuration from a JSON file.
 		/// @param filename the name of the file to load the configuration from.
 		/// @return
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(LoadFromJSONFile)(const const char* filename) {
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(LoadFromJSONFile)(const char* filename) {
 			CATCH_MFC_EX_S
 			API_LOCK_GUARD;
 			if (!created) {
@@ -1550,7 +1579,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			if (!file) {
 				std::string help(filename);
 				help = "CLA_LoadFromJSONFile: Failed to open config file " + help;
-				//AddErrorMessageCString(_T(help.c_str()));
+				//AddErrorMessage(help);
 				API_UNLOCK_RETURN_ERROR(false, help);
 			}
 
@@ -1559,7 +1588,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 				file >> config;
 			}
 			catch (json::parse_error& e) {
-				//AddErrorMessageCString(_T("JSON parse error"));
+				//AddErrorMessage("JSON parse error");
 				API_UNLOCK_RETURN_ERROR(false, "CLA_LoadFromJSONFile: JSON parse error");
 			}
 			bool ret = CLA_LoadFromJSON(config);

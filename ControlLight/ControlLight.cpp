@@ -6,6 +6,7 @@
 #include "std.h"
 #include <iostream>
 #include <string>
+#include <thread>
 
 using namespace std;
 
@@ -15,7 +16,11 @@ static char THIS_FILE[] = __FILE__;
 #define new DEBUG_NEW
 #endif
 
+#ifdef WIN32
 #define ConfigFileName "..\\..\\..\\ControlHardwareConfig.json"
+#else
+#define ConfigFileName "./ControlHardwareConfig.json"
+#endif
 
 
 #if !defined(BUILDING_DLL) && defined(USING_DLL)
@@ -48,11 +53,11 @@ bool LoadControlHardwareInterface() {
 				ControlMessageBox("Warning: Loading of hardware configuration file worked only partially.");
 			}
 			ControlHardwareInterfaceLoadedSuccessfully = true;
-			//AddErrorMessageCString("Hardware configuration file loaded");
+			//AddErrorMessage("Hardware configuration file loaded");
 		}
 		else {
 			if (success) {
-				AddErrorMessageCString("Warning: Hardware configuration file did not contain a sequencer with ID=0.");
+				AddErrorMessage("Warning: Hardware configuration file did not contain a sequencer with ID=0.");
 			}
 		}
 	}
@@ -81,18 +86,18 @@ int main() {
 	//	CLA.Create(/*InitializeAfx*/ true, /*InitializeAfxSocket*/ true);
 	//}
 	//catch (...) {
-	//	AddErrorMessageCString("Initialization failed");
+	//	AddErrorMessage("Initialization failed");
 	//	return 1; // Initialization failed
 	//}
 	if (!CLA.IsCreated()) {
-		AddErrorMessageCString("Initialization failed");
+		AddErrorMessage("Initialization failed");
 		return 1; // Initialization failed
 	}
 	try {
 		if (!LoadControlHardwareInterface()) {
-			AddErrorMessageCString("Error loading hardware configuration file 2");
+			AddErrorMessage("Error loading hardware configuration file 2");
 
-			CLA.AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.0.109", 7, true, 0, 100000000, 2000000, false, true, true);
+			CLA.AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.1.90", 7, true, 0, 100000000, 2000000, false, true, true);
 			CLA.AddDeviceAnalogOut16bit(0, 24, 4, true, -10, 10);
 			CLA.AddDeviceAnalogOut16bit(0, 552, 4, true, -10, 10);
 			CLA.AddDeviceDigitalOut(0, 1, 16);
@@ -120,7 +125,7 @@ int main() {
 	CLA.SwitchDebugMode(true, "DebugSequencer");
 	try { CLA.IsReady(); }
 	catch (...) {
-		AddErrorMessageCString("Not all sequencers connected");
+		AddErrorMessage("Not all sequencers connected");
 		CLA.Cleanup();
 		return -1;
 	}
@@ -129,7 +134,7 @@ int main() {
 	for (int i = 0; i < 10; i++) {
 		cout << "Iteration " << i << ": ";
 		try {
-			DWORD starttime = GetTickCount();
+			Time starttime = Clock::now();
 			CLA.StartAssemblingSequence();
 
 			//start data acquisition. This is an example for a command for which we didn't yet provide a convenience function in the DLL. 
@@ -167,14 +172,14 @@ int main() {
 			unsigned long buffer_length = 0;
 			unsigned long EndTimeOfCycle = 0;
 			CLA.WaitTillEndOfSequenceThenGetInputData(buffer, buffer_length, EndTimeOfCycle, 10);
-			DWORD Duration = GetTickCount() - starttime;
-			cout << "Duration: " << Duration << " ms  Buffer length : " << buffer_length << endl;
+			Duration duration = Clock::now() - starttime;
+			cout << "Duration: " << milliSeconds(duration) << " ms  Buffer length : " << buffer_length << endl;
 		}
 		catch (const CLA_Exception& e) {
 			ControlMessageBox(e.what());
 		}
 		catch (...) {
-			AddErrorMessageCString("Error during sequence execution");
+			AddErrorMessage("Error during sequence execution");
 		}
 
 	}
@@ -182,7 +187,7 @@ int main() {
 		CLA.Cleanup();
 	}
 	catch (...) {
-		AddErrorMessageCString("Error during cleanup");
+		AddErrorMessage("Error during cleanup");
 	}
 	return 0;
 }
@@ -207,11 +212,11 @@ bool LoadControlHardwareInterface() {
 				ControlMessageBox("Warning: Loading of hardware configuration file worked only partially.");
 			}
 			ControlHardwareInterfaceLoadedSuccessfully = true;
-			//AddErrorMessageCString("Hardware configuration file loaded");
+			//AddErrorMessage("Hardware configuration file loaded");
 		}
 		else {
 			if (success) {
-				AddErrorMessageCString("Warning: Hardware configuration file did not contain a sequencer with ID=0.");
+				AddErrorMessage("Warning: Hardware configuration file did not contain a sequencer with ID=0.");
 			}
 		}
 	}
@@ -240,14 +245,14 @@ int main() {
 		CLA_Create(/*InitializeAfx*/ true, /*InitializeAfxSocket*/ true);
 	}
 	catch (...) {
-		AddErrorMessageCString("Initialization failed");
+		AddErrorMessage("Initialization failed");
 		return 1; // Initialization failed
 	}
 	try {
 		if (!LoadControlHardwareInterface()) {
-			AddErrorMessageCString("Error loading hardware configuration file 2");
+			AddErrorMessage("Error loading hardware configuration file 2");
 
-			CLA_AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.0.109", 7, true, 0, 100000000, 2000000, false, true, true);
+			CLA_AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.1.90", 7, true, 0, 100000000, 2000000, false, true, true);
 			CLA_AddDeviceAnalogOut16bit(0, 24, 4, true, -10, 10);
 			CLA_AddDeviceAnalogOut16bit(0, 552, 4, true, -10, 10);
 			CLA_AddDeviceDigitalOut(0, 1, 16);
@@ -275,7 +280,7 @@ int main() {
 	CLA_SwitchDebugMode(true, "DebugSequencer");
 	try { CLA_IsReady(); }
 	catch (...) {
-		AddErrorMessageCString("Not all sequencers connected");
+		AddErrorMessage("Not all sequencers connected");
 		CLA_Cleanup();
 		return -1;
 	}
@@ -284,7 +289,7 @@ int main() {
 	for (int i = 0; i < 10; i++) {
 		cout << "Iteration " << i << ": ";
 		try {
-			DWORD starttime = GetTickCount();
+			Time starttime = Clock::now();
 			CLA_StartAssemblingSequence();
 
 			//start data acquisition. This is an example for a command for which we didn't yet provide a convenience function in the DLL. 
@@ -322,14 +327,14 @@ int main() {
 			unsigned long buffer_length = 0;
 			unsigned long EndTimeOfCycle = 0;
 			CLA_WaitTillEndOfSequenceThenGetInputData(buffer, buffer_length, EndTimeOfCycle, 10);
-			DWORD Duration = GetTickCount() - starttime;
-			cout << "Duration: " << Duration << " ms  Buffer length : " << buffer_length << endl;
+			Duration duration = Clock::now() - starttime;
+			cout << "Duration: " << milliSeconds(duration) << " ms  Buffer length : " << buffer_length << endl;
 		}
 		catch (const CLA_Exception& e) {
 			ControlMessageBox(e.what());
 		}
 		catch (...) {
-			AddErrorMessageCString("Error during sequence execution");
+			AddErrorMessage("Error during sequence execution");
 		}
 
 	}
@@ -337,7 +342,7 @@ int main() {
 		CLA_Cleanup();
 	}
 	catch (...) {
-		AddErrorMessageCString("Error during cleanup");
+		AddErrorMessage("Error during cleanup");
 	}
 	return 0;
 }
@@ -361,16 +366,16 @@ bool LoadControlHardwareInterface() {
 				ControlMessageBox("Warning: Loading of hardware configuration file worked only partially.");
 			}
 			ControlHardwareInterfaceLoadedSuccessfully = true;
-			//AddErrorMessageCString("Hardware configuration file loaded");
+			//AddErrorMessage("Hardware configuration file loaded");
 		}
 		else {
 			if (success) {
-				AddErrorMessageCString("Warning: Hardware configuration file did not contain a sequencer with ID=0.");
+				AddErrorMessage("Warning: Hardware configuration file did not contain a sequencer with ID=0.");
 			}
 		}
 	}
 	catch (...) {
-		AddErrorMessageCString("Error loading hardware configuration file 1");
+		AddErrorMessage("Error loading hardware configuration file 1");
 	}
 	if (!ControlHardwareInterfaceLoadedSuccessfully) {
 		CLA.Cleanup();
@@ -387,9 +392,9 @@ int main() {
 		return 1; // Initialization failed
 	}
 	if (!LoadControlHardwareInterface()) {
-		AddErrorMessageCString("Error loading hardware configuration file 2");
+		AddErrorMessage("Error loading hardware configuration file 2");
 
-		CLA.AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.0.109", 7, true, 0, 100000000, 2000000, false, true, true);
+		CLA.AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.1.90", 7, true, 0, 100000000, 2000000, false, true, true);
 		CLA.AddDeviceAnalogOut16bit(0, 24, 4, true, -10, 10);
 		CLA.AddDeviceAnalogOut16bit(0, 552, 4, true, -10, 10);
 		CLA.AddDeviceDigitalOut(0, 1, 16);
@@ -404,14 +409,14 @@ int main() {
 
 	CLA.SwitchDebugMode(true, "DebugSequencer");
 	if (!CLA.IsReady()) {
-		AddErrorMessageCString("Not all sequencers connected");
+		AddErrorMessage("Not all sequencers connected");
 		CLA.Cleanup();
 		return -1;
 	}
 	//test
 	uint8_t* buffer = nullptr;
 	for (int i = 0; i < 10; i++) {
-		DWORD starttime = GetTickCount();
+		Time starttime = Clock::now();
 		cout << "Iteration " << i << ": ";
 		CLA.StartAssemblingSequence();
 
@@ -450,8 +455,8 @@ int main() {
 		unsigned long buffer_length = 0;
 		unsigned long EndTimeOfCycle = 0;
 		CLA.WaitTillEndOfSequenceThenGetInputData(buffer, buffer_length, EndTimeOfCycle, 10);
-		DWORD Duration = GetTickCount() - starttime;
-		cout << "Duration: " << Duration << " ms  Buffer length : " << buffer_length << endl;
+		Duration duration = Clock::now() - starttime;
+		cout << "Duration: " << milliSeconds(duration) << " ms  Buffer length : " << buffer_length << endl;
 
 	}
 	//CLA.Cleanup();//this happens in CLA desctuctor
@@ -470,16 +475,16 @@ bool LoadControlHardwareInterface() {
 				ControlMessageBox("Warning: Loading of hardware configuration file worked only partially.");
 			}
 			ControlHardwareInterfaceLoadedSuccessfully = true;
-			//AddErrorMessageCString("Hardware configuration file loaded");
+			//AddErrorMessage("Hardware configuration file loaded");
 		}
 		else {
 			if (success) {
-				AddErrorMessageCString("Warning: Hardware configuration file did not contain a sequencer with ID=0.");
+				AddErrorMessage("Warning: Hardware configuration file did not contain a sequencer with ID=0.");
 			}
 		}
 	}
 	catch (...) {
-		AddErrorMessageCString("Error loading hardware configuration file 1");
+		AddErrorMessage("Error loading hardware configuration file 1");
 	}	
 	if (!ControlHardwareInterfaceLoadedSuccessfully) {
 		CLA_Cleanup();
@@ -510,9 +515,9 @@ void DemoFPGASequencer() {
 		return; // Initialization failed
 	}
 	if (!LoadControlHardwareInterface()) {
-		AddErrorMessageCString("Error loading hardware configuration file 2");
+		AddErrorMessage("Error loading hardware configuration file 2");
 
-		CLA_AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.0.109", 7, true, 0, 100000000, 2000000, false, true, true);
+		CLA_AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.1.90", 7, true, 0, 100000000, 2000000, false, true, true);
 		CLA_AddDeviceAnalogOut16bit(0, 24, 4, true, -10, 10);
 		CLA_AddDeviceAnalogOut16bit(0, 552, 4, true, -10, 10);
 		CLA_AddDeviceDigitalOut(0, 1, 16);
@@ -527,14 +532,14 @@ void DemoFPGASequencer() {
 
 	CLA_SwitchDebugMode(true, "DebugSequencer");
 	if (!CLA_IsReady()) {
-		AddErrorMessageCString("Not all sequencers connected");
+		AddErrorMessage("Not all sequencers connected");
 		CLA_Cleanup();
 		return;
 	}
 	//test
 	uint8_t* buffer = nullptr;
 	for (int i = 0; i < 10; i++) {
-		DWORD starttime = GetTickCount();
+		Time starttime = Clock::now();
 		cout << "Iteration " << i << ": ";
 		CLA_StartAssemblingSequence();
 
@@ -551,7 +556,7 @@ void DemoFPGASequencer() {
 		*/
 
 		//this is the same command using a convenience function
-		CLA_SequencerStartAnalogInAcquisition(0, 0, 1000, 0.02);
+		CLA_SequencerStartAnalogInAcquisition(0, 0, 100, 0.02);
 
 		for (int j = 1; j < 100; j++) {
 			CLA_SetVoltage(0, 24, 10.0 * j / 100.0);
@@ -574,9 +579,9 @@ void DemoFPGASequencer() {
 		unsigned long buffer_length = 0;
 		unsigned long EndTimeOfCycle = 0;
 		CLA_WaitTillEndOfSequenceThenGetInputData(buffer, buffer_length, EndTimeOfCycle, 10);
-		DWORD Duration = GetTickCount() - starttime;
-		cout << "Duration: " << Duration << " ms  Buffer length : " << buffer_length << endl;
 
+		Duration duration = Clock::now() - starttime;
+		cout << "Duration: " << milliSeconds(duration) << " ms  Buffer length : " << buffer_length << endl;
 	}
 	CLA_Cleanup();
 }
@@ -598,7 +603,7 @@ void DemoSmartSequencer() {
 	unsigned int AnalogOutBoardStartAddress = 20;
 	unsigned int DigitalOutAddress = 10;
 
-	CLA_AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.0.104", 7, true, 0, 100000000, 3, false, true, true);
+	CLA_AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.1.90", 7, true, 0, 100000000, 3, false, true, true);
 	CLA_AddDeviceAnalogOut16bit(0, AnalogOutBoardStartAddress, 4, true, -10, 10);
 	CLA_AddDeviceDigitalOut(0, DigitalOutAddress, 16);
 	CLA_AddDeviceAD9854(0, AD98450Address, 2, 300000000, 1, 1);
@@ -608,13 +613,13 @@ void DemoSmartSequencer() {
 
 	//CLA_SwitchDebugMode(true, "DebugSequencer");
 	if (!CLA_IsReady()) {
-		AddErrorMessageCString("Not all sequencers connected");
+		AddErrorMessage("Not all sequencers connected");
 		CLA_Cleanup();
 		return;
 	}
 	
 	uint8_t* buffer = nullptr;
-	DWORD starttime = GetTickCount();
+	Time starttime = Clock::now();
 	CLA_GetCPUCommandErrorMessages(); 
 	
 	//This is the FPGA sequence that the CPU sequence will execute. It has two parts: initialization and the main loop.
@@ -693,12 +698,12 @@ void DemoSmartSequencer() {
 
 	CLA_ExecuteCPUCommandSequence(100); //execute the CPU command sequence, which will execute the FPGA sequence and modify it in a loop
 	
-	Sleep(1000);
+	this_thread::sleep_for(1000ms);
 	CLA_GetCPUCommandErrorMessages();
 
 	CLA_StopCPUCommandSequence(); //Set "ContinueExecution" to false, so that the CPU command sequence stops at the next stop point 
 
-	Sleep(1000);
+	this_thread::sleep_for(1000ms);
 
 	CLA_InterruptCPUCommandSequence(); //stop the CPU command sequence immediately, just in case the above didn't stop it
 	CLA_GetCPUCommandErrorMessages();
@@ -726,7 +731,7 @@ void DemoDDSVCO() {
 	unsigned int AnalogOutBoardStartAddress = 20;
 	unsigned int DigitalOutAddress = 10;
 
-	CLA_AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.0.104", 7, true, 0, 100000000, 3, false, true, true);
+	CLA_AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.1.90", 7, true, 0, 100000000, 3, false, true, true);
 	CLA_AddDeviceAnalogOut16bit(0, AnalogOutBoardStartAddress, 4, true, -10, 10);
 	CLA_AddDeviceDigitalOut(0, DigitalOutAddress, 16);
 	CLA_AddDeviceAD9854(0, AD98450Address, 2, 300000000, 1, 1);
@@ -736,13 +741,13 @@ void DemoDDSVCO() {
 
 	//CLA_SwitchDebugMode(true, "DebugSequencer");
 	if (!CLA_IsReady()) {
-		AddErrorMessageCString("Not all sequencers connected");
+		AddErrorMessage("Not all sequencers connected");
 		CLA_Cleanup();
 		return;
 	}
 
 	uint8_t* buffer = nullptr;
-	DWORD starttime = GetTickCount();
+	Time starttime = Clock::now();
 	CLA_GetCPUCommandErrorMessages();
 
 	//This is the FPGA sequence that the CPU sequence will execute. It has two parts: initialization and the main loop.

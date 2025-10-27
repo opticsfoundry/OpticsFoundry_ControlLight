@@ -3,8 +3,10 @@
 
 
 //#ifndef USING_DLL
+#ifdef WIN32
 #define _AFXDLL
 #include <afxwin.h>         // MFC core and standard components
+#endif
 #include <fstream>
 //bool InitializeMFC();
 //#endif
@@ -132,7 +134,9 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 
 			//typedef void* HControlLightAPI;
 	#ifdef BUILDING_DLL
+	#ifdef WIN32
 			BOOL APIENTRY DllMain(HMODULE, DWORD, LPVOID);
+	#endif
 	#endif
 			
 	#endif
@@ -310,7 +314,9 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @return
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(GetNextBufferPositionOfMasterSequencer)(unsigned long& next_buffer_position);
 
-
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SetPeriodicTrigger)(double PeriodicTriggerPeriod_in_s, double PeriodicTriggerAllowedWaitTime_in_s);
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(GetNextCycleNumber)(long& NextCycleNumber);
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(ResetCycleNumber)();
 
 		//The following functions enable you to assemble a CPU command sequence on the master sequencer, which can then be executed by the CPU.
 		//These command sequences can start FPGA command sequence, analyze acquired data, modify the FPGA command sequence and repeat.
@@ -580,7 +586,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/** @brief To use a DDS like a VCO: calculates the frequency tuning word for a AD9854 DDS using a centre frequency and a detuning proportional to a ADC value.
 		* The frequency tuning word is proportional to the period of the DDS output frequency, i.e. it's 1/frequency
 		* As with all Analog Devices DDS devices, the value of the frequency tuning word is determined by
-		* FTW = (Desired Output Frequency × 2^N)/SYSCLK
+		* FTW = (Desired Output Frequency Ã— 2^N)/SYSCLK
 		* where:
 		* N is the phase accumulator resolution (48 bits in this instance).
 		* Desired Output Frequency is expressed in hertz.

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "MultiWriteDevice.h"
-//#include <fstream>
+#include <cstdint>
 
 class CDeviceSequencer;
 
@@ -47,7 +47,7 @@ public:
 	void SetSPIClock(bool clock, bool write_immediately = true);
 	void SetSPIChipSelect(bool clock);
 	void SetSPIDataOut(bool clock);
-	void WriteSPIBitBanged(unsigned int number_of_bits_out, unsigned __int64 data);
+	void WriteSPIBitBanged(unsigned int number_of_bits_out, uint64_t data);
 	virtual void SetQSPIMode(bool OnOff);
 };
 

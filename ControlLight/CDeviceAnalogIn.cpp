@@ -53,4 +53,5 @@ bool CDeviceAnalogIn12bit::SetValue(const unsigned int& SubAddress, const uint8_
 	case 3: MySequencer->SequencerStartAnalogInAcquisition(ChannelNumber, NumberOfDataPoints, DelayBetweenDataPoints_in_ms); break;
 	default: return false;//To do: throw exception
 	}
+	return true;
 }

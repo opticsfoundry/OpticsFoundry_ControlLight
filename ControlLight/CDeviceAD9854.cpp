@@ -94,8 +94,8 @@ bool CDeviceAD9854::SetValue(const unsigned int& SubAddress, const uint8_t* data
 bool CDeviceAD9854::SetRegister(const unsigned int& SubAddress, const uint8_t* Data, const unsigned long& DataLength_in_bit, const uint8_t& StartBit) {
 
 	//bool SetControlBit(unsigned char RegisterNr, unsigned char BitNr, bool Value, bool GetValue = false);
-	//__int64 SetValue(unsigned char ValueNr, __int64 Value, bool GetValue = false);
-	//double CalculateModulationFrequencyData(__int64* DeltaFrequencyWord, unsigned int* ClockUpdateSteps);
+	//int64_t SetValue(unsigned char ValueNr, int64_t Value, bool GetValue = false);
+	//double CalculateModulationFrequencyData(int64_t* DeltaFrequencyWord, unsigned int* ClockUpdateSteps);
 	//PhaseAdjustRegister1:  Base: 0x00 Length: 2 Default: 0     ValueNr: 0 
 	//PhaseAdjustRegister2:  Base: 0x02 Length: 2 Default: 0	 ValueNr: 1
 	//FrequencyTuningWord1:  Base: 0x04 Length: 6 Default: 0	 ValueNr: 2

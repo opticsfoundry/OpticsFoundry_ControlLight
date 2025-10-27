@@ -2,12 +2,10 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "std.h"
-#include "control.h"
 #include "AD9852.h"
-#include "ControlAPI.h"
 #include "CDeviceSequencer.h"
-
+#include <string>
+#include <format>
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -82,9 +80,9 @@ CAD9852::CAD9852(unsigned long aBaseAddress, double aExternalClockSpeed, unsigne
 	ShapedKeying = false;
 	FSK_BPSK_Hold = false;
 	//if (aBaseAddress >= 64) {
-	//	CString buf;
-	//	buf.Format("CAD9852::CAD9852 : BaseAdress too high (BaseAddress=%x Bus=%x)", BaseAddress, Bus >> BusBitShift);
-	//	AddErrorMessageCString(buf);
+	//
+	//	std::string buf = std::format("CAD9852::CAD9852 : BaseAdress too high (BaseAddress={:x} Bus={:x})", BaseAddress, Bus >> BusBitShift);
+	//	AddErrorMessage(buf);
 	//}
 }
 
@@ -167,17 +165,17 @@ unsigned short CAD9852::SetPhaseAdjustRegister2(unsigned short aPhaseAdjustRegis
 ////Frequency in MHz, ClockSpeed in Hz
 //double CAD9852::SetFrequency1(double Frequency, bool GetValue) {
 //	if (!Enabled) return 0;
-//	__int64 FrequencyTuningWord1=0;
+//	int64_t FrequencyTuningWord1=0;
 //	if (GetValue) {
 //		 FrequencyTuningWord1=SetValue(2,FrequencyTuningWord1,true);
 //		 return FrequencyMultiplier*((FrequencyTuningWord1*ClockSpeed)/0x1000000000000)/1E6;
 //	} else {
 //		if (Frequency>MaxFrequency) {			
-//			CString buf;
-//			buf.Format("CAD9852::SetFrequency1 : frequency out of range (BaseAddress=%x Bus=%x) fwanted=%.f MHz fmax=%.f MHz",BaseAddress,Bus>>BusBitShift,Frequency,MaxFrequency);
-//			AddErrorMessageCString(buf);
+//
+//			std::string buf = std::format("CAD9852::SetFrequency1 : frequency out of range (BaseAddress={:x} Bus={:x}) fwanted={} MHz fmax={} MHz",BaseAddress,Bus>>BusBitShift,Frequency,MaxFrequency);
+//			AddErrorMessage(buf);
 //		}		
-//		FrequencyTuningWord1=(__int64)(Frequency*FrequencyScale);
+//		FrequencyTuningWord1=(int64_t)(Frequency*FrequencyScale);
 //		SetValue(2,FrequencyTuningWord1,false);
 //		return Frequency;
 //	}
@@ -186,8 +184,8 @@ unsigned short CAD9852::SetPhaseAdjustRegister2(unsigned short aPhaseAdjustRegis
 //Frequency in MHz, ClockSpeed in Hz
 double CAD9852::SetFrequency1(double Frequency, bool GetValue) {
 	if (!Enabled) return 0;
-	__int64 FrequencyTuningWord1 = 0;
-	CString buf;
+	int64_t FrequencyTuningWord1 = 0;
+
 
 	if (GetValue) {
 		FrequencyTuningWord1 = SetValue(2, FrequencyTuningWord1, true);
@@ -195,18 +193,18 @@ double CAD9852::SetFrequency1(double Frequency, bool GetValue) {
 	}
 	else {
 		if (Frequency > MaxFrequency) {
-			buf.Format("CAD9852::SetFrequency1 : frequency out of range (BaseAddress=%x Bus=%x) fwanted=%.f MHz fmax=%.f MHz", BaseAddress, Bus >> BusBitShift, Frequency, MaxFrequency);
-			AddErrorMessageCString(buf);
+			std::string buf = std::format("CAD9852::SetFrequency1 : frequency out of range (BaseAddress={:x} Bus={:x}) fwanted={} MHz fmax={} MHz", BaseAddress, Bus >> BusBitShift, Frequency, MaxFrequency);
+			AddErrorMessage(buf);
 		}
 
 		//		if (RequestedStartFrequency!=Frequency) {
 		RequestedStartFrequency = Frequency;
-		//FrequencyTuningWord1=(__int64)(Frequency*FrequencyScale);
+		//FrequencyTuningWord1=(int64_t)(Frequency*FrequencyScale);
 		//SetValue(2,FrequencyTuningWord1,false);
 		//LastStartFrequency=Frequency;
 
-		//buf.Format("%f MHz f2=%f MHz",LastStartFrequency,Frequency);
-		//AddErrorMessageCString(buf);
+		//std::string buf = std::format("%f MHz f2=%f MHz",LastStartFrequency,Frequency);
+		//AddErrorMessage(buf);
 		UpdateFrequencyValues();
 		//		}
 		return RequestedStartFrequency;
@@ -218,7 +216,7 @@ double CAD9852::SetFrequency1(double Frequency, bool GetValue) {
 double CAD9852::SetFrequency1AsBinary(const uint64_t &_FrequencyTuningWord, bool GetValue) {
 	if (!Enabled) return 0;
 	uint64_t FrequencyTuningWord = _FrequencyTuningWord;
-	CString buf;
+
 
 	if (GetValue) {
 		return SetValue(2, FrequencyTuningWord, true);
@@ -234,7 +232,7 @@ double CAD9852::SetFrequency1AsBinary(const uint64_t &_FrequencyTuningWord, bool
 double CAD9852::SetFrequency2AsBinary(const uint64_t& _FrequencyTuningWord, bool GetValue) {
 	if (!Enabled) return 0;
 	uint64_t FrequencyTuningWord = _FrequencyTuningWord;
-	CString buf;
+
 
 	if (GetValue) {
 		return SetValue(3, FrequencyTuningWord, true);
@@ -247,10 +245,10 @@ double CAD9852::SetFrequency2AsBinary(const uint64_t& _FrequencyTuningWord, bool
 
 
 void CAD9852::UpdateFrequencyValues() {
-	CString buf;
-	__int64 FrequencyTuningWord1 = 0;
-	__int64 FrequencyTuningWord2 = 0;
-	__int64 DeltaFrequencyWord = 0;
+
+	int64_t FrequencyTuningWord1 = 0;
+	int64_t FrequencyTuningWord2 = 0;
+	int64_t DeltaFrequencyWord = 0;
 	unsigned int ClockUpdateSteps = 0;
 	unsigned int RampRateSteps = 1;
 	double NewLastModulationFrequency;
@@ -274,12 +272,12 @@ void CAD9852::UpdateFrequencyValues() {
 	}
 
 
-	//buf.Format("CAD9852::UpdateFrequencyData : DeltaFrequencyWord>2^47 (BaseAddress=%x Bus=%x)",BaseAddress,Bus>>BusBitShift);
-	//AddErrorMessageCString(buf);
+	//std::string buf = std::format("CAD9852::UpdateFrequencyData : DeltaFrequencyWord>2^47 (BaseAddress={:x} Bus={:x})",BaseAddress,Bus>>BusBitShift);
+	//AddErrorMessage(buf);
 	//DeltaFrequencyWord=(281474976710656/2);
 
-	FrequencyTuningWord1 = (__int64)(SortedStartFrequency * FrequencyScale);
-	FrequencyTuningWord2 = (__int64)(SortedStopFrequency * FrequencyScale);
+	FrequencyTuningWord1 = (int64_t)(SortedStartFrequency * FrequencyScale);
+	FrequencyTuningWord2 = (int64_t)(SortedStopFrequency * FrequencyScale);
 
 
 	if ((LastStartFrequency != SortedStartFrequency) || (LastStopFrequency != SortedStopFrequency) || (LastModulationFrequency != SortedModulationFrequency) || (ForceUpdate)) {
@@ -345,17 +343,17 @@ void CAD9852::FrequencyModulation(double StartFrequency, double StopFrequency, d
 
 //double CAD9852::SetFrequency2(double Frequency, bool GetValue) {
 //	if (!Enabled) return 0;
-//	__int64 FrequencyTuningWord2=0;
+//	int64_t FrequencyTuningWord2=0;
 //	if (GetValue) {
 //		 FrequencyTuningWord2=SetValue(3,FrequencyTuningWord2,true);
 //		 return FrequencyMultiplier*((FrequencyTuningWord2*ClockSpeed)/0x1000000000000)/1E6;
 //	} else {
 //		if (Frequency>MaxFrequency) {
-//			CString buf;
-//			buf.Format("CAD9852::SetFrequency2 : frequency out of range (BaseAddress=%x Bus=%x) fwanted=%.f MHz fmax=%.f MHz",BaseAddress,Bus>>BusBitShift,Frequency,MaxFrequency);
-//			AddErrorMessageCString(buf);			
+//
+//			std::string buf = std::format("CAD9852::SetFrequency2 : frequency out of range (BaseAddress={:x} Bus={:x}) fwanted={} MHz fmax={} MHz",BaseAddress,Bus>>BusBitShift,Frequency,MaxFrequency);
+//			AddErrorMessage(buf);
 //		}				
-//		FrequencyTuningWord2=(__int64)(Frequency*FrequencyScale);
+//		FrequencyTuningWord2=(int64_t)(Frequency*FrequencyScale);
 //		RequestedStopFrequency=Frequency;
 //		SetValue(3,FrequencyTuningWord2,false);
 //		LastStopFrequency=Frequency;
@@ -365,12 +363,12 @@ void CAD9852::FrequencyModulation(double StartFrequency, double StopFrequency, d
 
 double CAD9852::SetFrequency2(double Frequency, bool GetValue) {
 	if (!Enabled) return 0;
-	__int64 FrequencyTuningWord2 = 0;
-	__int64 DeltaFrequencyWord = 0;
+	int64_t FrequencyTuningWord2 = 0;
+	int64_t DeltaFrequencyWord = 0;
 	unsigned int ClockUpdateSteps = 0;
 	//	double NewLastModulationFrequency;
 
-	CString buf;
+
 
 	if (GetValue) {
 		FrequencyTuningWord2 = SetValue(3, FrequencyTuningWord2, true);
@@ -378,8 +376,8 @@ double CAD9852::SetFrequency2(double Frequency, bool GetValue) {
 	}
 	else {
 		if (Frequency > MaxFrequency) {
-			buf.Format("CAD9852::SetFrequency2 : frequency out of range (BaseAddress=%x Bus=%x) fwanted=%.f MHz fmax=%.f MHz", BaseAddress, Bus >> BusBitShift, Frequency, MaxFrequency);
-			AddErrorMessageCString(buf);
+			std::string buf = std::format("CAD9852::SetFrequency2 : frequency out of range (BaseAddress={:x} Bus={:x}) fwanted={} MHz fmax={} MHz", BaseAddress, Bus >> BusBitShift, Frequency, MaxFrequency);
+			AddErrorMessage(buf);
 		}
 		if (RequestedStopFrequency != Frequency) {
 			RequestedStopFrequency = Frequency;
@@ -392,9 +390,9 @@ double CAD9852::SetFrequency2(double Frequency, bool GetValue) {
 
 //void CAD9852::SetWaveformFrequenciesDDSAD9852(unsigned int DDSNumber, double StartFrequency, double StopFrequency, double ModulationFrequency) {	
 //
-//	__int64 FrequencyTuningWord1=0;
-//	__int64 FrequencyTuningWord2=0;
-//	__int64 DeltaFrequencyWord=0;
+//	int64_t FrequencyTuningWord1=0;
+//	int64_t FrequencyTuningWord2=0;
+//	int64_t DeltaFrequencyWord=0;
 //	unsigned int ClockUpdateSteps=0;
 //	unsigned int RampRateSteps=1;
 //
@@ -419,19 +417,19 @@ double CAD9852::SetFrequency2(double Frequency, bool GetValue) {
 //		}
 //	}
 //
-//	FrequencyTuningWord1=(__int64)(SortedStartFrequency*FrequencyScale);
-//	FrequencyTuningWord2=(__int64)(SortedStopFrequency*FrequencyScale);
+//	FrequencyTuningWord1=(int64_t)(SortedStartFrequency*FrequencyScale);
+//	FrequencyTuningWord2=(int64_t)(SortedStopFrequency*FrequencyScale);
 //	if (SortedModulationFrequency<2) {
 //		ClockUpdateSteps=2^32;
 //	} else {
-//		ClockUpdateSteps=(__int64)((ClockSpeed/(RampRateSteps+1)/(ModulationFrequency*1E6)));
+//		ClockUpdateSteps=(int64_t)((ClockSpeed/(RampRateSteps+1)/(ModulationFrequency*1E6)));
 //	}
-//	DeltaFrequencyWord=(__int64)(FrequencyTuningWord2-FrequencyTuningWord1)/ClockUpdateSteps;
+//	DeltaFrequencyWord=(int64_t)(FrequencyTuningWord2-FrequencyTuningWord1)/ClockUpdateSteps;
 //
 //	if (DeltaFrequencyWord>(281474976710656/2)) {
-//		CString buf;
-//		buf.Format("CAD9852::UpdateFrequencyData : DeltaFrequencyWord>2^47 (BaseAddress=%x Bus=%x)",BaseAddress,Bus>>BusBitShift);
-//		AddErrorMessageCString(buf);
+//
+//		std::string buf = std::format("CAD9852::UpdateFrequencyData : DeltaFrequencyWord>2^47 (BaseAddress={:x} Bus={:x})",BaseAddress,Bus>>BusBitShift);
+//		AddErrorMessage(buf);
 //		DeltaFrequencyWord=(281474976710656/2);
 //	}
 //
@@ -480,23 +478,23 @@ double CAD9852::SetFrequency2(double Frequency, bool GetValue) {
 //	//	Output->WaitTillBusBufferEmpty(3253);//WriteMultiIOBus();
 //	//}
 //
-//	//CString buf;
-//	////buf.Format("fmod=%f MHz, fstart=%f MHz, fend=%f MHz",RequestedModulationFrequency,RequestedStartFrequency,RequestedStopFrequency);
-//	////AddErrorMessageCString(buf);
+//	//
+//	////std::string buf = std::format("fmod=%f MHz, fstart=%f MHz, fend=%f MHz",RequestedModulationFrequency,RequestedStartFrequency,RequestedStopFrequency);
+//	////AddErrorMessage(buf);
 //
 //
 //	////Range Checking
 //
 //	//if (RequestedModulationFrequency<0) {
-//	//	buf.Format("CAD9852::UpdateFrequencyData : modulation frequency should be positive (BaseAddress=%x Bus=%x) fmodwanted=%f MHz, fmin=%f MHz",BaseAddress,Bus>>BusBitShift,RequestedModulationFrequency);
-//	//	AddErrorMessageCString(buf);
+//	//	std::string buf = std::format("CAD9852::UpdateFrequencyData : modulation frequency should be positive (BaseAddress={:x} Bus={:x}) fmodwanted=%f MHz, fmin=%f MHz",BaseAddress,Bus>>BusBitShift,RequestedModulationFrequency);
+//	//	AddErrorMessage(buf);
 //	//	RequestedModulationFrequency=0;
 //	//}
 //
 //	////if (ModulationFrequency<MinModulation) {
-//	////	CString buf;
-//	////	buf.Format("CAD9852::UpdateFrequencyData : modulation frequency should bigger than (BaseAddress=%x Bus=%x) fmodwanted=%f MHz, fmin=%f MHz",BaseAddress,Bus>>BusBitShift,ModulationFrequency,MinModulation);
-//	////	AddErrorMessageCString(buf);
+//	////
+//	////	std::string buf = std::format("CAD9852::UpdateFrequencyData : modulation frequency should bigger than (BaseAddress={:x} Bus={:x}) fmodwanted=%f MHz, fmin=%f MHz",BaseAddress,Bus>>BusBitShift,ModulationFrequency,MinModulation);
+//	////	AddErrorMessage(buf);
 //	////	ModulationFrequency=abs(ModulationFrequency);
 //	////}
 //
@@ -505,30 +503,30 @@ double CAD9852::SetFrequency2(double Frequency, bool GetValue) {
 //	////double MaxModulation=(0.5*(double)ClockSpeed/(AktValueContents[6]+1))/2/1E6;
 //
 //	//if ((RequestedModulationFrequency)>MaxModulation) {
-//	//	buf.Format("CAD9852::UpdateFrequencyData : modulation frequency too high (BaseAddress=%x Bus=%x) fmodwanted=%f MHz, fmax=%f MHz",BaseAddress,Bus>>BusBitShift,RequestedModulationFrequency,MaxModulation);
-//	//	AddErrorMessageCString(buf);
+//	//	std::string buf = std::format("CAD9852::UpdateFrequencyData : modulation frequency too high (BaseAddress={:x} Bus={:x}) fmodwanted=%f MHz, fmax=%f MHz",BaseAddress,Bus>>BusBitShift,RequestedModulationFrequency,MaxModulation);
+//	//	AddErrorMessage(buf);
 //	//	RequestedModulationFrequency=MaxModulation;
 //	//}
 //
 //	//if (RequestedStartFrequency>MaxFrequency) {
-//	//	buf.Format("CAD9852::UpdateFrequencyData : Start frequency too high (BaseAddress=%x Bus=%x) fwanted=%f MHz fmax=%f MHz",BaseAddress,Bus>>BusBitShift,RequestedStartFrequency,MaxFrequency);
-//	//	AddErrorMessageCString(buf);
+//	//	std::string buf = std::format("CAD9852::UpdateFrequencyData : Start frequency too high (BaseAddress={:x} Bus={:x}) fwanted=%f MHz fmax=%f MHz",BaseAddress,Bus>>BusBitShift,RequestedStartFrequency,MaxFrequency);
+//	//	AddErrorMessage(buf);
 //	//	RequestedStartFrequency=MaxFrequency;
 //	//}
 //	//if (RequestedStartFrequency<0) {
-//	//	buf.Format("CAD9852::UpdateFrequencyData : Start frequency <0 (BaseAddress=%x Bus=%x) fwanted=%f MHz fmax=%f MHz",BaseAddress,Bus>>BusBitShift,RequestedStartFrequency,MaxFrequency);
-//	//	AddErrorMessageCString(buf);
+//	//	std::string buf = std::format("CAD9852::UpdateFrequencyData : Start frequency <0 (BaseAddress={:x} Bus={:x}) fwanted=%f MHz fmax=%f MHz",BaseAddress,Bus>>BusBitShift,RequestedStartFrequency,MaxFrequency);
+//	//	AddErrorMessage(buf);
 //	//	RequestedStartFrequency=0;
 //	//}
 //
 //	//if (RequestedStopFrequency>MaxFrequency) {
-//	//	buf.Format("CAD9852::UpdateFrequencyData : Stop frequency too high (BaseAddress=%x Bus=%x) fwanted=%f MHz fmax=%f MHz",BaseAddress,Bus>>BusBitShift,RequestedStopFrequency,MaxFrequency);
-//	//	AddErrorMessageCString(buf);
+//	//	std::string buf = std::format("CAD9852::UpdateFrequencyData : Stop frequency too high (BaseAddress={:x} Bus={:x}) fwanted=%f MHz fmax=%f MHz",BaseAddress,Bus>>BusBitShift,RequestedStopFrequency,MaxFrequency);
+//	//	AddErrorMessage(buf);
 //	//	RequestedStopFrequency=MaxFrequency;
 //	//}
 //	//if (RequestedStopFrequency<0) {
-//	//	buf.Format("CAD9852::UpdateFrequencyData : Stop frequency <0 (BaseAddress=%x Bus=%x) fwanted=%f MHz fmax=%f MHz",BaseAddress,Bus>>BusBitShift,RequestedStopFrequency,MaxFrequency);
-//	//	AddErrorMessageCString(buf);
+//	//	std::string buf = std::format("CAD9852::UpdateFrequencyData : Stop frequency <0 (BaseAddress={:x} Bus={:x}) fwanted=%f MHz fmax=%f MHz",BaseAddress,Bus>>BusBitShift,RequestedStopFrequency,MaxFrequency);
+//	//	AddErrorMessage(buf);
 //	//	RequestedStopFrequency=0;
 //	//}
 //
@@ -544,9 +542,9 @@ unsigned long CAD9852::SetRampRateClock(unsigned long aRampRateClock, bool GetVa
 	}
 	else {
 		if ((aRampRateClock < 1) || (aRampRateClock > 1048576)) {
-			CString buf;
-			buf.Format("CAD9852::SetRampRateClock : Ramp rate clock out of range (BaseAddress=%x Bus=%x) aRampRateClock=%u", BaseAddress, Bus >> BusBitShift, aRampRateClock);
-			AddErrorMessageCString(buf);
+
+			std::string buf = std::format("CAD9852::SetRampRateClock : Ramp rate clock out of range (BaseAddress={:x} Bus={:x}) aRampRateClock=%u", BaseAddress, Bus >> BusBitShift, aRampRateClock);
+			AddErrorMessage(buf);
 			aRampRateClock = 1;
 		}
 		return (unsigned long)SetValue(6, aRampRateClock, GetValue);
@@ -554,7 +552,7 @@ unsigned long CAD9852::SetRampRateClock(unsigned long aRampRateClock, bool GetVa
 	}
 }
 
-__int64 CAD9852::SetDeltaFrequencyWord(__int64 aDeltaFrequencyWord, bool GetValue) {
+int64_t CAD9852::SetDeltaFrequencyWord(int64_t aDeltaFrequencyWord, bool GetValue) {
 	return SetValue(4, aDeltaFrequencyWord, GetValue);
 }
 
@@ -570,7 +568,7 @@ double CAD9852::SetRampTime(double RampTime, bool GetValue) {  //RampTime in ms
 
 //double CAD9852::SetModulationFrequency(double ModulationFrequency, bool GetValue) {  //ModulationFrequency in MHz
 //	if (!Enabled) return 0;
-//	__int64 FrequencyTuningWord=0;
+//	int64_t FrequencyTuningWord=0;
 //	if (GetValue) {
 //		 FrequencyTuningWord=SetDeltaFrequencyWord(FrequencyTuningWord,true);
 //		 //Convert back from 48 bit twos complement
@@ -580,17 +578,17 @@ double CAD9852::SetRampTime(double RampTime, bool GetValue) {  //RampTime in ms
 //		 return ModulationFrequency/1E6;
 //	} else {
 //		if (ModulationFrequency<0) {
-//			CString buf;
-//			buf.Format("CAD9852::SetModulationFrequency : modulation frequency out of range (BaseAddress=%x Bus=%x) fmodwanted=%.f Hz",BaseAddress,Bus>>BusBitShift,ModulationFrequency);
-//			AddErrorMessageCString(buf);			
+//
+//			std::string buf = std::format("CAD9852::SetModulationFrequency : modulation frequency out of range (BaseAddress={:x} Bus={:x}) fmodwanted={} Hz",BaseAddress,Bus>>BusBitShift,ModulationFrequency);
+//			AddErrorMessage(buf);
 //			ModulationFrequency=1;
 //		}
 //						
-//		FrequencyTuningWord=(__int64)((AktValueContents[3]-AktValueContents[2])*((ModulationFrequency*1E6)/(0.5*ClockSpeed/(AktValueContents[6]+1))));
+//		FrequencyTuningWord=(int64_t)((AktValueContents[3]-AktValueContents[2])*((ModulationFrequency*1E6)/(0.5*ClockSpeed/(AktValueContents[6]+1))));
 //		if (FrequencyTuningWord>(281474976710656/2)) {
-//			CString buf;
-//			buf.Format("CAD9852::SetModulationFrequency : frequency out of range (BaseAddress=%x Bus=%x) fwanted=%.f MHz",BaseAddress,Bus>>BusBitShift,ModulationFrequency);
-//			AddErrorMessageCString(buf);			
+//
+//			std::string buf = std::format("CAD9852::SetModulationFrequency : frequency out of range (BaseAddress={:x} Bus={:x}) fwanted={} MHz",BaseAddress,Bus>>BusBitShift,ModulationFrequency);
+//			AddErrorMessage(buf);
 //		}
 //		//Calculate 48bit twos complement
 //		//281474976710656=2^48
@@ -602,16 +600,16 @@ double CAD9852::SetRampTime(double RampTime, bool GetValue) {  //RampTime in ms
 
 
 double CAD9852::SetModulationFrequency(double ModulationFrequency, bool GetValue) {  //ModulationFrequency in MHz
-	CString buf;
-	__int64 FrequencyTuningWord1 = 0;
-	__int64 FrequencyTuningWord2 = 0;
-	__int64 DeltaFrequencyWord = 0;
+
+	int64_t FrequencyTuningWord1 = 0;
+	int64_t FrequencyTuningWord2 = 0;
+	int64_t DeltaFrequencyWord = 0;
 	unsigned int ClockUpdateSteps = 0;
 	unsigned int RampRateSteps = 1;
 	double NewLastModulationFrequency = 0;
 
 	if (!Enabled) return 0;
-	__int64 FrequencyTuningWord = 0;
+	int64_t FrequencyTuningWord = 0;
 	if (GetValue) {
 		FrequencyTuningWord = SetDeltaFrequencyWord(FrequencyTuningWord, true);
 		//Convert back from 48 bit twos complement
@@ -623,12 +621,12 @@ double CAD9852::SetModulationFrequency(double ModulationFrequency, bool GetValue
 	}
 	else {
 		if (ModulationFrequency < 0) {
-			buf.Format("CAD9852::SetModulationFrequency : modulation frequency out of range (BaseAddress=%x Bus=%x) fmodwanted=%.f Hz", BaseAddress, Bus >> BusBitShift, ModulationFrequency);
-			AddErrorMessageCString(buf);
+			std::string buf = std::format("CAD9852::SetModulationFrequency : modulation frequency out of range (BaseAddress={:x} Bus={:x}) fmodwanted={} Hz", BaseAddress, Bus >> BusBitShift, ModulationFrequency);
+			AddErrorMessage(buf);
 			ModulationFrequency = 1;
 		}
 
-		//		FrequencyTuningWord=(__int64)((AktValueContents[3]-AktValueContents[2])*((ModulationFrequency*1E6)/(0.5*ClockSpeed/(AktValueContents[6]+1))));
+		//		FrequencyTuningWord=(int64_t)((AktValueContents[3]-AktValueContents[2])*((ModulationFrequency*1E6)/(0.5*ClockSpeed/(AktValueContents[6]+1))));
 
 
 		if (LastModulationFrequency != ModulationFrequency) {
@@ -639,9 +637,9 @@ double CAD9852::SetModulationFrequency(double ModulationFrequency, bool GetValue
 
 			////if (LastFSKMode!=0) {
 			//	if (LastFSKMode==2) {
-			//		ClockUpdateSteps=(__int64)((ClockSpeed/(RampRateSteps+1)/(RequestedModulationFrequency*1E6))/4);
+			//		ClockUpdateSteps=(int64_t)((ClockSpeed/(RampRateSteps+1)/(RequestedModulationFrequency*1E6))/4);
 			//	} else {
-			//		ClockUpdateSteps=(__int64)((ClockSpeed/(RampRateSteps+1)/(RequestedModulationFrequency*1E6))/2);
+			//		ClockUpdateSteps=(int64_t)((ClockSpeed/(RampRateSteps+1)/(RequestedModulationFrequency*1E6))/2);
 			//	}
 			//	if (ClockUpdateSteps>2147483648) {
 			//		ClockUpdateSteps=2147483648;
@@ -649,26 +647,26 @@ double CAD9852::SetModulationFrequency(double ModulationFrequency, bool GetValue
 			//	if (ClockUpdateSteps<20) {
 			//		ClockUpdateSteps=20;
 			//	}
-			//	//DeltaFrequencyWord=(__int64)((AktValueContents[3]-AktValueContents[2])*((ModulationFrequency*1E6)/(0.5*ClockSpeed/(AktValueContents[6]+1))));
-			//	//DeltaFrequencyWordv2=(__int64)(AktValueContents[3]-AktValueContents[2])/ClockUpdateSteps;
+			//	//DeltaFrequencyWord=(int64_t)((AktValueContents[3]-AktValueContents[2])*((ModulationFrequency*1E6)/(0.5*ClockSpeed/(AktValueContents[6]+1))));
+			//	//DeltaFrequencyWordv2=(int64_t)(AktValueContents[3]-AktValueContents[2])/ClockUpdateSteps;
 
 			//	//__int32 ClockUpdateSteps32=(__int32)((ClockSpeed/(RampRateSteps+1)/(SortedModulationFrequency*1E6)));
 			//	//double aDeltaFrequencyWord=(double)((AktValueContents[3]-AktValueContents[2])*((ModulationFrequency*1E6)/(0.5*ClockSpeed/(AktValueContents[6]+1))));
 			//	//double aDeltaFrequencyWordv2a=(double)(AktValueContents[3]-AktValueContents[2])/ClockUpdateSteps;
 			//	//__int32 aDeltaFrequencyWordv2=(__int32)(AktValueContents[3]-AktValueContents[2])/ClockUpdateSteps;
 			//	//double aDeltaFrequencyWordv3=(double)(LastStopFrequency-LastStartFrequency)*FrequencyScale/ClockUpdateSteps;
-			//	DeltaFrequencyWord=(__int64)(((__int64)(LastStopFrequency-LastStartFrequency))*FrequencyScale/ClockUpdateSteps);
+			//	DeltaFrequencyWord=(int64_t)(((int64_t)(LastStopFrequency-LastStartFrequency))*FrequencyScale/ClockUpdateSteps);
 
-			//	//buf.Format("%f %f %f %f %f %f %i",LastStartFrequency,LastStopFrequency,ModulationFrequency,aDeltaFrequencyWord,aDeltaFrequencyWordv2a,aDeltaFrequencyWordv3,ClockUpdateSteps32);
-			//	//AddErrorMessageCString(buf);			
+			//	//std::string buf = std::format("%f %f %f %f %f %f %i",LastStartFrequency,LastStopFrequency,ModulationFrequency,aDeltaFrequencyWord,aDeltaFrequencyWordv2a,aDeltaFrequencyWordv3,ClockUpdateSteps32);
+			//	//AddErrorMessage(buf);
 
 			//	if (DeltaFrequencyWord>(281474976710656/2)) {
-			//		buf.Format("CAD9852::SetModulationFrequency : frequency out of range (BaseAddress=%x Bus=%x) fwanted=%.f MHz",BaseAddress,Bus>>BusBitShift,RequestedModulationFrequency);
-			//		AddErrorMessageCString(buf);			
+			//		std::string buf = std::format("CAD9852::SetModulationFrequency : frequency out of range (BaseAddress={:x} Bus={:x}) fwanted={} MHz",BaseAddress,Bus>>BusBitShift,RequestedModulationFrequency);
+			//		AddErrorMessage(buf);
 			//	}
 			//	if (DeltaFrequencyWord>(281474976710656/2)) {
-			//		buf.Format("CAD9852::UpdateFrequencyData : DeltaFrequencyWord>2^47 (BaseAddress=%x Bus=%x)",BaseAddress,Bus>>BusBitShift);
-			//		AddErrorMessageCString(buf);
+			//		std::string buf = std::format("CAD9852::UpdateFrequencyData : DeltaFrequencyWord>2^47 (BaseAddress={:x} Bus={:x})",BaseAddress,Bus>>BusBitShift);
+			//		AddErrorMessage(buf);
 			//		DeltaFrequencyWord=(281474976710656/2);
 			//	}
 			////	//281474976710656=2^48
@@ -681,8 +679,8 @@ double CAD9852::SetModulationFrequency(double ModulationFrequency, bool GetValue
 
 
 			//double DeltaFrequencyWordv=(double)DeltaFrequencyWord;
-			//buf.Format("%f %u",DeltaFrequencyWordv,ClockUpdateSteps);
-			//AddErrorMessageCString(buf);
+			//std::string buf = std::format("%f %u",DeltaFrequencyWordv,ClockUpdateSteps);
+			//AddErrorMessage(buf);
 
 
 			NewLastModulationFrequency = CalculateModulationFrequencyData(&DeltaFrequencyWord, &ClockUpdateSteps);
@@ -694,27 +692,27 @@ double CAD9852::SetModulationFrequency(double ModulationFrequency, bool GetValue
 
 
 			//DeltaFrequencyWordv=(double)DeltaFrequencyWord;
-			//buf.Format("%f %u",DeltaFrequencyWordv,ClockUpdateSteps);
-			//AddErrorMessageCString(buf);
+			//std::string buf = std::format("%f %u",DeltaFrequencyWordv,ClockUpdateSteps);
+			//AddErrorMessage(buf);
 
 		}
 
 
-		//			__int64 FrequencyTuningWordv2=(__int64)((AktValueContents[3]-AktValueContents[2])*((ModulationFrequency*1E6)/(0.5*ClockSpeed/(AktValueContents[6]+1))));
+		//			int64_t FrequencyTuningWordv2=(int64_t)((AktValueContents[3]-AktValueContents[2])*((ModulationFrequency*1E6)/(0.5*ClockSpeed/(AktValueContents[6]+1))));
 		//			if (FrequencyTuningWordv2>(281474976710656/2)) {
-		//				CString buf;
-		//				buf.Format("CAD9852::SetModulationFrequency : frequency out of range (BaseAddress=%x Bus=%x) fwanted=%.f MHz",BaseAddress,Bus>>BusBitShift,ModulationFrequency);
-		//				AddErrorMessageCString(buf);			
+		//
+		//				std::string buf = std::format("CAD9852::SetModulationFrequency : frequency out of range (BaseAddress={:x} Bus={:x}) fwanted={} MHz",BaseAddress,Bus>>BusBitShift,ModulationFrequency);
+		//				AddErrorMessage(buf);
 		//			}
 		//			//Calculate 48bit twos complement
 		//			//281474976710656=2^48
 		//			FrequencyTuningWordv2=(0x1000000000000-FrequencyTuningWordv2) & 0xFFFFFFFFFFFF;
 		////			SetDeltaFrequencyWord(FrequencyTuningWordv2,false);
 
-							//buf.Format("%u",LastFSKMode);
-							//AddErrorMessageCString(buf);
-							//buf.Format("%u %u %f %f",DeltaFrequencyWord,DeltaFrequencyWordv2,LastStartFrequency,LastStopFrequency);
-							//AddErrorMessageCString(buf);
+							//std::string buf = std::format("%u",LastFSKMode);
+							//AddErrorMessage(buf);
+							//std::string buf = std::format("%u %u %f %f",DeltaFrequencyWord,DeltaFrequencyWordv2,LastStartFrequency,LastStopFrequency);
+							//AddErrorMessage(buf);
 
 
 		//		}
@@ -723,8 +721,8 @@ double CAD9852::SetModulationFrequency(double ModulationFrequency, bool GetValue
 	}
 }
 
-double CAD9852::CalculateModulationFrequencyData(__int64* DeltaFrequencyWord, unsigned int* ClockUpdateSteps) {
-	CString buf;
+double CAD9852::CalculateModulationFrequencyData(int64_t* DeltaFrequencyWord, unsigned int* ClockUpdateSteps) {
+
 	unsigned int RampRateSteps = 1;
 	double NewModulationFrequency = 0;
 
@@ -736,10 +734,10 @@ double CAD9852::CalculateModulationFrequencyData(__int64* DeltaFrequencyWord, un
 	}
 	else {
 		if (LastFSKMode == 2) {
-			*ClockUpdateSteps = (__int64)((ClockSpeed / (RampRateSteps + 1) / (RequestedModulationFrequency * 1E6)) / 2);
+			*ClockUpdateSteps = (int64_t)((ClockSpeed / (RampRateSteps + 1) / (RequestedModulationFrequency * 1E6)) / 2);
 		}
 		else {
-			*ClockUpdateSteps = (__int64)((ClockSpeed / (RampRateSteps + 1) / (RequestedModulationFrequency * 1E6)) / 1);
+			*ClockUpdateSteps = (int64_t)((ClockSpeed / (RampRateSteps + 1) / (RequestedModulationFrequency * 1E6)) / 1);
 		}
 		if (*ClockUpdateSteps > 2147483648) {
 			*ClockUpdateSteps = 2147483648;
@@ -748,37 +746,37 @@ double CAD9852::CalculateModulationFrequencyData(__int64* DeltaFrequencyWord, un
 			*ClockUpdateSteps = 20;
 		}
 	}
-	*DeltaFrequencyWord = (__int64)((LastStopFrequency - LastStartFrequency) * (FrequencyScale / (*ClockUpdateSteps)));
+	*DeltaFrequencyWord = (int64_t)((LastStopFrequency - LastStartFrequency) * (FrequencyScale / (*ClockUpdateSteps)));
 	if (*DeltaFrequencyWord < -(281474976710656 / 2)) {
-		//buf.Format("CAD9852::SetModulationFrequency : frequency out of range (BaseAddress=%x Bus=%x) fwanted=%.f MHz",BaseAddress,Bus>>BusBitShift,RequestedModulationFrequency);
-		//AddErrorMessageCString(buf);			
+		//std::string buf = std::format("CAD9852::SetModulationFrequency : frequency out of range (BaseAddress={:x} Bus={:x}) fwanted={} MHz",BaseAddress,Bus>>BusBitShift,RequestedModulationFrequency);
+		//AddErrorMessage(buf);
 		*DeltaFrequencyWord = -(281474976710656 / 2);
 	}
 	if (*DeltaFrequencyWord > (281474976710656 / 2)) {
-		//buf.Format("CAD9852::UpdateFrequencyData : DeltaFrequencyWord>2^47 (BaseAddress=%x Bus=%x)",BaseAddress,Bus>>BusBitShift);
-		//AddErrorMessageCString(buf);
+		//std::string buf = std::format("CAD9852::UpdateFrequencyData : DeltaFrequencyWord>2^47 (BaseAddress={:x} Bus={:x})",BaseAddress,Bus>>BusBitShift);
+		//AddErrorMessage(buf);
 		*DeltaFrequencyWord = (281474976710656 / 2);
 	}
 
 	//	//281474976710656=2^48
 	//DeltaFrequencyWord=281474976710656-DeltaFrequencyWord;
-	//buf.Format("%f %f %f %f %f",(double)(dbDeltaFrequencyWord),(double)(*ClockUpdateSteps),LastStopFrequency,LastStartFrequency,(double)FrequencyScale);
-	//AddErrorMessageCString(buf);
-//		*DeltaFrequencyWord=(0x1000000000000+(__int64)dbDeltaFrequencyWord) & 0xFFFFFFFFFFFF;
+	//std::string buf = std::format("%f %f %f %f %f",(double)(dbDeltaFrequencyWord),(double)(*ClockUpdateSteps),LastStopFrequency,LastStartFrequency,(double)FrequencyScale);
+	//AddErrorMessage(buf);
+//		*DeltaFrequencyWord=(0x1000000000000+(int64_t)dbDeltaFrequencyWord) & 0xFFFFFFFFFFFF;
 	*DeltaFrequencyWord = (0x1000000000000 + (*DeltaFrequencyWord)) & 0xFFFFFFFFFFFF;
 	//} else {
 	//	*ClockUpdateSteps=20;
 	//}
-	//buf.Format("%f %f %f %f",(double)(*DeltaFrequencyWord),(double)(*ClockUpdateSteps),LastStopFrequency,LastStartFrequency);
-	//AddErrorMessageCString(buf);
+	//std::string buf = std::format("%f %f %f %f",(double)(*DeltaFrequencyWord),(double)(*ClockUpdateSteps),LastStopFrequency,LastStartFrequency);
+	//AddErrorMessage(buf);
 
 //	NewModulationFrequency=((double)DeltaFrequencyWord*ClockSpeed/((double)(LastStopFrequency-LastStartFrequency)*FrequencyScale*2*(RampRateSteps+1)*1e6));
 
 	NewModulationFrequency = RequestedModulationFrequency;
 
 	//double DeltaFrequencyWordv=(double)DeltaFrequencyWord;
-	//buf.Format("%f %u",DeltaFrequencyWordv,ClockUpdateSteps);
-	//AddErrorMessageCString(buf);
+	//std::string buf = std::format("%f %u",DeltaFrequencyWordv,ClockUpdateSteps);
+	//AddErrorMessage(buf);
 
 	return NewModulationFrequency;
 }
@@ -799,7 +797,7 @@ unsigned short CAD9852::SetControlDAC(unsigned short aControlDAC, bool GetValue)
 	return (unsigned short)SetValue(9, aControlDAC, GetValue);
 }
 
-__int64 CAD9852::SetValue(unsigned char ValueNr, __int64 Value, bool GetValue)
+int64_t CAD9852::SetValue(unsigned char ValueNr, int64_t Value, bool GetValue)
 {
 	if (!Enabled) return 0;
 	if (ValueNr >= AD9852MaxValues) return 0;
@@ -809,9 +807,9 @@ __int64 CAD9852::SetValue(unsigned char ValueNr, __int64 Value, bool GetValue)
 	else {
 		if ((AktValueContents[ValueNr] != Value) || (ForceWriting)) {
 			if (BusBufferLength >= AD9852MaxBusBuffer) {
-				CString buf;
-				buf.Format("CAD9852::SetValue : Bus Buffer exceeded (BaseAddress=%x Bus=%x)", BaseAddress, Bus >> BusBitShift);
-				AddErrorMessageCString(buf);
+
+				std::string buf = std::format("CAD9852::SetValue : Bus Buffer exceeded (BaseAddress={:x} Bus={:x})", BaseAddress, Bus >> BusBitShift);
+				AddErrorMessage(buf);
 				return 0;
 			}
 			if (ValueInBusBuffer[ValueNr] != AD9852ValueNotInBusBuffer) {
@@ -834,9 +832,9 @@ __int64 CAD9852::SetValue(unsigned char ValueNr, __int64 Value, bool GetValue)
 void CAD9852::MasterReset() {
 	if (!Enabled) return;
 	if (BusBufferLength >= AD9852MaxBusBuffer) {
-		CString buf;
-		buf.Format("CAD9852::SetValue : Bus Buffer exceeded (BaseAddress=%x Bus=%x)", BaseAddress, Bus >> BusBitShift);
-		AddErrorMessageCString(buf);
+
+		std::string buf = std::format("CAD9852::SetValue : Bus Buffer exceeded (BaseAddress={:x} Bus={:x})", BaseAddress, Bus >> BusBitShift);
+		AddErrorMessage(buf);
 		return;
 	}
 
@@ -865,9 +863,9 @@ void CAD9852::MasterReset() {
 void CAD9852::UpdateRegisters() {
 	if (!Enabled) return;
 	if (BusBufferLength >= AD9852MaxBusBuffer) {
-		CString buf;
-		buf.Format("CAD9852::UpdateRegisters : Bus Buffer exceeded (BaseAddress=%x Bus=%x)", BaseAddress, Bus >> BusBitShift);
-		AddErrorMessageCString(buf);
+
+		std::string buf = std::format("CAD9852::UpdateRegisters : Bus Buffer exceeded (BaseAddress={:x} Bus={:x})", BaseAddress, Bus >> BusBitShift);
+		AddErrorMessage(buf);
 		return;
 	}
 }
@@ -875,9 +873,9 @@ void CAD9852::UpdateRegisters() {
 void CAD9852::LoadLatches() {
 	if (!Enabled) return;
 	if (BusBufferLength >= AD9852MaxBusBuffer) {
-		CString buf;
-		buf.Format("CAD9852::LoadLatches : Bus Buffer exceeded (BaseAddress=%x Bus=%x)", BaseAddress, Bus >> BusBitShift);
-		AddErrorMessageCString(buf);
+
+		std::string buf = std::format("CAD9852::LoadLatches : Bus Buffer exceeded (BaseAddress={:x} Bus={:x})", BaseAddress, Bus >> BusBitShift);
+		AddErrorMessage(buf);
 		return;
 	}
 	BusBuffer[BusBufferEnd] = 16;

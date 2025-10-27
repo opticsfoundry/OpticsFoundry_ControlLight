@@ -1,17 +1,14 @@
 ﻿# CMakeList.txt : CMake project for ControlLight, include source and define
 # project specific logic here.
 #
+cmake_minimum_required (VERSION 3.14)
+
 project(ControlLight)
 project ("ControlLight")
 
-cmake_minimum_required (VERSION 3.14)
-
-
 # Set C++ standard
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-set(CMAKE_MFC_FLAG 2)  # 1 = static, 2 = shared DLL
 
 # Add custom option for build mode
 set(BUILD_MODE "EXE" CACHE STRING "Choose build mode: EXE, DLL or PYD")
@@ -23,27 +20,33 @@ set(BUILD_MODE "EXE" CACHE STRING "Choose build mode" FORCE)  # <-- change this 
 
 
 # Use dynamic (DLL) runtime libraries, needed for _AFXDLL
-foreach(flag_var
-    CMAKE_C_FLAGS_DEBUG
-    CMAKE_C_FLAGS_RELEASE
-    CMAKE_C_FLAGS_RELWITHDEBINFO
-    CMAKE_C_FLAGS_MINSIZEREL
-    CMAKE_CXX_FLAGS_DEBUG
-    CMAKE_CXX_FLAGS_RELEASE
-    CMAKE_CXX_FLAGS_RELWITHDEBINFO
-    CMAKE_CXX_FLAGS_MINSIZEREL)
-  string(REPLACE "/MT" "/MD" ${flag_var} "${${flag_var}}")
-endforeach()
-
+if (MSVC)
+    set(CMAKE_MFC_FLAG 2)  # 1 = static, 2 = shared DLL
+    foreach(flag_var
+        CMAKE_C_FLAGS_DEBUG
+        CMAKE_C_FLAGS_RELEASE
+        CMAKE_C_FLAGS_RELWITHDEBINFO
+        CMAKE_C_FLAGS_MINSIZEREL
+        CMAKE_CXX_FLAGS_DEBUG
+        CMAKE_CXX_FLAGS_RELEASE
+        CMAKE_CXX_FLAGS_RELWITHDEBINFO
+        CMAKE_CXX_FLAGS_MINSIZEREL)
+      string(REPLACE "/MT" "/MD" ${flag_var} "${${flag_var}}")
+    endforeach()
+else()
+    # additional warnings
+    add_compile_options(-O3)
+endif()
 
 # Conditional target generation
 if(BUILD_MODE STREQUAL "EXE")
-   
 
     # Enable Hot Reload for MSVC compilers if supported.
-    if (POLICY CMP0141)
-      cmake_policy(SET CMP0141 NEW)
-      set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
+    if (MSVC)
+        if (POLICY CMP0141)
+          cmake_policy(SET CMP0141 NEW)
+          set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
+        endif()
     endif()
 
     #add all sources
@@ -51,7 +54,6 @@ if(BUILD_MODE STREQUAL "EXE")
 
     #To create an executable for testing
     add_executable(ControlLight ${SOURCES})
-  
 
     target_compile_definitions(ControlLight PRIVATE USING_DLL)
     target_compile_definitions(ControlLight PRIVATE _AFXDLL)
@@ -61,19 +63,14 @@ if(BUILD_MODE STREQUAL "EXE")
 
     #set(CMAKE_BUILD_TYPE Debug)
 
-    if (CMAKE_VERSION VERSION_GREATER 3.12)
-        set_property(TARGET ControlLight PROPERTY CXX_STANDARD 20)
-    endif()
-
-
-
 elseif(BUILD_MODE STREQUAL "DLL")
-   
 
     # Enable Hot Reload for MSVC compilers if supported.
-    if (POLICY CMP0141)
-      cmake_policy(SET CMP0141 NEW)
-      set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
+    if (MSVC)
+        if (POLICY CMP0141)
+          cmake_policy(SET CMP0141 NEW)
+          set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
+        endif()
     endif()
 
     #add all sources
@@ -94,13 +91,7 @@ elseif(BUILD_MODE STREQUAL "DLL")
     #install(TARGETS ControlLight DESTINATION lib)
     #install(FILES ControlLight.h DESTINATION include)
 
-    if (CMAKE_VERSION VERSION_GREATER 3.12)
-        set_property(TARGET ControlLight PROPERTY CXX_STANDARD 20)
-    endif()
-
 elseif(BUILD_MODE STREQUAL "PYD")
-    
-
 
     # Collect sources
     file(GLOB SOURCES "*.cpp" "*.h")
@@ -133,4 +124,3 @@ elseif(BUILD_MODE STREQUAL "PYD")
 else()
     message(FATAL_ERROR "Invalid BUILD_MODE: must be EXE, DLL, or PYD")
 endif()
-

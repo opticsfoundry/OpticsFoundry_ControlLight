@@ -3,8 +3,8 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "std.h"
-#include "control.h"
 #include "MultiWriteDeviceSPI.h"
+#include <format>
 
 #include "CDeviceSequencer.h"
 
@@ -59,9 +59,7 @@ CMultiWriteDeviceSPI::~CMultiWriteDeviceSPI()
 void CMultiWriteDeviceSPI::AddToBusBuffer(unsigned short value) {
 	if (!Enabled) return;
 	if (BusBufferLength >= MultiWriteDeviceSPIMaxBusBuffer) {
-		CString buf;
-		buf.Format("CMultiWriteDeviceSPI::AddToBusBuffer : Bus Buffer exceeded (%d)", MultiWriteDeviceSPIMaxBusBuffer);
-		ControlMessageBox(buf);
+		ControlMessageBox(std::format("CMultiWriteDeviceSPI::AddToBusBuffer : Bus Buffer exceeded ({})", MultiWriteDeviceSPIMaxBusBuffer));
 		return;
 	}
 	BusBuffer[BusBufferEnd] = value;
@@ -118,7 +116,7 @@ void CMultiWriteDeviceSPI::SetSPIDataOut(bool data) {
 	SetControlRegister(SDIO_0_bit, 1, (data) ? 1 : 0);
 }
 
-std::string format_binary_64(unsigned __int64 data, unsigned int number_of_bits_out) {
+std::string format_binary_64(uint64_t data, unsigned int number_of_bits_out) {
 	std::string result;
 	for (int i = number_of_bits_out - 1; i >= 0; --i) {
 		result += (data & (1ULL << i)) ? '1' : '0';
@@ -127,9 +125,9 @@ std::string format_binary_64(unsigned __int64 data, unsigned int number_of_bits_
 	return result;
 }
 
-void CMultiWriteDeviceSPI::WriteSPIBitBanged(unsigned int number_of_bits_out, unsigned __int64 data) {
+void CMultiWriteDeviceSPI::WriteSPIBitBanged(unsigned int number_of_bits_out, uint64_t data) {
 	//ToDo: make data_sent calculation more efficient
-	unsigned __int64 data_sent = 0;
+	uint64_t data_sent = 0;
 	//This could easily be expanded into a 4-bit SPI interface
 	SetSPIChipSelect(false);
 	SetSPIClock(false);

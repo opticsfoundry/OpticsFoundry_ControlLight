@@ -81,7 +81,7 @@ bool CDeviceAD9858::SetValue(const unsigned int& SubAddress, const uint8_t* data
 	case 15: if (DataLength_in_bit == 8) MyAD9858->SetFrequencyDetectModeChargePumpCurrent(data[0]); else return false; break;
 	case 16: if (DataLength_in_bit == 8) MyAD9858->SetFinalClosedLoopModeChargePumpCurrent(data[0]); else return false; break;
 	case 17: if (DataLength_in_bit == 8) MyAD9858->SetWideClosedLoopModeChargePumpCurrent(data[0]); else return false; break;
-	case 18: if (DataLength_in_bit == 64) MyAD9858->SetDeltaFrequencyWord((__int64)dValue); else return false; break;
+	case 18: if (DataLength_in_bit == 64) MyAD9858->SetDeltaFrequencyWord((int64_t)dValue); else return false; break;
 	case 19: if (DataLength_in_bit == 32) MyAD9858->SetRampRateWord((unsigned long)dValue); else return false; break;
 	case 20: if (DataLength_in_bit == 64) MyAD9858->SetAttenuation(dValue); else return false; break;
 

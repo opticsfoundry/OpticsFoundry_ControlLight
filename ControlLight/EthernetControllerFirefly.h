@@ -3,12 +3,12 @@
 #include "NetworkClient.h"	// Added by ClassView
 #include "EthernetControllerFirefly.h"
 #include <functional>
-
+#include "std.h"
 
 
 #pragma once
 
-typedef function<bool(void)> tBoolFunction;
+typedef std::function<bool(void)> tBoolFunction;
 
 class CDeviceSequencer;
 
@@ -21,7 +21,7 @@ public:
 public:
 	bool Connected;
 	bool DebugBufferOn;
-	ofstream* DebugBufferFile;
+	std::ofstream* DebugBufferFile;
 	bool ExternalTrigger0;
 	bool ExternalTrigger1;
 	double PeriodicTriggerPeriod_in_s;
@@ -33,7 +33,7 @@ public:
 	double FPGAClockFrequencyInHz;
 	bool FPGAUseExternalClock;
 	bool FPGAUseStrobeGenerator;
-	unsigned  long StartTickCounts;
+	Time StartTickCounts;
 	//uint32_t* FPGABuffer;
 	//uint32_t* FPGAAbsoluteTime;
 	//uint32_t FPGABufferUsed;
@@ -57,7 +57,7 @@ public:
 	void StartXADCAnalogInAcquisition(unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms);
 private:
 	void StartSPIAnalogInAcquisition(unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms);
-	void AddCommandAnalogInOut(uint8_t adc_register_address, uint8_t adc_write_enable, unsigned __int16 adc_programming_out, uint8_t dont_execute_now, uint8_t only_read_write, uint32_t wait_time);
+	void AddCommandAnalogInOut(uint8_t adc_register_address, uint8_t adc_write_enable, uint16_t adc_programming_out, uint8_t dont_execute_now, uint8_t only_read_write, uint32_t wait_time);
 	void AddCommandSetCoreOption_LED(bool a_core_option_LED);
 	void AddCommandSetCoreOption_SPI_CS(uint8_t a_core_option_SPI_CS);
 	void AddCommandSetCoreOption_dig_out(uint8_t a_core_option_dig_out);
@@ -75,7 +75,7 @@ public:
 	bool SendSequenceToFPGA(uint32_t* buffer);
 	void AddSequencerCommandToSequenceList(uint32_t high_buffer, uint32_t low_buffer);
 	void StartAnalogInAcquisition(unsigned int channel_nr, unsigned int number_of_datapooints, double delay_between_datapoints);
-	void WriteReadSPI(unsigned int chip_select, unsigned int number_of_bits_out, unsigned __int64 data_high, unsigned __int64 data_low, unsigned int number_of_bits_in);
+	void WriteReadSPI(unsigned int chip_select, unsigned int number_of_bits_out, uint64_t data_high, uint64_t data_low, unsigned int number_of_bits_in);
 	//bool AddData(uint32_t* BusData, uint32_t* Spacing, /*uint32_t* AbsoluteTime,*/ unsigned long Count);
 	bool AddSequencePreamble();
 	bool GetAktWaveformPoint(unsigned long long& DataPointsWritten, bool &running);
@@ -91,7 +91,7 @@ public:
 	void SetTriggerOptions( bool ExternalTrigger0, bool ExternalTrigger1);
 	void AddExternalTrigger( bool ExternalTrigger0, bool ExternalTrigger1, bool FPGASoftwareTrigger );
 	void WriteBufferToFile(uint32_t* buffer, unsigned long length);
-	bool ConnectSocket(LPCTSTR lpszAddress, UINT port, unsigned int aFPGAClockToBusClockRatio, double aFPGAClockFrequencyInHz, bool aFPGAUseExternalClock, bool aFPGAUseStrobeGenerator, bool ExternalTrigger);
+	bool ConnectSocket(const std::string& host, unsigned int port, unsigned int aFPGAClockToBusClockRatio, double aFPGAClockFrequencyInHz, bool aFPGAUseExternalClock, bool aFPGAUseStrobeGenerator, bool ExternalTrigger);
 	double GetBusFrequency();
 	bool WaitTillFinished();
 	bool Start();
@@ -105,7 +105,7 @@ public:
 	void SetPeriodicTrigger(double aPeriodicTriggerPeriod_in_s, double aPeriodicTriggerAllowedWaitTime_in_s);
 	void WaitForPeriodicTrigger(bool aWaitForPeriodicTriggerAtBeginningOfSequence);
 	bool SetExternalClock(bool ExternalClock0, bool ExternalClock1);
-	void DebugBuffer(CString filename);
+	void DebugBuffer(const std::string& filename);
 	void AddSequencerCommandToBuffer(uint32_t* buffer, uint32_t n, uint32_t high_buffer, uint32_t low_buffer);
 	void ClearSequencerCommandList();
 	void AddSequencerCommand(uint32_t high_word, uint32_t low_word);
@@ -144,5 +144,5 @@ private:
 	bool AttemptSetFrequency(double Frequency);
 	bool AttemptGetFrequency(double& Frequency);
 	bool AttemptGetPeriodicTriggerError(bool& Error);
-	bool AttemptWaitTillEndOfSequenceThenGetInputData(uint8_t*& buffer, unsigned long& buffer_length, unsigned  long& EndTimeOfCycle, double timeout_in_s);
+	bool AttemptWaitTillEndOfSequenceThenGetInputData(uint8_t*& buffer, unsigned long& buffer_length, unsigned long& EndTimeOfCycle, double timeout_in_s);
 };

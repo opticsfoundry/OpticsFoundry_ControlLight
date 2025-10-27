@@ -1,6 +1,6 @@
-
 #pragma once
 
+#include <cstdint>
 
 class CDeviceSequencer;
 
@@ -24,13 +24,13 @@ private:
 	unsigned long BusBufferEnd;
 	unsigned long BusBufferLength;
 
-	__int64 AktValueContentsWritten;
+	int64_t AktValueContentsWritten;
 	uint8_t AktValueNrWritten;
 	uint8_t AktSubAddressWritten;		
 	uint8_t WritePrecision[AD9858MaxValues];
 
 	
-	__int64 AktValueContents[AD9858MaxValues]; //keeps track of Value, contains value after bus buffer has been finished to be written out
+	int64_t AktValueContents[AD9858MaxValues]; //keeps track of Value, contains value after bus buffer has been finished to be written out
 	double ClockSpeed;
 	double InputClockSpeed;
 	double MaxFrequency;	
@@ -73,17 +73,17 @@ public:
 	uint8_t SetFrequencyDetectModeChargePumpCurrent(uint8_t aValue, bool GetValue=false);
 	uint8_t SetFinalClosedLoopModeChargePumpCurrent(uint8_t aValue, bool GetValue=false);
 	uint8_t SetWideClosedLoopModeChargePumpCurrent(uint8_t aValue, bool GetValue=false);
-	__int64 SetDeltaFrequencyWord(__int64 aDeltaFrequencyWord, bool GetValue=false);
+	int64_t SetDeltaFrequencyWord(int64_t aDeltaFrequencyWord, bool GetValue=false);
 	unsigned long SetRampRateWord(unsigned long aRampRateWord, bool GetValue=false);	
 	double SetAttenuation(double aValue, bool GetValue=false);
 	double SetFrequency0(double Frequency, bool GetValue=false);
 	double SetFrequency1(double Frequency, bool GetValue=false);
 	double SetFrequency2(double Frequency, bool GetValue=false);
 	double SetFrequency3(double Frequency, bool GetValue=false);
-	__int64 SetFrequencyTuningWord0(const uint64_t& FrequencyTuningWord, bool GetValue = false);
-	__int64 SetFrequencyTuningWord1(const uint64_t& FrequencyTuningWord, bool GetValue = false);
-	__int64 SetFrequencyTuningWord2(const uint64_t& FrequencyTuningWord, bool GetValue = false);
-	__int64 SetFrequencyTuningWord3(const uint64_t& FrequencyTuningWord, bool GetValue = false);
+	int64_t SetFrequencyTuningWord0(const uint64_t& FrequencyTuningWord, bool GetValue = false);
+	int64_t SetFrequencyTuningWord1(const uint64_t& FrequencyTuningWord, bool GetValue = false);
+	int64_t SetFrequencyTuningWord2(const uint64_t& FrequencyTuningWord, bool GetValue = false);
+	int64_t SetFrequencyTuningWord3(const uint64_t& FrequencyTuningWord, bool GetValue = false);
 
 	unsigned short SetPhaseOffsetWord0(unsigned short aPhaseOffsetWord, bool GetValue=false);
 	unsigned short SetPhaseOffsetWord1(unsigned short aPhaseOffsetWord, bool GetValue=false);
@@ -105,7 +105,7 @@ public:
 private:
 	bool SetControlBit(uint8_t RegisterNr, uint8_t BitNr, bool Value, bool GetValue);
 	uint8_t SetControlBits(uint8_t RegisterNr, uint8_t LowestBitNr, uint8_t NrBits, uint8_t Value, bool GetValue);
-	__int64 SetValue(uint8_t ValueNr, __int64 Value, bool GetValue);
+	int64_t SetValue(uint8_t ValueNr, int64_t Value, bool GetValue);
 	void LoadLatches();
 	void UpdateRegisters();
 	CDeviceSequencer* MyDeviceSequencer;

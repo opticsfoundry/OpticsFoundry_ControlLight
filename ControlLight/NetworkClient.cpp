@@ -1,9 +1,16 @@
 // CNetworkClient.cpp: implementation of the CNetworkClient class.
 //
 //////////////////////////////////////////////////////////////////////
-#include <afxwin.h>
 #include "NetworkClient.h"
+#include "ControlAPI.h"
 #include "std.h"
+#ifdef WIN32
+#include <tchar.h>
+#endif
+#include <thread>
+#include <format>
+
+using namespace std;
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -35,16 +42,16 @@ CNetworkClient::~CNetworkClient()
 	}
 }
 
-void CNetworkClient::Debug(CString filename) {
+void CNetworkClient::Debug(const std::string& filename) {
 	DebugFileName = filename;
 	DebugOn = true;
 	if (Network) Network->DebugStart(DebugFileName);
 }
 
-bool CNetworkClient::ConnectSocket(LPCTSTR lpszAddress,UINT port,CString SocketName) {
+bool CNetworkClient::ConnectSocket(const std::string& host, unsigned int port, const std::string& SocketName) {
 	Network=new CNetwork();
 	if (DebugOn) Network->DebugStart(DebugFileName);
-	bool Connected=Network->ConnectSocket(lpszAddress,port,SocketName);
+	bool Connected=Network->ConnectSocket(host, port, SocketName);
 	//we insist that a server is present on program start. If it isn't we ignore that server, gaining speed. The alternative would be to try to reconnect every time, which takes a second or so, if the sever is not present.
 	//if you dont want this, comment out the next four lines
 	if (!Connected) {
@@ -61,11 +68,19 @@ bool CNetworkClient::SendCommand(const CString& command) {
 			Network->SendMsg(msg);
 		} 
 		else if (mode == 2) {
+#ifdef STD_STRING
+			unsigned int StrLength = command.size();
+#else
 			unsigned int StrLength = command.GetLength();
+#endif
 			if (StrLength > 255) return false;
 			uint8_t length = StrLength;
 			Network->SendData(&length, 1);			
+#ifdef STD_STRING
+			Network->SendData((uint8_t*)(command.c_str()), length);
+#else
 			Network->SendData((uint8_t*)(LPCTSTR)command, length);
+#endif
 		}
 		else {  //mode == 3
 			CString msg = command + _T("\n");
@@ -76,9 +91,13 @@ bool CNetworkClient::SendCommand(const CString& command) {
 }
 
 bool CNetworkClient::WriteDouble(double d) {
+#ifdef STD_STRING
+	return SendCommand(std::format("{:8.7e}", d));
+#else
 	CString buf;
 	buf.Format("%8.7e",d);
 	return SendCommand(buf);
+#endif
 }
 
 bool CNetworkClient::SendData(uint8_t* Data, unsigned long Size) {
@@ -90,9 +109,13 @@ bool CNetworkClient::SendData(uint8_t* Data, unsigned long Size) {
 }
 
 bool CNetworkClient::WriteInteger(long i) {
+#ifdef STD_STRING
+	return SendCommand(std::format("{:8d}", i));
+#else
 	CString buf;
 	buf.Format("%8i",i);
 	return SendCommand(buf);
+#endif
 }
 
 bool CNetworkClient::WriteBoolean(bool b) {
@@ -110,7 +133,9 @@ bool CNetworkClient::WriteString(CString s) {
 }
 
 bool CNetworkClient::WriteChar(char c) {
-	CString buf=c;
+	char tmp[2];
+	sprintf(tmp, "%c", c);
+	CString buf(tmp);
 	return SendCommand(buf);
 }
 
@@ -121,8 +146,12 @@ bool CNetworkClient::ReadDouble(double& Value)
 	bool ok = GetCommand(buf);
 	//Value=atof(buf);
 	// Convert CString ? const char* safely
+#ifdef STD_STRING
+	const char* str = buf.c_str();
+#else
 	CT2A narrow(buf);      // Converts to multibyte from Unicode if needed
 	const char* str = narrow;
+#endif
 	char* endptr = nullptr;
 	Value = std::strtod(str, &endptr);
 	if (endptr == str) {
@@ -152,8 +181,12 @@ bool CNetworkClient::ReadInt(int& Value, double timeout_in_seconds)
 	bool ok = GetCommand(buf, timeout_in_seconds);
 	//Value = atoi(buf);
 	// Convert CString ? const char* safely
+#ifdef STD_STRING
+	const char* str = buf.c_str();
+#else
 	CT2A narrow(buf);      // Converts to multibyte from Unicode if needed
 	const char* str = narrow;
+#endif
 	char* endptr = nullptr;
 	Value = std::strtol(str, &endptr, 10);
 	if (endptr == str) {
@@ -174,8 +207,12 @@ bool CNetworkClient::ReadLong(long& Value)
 	bool ok = GetCommand(buf);
 	//Value = atoi(buf);
 	// Convert CString ? const char* safely
+#ifdef STD_STRING
+	const char* str = buf.c_str();
+#else
 	CT2A narrow(buf);      // Converts to multibyte from Unicode if needed
 	const char* str = narrow;
+#endif
 	char* endptr = nullptr;
 	Value = std::strtol(str, &endptr, 10);
 	if (endptr == str) {
@@ -197,8 +234,12 @@ bool CNetworkClient::ReadInt64(unsigned long long& Value)
 	//Value = atoi(buf);
 
 	// Convert CString ? const char* safely
+#ifdef STD_STRING
+	const char* str = buf.c_str();
+#else
 	CT2A narrow(buf);      // Converts to multibyte from Unicode if needed
 	const char* str = narrow;
+#endif
 	char* endptr = nullptr;
 	Value = std::strtoull(str, &endptr, 10);
 	if (endptr == str) {
@@ -217,19 +258,19 @@ bool CNetworkClient::Command(CString CommandString, bool DontWaitForReady) {
 	unsigned int attempts = 0;
 	while ((attempts < MaxReconnectAttempts) && (!AttemptCommand(CommandString, DontWaitForReady))) {
 		Network->ResetConnection();
-		Sleep_ms(100);
+		this_thread::sleep_for(100ms);
 		attempts++;
 	}
-	if (attempts == MaxReconnectAttempts) AddErrorMessageCString("CNetworkClient::Command : Maximum reconnect attempts reached. Command failed: " + CommandString);
+	if (attempts == MaxReconnectAttempts) AddErrorMessage("CNetworkClient::Command : Maximum reconnect attempts reached. Command failed: " + CStringToStdString(CommandString));
 	return (attempts < MaxReconnectAttempts);
 }
 
-bool CNetworkClient::AttemptCommand(CString comand, bool DontWaitForReady) {  
+bool CNetworkClient::AttemptCommand(CString command, bool DontWaitForReady) {
 	if (Network) Network->Flush();
-	SendCommand(comand);
+	SendCommand(command);
 	if ((FastWrite) || (DontWaitForReady)) return true;
 	if ((!Ready()) && (Network)) {
-		//AddErrorMessageCString("CNetworkClient not Ready!\n(Command: "+comand+")");
+		//AddErrorMessage("CNetworkClient not Ready!\n(Command: "+command+")");
 		return false;
 	} else return true;
 }
@@ -270,6 +311,6 @@ void CNetworkClient::StopFastWrite()
 void CNetworkClient::DebugStop() {
 	if (Network) Network->DebugStop();
 }
-void CNetworkClient::DebugStart(CString Filename) {
+void CNetworkClient::DebugStart(const std::string& Filename) {
 	if (Network) Network->DebugStart(Filename);
 }

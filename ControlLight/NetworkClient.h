@@ -2,27 +2,33 @@
 
 //#define _AFXDLL
 
+#ifdef WIN32
 #include <afxwin.h>
-#include "Network.h"
+#endif
+#include "std.h"
+#include "network.h"
 
 
 
-class CNetworkClient : public CObject
+class CNetworkClient
+#ifdef WIN32
+	: public CObject
+#endif
 {
 private:
 	int mode;
 	bool DebugOn;
-	CString DebugFileName;
+	std::string DebugFileName;
 public:
 	CNetwork* Network;
 	void DebugStop();
-	void DebugStart(CString Filename);
+	void DebugStart(const std::string& Filename);
 	void StopFastWrite();
 	void StartFastWrite();
 	bool FastWrite;
 	void Flush();
 	bool Ready();
-	bool ConnectSocket(LPCTSTR lpszAddress,UINT port,CString SocketName);
+	bool ConnectSocket(const std::string& host, unsigned int port, const std::string& SocketName);
 	bool ReadDouble(double &Value);
 	bool ReadBool(bool& Value);
 	bool ReadInt(int& Value, double timeout_in_seconds = 5);
@@ -40,5 +46,5 @@ public:
 	bool GetCommand(CString &Command, double timeout_in_seconds = 5);
 	CNetworkClient(int amode, bool aFastWrite = false);
 	virtual ~CNetworkClient();
-	void Debug(CString filename);
+	void Debug(const std::string& filename);
 };

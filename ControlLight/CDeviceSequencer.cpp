@@ -5,7 +5,9 @@
 #include "EthernetControllerFirefly.h"
 #include "AD9852.h"
 #include "AD9858.h"
-
+#ifdef WIN32
+#include <tchar.h>
+#endif
 
 using namespace std;
 #include <format>
@@ -64,7 +66,7 @@ CDeviceSequencer::CDeviceSequencer(
 	MyEthernetMultiIOControllerFirefly = new CEthernetControllerFirefly(this);
 	bool success = MyEthernetMultiIOControllerFirefly->ConnectSocket(ip.c_str(), port, FPGAClockToBusClockRatio, clockFrequency, useExternalClock, useStrobeGenerator, /* ExternalTrigger*/ !master);
 	if (!success) {
-		NotifyError(_T("Failed to connect to sequencer"));
+		NotifyError("Failed to connect to sequencer");
 		BusFrequency = MyEthernetMultiIOControllerFirefly->GetBusFrequency();
 	}
 
@@ -160,7 +162,7 @@ void CDeviceSequencer::AddCommandToSequence(const uint32_t& high_word, const uin
 		AddBusCommandToSequence(LastBusData);
 	}
 	if (BufferPosition >= PCBufferSize_in_u64) {
-		NotifyError(_T("Buffer overflow")); //ToDo: throw exception
+		NotifyError("Buffer overflow"); //ToDo: throw exception
 		return;
 	}
 	Buffer[currentBuffer][BufferPosition * 2] = low_word;
@@ -188,7 +190,7 @@ inline void CDeviceSequencer::AddBusCommandAndWait(uint32_t busdata, uint32_t de
 	uint32_t high_buffer = ((bus_data_mask & busdata) << 4) | ((delay >> 27) & delay_mask_high);
 
 	if (BufferPosition >= PCBufferSize_in_u64 / 2) {
-		AddErrorMessageCString(_T("Buffer overflow")); //ToDo: throw exception
+		AddErrorMessage("Buffer overflow"); //ToDo: throw exception
 		return;
 	}
 	Buffer[currentBuffer][BufferPosition * 2] = low_buffer;
@@ -196,9 +198,9 @@ inline void CDeviceSequencer::AddBusCommandAndWait(uint32_t busdata, uint32_t de
 	BufferPosition++;
 }
 
-inline void CDeviceSequencer::AddBusCommandToSequence(const uint32_t& content) {
+void CDeviceSequencer::AddBusCommandToSequence(const uint32_t& content) {
 	if (BufferPosition >= PCBufferSize_in_u64) {
-		AddErrorMessageCString(_T("Buffer overflow")); //ToDo: throw exception
+		AddErrorMessage("Buffer overflow"); //ToDo: throw exception
 		return;
 	}
 	uint32_t spacing = Delay_in_ms * clockFrequency / 1000.0;
@@ -323,6 +325,23 @@ void CDeviceSequencer::PrintCPUCommandSequence() {
 	}
 }
 
+void CDeviceSequencer::SetPeriodicTrigger(double periodicTriggerPeriod_in_s, double periodicTriggerAllowedWaitTime_in_s) {
+	if (master) {
+		MyEthernetMultiIOControllerFirefly->SetPeriodicTrigger(periodicTriggerPeriod_in_s, periodicTriggerAllowedWaitTime_in_s);
+	}
+}
+
+void CDeviceSequencer::GetNextCycleNumber(long& NextCycleNumber) {
+	if (master) {
+		MyEthernetMultiIOControllerFirefly->GetNextCycleNumber(NextCycleNumber);
+	}
+}
+
+void CDeviceSequencer::ResetCycleNumber() {
+	if (master) {
+		MyEthernetMultiIOControllerFirefly->ResetCycleNumber();
+	}
+}
 
 
 
@@ -401,10 +420,6 @@ void CDeviceSequencer::SequencerJumpBackward(unsigned int jump_length, bool unco
 void CDeviceSequencer::SequencerJumpForward(unsigned int jump_length, bool unconditional_jump, bool condition_0, bool condition_1, bool condition_PS) {
 	MyEthernetMultiIOControllerFirefly->AddCommandJumpForward(jump_length, unconditional_jump, condition_0, condition_1, condition_PS);
 }
-
-
-
-
 
 
 
