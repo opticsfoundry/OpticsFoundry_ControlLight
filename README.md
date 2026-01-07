@@ -129,9 +129,9 @@ We are working on a labscript interface. Please contact us if you are interested
 
 &nbsp;
 
-## Use with Linux
+## Use with Linux and Windows
 
-It would not require much work to adapt this API to Linux. If you need this, please tell us and we can accelerate Linux support.
+ControlLight works with Linux and Windows, thanks to Jérôme Lodewyck rendering the code portable.
 
 &nbsp;
 
