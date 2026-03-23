@@ -78,6 +78,9 @@ public:
 	void SetPeriodicTrigger(double periodicTriggerPeriod_in_s, double periodicTriggerAllowedWaitTime_in_s);
 	void GetNextCycleNumber(long &NextCycleNumber);
 	void ResetCycleNumber();
+
+	bool TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz);
+
 	void StartAssemblingCPUCommandSequence();
 	void AddCPUCommand(const char* command);
 	void ExecuteCPUCommandSequence(unsigned long ethernet_check_period_in_ms);

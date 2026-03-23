@@ -314,9 +314,31 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @return
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(GetNextBufferPositionOfMasterSequencer)(unsigned long& next_buffer_position);
 
+		/// @brief Set periodic trigger
+		/// @param PeriodicTriggerPeriod_in_s the period of the periodic trigger in seconds.
+		/// @param PeriodicTriggerAllowedWaitTime_in_s the allowed wait time for the
+		/// @return 
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SetPeriodicTrigger)(double PeriodicTriggerPeriod_in_s, double PeriodicTriggerAllowedWaitTime_in_s);
+		
+		/// @brief Get next cycle number of master sequencer.
+		/// @param NextCycleNumber the next cycle number.
+		/// @return 
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(GetNextCycleNumber)(long& NextCycleNumber);
+
+		/// @brief Reset cycle number of master sequencer to 0.
+		/// @return 
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(ResetCycleNumber)();
+
+		/// @brief Read data from an I2C port.
+		/// @param I2C_port the I2C port to read from.
+		/// @param I2C_address the I2C address to read from.
+		/// @param send_length the length of the data to send in bytes.
+		/// @param send_data the data to send.
+		/// @param receive_length the length of the data to receive in bytes.
+		/// @param receive_data the buffer to store the received data.
+		/// @param I2C_clock_frequency_in_Hz the clock frequency of the I
+		/// @return 
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(TransmitI2CPort)(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz);
 
 		//The following functions enable you to assemble a CPU command sequence on the master sequencer, which can then be executed by the CPU.
 		//These command sequences can start FPGA command sequence, analyze acquired data, modify the FPGA command sequence and repeat.
@@ -700,7 +722,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @param condition_0 true if condition 0 is met, false otherwise.
 		/// @param condition_1 true if condition 1 is met, false otherwise.
 		/// @param condition_PS true if the PS condition is met, false otherwise.
-		API_EXPORT ERROR_CODE_TYPE CLA_FN(AddCommandJumpForward)(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerJumpForward)(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false);
 
 
 

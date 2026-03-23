@@ -61,6 +61,16 @@ PYBIND11_MODULE(control_light_api, m) {
 		        self.GetNextBufferPositionOfMasterSequencer(next_buffer_position);
 		        return next_buffer_position;
 			})
+
+        .def("set_periodic_trigger", &ControlLight_API::SetPeriodicTrigger, py::arg("periodic_trigger_period_in_s"), py::arg("periodic_trigger_allowed_wait_time_in_s"))
+        .def("get_next_cycle_number", [](ControlLight_API& self) {
+                long next_cycle_number = 0;
+                self.GetNextCycleNumber(next_cycle_number);
+                return next_cycle_number;
+            })
+        .def("reset_cycle_number", &ControlLight_API::ResetCycleNumber)
+        .def("transmit_i2c_port", &ControlLight_API::TransmitI2CPort, py::arg("i2c_port"), py::arg("i2c_address"), py::arg("send_length"), py::arg("send_data"), py::arg("receive_length"), py::arg("receive_data"), py::arg("i2c_clock_frequency_in_hz"))
+
 		.def("start_assembling_cpu_command_sequence", &ControlLight_API::StartAssemblingCPUCommandSequence)
 		.def("add_cpu_command", &ControlLight_API::AddCPUCommand, py::arg("command"))
 		.def("execute_cpu_command_sequence", &ControlLight_API::ExecuteCPUCommandSequence, py::arg("ethernet_check_period_ms") = 0)

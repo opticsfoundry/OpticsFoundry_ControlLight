@@ -343,8 +343,12 @@ void CDeviceSequencer::ResetCycleNumber() {
 	}
 }
 
-
-
+bool CDeviceSequencer::TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz) {
+	if (master) {
+		return MyEthernetMultiIOControllerFirefly->TransmitI2CPort(I2C_port, I2C_address, send_length, send_data, receive_length, receive_data, I2C_clock_frequency_in_Hz);
+	}
+	return false;
+}
 
 bool CDeviceSequencer::Wait_ms(double time_in_ms) {
 	Delay_in_ms += time_in_ms;

@@ -24,8 +24,10 @@ using json = nlohmann::json;
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <cstdint>      // for uint8_t, uint32_t, etc.
 
 using namespace std;
+
 
 #define CATCH_MFC_EX_S ;
 #define CATCH_MFC_EX_E ;
@@ -1084,6 +1086,14 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "ResetCycleNumber: error");
 		}
 
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(TransmitI2CPort)(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz) {
+			API_LOCK_GUARD;
+			if (!MasterSequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "TransmitI2CPort: no master sequencer not found");
+			}
+			MasterSequencer->TransmitI2CPort(I2C_port, I2C_address, send_length, send_data, receive_length, receive_data, I2C_clock_frequency_in_Hz);
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "TransmitI2CPort: error");
+		}
 
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(StartAssemblingCPUCommandSequence)() {
 			API_LOCK_GUARD;
@@ -1093,8 +1103,6 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			MasterSequencer->StartAssemblingCPUCommandSequence();
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "StartAssemblingCPUCommandSequence: error");
 		}
-
-
 
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(AddCPUCommand)(const char* command) {
 			API_LOCK_GUARD;

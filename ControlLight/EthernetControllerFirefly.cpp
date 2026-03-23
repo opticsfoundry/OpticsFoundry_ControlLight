@@ -66,6 +66,9 @@ CEthernetControllerFirefly::CEthernetControllerFirefly(CDeviceSequencer* _MySequ
 	LastPeriodicTriggerPeriod_in_s = 0;
 	DebugModeOn = false;
 	previous_command_buffer_ptr = nullptr;
+
+	previous_receive_data_ptr = nullptr;
+	receive_data_length = 0;
 }
 
 CEthernetControllerFirefly::~CEthernetControllerFirefly()
@@ -77,6 +80,7 @@ CEthernetControllerFirefly::~CEthernetControllerFirefly()
 	//delete FPGAAbsoluteTime;
 	if (SequencerCommandList) delete SequencerCommandList;
 	if (previous_command_buffer_ptr) delete previous_command_buffer_ptr;
+	if (previous_receive_data_ptr) delete previous_receive_data_ptr;
 }
 
 bool CEthernetControllerFirefly::ConnectSocket(const std::string& host, unsigned port, unsigned int aFPGAClockToBusClockRatio, double aFPGAClockFrequencyInHz, bool aFPGAUseExternalClock, bool aFPGAUseStrobeGenerator, bool aExternalTrigger) {
@@ -1148,6 +1152,50 @@ bool CEthernetControllerFirefly::AttemptSendSequence(uint32_t DataSize, uint32_t
 	if (!SendData((uint8_t*)buffer, DataSize)) return false;
 	return true;
 }
+
+
+
+bool CEthernetControllerFirefly::TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz) {
+	if (!Connected) return false;
+	unsigned int attempts = 0;
+	while ((attempts < MaxReconnectAttempts) && (!AttemptTransmitI2CPort(I2C_port, I2C_address, send_length, send_data, receive_length, receive_data, I2C_clock_frequency_in_Hz))) {
+		Network->ResetConnection();
+		this_thread::sleep_for(100ms);
+		attempts++;
+	}
+	return (attempts < MaxReconnectAttempts);
+}
+
+bool CEthernetControllerFirefly::AttemptTransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t &receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz) {
+	if (!/*Optimized*/Command("transmit_I2C")) return false;
+	if (!WriteInteger(I2C_port)) return false;
+	if (!WriteInteger(I2C_address)) return false;
+	if (!WriteInteger(I2C_clock_frequency_in_Hz)) return false;
+	if (!WriteInteger(send_length)) return false;
+	if (!WriteInteger(receive_length)) return false;
+	if (send_length>0) {
+		if (!SendData(send_data, send_length)) return false;
+	}
+	unsigned long long InputBufferContentsLength;
+	if (!ReadInt64(InputBufferContentsLength)) return false;
+	if (InputBufferContentsLength > 0) {
+		receive_length = InputBufferContentsLength;
+		if (receive_data) delete[] receive_data;
+		receive_data = new uint8_t[receive_length];
+		previous_receive_data_ptr = receive_data;
+		receive_data_length = receive_length;
+		if (Network) return Network->ReceiveData(receive_data, receive_length, /*timeout_in_ms = */ 5000);
+		else {
+			delete[] receive_data;
+			receive_data = NULL;
+			previous_receive_data_ptr = NULL;
+			receive_data_length = 0;
+			return false;
+		}
+	}
+	return true;
+}
+
 
 const unsigned int BusBitShift = 8;
 const unsigned int BusSequencerSpecialCommand = 0x7 << BusBitShift;

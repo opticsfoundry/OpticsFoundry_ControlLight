@@ -505,14 +505,14 @@ void RampVoltage(unsigned int Sequencer, unsigned int Address, double StartVolta
 	CLA_SetVoltage(Sequencer, Address, TargetVoltage);
 }
 
-void DemoFPGASequencer() {
+bool InitializeSystem() {
 	cout << "Bare function API, using bool error return value" << endl;
 
 
 	bool DemoSmartSequencer = false;
 
 	if (!CLA_Create(/*InitializeAfx*/ true, /*InitializeAfxSocket*/ true)) {
-		return; // Initialization failed
+		return false; // Initialization failed
 	}
 	if (!LoadControlHardwareInterface()) {
 		AddErrorMessage("Error loading hardware configuration file 2");
@@ -534,6 +534,47 @@ void DemoFPGASequencer() {
 	if (!CLA_IsReady()) {
 		AddErrorMessage("Not all sequencers connected");
 		CLA_Cleanup();
+		return false;
+	}
+	return true;
+}
+
+
+void DemoSequence() {
+	CLA_StartAssemblingSequence();
+
+	//start data acquisition. This is an example for a command for which we didn't yet provide a convenience function in the DLL. 
+	//In this somewhat convoluted manner one can achieve anything without API interface changes
+	/*
+	uint8_t ChannelNumber = 0;
+	uint32_t NumberOfDataPoints = 1000;
+	double DelayBetweenDataPoints_in_ms_in_ms = 0.02;
+	CLA_SetValueSerialDevice(0, 0, 0, (uint8_t*)&ChannelNumber, 8);
+	CLA_SetValueSerialDevice(0, 0, 1, (uint8_t*)&NumberOfDataPoints, 32);
+	CLA_SetValueSerialDevice(0, 0, 2, (uint8_t*)&DelayBetweenDataPoints_in_ms_in_ms, 64);
+	CLA_SetValueSerialDevice(0, 0, 3, (uint8_t*)&ChannelNumber, 8); //starts the acquisition
+	*/
+
+	//this is the same command using a convenience function
+	CLA_SequencerStartAnalogInAcquisition(0, 0, 100, 0.02);
+
+	for (int j = 1; j < 100; j++) {
+		CLA_SetVoltage(0, 24, 10.0 * j / 100.0);
+		uint16_t data = 0xffff;
+		CLA_SetValue(0, 1, 0, (uint8_t*)&data, 16);
+		CLA_Wait_ms(0.1);
+		data = 0;
+		CLA_SetValue(0, 1, 0, (uint8_t*)&data, 16);
+		CLA_Wait_ms(0.1);
+		double Frequency = 1000.0 * j / 100.0;
+		CLA_SetValue(0, 232, 0, (uint8_t*)&Frequency, 64);
+	}
+	CLA_Wait_ms(10);
+	RampVoltage(/*Sequencer*/ 0, /*Address*/ 24, /*StartVoltage*/ -10, /* TargetVoltage*/ 10, /*Duration_in_ms*/ 100, /*StepSize_in_ms*/ 0.1);
+}
+
+void DemoFPGASequencerSingleRun() {
+	if (!InitializeSystem()) {
 		return;
 	}
 	//test
@@ -541,36 +582,7 @@ void DemoFPGASequencer() {
 	for (int i = 0; i < 10; i++) {
 		Time starttime = Clock::now();
 		cout << "Iteration " << i << ": ";
-		CLA_StartAssemblingSequence();
-
-		//start data acquisition. This is an example for a command for which we didn't yet provide a convenience function in the DLL. 
-		//In this somewhat convoluted manner one can achieve anything without API interface changes
-		/*
-		uint8_t ChannelNumber = 0;
-		uint32_t NumberOfDataPoints = 1000;
-		double DelayBetweenDataPoints_in_ms_in_ms = 0.02;
-		CLA_SetValueSerialDevice(0, 0, 0, (uint8_t*)&ChannelNumber, 8);
-		CLA_SetValueSerialDevice(0, 0, 1, (uint8_t*)&NumberOfDataPoints, 32);
-		CLA_SetValueSerialDevice(0, 0, 2, (uint8_t*)&DelayBetweenDataPoints_in_ms_in_ms, 64);
-		CLA_SetValueSerialDevice(0, 0, 3, (uint8_t*)&ChannelNumber, 8); //starts the acquisition
-		*/
-
-		//this is the same command using a convenience function
-		CLA_SequencerStartAnalogInAcquisition(0, 0, 100, 0.02);
-
-		for (int j = 1; j < 100; j++) {
-			CLA_SetVoltage(0, 24, 10.0 * j / 100.0);
-			uint16_t data = 0xffff;
-			CLA_SetValue(0, 1, 0, (uint8_t*)&data, 16);
-			CLA_Wait_ms(0.1);
-			data = 0;
-			CLA_SetValue(0, 1, 0, (uint8_t*)&data, 16);
-			CLA_Wait_ms(0.1);
-			double Frequency = 1000.0 * j / 100.0;
-			CLA_SetValue(0, 232, 0, (uint8_t*)&Frequency, 64);
-		}
-		CLA_Wait_ms(10);
-		RampVoltage(/*Sequencer*/ 0, /*Address*/ 24, /*StartVoltage*/ -10, /* TargetVoltage*/ 10, /*Duration_in_ms*/ 100, /*StepSize_in_ms*/ 0.1);
+		DemoSequence();
 		CLA_ExecuteSequence();
 		bool running = false;
 		unsigned long long DataPointsWritten = 0;
@@ -583,6 +595,58 @@ void DemoFPGASequencer() {
 		Duration duration = Clock::now() - starttime;
 		cout << "Duration: " << milliSeconds(duration) << " ms  Buffer length : " << buffer_length << endl;
 	}
+	CLA_Cleanup();
+}
+
+
+
+void DemoFPGASequencerCyclicSequencing() {
+	if (!InitializeSystem()) {
+		return;
+	}
+	uint8_t* buffer = nullptr;
+	
+	
+	//THIS NEEDS TO BE FINISHED....
+	
+	//assemble sequence, also to measure duration
+
+	DemoSequence();
+	//ToDo: get sequence duration
+
+	double PeriodicTriggerPeriod_in_s = 1;
+	double PeriodicTriggerAllowedWaitTime_in_s = 2;
+
+	//Tell sequencer that we'll use cyclic sequencing; ToDo: if sequence is already in memory: update preamble
+	CLA_SetPeriodicTrigger(PeriodicTriggerPeriod_in_s, PeriodicTriggerAllowedWaitTime_in_s);
+
+	for (int i = 0; i < 10; i++) {
+		Time starttime = Clock::now();
+		cout << "Iteration " << i << ": ";
+
+		CLA_ExecuteSequence();
+		bool running = false;
+		unsigned long long DataPointsWritten = 0;
+		CLA_GetSequenceExecutionStatus(running, DataPointsWritten);
+
+		unsigned long buffer_length = 0;
+		unsigned long EndTimeOfCycle = 0;
+		CLA_WaitTillEndOfSequenceThenGetInputData(buffer, buffer_length, EndTimeOfCycle, 10);
+		//ToDo: process data, especially analyze if sequence timing was correct
+
+		//Create updated sequence for next cycle; ToDo: add change to sequence so that we can see the difference, e.g. by writing a changin marker to input memory
+		DemoSequence();
+
+		//ToDo: Update sequence; user can decide if fully uploaded to FPGA module from scratch or if only the changed parts are sent
+
+		//CLA_UpdateSequence();
+
+		Duration duration = Clock::now() - starttime;
+		cout << "Duration: " << milliSeconds(duration) << " ms  Buffer length : " << buffer_length << endl;
+	}
+	//ToDo: leave cyclic sequencing node
+	
+	//end everything
 	CLA_Cleanup();
 }
 
@@ -843,7 +907,8 @@ void DemoDDSVCO() {
 }
 
 int main() {
-	DemoFPGASequencer();
+	//DemoFPGASequencerSingleRun();
+	DemoFPGASequencerCyclicSequencing();
 	//DemoSmartSequencer();
 	//DemoDDSVCO();
 	return 0;
