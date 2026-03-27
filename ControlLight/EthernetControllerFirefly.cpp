@@ -180,11 +180,20 @@ constexpr uint8_t CMD_ANALOG_IN_OUT = 24;
 constexpr uint8_t CMD_PL_TO_PS_COMMAND = 25;
 constexpr uint8_t CMD_LOAD_COMMAND_BUFFER = 26;
 constexpr uint8_t CMD_SAVE_CYCLE_COUNT_SINCE_STARTUP_IN_INPUT_BUF_MEM = 27;
-constexpr unsigned char CMD_CALC_AD9854_FREQUENCY_TUNING_WORD = 28;
+constexpr uint8_t CMD_CALC_AD9854_FREQUENCY_TUNING_WORD = 28;
+constexpr uint8_t CMD_LOAD_EXTENDED_COMMAND = 29;
 
-constexpr unsigned char NrCommands = 29;
-const std::string CommandNames[NrCommands] = { "CMD_STOP", "CMD_STEP", "CMD_STEP_AND_ENTER_FAST_MODE", "CMD_SET_OPTIONS", "CMD_LOAD_REG_LOW", "CMD_LOAD_REG_HIGH", "CMD_LATCH_STATE", "CMD_RESET_WAIT_CYCLES", "CMD_LONG_WAIT", "CMD_SET_STROBE_OPTIONS", "CMD_SET_INPUT_BUF_MEM", "CMD_WAIT_FOR_TRIGGER", "CMD_SET_LOOP_COUNT", "CMD_CONDITIONAL_JUMP_FORWARD", "CMD_CONDITIONAL_JUMP_BACKWARD", "CMD_I2C_OUT", "CMD_SPI_OUT_IN", "CMD_INPUT_REPEATED_OUT_IN", "CMD_SET_PERIODIC_TRIGGER_PERIOD", "CMD_SET_PERIODIC_TRIGGER_ALLOWED_WAIT_TIME", "CMD_WAIT_FOR_PERIODIC_TRIGGER", "CMD_WAIT_FOR_WAIT_CYCLE_NR", "CMD_DIG_IN", "CMD_TRIGGER_SECONDARY_PL_PS_INTERRUPT", "CMD_ANALOG_IN_OUT", "CMD_PL_TO_PS_COMMAND", "CMD_LOAD_COMMAND_BUFFER", "CMD_SAVE_CYCLE_COUNT_SINCE_STARTUP_IN_INPUT_BUF_MEM", "CMD_CALC_AD9854_FREQUENCY_TUNING_WORD" };
-constexpr bool CommandUsesBuffer[NrCommands] = { false   , false     , false                         , true             , false             , false              , false            , false                  , true           , true                    , true                   , true                  , true                , true                          , true                           , true         , true            , true                       , true                             , true                                        , false                          , true                        , true        , false                                  , true               , true                  , false                , false												, true };
+constexpr uint8_t NrCommands = 30;
+const std::string CommandNames[NrCommands] = { "CMD_STOP", "CMD_STEP", "CMD_STEP_AND_ENTER_FAST_MODE", "CMD_SET_OPTIONS", "CMD_LOAD_REG_LOW", "CMD_LOAD_REG_HIGH", "CMD_LATCH_STATE", "CMD_RESET_WAIT_CYCLES", "CMD_LONG_WAIT", "CMD_SET_STROBE_OPTIONS", "CMD_SET_INPUT_BUF_MEM", "CMD_WAIT_FOR_TRIGGER", "CMD_SET_LOOP_COUNT", "CMD_CONDITIONAL_JUMP_FORWARD", "CMD_CONDITIONAL_JUMP_BACKWARD", "CMD_I2C_OUT", "CMD_SPI_OUT_IN", "CMD_INPUT_REPEATED_OUT_IN", "CMD_SET_PERIODIC_TRIGGER_PERIOD", "CMD_SET_PERIODIC_TRIGGER_ALLOWED_WAIT_TIME", "CMD_WAIT_FOR_PERIODIC_TRIGGER", "CMD_WAIT_FOR_WAIT_CYCLE_NR", "CMD_DIG_IN", "CMD_TRIGGER_SECONDARY_PL_PS_INTERRUPT", "CMD_ANALOG_IN_OUT", "CMD_PL_TO_PS_COMMAND", "CMD_LOAD_COMMAND_BUFFER", "CMD_SAVE_CYCLE_COUNT_SINCE_STARTUP_IN_INPUT_BUF_MEM", "CMD_CALC_AD9854_FREQUENCY_TUNING_WORD", "CMD_LOAD_EXTENDED_COMMAND" };
+constexpr bool CommandUsesBuffer[NrCommands] = { false   , false     , false                         , true             , false             , false              , false            , false                  , true           , true                    , true                   , true                  , true                , true                          , true                           , true         , true            , true                       , true                             , true                                        , false                          , true                        , true        , false                                  , true               , true                  , false                , false												, true , false };
+
+constexpr uint8_t EXTENDED_CMD_STOP = 0;
+constexpr uint8_t EXTENDED_CMD_LOAD_SPI_TIMING = 1;
+constexpr uint8_t EXTENDED_CMD_SET_I2C_PARAMETERS = 2;
+constexpr uint8_t NrExtendedCommands = 3;
+const std::string ExtendedCommandNames[NrExtendedCommands] = { "EXTENDED_CMD_STOP", "EXTENDED_CMD_LOAD_SPI_TIMING", "EXTENDED_CMD_SET_I2C_PARAMETERS" };
+
+
 
 void CEthernetControllerFirefly::StartAnalogInAcquisition(unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms) {
 	//if (channel_nr < 2) {
@@ -402,6 +411,32 @@ void CEthernetControllerFirefly::AddCommandCalcAD9854FrequencyTuningWord(uint64_
 	uint32_t high_buffer = ftw0 >> 16;
 	AddSequencerCommandToSequenceList(high_buffer, low_buffer);
 }
+
+
+
+//EXTENDED_CMD_LOAD_SPI_TIMING", "EXTENDED_CMD_SET_I2C_PARAMETERS
+/*
+							SPI_delay_CS_low_start_wait[7:0] <= extended_command[23:16];
+                            SPI_delay_write[7:0] <= extended_command[31:24];
+                            SPI_delay_pause_before_read[7:0] <= extended_command[39:32];
+                            SPI_delay_read[7:0] <= extended_command[47:40];
+                            SPI_delay_CS_low_end_wait[7:0] <= extended_command[55:48];
+							*/
+void CEthernetControllerFirefly::AddCommandLoadSPITiming(uint8_t SPI_delay_CS_low_start_wait, uint8_t SPI_delay_write, uint8_t SPI_delay_pause_before_read, uint8_t SPI_delay_read, uint8_t SPI_delay_CS_low_end_wait) {
+	unsigned char ext_command = EXTENDED_CMD_LOAD_SPI_TIMING;
+	uint32_t low_buffer = (SPI_delay_write << 24) & (SPI_delay_CS_low_start_wait << 16) & ((0x3F & ext_command) << 5) & (0x1F & CMD_LOAD_EXTENDED_COMMAND);
+	uint32_t high_buffer = (SPI_delay_CS_low_end_wait << 16) & (SPI_delay_read << 8) & SPI_delay_pause_before_read;
+	AddSequencerCommandToSequenceList(high_buffer, low_buffer);
+}
+
+//I2C_0_Destination <= extended_command[16:16];
+void CEthernetControllerFirefly::AddCommandSetI2CParameters(uint8_t I2C_0_Destination) {
+	unsigned char ext_command = EXTENDED_CMD_SET_I2C_PARAMETERS;
+	uint32_t low_buffer = (I2C_0_Destination << 16) & ((0x3F & ext_command) << 5) & (0x1F & CMD_LOAD_EXTENDED_COMMAND);
+	uint32_t high_buffer = 0;
+	AddSequencerCommandToSequenceList(high_buffer, low_buffer);
+}
+
 
 /*
 //Vitis command:
