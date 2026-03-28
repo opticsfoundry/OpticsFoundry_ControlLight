@@ -609,7 +609,7 @@ void SaveInputDataToFile(const std::string& filename,
     std::fclose(file);
 }
 
-void DemoSequenceAnalyseData(unsigned long CycleNumber, uint8_t*& buffer, unsigned long& buffer_length, unsigned long& EndTimeOfCycle) {
+void DemoSequenceAnalyseData(unsigned long CycleNumber, uint32_t*& buffer, unsigned long& buffer_length, unsigned long& EndTimeOfCycle) {
 	static unsigned long long PreviousFPGASystemTime = 0;
 	static unsigned int NumberOfTimesFailedRun = 0;
 	static double PeriodicTriggerPeriod_in_ms = 0;
@@ -617,9 +617,10 @@ void DemoSequenceAnalyseData(unsigned long CycleNumber, uint8_t*& buffer, unsign
 	static Time last_starttime = Clock::now();
 
 	bool CycleSuccessful = true;
-	//FPGA SystemTime is in first 8 bytes thanks to CA.Command("WriteSystemTimeToInputMemory();"); command
-	//unsigned long FPGASystemTimeLowStart = Buffer[0];
-	//unsigned long FPGASystemTimeHighStart = Buffer[1];
+	//FPGA soft trigger SystemTime is in first 8 bytes thanks to CLA automatically putting WriteSystemTimeToInputMemory before cyclic trigger
+	//Bytes 8 to 15 contain the FPGA SystemTime directly after the cyclic trigger, thanks to the
+	//CA.Command("WriteSystemTimeToInputMemory();"); command in the sequence.
+	//We use it to check if the time between two triggers is correct, i.e. if the total cycle duration is correct.
 	unsigned long long FPGASystemTimeStart = ((unsigned long long*)buffer)[0]; // in units of the clock period, i.e. usually 10ns
 	unsigned long FPGASystemTimeLow = buffer[2];
 	unsigned long FPGASystemTimeHigh = buffer[3];
@@ -668,7 +669,7 @@ void DemoSequenceAnalyseData(unsigned long CycleNumber, uint8_t*& buffer, unsign
 	if (buffer != NULL) {
 		//process input data
 		std::string filename = std::format(".\\data\\input%04u.dat", CycleNumber);
-		SaveInputDataToFile(filename, (uint16_t*)buffer, buffer_length/2);
+		SaveInputDataToFile(filename, (uint16_t*)buffer, buffer_length*2);
 		//freeing buffer is done in CAL and shouldn't be done here.
 	}
 	else {
@@ -695,7 +696,7 @@ void DemoFPGASequencerSingleRun() {
 		unsigned long buffer_length = 0;
 		unsigned long EndTimeOfCycle = 0;
 		CLA_WaitTillEndOfSequenceThenGetInputData(buffer, buffer_length, EndTimeOfCycle, 10);
-		DemoSequenceAnalyseData(CycleNr, buffer, buffer_length, EndTimeOfCycle);
+			DemoSequenceAnalyseData(CycleNr, (uint32_t*)buffer, buffer_length/4, EndTimeOfCycle);
 
 		//Duration duration = Clock::now() - starttime;
 		//cout << "Duration: " << milliSeconds(duration) << " ms  Buffer length : " << buffer_length << endl;
@@ -737,8 +738,7 @@ void DemoFPGASequencerCyclicSequencing() {
 		unsigned long buffer_length = 0;
 		unsigned long EndTimeOfCycle = 0;
 		CLA_WaitTillEndOfSequenceThenGetInputData(buffer, buffer_length, EndTimeOfCycle, 10);
-		DemoSequenceAnalyseData(CycleNr, buffer, buffer_length, EndTimeOfCycle);
-
+		DemoSequenceAnalyseData(CycleNr, (uint32_t*)buffer, buffer_length/4, EndTimeOfCycle);
 		//Duration duration = Clock::now() - starttime;
 		//cout << "Duration: " << milliSeconds(duration) << " ms  Buffer length : " << buffer_length << endl;
 	}
@@ -1022,6 +1022,6 @@ int main() {
 // Pull additional convenience commands for digital out and DDS devices from CDevice.h into the API
 // Finish SetRegister and SetValue functions for DDS
 //(optional, as we do take care of TimeDebt now): wait for startDelay tick counts to synchronize several sequencers
-// Add interlaced ramping & LabScript interface
+// Add interlaced ramping & LabScript & HEROS interface
 // Add calibration functions, time reordering, last value access, intermittent storage of output values, 
 
