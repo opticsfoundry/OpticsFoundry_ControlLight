@@ -54,6 +54,7 @@ public:
 	virtual ~CDeviceSequencer();
 	void Initialize(unsigned long _PCBufferSize_in_u64);
 	void SwitchDebugMode(bool OnOff, const std::string &FileName);
+	void TransmitOnlyDifferenceBetweenCommandSequenceIfPossible(bool OnOff);
 	bool IsSequencerConnected();
 	void StartAssemblingSequence();
 	void StartAssemblingNextSequence();
@@ -95,7 +96,7 @@ public:
 	virtual bool SetValue(const unsigned int& SubAddress, const uint8_t* Data, const unsigned long& DataLength_in_bit, const uint8_t& StartBit);
 public:
 	//the following commands are intended to be used by devices connected to the sequencer, such as analog input cards.
-	void SequencerStartAnalogInAcquisition(const uint8_t& ChannelNumber, const uint32_t& NumberOfDataPoints, const double& DelayBetweenDataPoints_in_ms);
+	void SequencerStartAnalogInAcquisition(const uint8_t& SPI_port, const uint8_t& SPI_CS, const uint8_t& ChannelNumber, const uint32_t& NumberOfDataPoints, const double& DelayBetweenDataPoints_in_ms);
 	void SequencerWriteInputMemory(unsigned long input_buf_mem_data, bool write_next_address = 1, unsigned long input_buf_mem_address = 0);
 	void SequencerWriteSystemTimeToInputMemory();
 	void SequencerCalcAD9854FrequencyTuningWord(uint64_t ftw0, uint8_t bit_shift);

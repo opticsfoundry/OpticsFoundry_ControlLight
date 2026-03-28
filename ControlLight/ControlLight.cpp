@@ -7,6 +7,8 @@
 #include <iostream>
 #include <string>
 #include <thread>
+#include <cstdio>
+
 
 using namespace std;
 
@@ -540,23 +542,28 @@ bool InitializeSystem() {
 }
 
 
-void DemoSequence() {
+void DemoSequence(unsigned long CycleNumber) {
 	CLA_StartAssemblingSequence();
-
+	CLA_SequencerWriteSystemTimeToInputMemory(/*SequencerNr*/ 0);
+	CLA_SequencerWriteInputMemory(/*SequencerNr*/ 0, CycleNumber);
+	CLA_SequencerSwitchDebugLED(/*SequencerNr*/ 0, 1);
+	CLA_SequencerAddMarker(/*SequencerNr*/ 0, 1);//for debug: displays marker (here "1") on ZYNQ USB port output (use Termite or similar to see it)
 	//start data acquisition. This is an example for a command for which we didn't yet provide a convenience function in the DLL. 
 	//In this somewhat convoluted manner one can achieve anything without API interface changes
 	/*
 	uint8_t ChannelNumber = 0;
 	uint32_t NumberOfDataPoints = 1000;
 	double DelayBetweenDataPoints_in_ms_in_ms = 0.02;
-	CLA_SetValueSerialDevice(0, 0, 0, (uint8_t*)&ChannelNumber, 8);
-	CLA_SetValueSerialDevice(0, 0, 1, (uint8_t*)&NumberOfDataPoints, 32);
-	CLA_SetValueSerialDevice(0, 0, 2, (uint8_t*)&DelayBetweenDataPoints_in_ms_in_ms, 64);
-	CLA_SetValueSerialDevice(0, 0, 3, (uint8_t*)&ChannelNumber, 8); //starts the acquisition
+	CLA_SetValueSerialDevice(0, 0, 0, (uint8_t*)&SPI_port, 8);
+	CLA_SetValueSerialDevice(0, 0, 1, (uint8_t*)&SPI_CS, 8);
+	CLA_SetValueSerialDevice(0, 0, 2, (uint8_t*)&ChannelNumber, 8);
+	CLA_SetValueSerialDevice(0, 0, 3, (uint8_t*)&NumberOfDataPoints, 32);
+	CLA_SetValueSerialDevice(0, 0, 4, (uint8_t*)&DelayBetweenDataPoints_in_ms_in_ms, 64);
+	CLA_SetValueSerialDevice(0, 0, 5, (uint8_t*)&ChannelNumber, 8); //starts the acquisition
 	*/
 
 	//this is the same command using a convenience function
-	CLA_SequencerStartAnalogInAcquisition(0, 0, 100, 0.02);
+	CLA_SequencerStartAnalogInAcquisition(/*Sequencer_Nr*/ 0, /*SPI_port*/ 1, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 1000, /*SamplingPeriod_in_ms*/ 0.1);
 
 	for (int j = 1; j < 100; j++) {
 		CLA_SetVoltage(0, 24, 10.0 * j / 100.0);
@@ -571,18 +578,115 @@ void DemoSequence() {
 	}
 	CLA_Wait_ms(10);
 	RampVoltage(/*Sequencer*/ 0, /*Address*/ 24, /*StartVoltage*/ -10, /* TargetVoltage*/ 10, /*Duration_in_ms*/ 100, /*StepSize_in_ms*/ 0.1);
+	CLA_SequencerSwitchDebugLED(/*SequencerNr*/ 0, 0);
+	CLA_SequencerWriteSystemTimeToInputMemory(/*SequencerNr*/ 0);
+}
+
+void SaveInputDataToFile(const std::string& filename,
+                         const uint16_t* buffer,
+                         unsigned long buffer_length)
+{
+    FILE* file = std::fopen(filename.c_str(), "w");
+    if (!file) {
+		cerr << "Couldn't open file for writing"  <<  endl;
+        return;
+    }
+
+    for (unsigned long i = 0; i < buffer_length; ++i) {
+        // usual 16-bit data format
+        std::fprintf(file, "%lu %u\n", i, buffer[i]);
+
+        /*
+        // for 32-bit data format (mostly for debugging)
+        unsigned long buf_high = buffer[i] >> 16;
+        unsigned long buf_low  = buffer[i] & 0xFFFF;
+        unsigned long data     = buf_low & 0xFFF;
+        std::fprintf(file, "%lu %lu %lu %lu    %lx %lx\n",
+                     i, data, buf_high, buf_low, buf_high, buf_low);
+        */
+    }
+
+    std::fclose(file);
+}
+
+void DemoSequenceAnalyseData(unsigned long CycleNumber, uint8_t*& buffer, unsigned long& buffer_length, unsigned long& EndTimeOfCycle) {
+	static unsigned long long PreviousFPGASystemTime = 0;
+	static unsigned int NumberOfTimesFailedRun = 0;
+	static double PeriodicTriggerPeriod_in_ms = 0;
+	static Time starttime = Clock::now();
+	static Time last_starttime = Clock::now();
+
+	bool CycleSuccessful = true;
+	//FPGA SystemTime is in first 8 bytes thanks to CA.Command("WriteSystemTimeToInputMemory();"); command
+	//unsigned long FPGASystemTimeLowStart = Buffer[0];
+	//unsigned long FPGASystemTimeHighStart = Buffer[1];
+	unsigned long long FPGASystemTimeStart = ((unsigned long long*)buffer)[0]; // in units of the clock period, i.e. usually 10ns
+	unsigned long FPGASystemTimeLow = buffer[2];
+	unsigned long FPGASystemTimeHigh = buffer[3];
+	unsigned long long FPGASystemTime = ((unsigned long long*)buffer)[1]; // in units of the clock period, i.e. usually 10ns
+	//unsigned long long FPGASystemTimeAtSequenceEnd = ((unsigned long long*)Buffer)[BufferLength/2-2]; // in units of the clock period, i.e. usually 10ns
+	unsigned long CycleNrFromBuffer = buffer[4];
+	double WaitForTriggerTime = 0.00001 * (FPGASystemTime - FPGASystemTimeStart);
+	//We check if the MOT loading time was ok. 
+	//For that, PeriodicTriggerPeriod_in_ms must contain the duration of the previous sequence plus the desired MOT loading time.
+	//The only variable part of the sequence is the blue MOT duration. 
+	//We measure this blue MOT's duration by determining the time between the start of the last sequence and the start of this sequence.
+	//The blue MOT duration is ElapsedFPGASystemTime - the duration of the last sequence.
+	//We don't calculate the blue MOT duration explicitly, but check if ElapsedFPGASystemTime is within the expected range.
+	unsigned long long ElapsedFPGASystemTime = FPGASystemTime - PreviousFPGASystemTime;
+	std::string ErrorMessages = "";
+	if (ElapsedFPGASystemTime > PeriodicTriggerPeriod_in_ms * 100000 + 10) {
+		ErrorMessages += " Overtime.";
+		CycleSuccessful = false;
+	}
+	else if (ElapsedFPGASystemTime < PeriodicTriggerPeriod_in_ms * 100000 - 10) {
+		ErrorMessages += " Undertime.";
+		CycleSuccessful = false;
+	}
+	if (CycleNumber != CycleNrFromBuffer) {
+		ErrorMessages += " Cycle number slip (expected " + std::format("{}", CycleNumber) + ", got " + std::format("{}", CycleNrFromBuffer) + ").";
+		CycleSuccessful = false;
+	}
+	PreviousFPGASystemTime = FPGASystemTime;
+	
+	last_starttime = starttime;
+	starttime = Clock::now();
+	Duration duration = last_starttime - starttime;
+	std::string out_buf = std::format("%4u %4u %4u %4.0f %10llu %03X %08X f%03u rc%u %u",
+		CycleNrFromBuffer,
+		buffer_length,
+		milliSeconds(duration),
+		WaitForTriggerTime,
+		ElapsedFPGASystemTime,
+		FPGASystemTimeHigh,
+		FPGASystemTimeLow,
+		NumberOfTimesFailedRun,
+		(CycleSuccessful) ? 1 : 0);
+	std::string status = out_buf + ErrorMessages;
+	cout << status << endl;
+
+	if (buffer != NULL) {
+		//process input data
+		std::string filename = std::format(".\\data\\input%04u.dat", CycleNumber);
+		SaveInputDataToFile(filename, (uint16_t*)buffer, buffer_length/2);
+		//freeing buffer is done in CAL and shouldn't be done here.
+	}
+	else {
+		cerr << "no input data received" << endl;
+		CycleSuccessful = false;
+	}
+	if (!CycleSuccessful) NumberOfTimesFailedRun++;
 }
 
 void DemoFPGASequencerSingleRun() {
 	if (!InitializeSystem()) {
 		return;
 	}
-	//test
 	uint8_t* buffer = nullptr;
-	for (int i = 0; i < 10; i++) {
+	for (unsigned long CycleNr = 0; CycleNr < 10; CycleNr++) {
 		Time starttime = Clock::now();
-		cout << "Iteration " << i << ": ";
-		DemoSequence();
+		cout << "Iteration " << CycleNr << ": ";
+		DemoSequence(CycleNr);
 		CLA_ExecuteSequence();
 		bool running = false;
 		unsigned long long DataPointsWritten = 0;
@@ -591,39 +695,40 @@ void DemoFPGASequencerSingleRun() {
 		unsigned long buffer_length = 0;
 		unsigned long EndTimeOfCycle = 0;
 		CLA_WaitTillEndOfSequenceThenGetInputData(buffer, buffer_length, EndTimeOfCycle, 10);
+		DemoSequenceAnalyseData(CycleNr, buffer, buffer_length, EndTimeOfCycle);
 
-		Duration duration = Clock::now() - starttime;
-		cout << "Duration: " << milliSeconds(duration) << " ms  Buffer length : " << buffer_length << endl;
+		//Duration duration = Clock::now() - starttime;
+		//cout << "Duration: " << milliSeconds(duration) << " ms  Buffer length : " << buffer_length << endl;
 	}
 	CLA_Cleanup();
 }
-
-
 
 void DemoFPGASequencerCyclicSequencing() {
 	if (!InitializeSystem()) {
 		return;
 	}
 	uint8_t* buffer = nullptr;
-	
-	
-	//THIS NEEDS TO BE FINISHED....
-	
-	//assemble sequence, also to measure duration
-
-	DemoSequence();
-	//ToDo: get sequence duration
-
-	double PeriodicTriggerPeriod_in_s = 1;
+	//assemble sequence
+	DemoSequence(0);
+	double SequenceDuration_in_ms;
+	CLA_GetTime_ms(SequenceDuration_in_ms);
+	double WaitTimeAfterSequence_in_ms = 300;
+	double PeriodicTriggerPeriod_in_s = 0.001*(SequenceDuration_in_ms + WaitTimeAfterSequence_in_ms);
 	double PeriodicTriggerAllowedWaitTime_in_s = 2;
+	cout << "Cycling with " << PeriodicTriggerPeriod_in_s*1000 << " ms period of which " << SequenceDuration_in_ms << " ms sequence duration." << endl;
 
-	//Tell sequencer that we'll use cyclic sequencing; ToDo: if sequence is already in memory: update preamble
+
+	//Tell sequencer that we'll use cyclic sequencing. This updates trigger settings.
 	CLA_SetPeriodicTrigger(PeriodicTriggerPeriod_in_s, PeriodicTriggerAllowedWaitTime_in_s);
+	
+	//to speed up TCP/IP transmission of data from PC to sequencer, transmit only changes of sequence, if possible.
+	CLA_TransmitOnlyDifferenceBetweenCommandSequenceIfPossible(true);
 
-	for (int i = 0; i < 10; i++) {
+	for (unsigned long CycleNr = 0; CycleNr < 100; CycleNr++) {
 		Time starttime = Clock::now();
-		cout << "Iteration " << i << ": ";
-
+		cout << "Iteration " << CycleNr << ": ";
+		//We create sequence from scratch to update trigger settings and cycle number dependent sequence entries.
+		DemoSequence(CycleNr);
 		CLA_ExecuteSequence();
 		bool running = false;
 		unsigned long long DataPointsWritten = 0;
@@ -632,22 +737,13 @@ void DemoFPGASequencerCyclicSequencing() {
 		unsigned long buffer_length = 0;
 		unsigned long EndTimeOfCycle = 0;
 		CLA_WaitTillEndOfSequenceThenGetInputData(buffer, buffer_length, EndTimeOfCycle, 10);
-		//ToDo: process data, especially analyze if sequence timing was correct
+		DemoSequenceAnalyseData(CycleNr, buffer, buffer_length, EndTimeOfCycle);
 
-		//Create updated sequence for next cycle; ToDo: add change to sequence so that we can see the difference, e.g. by writing a changin marker to input memory
-		DemoSequence();
-
-		//ToDo: Update sequence; user can decide if fully uploaded to FPGA module from scratch or if only the changed parts are sent
-
-		//CLA_UpdateSequence();
-
-		Duration duration = Clock::now() - starttime;
-		cout << "Duration: " << milliSeconds(duration) << " ms  Buffer length : " << buffer_length << endl;
+		//Duration duration = Clock::now() - starttime;
+		//cout << "Duration: " << milliSeconds(duration) << " ms  Buffer length : " << buffer_length << endl;
 	}
-	//ToDo: leave cyclic sequencing node
-	
-	//end everything
-	CLA_Cleanup();
+	//Switch periodic trigger off by setting its period to 0ms.
+	CLA_SetPeriodicTrigger(0, 0);
 }
 
 void DemoSmartSequencer() {
@@ -696,7 +792,7 @@ void DemoSmartSequencer() {
 	bool DoInitialization = false;
 	bool DoFastVCOLoop = true;
 	if (DoInitialization) {
-		CLA_SequencerStartAnalogInAcquisition(0, 0, 1, 0.1);
+		CLA_SequencerStartAnalogInAcquisition(0, 0, 0, 0, 1, 0.1);
 		//initialize devices
 		CLA_SetStartFrequency(0, AD98450Address, 1000000.0);
 		//CLA_SetPower(0, AD98450Address, 100.0);
@@ -712,7 +808,7 @@ void DemoSmartSequencer() {
 	CLA_GetNextBufferPositionOfMasterSequencer(CycleStartBufferPosition);
 	//set digital output to high to indicate end of FPGA sequence loop
 	CLA_SetDigitalOutput(0, DigitalOutAddress, 0, true);
-	CLA_SequencerStartAnalogInAcquisition(0, 0, 1, 0.1);
+	CLA_SequencerStartAnalogInAcquisition(0, 0, 0, 0, 1, 0.1);
 	//unsigned long SetVoltageBufferPosition;
 	//CLA_GetNextBufferPositionOfMasterSequencer(SetVoltageBufferPosition);
 	//CLA_SetVoltage(0, AnalogOutBoardStartAddress, 10.0);
@@ -824,7 +920,7 @@ void DemoDDSVCO() {
 	bool DoInitialization = false;
 	bool DoFastVCOLoop = true;
 	if (DoInitialization) {
-		CLA_SequencerStartAnalogInAcquisition(0, 0, 1, 0.1);
+		CLA_SequencerStartAnalogInAcquisition(0, 0, 0, 0, 1, 0.1);
 		//initialize devices
 		CLA_SetStartFrequency(0, AD98450Address, 1000000.0);
 		CLA_SetPower(0, AD98450Address, 100.0);
@@ -839,7 +935,7 @@ void DemoDDSVCO() {
 	//we reset the input memory pointer to zero in order to avoid the Zynq CPU constantly having to copy input data from BRAM to DRAM
 	CLA_SequencerWriteInputMemory(/*Sequencer*/ 0, /*input_buf_mem_data*/0, /*write_next_address*/0, /*input_buf_mem_address*/0);
 	//We start a single ADC acquisition
-	CLA_SequencerStartAnalogInAcquisition(0, 0, 1, 0.1);
+	CLA_SequencerStartAnalogInAcquisition(0, 0, 0, 0, 1, 0.1);
 	//set digital output to high to indicate start of FPGA sequence loop
 	CLA_SetDigitalOutput(0, DigitalOutAddress, 0, true);
 	double Frequency = 80.0; //set the frequency to 80 MHz

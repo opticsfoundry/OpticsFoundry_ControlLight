@@ -133,6 +133,10 @@ void CDeviceSequencer::SwitchDebugMode(bool OnOff, const std::string& FileName) 
 	MyEthernetMultiIOControllerFirefly->SwitchDebugMode(OnOff, FileName);
 }
 
+void CDeviceSequencer::TransmitOnlyDifferenceBetweenCommandSequenceIfPossible(bool OnOff) {
+	MyEthernetMultiIOControllerFirefly->TransmitOnlyDifferenceBetweenCommandSequenceIfPossible(OnOff);
+}
+
 void CDeviceSequencer::StartAssemblingSequence() {
 	//There can be multiple sequences in the buffer. This function starts the very first of these sequences.
 	BufferPosition = 0;
@@ -386,8 +390,8 @@ bool CDeviceSequencer::SetValue(const unsigned int& SubAddress, const uint8_t* D
 	return false;
 }
 
-void CDeviceSequencer::SequencerStartAnalogInAcquisition(const uint8_t& ChannelNumber, const uint32_t& NumberOfDataPoints, const double& DelayBetweenDataPoints_in_ms) {
-	MyEthernetMultiIOControllerFirefly->StartAnalogInAcquisition(ChannelNumber, NumberOfDataPoints, DelayBetweenDataPoints_in_ms);
+void CDeviceSequencer::SequencerStartAnalogInAcquisition(const uint8_t& SPI_port, const uint8_t& SPI_CS, const uint8_t& ChannelNumber, const uint32_t& NumberOfDataPoints, const double& DelayBetweenDataPoints_in_ms) {
+	MyEthernetMultiIOControllerFirefly->StartAnalogInAcquisition(SPI_port, SPI_CS, ChannelNumber, NumberOfDataPoints, DelayBetweenDataPoints_in_ms);
 }
 
 void CDeviceSequencer::SequencerWriteInputMemory(unsigned long input_buf_mem_data, bool write_next_address, unsigned long input_buf_mem_address) {

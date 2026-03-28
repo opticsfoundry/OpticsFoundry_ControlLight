@@ -463,7 +463,17 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_UNLOCK;
 		}
 
-
+		API_EXPORT void CLA_FNDEF(TransmitOnlyDifferenceBetweenCommandSequenceIfPossible)(bool OnOff) {
+			API_LOCK_GUARD;
+			if (!initialized) {
+				API_UNLOCK;
+				return;
+			}
+			for (int i = 0; i < NrSequencers; i++) {
+				ShortSequencerList[i]->TransmitOnlyDifferenceBetweenCommandSequenceIfPossible(OnOff);
+			}
+			API_UNLOCK;
+		}
 		
 		API_EXPORT void CLA_FNDEF(StartAssemblingSequence)() {
 			CATCH_MFC_EX_S
@@ -592,18 +602,28 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 		}
 		
 		
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerStartAnalogInAcquisition)(const unsigned int& Sequencer, const uint8_t& ChannelNumber, const uint32_t& NumberOfDataPoints, const double& DelayBetweenDataPoints_in_ms) {
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerStartAnalogInAcquisition)(const unsigned int& Sequencer, const uint8_t &SPI_port, const uint8_t &SPI_CS, const uint8_t& ChannelNumber, const uint32_t& NumberOfDataPoints, const double& DelayBetweenDataPoints_in_ms) {
 			API_LOCK_GUARD;
 			CDeviceSequencer* sequencer = GetSequencer(Sequencer);
 			//SequencerList is initialized to zero at program start, so no need to check if it is initialized
 			if (!sequencer) {
 				API_UNLOCK_RETURN_ERROR(false, "CLA_SequencerStartAnalogInAcquisition error: Invalid sequencer.");
 			}
-			sequencer->SequencerStartAnalogInAcquisition(ChannelNumber, NumberOfDataPoints, DelayBetweenDataPoints_in_ms);
+			sequencer->SequencerStartAnalogInAcquisition(SPI_port, SPI_CS, ChannelNumber, NumberOfDataPoints, DelayBetweenDataPoints_in_ms);
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerStartAnalogInAcquisition: error");
 		}
 
-		
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerWriteSystemTimeToInputMemory)(const unsigned int& Sequencer) {
+			API_LOCK_GUARD;
+			CDeviceSequencer* sequencer = GetSequencer(Sequencer);
+			//SequencerList is initialized to zero at program start, so no need to check if it is initialized
+			if (!sequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "CLA_SequencerWriteSystemTimeToInputMemory: Invalid sequencer");
+			}
+			sequencer->SequencerWriteSystemTimeToInputMemory();
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerWriteSystemTimeToInputMemory: error");
+		}
+
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerWriteInputMemory)(const unsigned int& Sequencer, unsigned long input_buf_mem_data, bool write_next_address, unsigned long input_buf_mem_address) {
 			API_LOCK_GUARD;
 			CDeviceSequencer* sequencer = GetSequencer(Sequencer);

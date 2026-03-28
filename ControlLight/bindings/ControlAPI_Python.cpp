@@ -22,7 +22,8 @@ PYBIND11_MODULE(control_light_api, m) {
         .def("configure", &ControlLight_API::Configure, py::arg("display_errors"))
         .def("load_from_json_file", &ControlLight_API::LoadFromJSONFile)
         .def("initialize", &ControlLight_API::Initialize)
-        .def("switch_debug_mode", &ControlLight_API::SwitchDebugMode)
+        .def("switch_debug_mode", &ControlLight_API::SwitchDebugMode, py::arg("on_off"), py::arg("filename"))
+        .def("TransmitOnlyDifferenceBetweenCommandSequenceIfPossible", &ControlLight_API::TransmitOnlyDifferenceBetweenCommandSequenceIfPossible, py::arg("on_off"))
         .def("is_ready", &ControlLight_API::IsReady)
         .def("start_assembling_sequence", &ControlLight_API::StartAssemblingSequence)
         .def("start_assembling_next_sequence", &ControlLight_API::StartAssemblingNextSequence)
@@ -153,8 +154,12 @@ PYBIND11_MODULE(control_light_api, m) {
 
         // Starts analog input acquisition
         .def("sequencer_start_analog_in_acquisition", &ControlLight_API::SequencerStartAnalogInAcquisition,
-            py::arg("sequencer"), py::arg("channel_number"),
+            py::arg("sequencer"), py::arg("spi_port"), py::arg("spi_cs"), py::arg("channel_number"),
             py::arg("number_of_data_points"), py::arg("delay_between_data_points_in_ms"))
+
+        // Write system time to input memory
+        .def("sequencer_write_system_time_to_input_memory", &ControlLight_API::SequencerWriteSystemTimeToInputMemory,
+            py::arg("sequencer"))
 
         // Writes to input memory
         .def("sequencer_write_input_memory", &ControlLight_API::SequencerWriteInputMemory,

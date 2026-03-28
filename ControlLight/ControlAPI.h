@@ -220,6 +220,13 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @param FileName the name of the file to write the debug information to without filename extension.
 		API_EXPORT void CLA_FN(SwitchDebugMode)(bool OnOff, const char* FileName);
 
+
+		/**  @brief Transmits only changes of sequence over TCP/IP to sequencer in order to safe time.
+		 * Once a sequence is in the sequencer's memory, the next sequence is compared to the one in memory and only the changes are transmitted over TCP/IP, if this results in less transmission data.
+		*/
+		/// @param OnOff true to switch on debug mode, false to switch it off.
+		API_EXPORT void CLA_FN(TransmitOnlyDifferenceBetweenCommandSequenceIfPossible)(bool OnOff);
+
 		/// @brief Checks if the ControlAPI is ready to be used.
 		/// @param IsReady true if the ControlAPI is ready to be used, false otherwise.
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(IsReady)();
@@ -588,11 +595,13 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		 * The data will be returned at the end of a sequence when using
 		 * CLA_WaitTillEndOfSequenceThenGetInputData.
 		 * @param Sequencer the sequencer to use.
+		 * @param SPI_port SPI port to use
+		 * @param SPI_CS SPI CS setting to use
 		 * @param ChannelNumber the channel number to use.
 		 * @param NumberOfDataPoints the number of data points to acquire.
 		 * @param DelayBetweenDataPoints_in_ms the delay between data points in ms.
 		*/
-		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerStartAnalogInAcquisition)(const unsigned int& Sequencer, const uint8_t& ChannelNumber, const uint32_t& NumberOfDataPoints, const double& DelayBetweenDataPoints_in_ms);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerStartAnalogInAcquisition)(const unsigned int& Sequencer, const uint8_t &SPI_port, const uint8_t &SPI_CS, const uint8_t& ChannelNumber, const uint32_t& NumberOfDataPoints, const double& DelayBetweenDataPoints_in_ms);
 		
 		/**  @brief Writes a value to the input memory of the sequencer.
 		 * This is useful to mark the start or end of a data acquisition, or to mark the type of experimental run in the full fledged version of the ControlAPI, which can cycle sequences automatically in the background.

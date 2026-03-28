@@ -78,7 +78,8 @@ public:
 	virtual ~CEthernetControllerFirefly();
 	bool SendSequenceToFPGA(uint32_t* buffer);
 	void AddSequencerCommandToSequenceList(uint32_t high_buffer, uint32_t low_buffer);
-	void StartAnalogInAcquisition(unsigned int channel_nr, unsigned int number_of_datapooints, double delay_between_datapoints);
+	void StartAnalogInAcquisition(unsigned char SPI_port, unsigned char SPI_CS, unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms);
+	void StartSPIAnalogInAcquisition(unsigned char SPI_port, unsigned char SPI_CS, unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms);
 	void WriteReadSPI(unsigned int chip_select, unsigned int number_of_bits_out, uint64_t data_high, uint64_t data_low, unsigned int number_of_bits_in);
 	//bool AddData(uint32_t* BusData, uint32_t* Spacing, /*uint32_t* AbsoluteTime,*/ unsigned long Count);
 	bool AddSequencePreamble();

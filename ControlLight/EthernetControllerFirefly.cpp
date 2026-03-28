@@ -194,12 +194,11 @@ constexpr uint8_t NrExtendedCommands = 3;
 const std::string ExtendedCommandNames[NrExtendedCommands] = { "EXTENDED_CMD_STOP", "EXTENDED_CMD_LOAD_SPI_TIMING", "EXTENDED_CMD_SET_I2C_PARAMETERS" };
 
 
-
-void CEthernetControllerFirefly::StartAnalogInAcquisition(unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms) {
+void CEthernetControllerFirefly::StartAnalogInAcquisition(unsigned char SPI_port, unsigned char SPI_CS, unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms) {
 	//if (channel_nr < 2) {
 	//	StartXADCAnalogInAcquisition(channel_nr, number_of_datapoints, delay_between_datapoints_in_ms);
 //	} else {
-		StartSPIAnalogInAcquisition(channel_nr /* - 2*/, number_of_datapoints, delay_between_datapoints_in_ms);
+		StartSPIAnalogInAcquisition(SPI_port, SPI_CS, channel_nr /* - 2*/, number_of_datapoints, delay_between_datapoints_in_ms);
 	//}
 }
 
@@ -615,7 +614,7 @@ void CEthernetControllerFirefly::WriteReadSPI(unsigned int chip_select, unsigned
 }
 
 
-void CEthernetControllerFirefly::StartSPIAnalogInAcquisition(unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms) {
+void CEthernetControllerFirefly::StartSPIAnalogInAcquisition(unsigned char SPI_port, unsigned char SPI_CS, unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms) {
 	
 
 	//only for debugging
@@ -632,15 +631,15 @@ void CEthernetControllerFirefly::StartSPIAnalogInAcquisition(unsigned int channe
                         end 
 	*/
 
-	uint32_t SPI_SINGLE_ENDED_INPUT = 1;
-	uint32_t SPI_ANALOG_IN_NR = channel_nr;
-	uint32_t SPI_IN_NR_REVERSED = (((SPI_ANALOG_IN_NR & 1)>0) ? 4 : 0) + (((SPI_ANALOG_IN_NR & 2)>0) ? 2 : 0) + (((SPI_ANALOG_IN_NR & 4)>0) ? 1 : 0);
-	uint32_t SPI_DATA = 1 + (SPI_SINGLE_ENDED_INPUT << 1) + (SPI_IN_NR_REVERSED << 2);
+	unsigned __int32 SPI_SINGLE_ENDED_INPUT = 1;
+	unsigned __int32 SPI_ANALOG_IN_NR = channel_nr;
+	unsigned __int32 SPI_IN_NR_REVERSED = (((SPI_ANALOG_IN_NR & 1)>0) ? 4 : 0) + (((SPI_ANALOG_IN_NR & 2)>0) ? 2 : 0) + (((SPI_ANALOG_IN_NR & 4)>0) ? 1 : 0);
+	unsigned __int32 SPI_DATA = 1 + (SPI_SINGLE_ENDED_INPUT << 1) + (SPI_IN_NR_REVERSED << 2);
 	//SPI_DATA = 1+2;
 	
-	uint8_t command = CMD_LOAD_REG_LOW;
-	uint32_t low_buffer = (SPI_DATA << 5) | command;
-	uint32_t high_buffer = 0;
+	unsigned char command = CMD_LOAD_REG_LOW;
+	unsigned __int32 low_buffer = (SPI_DATA << 5) | command;
+	unsigned __int32 high_buffer = 0;
 	AddSequencerCommandToSequenceList( high_buffer, low_buffer);
 	
 	command = CMD_LOAD_REG_HIGH;
@@ -662,12 +661,12 @@ void CEthernetControllerFirefly::StartSPIAnalogInAcquisition(unsigned int channe
 	*/
 
 	command = CMD_SPI_OUT_IN;
-	uint32_t SPI_out_length = 6;
-	uint32_t SPI_in_length = 13;
-	//uint32_t SPI_CS = 1;  
-	uint32_t wait_time = 0;
-	uint8_t SPI_SEL_next = 0x01; //2 SPI ports, 1 means active under PL control; if inactive they are under PS control
-	uint8_t SPI_chip_select_next = 2 + 4 + 8; //4 CS lines, low means active.
+	unsigned __int32 SPI_out_length = 6;
+	unsigned __int32 SPI_in_length = 13;
+	//unsigned __int32 SPI_CS = 1;  
+	unsigned __int32 wait_time = 0;
+	unsigned char SPI_SEL_next = (SPI_port == 0) ? 0x01 : 0x02; //2 SPI ports, port 0 is controlled by bit zero here, port 1 is bit one here; 1 means active under PL control; if inactive they are under PS control
+	unsigned char SPI_chip_select_next = (~(1 << SPI_CS)) & 0x0F;// 2 + 4 + 8; //4 CS lines, low means active; ToDo: in V2 we intend to install a multiplexer on the backplane, then every 16 bit value is valid and the code needs to be changed here.
 	unsigned int start_now = 0;
 	low_buffer =  (SPI_in_length << 16) | (SPI_out_length << 8) | command;
 	high_buffer = (start_now << (40-32)) | (SPI_chip_select_next << 2) | (0x03 & SPI_SEL_next);
@@ -691,16 +690,16 @@ void CEthernetControllerFirefly::StartSPIAnalogInAcquisition(unsigned int channe
 
 	*/
 	command = CMD_INPUT_REPEATED_OUT_IN;
-	uint32_t INPUT_REPEAT_repeats = number_of_datapoints;
-	uint32_t INPUT_REPEAT_wait = floor(delay_between_datapoints_in_ms * FPGAClockFrequencyInHz / 1000);
-	uint32_t INPUT_REPEAT_command = 1;  //SPI input
-	uint32_t INPUT_REPEAT_trigger_secondary_interrupt_when_finished = 1;//this is needed if input BRAM buffer should be copied to DDR when half buffer full 
+	unsigned __int32 INPUT_REPEAT_repeats = number_of_datapoints;
+	unsigned __int32 INPUT_REPEAT_wait = floor(delay_between_datapoints_in_ms * FPGAClockFrequencyInHz / 1000);
+	unsigned __int32 INPUT_REPEAT_command = 1;  //SPI input
+	unsigned __int32 INPUT_REPEAT_trigger_secondary_interrupt_when_finished = 1;//this is needed if input BRAM buffer should be copied to DDR when half buffer full 
 
 	low_buffer = (INPUT_REPEAT_repeats << 8) | command;
 	high_buffer = INPUT_REPEAT_wait | (INPUT_REPEAT_trigger_secondary_interrupt_when_finished << (56 - 32)) | (INPUT_REPEAT_command << (57 - 32));
 	AddSequencerCommandToSequenceList( high_buffer, low_buffer);
 
-	uint32_t DelayMultiplier = FPGAClockToBusClockRatio;// floor(FPGAClockFrequencyInHz / BusFrequency - 1);
+	unsigned __int32 DelayMultiplier = FPGAClockToBusClockRatio;// floor(FPGAClockFrequencyInHz / BusFrequency);
 	if (DelayMultiplier < 1) DelayMultiplier = 1;
 	if (DelayMultiplier == 1) {
 		AddProgramLineToSequenceList(1, 0, DelayMultiplier * 3 - 2); //CMD_STEP doing nothing, just in order to keep the time calculated by COutput aligned with the time used by the FPGA; needed because the four commands above only consume 4 FPGA cycles, but are accounted for with 2 bus cycles by COutput
@@ -714,6 +713,7 @@ void CEthernetControllerFirefly::StartSPIAnalogInAcquisition(unsigned int channe
 	//	AddCommandWriteInputBuffer(/*write_next_address*/ false, /* input_buf_mem_address */ n*2, /*input_buf_mem_data*/0xDEAD0000+n, /* wait_time_in_FPGA_cycles*/ 5);
 	
 }
+
 
 void CEthernetControllerFirefly::SwitchDebugLED(bool OnOff) {
 	AddCommandSetCoreOption_LED(OnOff);
@@ -1123,11 +1123,11 @@ void CEthernetControllerFirefly::WriteBufferToFile(uint32_t* buffer, unsigned lo
 }
 
 void CEthernetControllerFirefly::SetPeriodicTrigger(double aPeriodicTriggerPeriod_in_s, double aPeriodicTriggerAllowedWaitTime_in_s) {
+	WaitForPeriodicTrigger(aPeriodicTriggerPeriod_in_s > 0);
 	PeriodicTriggerPeriod_in_s = aPeriodicTriggerPeriod_in_s;
 	PeriodicTriggerAllowedWait_in_s = aPeriodicTriggerAllowedWaitTime_in_s;
 	SetPeriodicTriggerAtBeginningOfNextSequence = true;
 	ChangePeriodicTriggerPeriodWhileCycling = WaitForPeriodicTriggerAtBeginningOfSequence;
-	//WaitForPeriodicTrigger(true); //not needed here as it will be called by StartCycling
 }
 
 void CEthernetControllerFirefly::WaitForPeriodicTrigger(bool aWaitForPeriodicTriggerAtBeginningOfSequence) {

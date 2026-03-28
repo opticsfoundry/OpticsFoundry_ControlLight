@@ -10,6 +10,8 @@ public:
 	double minVoltage;
 	double maxVoltage;
 private:
+	uint8_t SPI_port;
+	uint8_t SPI_CS;
 	uint8_t ChannelNumber;
 	uint32_t NumberOfDataPoints;
 	double DelayBetweenDataPoints_in_ms;
