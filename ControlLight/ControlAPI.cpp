@@ -12,6 +12,7 @@ using json = nlohmann::json;
 #include "ControlAPI.h"
 
 #include "CDeviceSequencer.h"
+#include "CDeviceRack.h"
 #include "CDeviceAnalogOut.h"
 #include "CDeviceAnalogIn.h"
 #include "CDeviceAD9854.h"
@@ -1206,6 +1207,43 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 		//one that creates the object with parameters taken from a json structure, which is used internally when loading a json configuration file.
 		//unfortunately the second can't simply call the first, as this could create a problem with API_LOCK_GUARD;
 
+
+
+
+		bool CLA_AddDeviceRackFromJSON(const json& device_json) {
+			if (!device_json.contains("RackAddress")) return false;
+			unsigned int rackAddress = device_json["RackAddress"];
+			unsigned int sequencer;
+			unsigned int numberChannels;
+			LOAD_VALUE(sequencer, "Sequencer", 0);
+			LOAD_VALUE(numberChannels, "NumberChannels", 16);
+
+			if (!GetSequencerBeforeInitialization(sequencer)) {
+				RETURN_ERROR(false, "CLA_AddDeviceRackFromJSON: Invalid sequencer");
+			}
+			new CDeviceRack(
+				SequencerList[sequencer],
+				rackAddress);
+			RETURN_ERROR(!SequencerList[sequencer]->ErrorOccured(), "CLA_AddDeviceRackFromJSON: error on initialization");
+
+		}
+
+		
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(AddDeviceRack)(
+			unsigned int sequencer,
+			unsigned int rackAddress) {
+			API_LOCK_GUARD;
+			if (!GetSequencerBeforeInitialization(sequencer)) {
+				API_UNLOCK_RETURN_ERROR(false, "CLA_AddDeviceRack: Invalid sequencer");
+			}
+			new CDeviceRack(
+				SequencerList[sequencer],
+				rackAddress);
+			API_UNLOCK_RETURN_ERROR(!SequencerList[sequencer]->ErrorOccured(), "CLA_AddDeviceRack: error on initialization");
+		}
+
+
+
 		bool CLA_AddDeviceAD9854FromJSON(const json& device_json) {
 			//only called from CLA_FNDEF(LoadFromJSON, which already checked if  CLA_FNDEF(Created() was called
 			if (!device_json.contains("Address")) return false;
@@ -1559,6 +1597,11 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			if (config.contains("Sequencers")) {
 				for (const auto& device_json : config["Sequencers"])
 					success &= CLA_AddDeviceSequencerFromJSON(device_json);
+			}
+			//Add racks
+			if (config.contains("Rack")) {
+				for (const auto& device_json : config["Rack"])
+					success &= CLA_AddDeviceAD9854FromJSON(device_json);
 			}
 			//Add 16-bit analog out boards
 			if (config.contains("AnalogOutBoards16bit")) {

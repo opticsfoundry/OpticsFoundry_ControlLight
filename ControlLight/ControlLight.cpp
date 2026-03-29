@@ -609,7 +609,7 @@ void SaveInputDataToFile(const std::string& filename,
     std::fclose(file);
 }
 
-void DemoSequenceAnalyseData(unsigned long CycleNumber, uint32_t*& buffer, unsigned long& buffer_length, unsigned long& EndTimeOfCycle) {
+void DemoSequenceAnalyseData(unsigned long CycleNumber, uint32_t* buffer, const unsigned long& buffer_length, const unsigned long& EndTimeOfCycle) {
 	static unsigned long long PreviousFPGASystemTime = 0;
 	static unsigned int NumberOfTimesFailedRun = 0;
 	static double PeriodicTriggerPeriod_in_ms = 0;

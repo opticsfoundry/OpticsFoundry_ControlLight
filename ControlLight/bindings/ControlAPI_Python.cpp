@@ -70,8 +70,15 @@ PYBIND11_MODULE(control_light_api, m) {
                 return next_cycle_number;
             })
         .def("reset_cycle_number", &ControlLight_API::ResetCycleNumber)
+        
+        //I2C port
         .def("transmit_i2c_port", &ControlLight_API::TransmitI2CPort, py::arg("i2c_port"), py::arg("i2c_address"), py::arg("send_length"), py::arg("send_data"), py::arg("receive_length"), py::arg("receive_data"), py::arg("i2c_clock_frequency_in_hz"))
-
+        
+        //Rack control
+        .def("select_slot", &ControlLight_API::SelectSlot, py::arg("slot_nr"))
+        .def("reset_i2c_multiplexer", &ControlLight_API::ResetI2CMultiplexer)   
+        
+        //sequencer commands
 		.def("start_assembling_cpu_command_sequence", &ControlLight_API::StartAssemblingCPUCommandSequence)
 		.def("add_cpu_command", &ControlLight_API::AddCPUCommand, py::arg("command"))
 		.def("execute_cpu_command_sequence", &ControlLight_API::ExecuteCPUCommandSequence, py::arg("ethernet_check_period_ms") = 0)
@@ -214,6 +221,8 @@ PYBIND11_MODULE(control_light_api, m) {
 			py::arg("condition_1") = false, py::arg("condition_PS") = false)
 			
 
+
+
             // AddDeviceSequencer
             .def("add_device_sequencer", &ControlLight_API::AddDeviceSequencer,
                 py::arg("id"),
@@ -227,6 +236,12 @@ PYBIND11_MODULE(control_light_api, m) {
                 py::arg("use_external_clock"),
                 py::arg("use_strobe_generator"),
                 py::arg("connect"))
+
+
+            // AddDeviceRack
+            .def("add_device_rack", &ControlLight_API::AddDeviceRack,
+                py::arg("sequencer"),
+                py::arg("rack_address"))
 
             // AddDeviceAnalogOut16bit
             .def("add_device_analog_out_16bit", &ControlLight_API::AddDeviceAnalogOut16bit,

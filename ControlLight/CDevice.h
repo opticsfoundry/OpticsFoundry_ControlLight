@@ -27,7 +27,7 @@ public:
 
 	//In derived classes, SetRegister accesses the registers (or similar) of the specific device, and directly writes to them
 	virtual bool SetRegister(const unsigned int& SubAddress, const uint8_t* Data, const unsigned long& DataLength_in_bit, const uint8_t& StartBit) {
-		AddErrorMessage("CDevice::SetValue: abstract function called");
+		AddErrorMessage("CDevice::SetRegister: abstract function called");
 		return SetValue(SubAddress, Data, DataLength_in_bit, StartBit);
 	}
 
@@ -35,9 +35,21 @@ public:
 	//the following are convenience functions, which allow us to define nice names to the few most important functions
 	//They are defined here, such that we can easily handle errors if the wrong device is used for a given function
 	
+
+	//Rack
+	virtual bool SelectSlot(const uint8_t& SlotNr) {
+		AddErrorMessage("CDevice::SelectSlot: abstract function called");
+		return false;
+	}
+
+	virtual bool ResetI2CMultiplexer() {
+		AddErrorMessage("CDevice::ResetI2CMultiplexer: abstract function called");
+		return false; 
+	}
+
 	//Analog output
 	virtual bool SetVoltage(double Voltage) { 
-		AddErrorMessage("CDevice::SetValue: abstract function called");
+		AddErrorMessage("CDevice::SetVoltage: abstract function called");
 		return false; 
 	}
 

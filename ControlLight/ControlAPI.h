@@ -762,6 +762,15 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 			bool useStrobeGenerator,
 			bool connect);
 
+
+		/// @brief Add a digital output device to the sequencer.
+		/// @param sequencer the sequencer to use.
+		/// @param rackAddress the address of the rack to add.
+		/// @return
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(AddDeviceRack)(
+			unsigned int sequencer,
+			unsigned int rackAddress);
+
 		/// @brief Add a 16 bit analog output device to the sequencer.
 		/// @param sequencer the sequencer to use.
 		/// @param startAddress the start address of the device to add.
