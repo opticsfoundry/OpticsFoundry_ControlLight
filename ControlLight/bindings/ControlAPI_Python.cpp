@@ -73,6 +73,20 @@ PYBIND11_MODULE(control_light_api, m) {
         
         //I2C port
         .def("transmit_i2c_port", &ControlLight_API::TransmitI2CPort, py::arg("i2c_port"), py::arg("i2c_address"), py::arg("send_length"), py::arg("send_data"), py::arg("receive_length"), py::arg("receive_data"), py::arg("i2c_clock_frequency_in_hz"))
+        .def("write_config_eeprom", [](ControlLight_API& self, uint8_t sequencer_id, uint8_t rack_nr, uint8_t slot_nr, py::bytes data) {
+                const std::string payload = static_cast<std::string>(data);
+                self.WriteConfigEEPROM(sequencer_id, rack_nr, slot_nr, payload.data(), payload.size());
+            }, py::arg("sequencer_id"), py::arg("rack_nr"), py::arg("slot_nr"), py::arg("data"))
+        .def("read_config_eeprom", [](ControlLight_API& self, uint8_t sequencer_id, uint8_t rack_nr, uint8_t slot_nr) {
+                std::string payload(256, '\0');
+                size_t length = payload.size();
+                self.ReadConfigEEPROM(sequencer_id, rack_nr, slot_nr, payload.data(), length);
+                payload.resize(length);
+                return py::dict(
+                    "data"_a = py::bytes(payload),
+                    "length"_a = length
+                );
+            }, py::arg("sequencer_id"), py::arg("rack_nr"), py::arg("slot_nr"))
         
         //Rack control
         .def("select_slot", &ControlLight_API::SelectSlot, py::arg("slot_nr"))
@@ -237,11 +251,6 @@ PYBIND11_MODULE(control_light_api, m) {
                 py::arg("use_strobe_generator"),
                 py::arg("connect"))
 
-
-            // AddDeviceRack
-            .def("add_device_rack", &ControlLight_API::AddDeviceRack,
-                py::arg("sequencer"),
-                py::arg("rack_address"))
 
             // AddDeviceAnalogOut16bit
             .def("add_device_analog_out_16bit", &ControlLight_API::AddDeviceAnalogOut16bit,

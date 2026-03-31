@@ -37,12 +37,6 @@ class ConfigBuilder:
             "DebugOn": DebugOn
         })
 
-    def RegisterRack(self, Sequencer=0, RackAddress=0):
-        self.config["Rack"].append({
-            "Sequencer": Sequencer,
-            "RackAddress": RackAddress
-        })
-
     def RegisterAnalogOutBoard16bit(self, Sequencer=0, StartAddress=24, NumberChannels=4, Signed=True,
                                      MinVoltage=-10, MaxVoltage=10):
         self.config["AnalogOutBoards16bit"].append({
@@ -108,18 +102,14 @@ class ConfigBuilder:
                 errors.append(f"{name} at address {address} should start at a multiple of {span}.")
             for offset in range(span):
                 addr = (sequencer, address + offset)
-                if not (0 <= address + offset <= 255):
-                    errors.append(f"{name} uses address {address + offset}, which is out of range [0, 255].")
+                if not (1 <= address + offset <= 251):
+                    errors.append(f"{name} uses address {address + offset}, which is out of range [1, 251].")
                 elif addr in used_addresses:
                     errors.append(f"Conflict: {name} at [{sequencer}, {address + offset}] already in use.")
                 used_addresses.add(addr)
 
         for entry in self.config["AnalogOutBoards16bit"]:
             check_and_add(entry["Sequencer"], entry["StartAddress"], entry["NumberChannels"] , "AnalogOutBoard16bit")
-
-        for entry in self.config["Rack"]:
-            check_and_add(entry["Sequencer"], 0xFF, 1, "Rack")
-            check_and_add(entry["Sequencer"], 0xFE, 1, "Rack")
 
         for entry in self.config["DigitalOutBoards"]:
             check_and_add(entry["Sequencer"], entry["Address"], 1, "DigitalOutBoard")
@@ -150,7 +140,6 @@ class ConfigBuilder:
 if __name__ == "__main__":
     builder = ConfigBuilder()
     builder.RegisterSequencer(IP="192.168.1.10", Port=57978, ClockFrequencyinMHz=100, BusFrequencyinMHz=2, DebugOn = False) #0.104 #90.108
-    builder.RegisterRack()
 
     analog_out_configs = [
         (24, True, -10, 10), #each of these lines configures 4 analog outputs in consecutive order of addresses

@@ -10,6 +10,7 @@
 using json = nlohmann::json;
 
 #include "ControlAPI.h"
+#include "AutoConfig.h"
 
 #include "CDeviceSequencer.h"
 #include "CDeviceRack.h"
@@ -1116,6 +1117,24 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "TransmitI2CPort: error");
 		}
 
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(WriteConfigEEPROM)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, const char* data, size_t length) {
+			API_LOCK_GUARD;
+			if (!MasterSequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "WriteConfigEEPROM: no master sequencer not found");
+			}
+			::WriteConfigEEPROM(SequencerID, RackNr, SlotNr, data, length);
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "WriteConfigEEPROM: error");
+		}
+
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(ReadConfigEEPROM)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, char* data, size_t& length) {
+			API_LOCK_GUARD;
+			if (!MasterSequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "ReadConfigEEPROM: no master sequencer not found");
+			}
+			::ReadConfigEEPROM(SequencerID, RackNr, SlotNr, data, length);
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "ReadConfigEEPROM: error");
+		}
+
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(StartAssemblingCPUCommandSequence)() {
 			API_LOCK_GUARD;
 			if (!MasterSequencer) {
@@ -1206,42 +1225,6 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 		//the one that's exported into the DLL
 		//one that creates the object with parameters taken from a json structure, which is used internally when loading a json configuration file.
 		//unfortunately the second can't simply call the first, as this could create a problem with API_LOCK_GUARD;
-
-
-
-
-		bool CLA_AddDeviceRackFromJSON(const json& device_json) {
-			if (!device_json.contains("RackAddress")) return false;
-			unsigned int rackAddress = device_json["RackAddress"];
-			unsigned int sequencer;
-			unsigned int numberChannels;
-			LOAD_VALUE(sequencer, "Sequencer", 0);
-			LOAD_VALUE(numberChannels, "NumberChannels", 16);
-
-			if (!GetSequencerBeforeInitialization(sequencer)) {
-				RETURN_ERROR(false, "CLA_AddDeviceRackFromJSON: Invalid sequencer");
-			}
-			new CDeviceRack(
-				SequencerList[sequencer],
-				rackAddress);
-			RETURN_ERROR(!SequencerList[sequencer]->ErrorOccured(), "CLA_AddDeviceRackFromJSON: error on initialization");
-
-		}
-
-		
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(AddDeviceRack)(
-			unsigned int sequencer,
-			unsigned int rackAddress) {
-			API_LOCK_GUARD;
-			if (!GetSequencerBeforeInitialization(sequencer)) {
-				API_UNLOCK_RETURN_ERROR(false, "CLA_AddDeviceRack: Invalid sequencer");
-			}
-			new CDeviceRack(
-				SequencerList[sequencer],
-				rackAddress);
-			API_UNLOCK_RETURN_ERROR(!SequencerList[sequencer]->ErrorOccured(), "CLA_AddDeviceRack: error on initialization");
-		}
-
 
 
 		bool CLA_AddDeviceAD9854FromJSON(const json& device_json) {
@@ -1537,6 +1520,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			}
 			// Create a new device sequencer and add it to the list
 			SequencerList[id] = new CDeviceSequencer(id, type, ip, port, master, startDelay, clockFrequency, FPGAClockToBusClockRatio, useExternalClock, useStrobeGenerator, connect);
+			new CDeviceRack(SequencerList[id]);
 			RETURN_ERROR(!SequencerList[id]->ErrorOccured(), "CLA_AddDeviceSequencerFromJSON: error on initialization");
 		}
 
@@ -1564,6 +1548,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			}
 			// Create a new device sequencer and add it to the list
 			SequencerList[id] = new CDeviceSequencer(id, type, ip, port, master, startDelay, clockFrequency, FPGAClockToBusClockRatio, useExternalClock, useStrobeGenerator, connect);
+			new CDeviceRack(SequencerList[id]);
 			API_UNLOCK_RETURN_ERROR(!SequencerList[id]->ErrorOccured(), "CLA_AddDeviceSequencer: error on initialization");
 			CATCH_MFC_EX_E
 		}
@@ -1677,4 +1662,3 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 	} //option namespace CLA
 #endif
 #endif
-

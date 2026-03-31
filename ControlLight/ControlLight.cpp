@@ -696,7 +696,7 @@ void DemoFPGASequencerSingleRun() {
 		unsigned long buffer_length = 0;
 		unsigned long EndTimeOfCycle = 0;
 		CLA_WaitTillEndOfSequenceThenGetInputData(buffer, buffer_length, EndTimeOfCycle, 10);
-			DemoSequenceAnalyseData(CycleNr, (uint32_t*)buffer, buffer_length/4, EndTimeOfCycle);
+		DemoSequenceAnalyseData(CycleNr, (uint32_t*)buffer, buffer_length/4, EndTimeOfCycle);
 
 		//Duration duration = Clock::now() - starttime;
 		//cout << "Duration: " << milliSeconds(duration) << " ms  Buffer length : " << buffer_length << endl;
@@ -1002,11 +1002,32 @@ void DemoDDSVCO() {
 	CLA_Cleanup();
 }
 
+void DemoWriteConfigEEPROM() {
+	if (!InitializeSystem()) {
+		return;
+	}
+	const char* buffer = "Hello";
+	CLA_WriteConfigEEPROM(0, 0, 0, buffer, 5);
+}
+
+void DemoReadConfigEEPROM() {
+	if (!InitializeSystem()) {
+		return;
+	}
+	char buffer[256] = {};
+	size_t length = sizeof(buffer);
+	CLA_ReadConfigEEPROM(0, 0, 0, buffer, length);
+	std::string read_data(buffer, length);
+	cout << "Read from EEPROM: " << read_data << endl;
+}
+
 int main() {
 	//DemoFPGASequencerSingleRun();
-	DemoFPGASequencerCyclicSequencing();
+	//DemoFPGASequencerCyclicSequencing();
 	//DemoSmartSequencer();
 	//DemoDDSVCO();
+	DemoWriteConfigEEPROM();
+	//DemoReadConfigEEPROM();
 	return 0;
 }
 
@@ -1024,4 +1045,3 @@ int main() {
 //(optional, as we do take care of TimeDebt now): wait for startDelay tick counts to synchronize several sequencers
 // Add interlaced ramping & LabScript & HEROS interface
 // Add calibration functions, time reordering, last value access, intermittent storage of output values, 
-

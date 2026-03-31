@@ -347,6 +347,24 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @return 
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(TransmitI2CPort)(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz);
 
+		/// @brief Write configuration data to the EEPROM of a rack slot.
+		/// @param SequencerID the sequencer to use.
+		/// @param RackNr the rack number.
+		/// @param SlotNr the slot number within the rack.
+		/// @param data the configuration payload to write.
+		/// @param length the payload length in bytes.
+		/// @return
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(WriteConfigEEPROM)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, const char* data, size_t length);
+
+		/// @brief Read the complete configuration EEPROM of a rack slot.
+		/// @param SequencerID the sequencer to use.
+		/// @param RackNr the rack number.
+		/// @param SlotNr the slot number within the rack.
+		/// @param data output buffer receiving the EEPROM contents.
+		/// @param length input: available buffer size in bytes, output: number of bytes read.
+		/// @return
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(ReadConfigEEPROM)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, char* data, size_t& length);
+
 		//The following functions enable you to assemble a CPU command sequence on the master sequencer, which can then be executed by the CPU.
 		//These command sequences can start FPGA command sequence, analyze acquired data, modify the FPGA command sequence and repeat.
 		//This enables for example: digital PIDs, digital VCOs,...
@@ -761,15 +779,6 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 			bool useExternalClock,
 			bool useStrobeGenerator,
 			bool connect);
-
-
-		/// @brief Add a digital output device to the sequencer.
-		/// @param sequencer the sequencer to use.
-		/// @param rackAddress the address of the rack to add.
-		/// @return
-		API_EXPORT ERROR_CODE_TYPE CLA_FN(AddDeviceRack)(
-			unsigned int sequencer,
-			unsigned int rackAddress);
 
 		/// @brief Add a 16 bit analog output device to the sequencer.
 		/// @param sequencer the sequencer to use.

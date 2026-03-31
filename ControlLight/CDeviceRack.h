@@ -12,7 +12,7 @@ public:
 public:
 	CDeviceRack(
 		CDeviceSequencer* _MySequencer,
-		unsigned int _MyRackAddress
+		unsigned int _MyRackAddress = 0
 	);
 	virtual ~CDeviceRack() = default;
 	//virtual bool SetValue(unsigned int SubAddress, uint8_t* Data, unsigned long DataLength);

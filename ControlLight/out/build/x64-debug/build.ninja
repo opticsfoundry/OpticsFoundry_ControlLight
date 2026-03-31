@@ -76,6 +76,15 @@ build CMakeFiles\ControlLight.dir\AD9958.cpp.obj: CXX_COMPILER__ControlLight_uns
   TARGET_COMPILE_PDB = CMakeFiles\ControlLight.dir\
   TARGET_PDB = ControlLight.pdb
 
+build CMakeFiles\ControlLight.dir\AutoConfig.cpp.obj: CXX_COMPILER__ControlLight_unscanned_Debug D$:\Florian\OpticsFoundry\OpticsFoundryControl\OpticsFoundry_ControlLight\ControlLight\AutoConfig.cpp || cmake_object_order_depends_target_ControlLight
+  CONFIG = Debug
+  DEFINES = -DC_API -DUSING_DLL -D_AFXDLL
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 -std:c++20
+  OBJECT_DIR = CMakeFiles\ControlLight.dir
+  OBJECT_FILE_DIR = CMakeFiles\ControlLight.dir
+  TARGET_COMPILE_PDB = CMakeFiles\ControlLight.dir\
+  TARGET_PDB = ControlLight.pdb
+
 build CMakeFiles\ControlLight.dir\CDevice.cpp.obj: CXX_COMPILER__ControlLight_unscanned_Debug D$:\Florian\OpticsFoundry\OpticsFoundryControl\OpticsFoundry_ControlLight\ControlLight\CDevice.cpp || cmake_object_order_depends_target_ControlLight
   CONFIG = Debug
   DEFINES = -DC_API -DUSING_DLL -D_AFXDLL
@@ -237,7 +246,7 @@ build CMakeFiles\ControlLight.dir\std.cpp.obj: CXX_COMPILER__ControlLight_unscan
 #############################################
 # Link the executable ControlLight.exe
 
-build ControlLight.exe: CXX_EXECUTABLE_LINKER__ControlLight_Debug CMakeFiles\ControlLight.dir\AD9852.cpp.obj CMakeFiles\ControlLight.dir\AD9858.cpp.obj CMakeFiles\ControlLight.dir\AD9958.cpp.obj CMakeFiles\ControlLight.dir\CDevice.cpp.obj CMakeFiles\ControlLight.dir\CDeviceAD9854.cpp.obj CMakeFiles\ControlLight.dir\CDeviceAD9858.cpp.obj CMakeFiles\ControlLight.dir\CDeviceAD9958.cpp.obj CMakeFiles\ControlLight.dir\CDeviceAnalogIn.cpp.obj CMakeFiles\ControlLight.dir\CDeviceAnalogOut.cpp.obj CMakeFiles\ControlLight.dir\CDeviceDigitalOut.cpp.obj CMakeFiles\ControlLight.dir\CDeviceRack.cpp.obj CMakeFiles\ControlLight.dir\CDeviceSequencer.cpp.obj CMakeFiles\ControlLight.dir\ControlAPI.cpp.obj CMakeFiles\ControlLight.dir\ControlLight.cpp.obj CMakeFiles\ControlLight.dir\EthernetControllerFirefly.cpp.obj CMakeFiles\ControlLight.dir\MultiWriteDevice.cpp.obj CMakeFiles\ControlLight.dir\MultiWriteDeviceSPI.cpp.obj CMakeFiles\ControlLight.dir\NetworkClient.cpp.obj CMakeFiles\ControlLight.dir\network.cpp.obj CMakeFiles\ControlLight.dir\std.cpp.obj
+build ControlLight.exe: CXX_EXECUTABLE_LINKER__ControlLight_Debug CMakeFiles\ControlLight.dir\AD9852.cpp.obj CMakeFiles\ControlLight.dir\AD9858.cpp.obj CMakeFiles\ControlLight.dir\AD9958.cpp.obj CMakeFiles\ControlLight.dir\AutoConfig.cpp.obj CMakeFiles\ControlLight.dir\CDevice.cpp.obj CMakeFiles\ControlLight.dir\CDeviceAD9854.cpp.obj CMakeFiles\ControlLight.dir\CDeviceAD9858.cpp.obj CMakeFiles\ControlLight.dir\CDeviceAD9958.cpp.obj CMakeFiles\ControlLight.dir\CDeviceAnalogIn.cpp.obj CMakeFiles\ControlLight.dir\CDeviceAnalogOut.cpp.obj CMakeFiles\ControlLight.dir\CDeviceDigitalOut.cpp.obj CMakeFiles\ControlLight.dir\CDeviceRack.cpp.obj CMakeFiles\ControlLight.dir\CDeviceSequencer.cpp.obj CMakeFiles\ControlLight.dir\ControlAPI.cpp.obj CMakeFiles\ControlLight.dir\ControlLight.cpp.obj CMakeFiles\ControlLight.dir\EthernetControllerFirefly.cpp.obj CMakeFiles\ControlLight.dir\MultiWriteDevice.cpp.obj CMakeFiles\ControlLight.dir\MultiWriteDeviceSPI.cpp.obj CMakeFiles\ControlLight.dir\NetworkClient.cpp.obj CMakeFiles\ControlLight.dir\network.cpp.obj CMakeFiles\ControlLight.dir\std.cpp.obj
   CONFIG = Debug
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
