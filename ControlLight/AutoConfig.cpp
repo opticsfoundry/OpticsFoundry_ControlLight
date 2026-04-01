@@ -16,7 +16,7 @@
 using namespace std;
 
 namespace {
-	constexpr uint8_t NrSlots = 13;
+	constexpr uint8_t NrSlots = 13; // "Slot" 13 is the backplane memory.
 	constexpr uint8_t I2CMultAddr[2] = { 0xE0, 0xEE};
 	constexpr uint8_t I2CPortNr[NrSlots] = { 2, 1, 0, 7, 6, 5, 4, 0, 1, 3, 2, 6, 5 };
 	constexpr uint8_t I2CMux[NrSlots] =    { 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0 };

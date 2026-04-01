@@ -5,6 +5,8 @@
 #include "ControlAPI.h"
 #include "std.h"
 #include <iostream>
+#include <iomanip>
+#include <sstream>
 #include <string>
 #include <thread>
 #include <cstdio>
@@ -1006,27 +1008,64 @@ void DemoWriteConfigEEPROM() {
 	if (!InitializeSystem()) {
 		return;
 	}
-	const char* buffer = "Hello";
-	CLA_WriteConfigEEPROM(0, 0, 0, buffer, 5);
+
+	constexpr size_t MaxEEPROMPayloadBytes = 256;
+	const string model_name = "AD9959v0";
+	constexpr unsigned int SNSuffix = 0;
+
+	constexpr uint8_t SequencerNr = 0;
+	constexpr uint8_t RackNr = 0;
+	constexpr uint8_t SlotNr = 0;
+
+	if (SNSuffix > 99) {
+		cout << "EEPROM write skipped: serial number suffix " << SNSuffix
+			<< " is out of range 00..99." << endl;
+		return;
+	}
+
+	auto now = chrono::system_clock::now();
+	time_t now_time = chrono::system_clock::to_time_t(now);
+	tm local_time = {};
+	localtime_s(&local_time, &now_time);
+
+	ostringstream serial_stream;
+	serial_stream << put_time(&local_time, "%Y%m%d%H%M%S")
+		<< setw(2) << setfill('0') << SNSuffix;
+
+	ostringstream json_stream;
+	json_stream << "{\"Model\":\"" << model_name
+		<< "\",\"SN\":" << serial_stream.str() << "}";
+	const string json_payload = json_stream.str();
+
+	if (json_payload.size() > MaxEEPROMPayloadBytes) {
+		cout << "EEPROM write skipped: JSON payload length " << json_payload.size()
+			<< " exceeds " << MaxEEPROMPayloadBytes << " bytes." << endl;
+		return;
+	}
+
+	CLA_WriteConfigEEPROM(SequencerNr, RackNr, SlotNr, json_payload.c_str(), json_payload.size());
 }
 
 void DemoReadConfigEEPROM() {
 	if (!InitializeSystem()) {
 		return;
 	}
+	constexpr uint8_t SequencerNr = 0;
+	constexpr uint8_t RackNr = 0;
+	constexpr uint8_t SlotNr = 0;
 	char buffer[256] = {};
 	size_t length = sizeof(buffer);
-	CLA_ReadConfigEEPROM(0, 0, 0, buffer, length);
+	CLA_ReadConfigEEPROM(SequencerNr, RackNr, SlotNr, buffer, length);
 	std::string read_data(buffer, length);
 	cout << "Read from EEPROM: " << read_data << endl;
 }
 
 int main() {
-	//DemoFPGASequencerSingleRun();
+	DemoFPGASequencerSingleRun();
 	//DemoFPGASequencerCyclicSequencing();
 	//DemoSmartSequencer();
 	//DemoDDSVCO();
-	DemoWriteConfigEEPROM();
+	//DemoWriteConfigEEPROM();
 	//DemoReadConfigEEPROM();
 	return 0;
 }
