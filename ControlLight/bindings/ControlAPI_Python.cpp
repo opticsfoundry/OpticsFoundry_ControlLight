@@ -87,6 +87,13 @@ PYBIND11_MODULE(control_light_api, m) {
                     "length"_a = length
                 );
             }, py::arg("sequencer_id"), py::arg("rack_nr"), py::arg("slot_nr"))
+        .def("write_config_address", &ControlLight_API::WriteConfigAddress,
+            py::arg("sequencer_id"), py::arg("rack_nr"), py::arg("slot_nr"), py::arg("address"))
+        .def("read_config_address", [](ControlLight_API& self, uint8_t sequencer_id, uint8_t rack_nr, uint8_t slot_nr) {
+                uint8_t address = 0;
+                self.ReadConfigAddress(sequencer_id, rack_nr, slot_nr, address);
+                return address;
+            }, py::arg("sequencer_id"), py::arg("rack_nr"), py::arg("slot_nr"))
         
         //Rack control
         .def("select_slot", &ControlLight_API::SelectSlot, py::arg("slot_nr"))

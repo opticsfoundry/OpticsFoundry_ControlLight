@@ -365,6 +365,22 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @return
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(ReadConfigEEPROM)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, char* data, size_t& length);
 
+		/// @brief Write the configuration address byte of a rack slot.
+		/// @param SequencerID the sequencer to use.
+		/// @param RackNr the rack number.
+		/// @param SlotNr the slot number within the rack.
+		/// @param address the address byte to write.
+		/// @return
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(WriteConfigAddress)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, uint8_t address);
+
+		/// @brief Read the configuration address byte of a rack slot.
+		/// @param SequencerID the sequencer to use.
+		/// @param RackNr the rack number.
+		/// @param SlotNr the slot number within the rack.
+		/// @param address output byte receiving the current address value.
+		/// @return
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(ReadConfigAddress)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, uint8_t& address);
+
 		//The following functions enable you to assemble a CPU command sequence on the master sequencer, which can then be executed by the CPU.
 		//These command sequences can start FPGA command sequence, analyze acquired data, modify the FPGA command sequence and repeat.
 		//This enables for example: digital PIDs, digital VCOs,...

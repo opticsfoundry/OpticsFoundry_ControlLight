@@ -1135,6 +1135,24 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "ReadConfigEEPROM: error");
 		}
 
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(WriteConfigAddress)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, uint8_t address) {
+			API_LOCK_GUARD;
+			if (!MasterSequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "WriteConfigAddress: no master sequencer not found");
+			}
+			::WriteConfigAddress(SequencerID, RackNr, SlotNr, address);
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "WriteConfigAddress: error");
+		}
+
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(ReadConfigAddress)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, uint8_t& address) {
+			API_LOCK_GUARD;
+			if (!MasterSequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "ReadConfigAddress: no master sequencer not found");
+			}
+			::ReadConfigAddress(SequencerID, RackNr, SlotNr, address);
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "ReadConfigAddress: error");
+		}
+
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(StartAssemblingCPUCommandSequence)() {
 			API_LOCK_GUARD;
 			if (!MasterSequencer) {
