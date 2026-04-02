@@ -213,6 +213,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 	CDeviceSequencer* ShortSequencerList[MaxSequencers] = {}; //initized to zero at program start
 	CDeviceSequencer* MasterSequencer = nullptr;
 	unsigned int NrSequencers = 0;
+	std::string ReadConfigurationCache;
 	unsigned long PCBufferSize_in_bytes = 0;
 	std::string ConfigurationName = "";
 	double LineFrequency = 0;
@@ -1051,6 +1052,13 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_UNLOCK_RETURN_ERROR(true, "No error");
 		}
 
+		API_EXPORT unsigned int CLA_FNDEF(GetNumberOfSequencers)() {
+			API_LOCK_GUARD;
+			unsigned int number_of_sequencers = NrSequencers;
+			API_UNLOCK;
+			return number_of_sequencers;
+		}
+
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(GetTimeOfSequencer_ms)(const unsigned int& Sequencer, double& time_in_ms) {
 			API_LOCK_GUARD;
 			if (!ShortSequencerList[Sequencer]) {
@@ -1151,6 +1159,14 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			}
 			::ReadConfigAddress(SequencerID, RackNr, SlotNr, address);
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "ReadConfigAddress: error");
+		}
+
+		API_EXPORT const char* CLA_FNDEF(ReadConfiguration)(const char* filename) {
+			API_LOCK_GUARD;
+			const std::string output_filename = filename ? filename : "";
+			ReadConfigurationCache = ::ReadConfiguration(output_filename).dump(4);
+			API_UNLOCK;
+			return ReadConfigurationCache.c_str();
 		}
 
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(StartAssemblingCPUCommandSequence)() {

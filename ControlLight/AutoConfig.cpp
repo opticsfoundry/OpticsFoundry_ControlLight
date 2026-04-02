@@ -23,6 +23,7 @@ namespace {
 	constexpr uint8_t I2CChainMult = 0;
 	constexpr uint8_t I2CChainPortNr = 7;
 	constexpr uint8_t I2CMux1PortNrOnMux0 = 4;
+	constexpr uint8_t MaxSupportedRackNr = 6;
 	constexpr uint8_t Write = 0;
 	constexpr uint8_t Read = 1;
 	constexpr uint8_t EEPROMAddress = 0xA0;
@@ -76,17 +77,17 @@ void SelectRackI2CSlot(const uint8_t SequencerID, const uint8_t RackNr, const ui
 		//Set the I2C multiplexer (TCA9548A, see folder datasheet) to the correct port to access the chain rack; repeat till we reach the correct rack
 		CLA_TransmitI2CPort(/*I2C_port*/ 0, 0xE0 + (I2CMultRackAddr << 1) + Write, /*send_length*/ 1, &mux_select, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz);
 	}
-	
+	uint8_t mux_address = RackNr;
 	//If the desired slot is 
 	if (I2CMux[SlotNr] == 1) {
 		mux_select = static_cast<uint8_t>(1u << I2CMux1PortNrOnMux0);
 		CLA_TransmitI2CPort(/*I2C_port*/ 0, 0xE0 + (RackNr << 1) + Write, /*send_length*/ 1, &mux_select, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz);	
+		mux_address = 1+2+4;
 	}
 
 	//Set the I2C multiplexer (TCA9548A, see folder datasheet) to the correct port for the slot, or the backplane memrory (for SlotNr == 12).
 	mux_select = static_cast<uint8_t>(1u << I2CPortNr[SlotNr]);
-	CLA_TransmitI2CPort(/*I2C_port*/ 0, I2CMultAddr[I2CMux[SlotNr]] + Write, /*send_length*/ 1, &mux_select, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz);
-	
+	CLA_TransmitI2CPort(/*I2C_port*/ 0, 0xE0 + (mux_address << 1) + Write, /*send_length*/ 1, &mux_select, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz);
 }
 
 void WriteConfigEEPROM(const uint8_t SequencerID, const uint8_t RackNr, const uint8_t SlotNr, const char* data, const size_t length) {
@@ -241,4 +242,62 @@ void ReadConfigAddress(const uint8_t SequencerID, const uint8_t RackNr, const ui
 		<< ", slot " << static_cast<unsigned int>(SlotNr)
 		<< ": 0x" << hex << static_cast<unsigned int>(address) << dec << "." << endl;
 	
+}
+
+json ReadConfiguration(const std::string& filename) {
+	json config;
+
+	//go over evert rack slot and the backplane memory, constructs json file containing whole configuration, including addresses stored in EEPROMS, sequencer, rack and slot number of each board or rack beackplane.
+	//store in file if filename is not empty.
+
+	for (uint8_t SequencerNr = 0 ; SequencerNr < CLA_GetNumberOfSequencers(); ++SequencerNr) {
+		for (uint8_t RackNr = 0; RackNr <= MaxSupportedRackNr; ++RackNr) {
+			for (uint8_t SlotNr = 0; SlotNr < NrSlots; ++SlotNr) {
+				char buffer[EEPROMSizeInBytes] = {};
+				size_t length = sizeof(buffer);
+				ReadConfigEEPROM(SequencerNr, RackNr, SlotNr, buffer, length);
+				uint8_t address = 0;
+				ReadConfigAddress(SequencerNr, RackNr, SlotNr, address);
+
+				size_t json_length = 0;
+				while (json_length < length && buffer[json_length] != '\0') {
+					++json_length;
+				}
+
+				std::string json_str(buffer, json_length);
+				if (!json_str.empty()) {
+					try {
+						json slot_config = json::parse(json_str);
+						slot_config["Address"] = address;
+						if (SlotNr == NrSlots-1) {
+							config["Sequencer" + std::to_string(SequencerNr)]["Rack" + std::to_string(RackNr)] = slot_config;
+						}
+						else {
+							config["Sequencer" + std::to_string(SequencerNr)]["Rack" + std::to_string(RackNr)]["Slot" + std::to_string(SlotNr)] = slot_config;
+						}
+					}
+					catch (const json::parse_error& e) {
+						cout << "Failed to parse JSON from EEPROM of sequencer " << static_cast<unsigned int>(SequencerNr)
+							<< ", rack " << static_cast<unsigned int>(RackNr)
+							<< ", slot " << static_cast<unsigned int>(SlotNr)
+							<< ": " << e.what() << endl;
+					}
+				}
+			}
+		}
+	}
+
+	if (!filename.empty()) {
+		std::ofstream file(filename);
+		if (file.is_open()) {
+			file << config.dump(4); // pretty print with 4 spaces indent
+			file.close();
+			cout << "Configuration saved to " << filename << endl;
+		}
+		else {
+			cout << "Failed to open file " << filename << " for writing." << endl;
+		}
+	}
+	
+	return config;
 }

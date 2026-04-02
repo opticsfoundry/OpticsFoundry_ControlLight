@@ -47,6 +47,7 @@ PYBIND11_MODULE(control_light_api, m) {
                 self.GetTime_ms(t);
                 return t;
             })
+        .def("get_number_of_sequencers", &ControlLight_API::GetNumberOfSequencers)
 		.def("get_time_of_sequencer_ms", [](ControlLight_API& self, unsigned int sequencer) {
 		        double t = 0;
 		        self.GetTimeOfSequencer_ms(sequencer, t);
@@ -94,6 +95,10 @@ PYBIND11_MODULE(control_light_api, m) {
                 self.ReadConfigAddress(sequencer_id, rack_nr, slot_nr, address);
                 return address;
             }, py::arg("sequencer_id"), py::arg("rack_nr"), py::arg("slot_nr"))
+        .def("read_configuration", [](ControlLight_API& self, const std::string& filename) {
+                py::object json_module = py::module_::import("json");
+                return json_module.attr("loads")(self.ReadConfiguration(filename.c_str()));
+            }, py::arg("filename") = "")
         
         //Rack control
         .def("select_slot", &ControlLight_API::SelectSlot, py::arg("slot_nr"))

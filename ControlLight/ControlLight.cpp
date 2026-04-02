@@ -1034,7 +1034,7 @@ void DemoWriteConfigEEPROM() {
 
 	ostringstream json_stream;
 	json_stream << "{\"Model\":\"" << model_name
-		<< "\",\"SN\":" << serial_stream.str() << "}";
+		<< "\",\"SN\":\"" << serial_stream.str() << "\"}";
 	const string json_payload = json_stream.str();
 
 	if (json_payload.size() > MaxEEPROMPayloadBytes) {
@@ -1058,6 +1058,7 @@ void DemoReadConfigEEPROM() {
 	CLA_ReadConfigEEPROM(SequencerNr, RackNr, SlotNr, buffer, length);
 	std::string read_data(buffer, length);
 	cout << "Read from EEPROM: " << read_data << endl;
+	CLA_ReadConfiguration("ConfigFromEEPROMs.json");
 }
 
 int main() {

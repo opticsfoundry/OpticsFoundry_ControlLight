@@ -303,6 +303,9 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @return
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(GetTime_ms)(double& time_in_ms);
 
+		/// @brief Get the number of configured sequencers.
+		/// @return The current number of sequencers known to the API.
+		API_EXPORT unsigned int CLA_FN(GetNumberOfSequencers)();
 
 		/// @brief Get the current time of a specific sequencer in the currently assembled sequence in ms.
 		/// @param Sequencer the sequencer to use.
@@ -380,6 +383,11 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @param address output byte receiving the current address value.
 		/// @return
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(ReadConfigAddress)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, uint8_t& address);
+
+		/// @brief Read the rack auto-configuration and return it as JSON text.
+		/// @param filename Optional output filename. Pass an empty string to avoid writing a file.
+		/// @return JSON text containing the discovered configuration.
+		API_EXPORT const char* CLA_FNDEF(ReadConfiguration)(const char* filename = "");
 
 		//The following functions enable you to assemble a CPU command sequence on the master sequencer, which can then be executed by the CPU.
 		//These command sequences can start FPGA command sequence, analyze acquired data, modify the FPGA command sequence and repeat.
