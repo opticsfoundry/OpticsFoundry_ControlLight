@@ -214,6 +214,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 	CDeviceSequencer* MasterSequencer = nullptr;
 	unsigned int NrSequencers = 0;
 	std::string ReadConfigurationCache;
+	std::string AutoConfigJSONCache;
 	unsigned long PCBufferSize_in_bytes = 0;
 	std::string ConfigurationName = "";
 	double LineFrequency = 0;
@@ -1169,6 +1170,12 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			return ReadConfigurationCache.c_str();
 		}
 
+		API_EXPORT const char* CLA_FNDEF(GetAutoConfigJSON)(const char* filename) {
+			const std::string output_filename = filename ? filename : "";
+			AutoConfigJSONCache = ::GetAutoConfigJSON(output_filename).dump(4);
+			return AutoConfigJSONCache.c_str();
+		}
+
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(StartAssemblingCPUCommandSequence)() {
 			API_LOCK_GUARD;
 			if (!MasterSequencer) {
@@ -1683,6 +1690,20 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			}
 			bool ret = CLA_LoadFromJSON(config);
 			API_UNLOCK_RETURN_ERROR(ret, "CLA_LoadFromJSONFile: Could not load from JSON");
+			CATCH_MFC_EX_E
+		}
+
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(AutoConfigure)(const char* filename) {
+			CATCH_MFC_EX_S
+			const std::string output_filename = filename ? filename : "";
+			json config = ::GetAutoConfigJSON(output_filename);
+
+			API_LOCK_GUARD;
+			if (!created) {
+				API_UNLOCK_RETURN_ERROR(false, "CLA_AutoConfigure: ControlAPI not created.");
+			}
+			bool ret = CLA_LoadFromJSON(config);
+			API_UNLOCK_RETURN_ERROR(ret, "CLA_AutoConfigure: Could not load from auto-config JSON");
 			CATCH_MFC_EX_E
 		}
 

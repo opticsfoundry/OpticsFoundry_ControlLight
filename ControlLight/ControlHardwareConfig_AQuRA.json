@@ -91,6 +91,14 @@
       "NumberChannels": 16
     }
   ],
+  "SerialPortBoards": [
+    {
+      "Sequencer": 0,
+      "Address": 251,
+      "RackNr": 0,
+      "SlotNr": 1
+    }
+  ],
   "DDSAD9854Boards": [
     {
       "Version": 2,

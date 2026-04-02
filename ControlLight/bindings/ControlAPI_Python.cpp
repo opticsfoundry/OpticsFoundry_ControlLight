@@ -21,6 +21,7 @@ PYBIND11_MODULE(control_light_api, m) {
         .def("get_last_error", &ControlLight_API::GetLastError)
         .def("configure", &ControlLight_API::Configure, py::arg("display_errors"))
         .def("load_from_json_file", &ControlLight_API::LoadFromJSONFile)
+        .def("auto_configure", &ControlLight_API::AutoConfigure, py::arg("filename") = "")
         .def("initialize", &ControlLight_API::Initialize)
         .def("switch_debug_mode", &ControlLight_API::SwitchDebugMode, py::arg("on_off"), py::arg("filename"))
         .def("TransmitOnlyDifferenceBetweenCommandSequenceIfPossible", &ControlLight_API::TransmitOnlyDifferenceBetweenCommandSequenceIfPossible, py::arg("on_off"))
@@ -98,6 +99,10 @@ PYBIND11_MODULE(control_light_api, m) {
         .def("read_configuration", [](ControlLight_API& self, const std::string& filename) {
                 py::object json_module = py::module_::import("json");
                 return json_module.attr("loads")(self.ReadConfiguration(filename.c_str()));
+            }, py::arg("filename") = "")
+        .def("get_auto_config_json", [](ControlLight_API& self, const std::string& filename) {
+                py::object json_module = py::module_::import("json");
+                return json_module.attr("loads")(self.GetAutoConfigJSON(filename.c_str()));
             }, py::arg("filename") = "")
         
         //Rack control

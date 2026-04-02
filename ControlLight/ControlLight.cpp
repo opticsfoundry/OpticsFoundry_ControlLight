@@ -1010,7 +1010,7 @@ void DemoWriteConfigEEPROM() {
 	}
 
 	constexpr size_t MaxEEPROMPayloadBytes = 256;
-	const string model_name = "AD9959v0";
+	const string model_name = "DDSAD9958 V1.0";
 	constexpr unsigned int SNSuffix = 0;
 
 	constexpr uint8_t SequencerNr = 0;
@@ -1058,7 +1058,7 @@ void DemoReadConfigEEPROM() {
 	CLA_ReadConfigEEPROM(SequencerNr, RackNr, SlotNr, buffer, length);
 	std::string read_data(buffer, length);
 	cout << "Read from EEPROM: " << read_data << endl;
-	CLA_ReadConfiguration("ConfigFromEEPROMs.json");
+	CLA_ReadConfiguration("ConfigFromEEPROMs");
 }
 
 int main() {

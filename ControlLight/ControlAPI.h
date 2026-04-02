@@ -205,6 +205,11 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		///@param filename the name of the json file to load.
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(LoadFromJSONFile)(const char* filename);
 
+		/// @brief Read the rack auto-configuration, convert it to the standard config schema, and load it.
+		/// @param filename Optional base filename used for the generated output files. Pass an empty string to avoid writing files.
+		/// @return
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(AutoConfigure)(const char* filename = "");
+
 		//Once all devices have been declared, you must initialize the system, otherwise the API will not work
 		/// @brief After Configuring the hardware, e.g. by loading a json configuration file, this function must be called to initialize the hardware.
 		/// @param  
@@ -388,6 +393,11 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @param filename Optional output filename. Pass an empty string to avoid writing a file.
 		/// @return JSON text containing the discovered configuration.
 		API_EXPORT const char* CLA_FNDEF(ReadConfiguration)(const char* filename = "");
+
+		/// @brief Read the rack auto-configuration, convert it to the standard config schema, and return it as JSON text.
+		/// @param filename Optional base filename used for the generated output files. Pass an empty string to avoid writing files.
+		/// @return JSON text containing the generated configuration.
+		API_EXPORT const char* CLA_FNDEF(GetAutoConfigJSON)(const char* filename = "");
 
 		//The following functions enable you to assemble a CPU command sequence on the master sequencer, which can then be executed by the CPU.
 		//These command sequences can start FPGA command sequence, analyze acquired data, modify the FPGA command sequence and repeat.

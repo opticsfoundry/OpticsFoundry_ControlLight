@@ -13,16 +13,28 @@ class ConfigBuilder:
             "Rack": [],
             "AnalogOutBoards16bit": [],
             "DigitalOutBoards": [],
+            "SerialPortBoards": [],
             "DDSAD9854Boards": [],
             "DDSAD9858Boards": [],
             "DDSAD9958Boards": [],
             "AnalogInBoards12bit": []
         }
 
+    def _add_optional_hardware_fields(self, entry, Model=None, SN=None, RackNr=None, SlotNr=None):
+        optional_fields = {
+            "Model": Model,
+            "SN": SN,
+            "RackNr": RackNr,
+            "SlotNr": SlotNr
+        }
+        entry.update({key: value for key, value in optional_fields.items() if value is not None})
+        return entry
+
     def RegisterSequencer(self, Id=0, Type="OpticsFoundrySequencerV1", IP="192.168.0.104", Port=7,
                           Master=True, StartDelay=10, ClockFrequencyinMHz=100, BusFrequencyinMHz=2,
-                          UseExternalClock=False, UseStrobeGenerator=True, Connect=True, DebugOn = False):
-        self.config["Sequencers"].append({
+                          UseExternalClock=False, UseStrobeGenerator=True, Connect=True, DebugOn = False,
+                          Model=None, SN=None, RackNr=None, SlotNr=None):
+        self.config["Sequencers"].append(self._add_optional_hardware_fields({
             "Id": Id,
             "Type": Type,
             "IP": IP,
@@ -35,63 +47,77 @@ class ConfigBuilder:
             "UseStrobeGenerator": UseStrobeGenerator,
             "Connect": Connect,
             "DebugOn": DebugOn
-        })
+        }, Model=Model, SN=SN, RackNr=RackNr, SlotNr=SlotNr))
 
     def RegisterAnalogOutBoard16bit(self, Sequencer=0, StartAddress=24, NumberChannels=4, Signed=True,
-                                     MinVoltage=-10, MaxVoltage=10):
-        self.config["AnalogOutBoards16bit"].append({
+                                     MinVoltage=-10, MaxVoltage=10, Model=None, SN=None,
+                                     RackNr=None, SlotNr=None):
+        self.config["AnalogOutBoards16bit"].append(self._add_optional_hardware_fields({
             "Sequencer": Sequencer,
             "StartAddress": StartAddress,
             "NumberChannels": NumberChannels,
             "Signed": Signed,
             "MinVoltage": MinVoltage,
             "MaxVoltage": MaxVoltage
-        })
+        }, Model=Model, SN=SN, RackNr=RackNr, SlotNr=SlotNr))
 
-    def RegisterDigitalOutBoard(self, Sequencer=0, Address=1, NumberChannels=16):
-        self.config["DigitalOutBoards"].append({
+    def RegisterDigitalOutBoard(self, Sequencer=0, Address=1, NumberChannels=16, Model=None, SN=None,
+                                RackNr=None, SlotNr=None):
+        self.config["DigitalOutBoards"].append(self._add_optional_hardware_fields({
             "Sequencer": Sequencer,
             "Address": Address,
             "NumberChannels": NumberChannels
-        })
+        }, Model=Model, SN=SN, RackNr=RackNr, SlotNr=SlotNr))
+
+    def RegisterSerialPortBoard(self, Sequencer=0, Address=1, RackNr=0, SlotNr=0, Model=None, SN=None):
+        self.config["SerialPortBoards"].append(self._add_optional_hardware_fields({
+            "Sequencer": Sequencer,
+            "Address": Address,
+            "RackNr": RackNr,
+            "SlotNr": SlotNr
+        }, Model=Model, SN=SN))
 
     def RegisterDDSAD9854Board(self, Version=2, Sequencer=0, Address=132, ExternalClockFrequencyinMHz=300,
-                                PLLReferenceMultiplier=1, FrequencyMultiplier=1):
-        self.config["DDSAD9854Boards"].append({
+                                PLLReferenceMultiplier=1, FrequencyMultiplier=1, Model=None, SN=None,
+                                RackNr=None, SlotNr=None):
+        self.config["DDSAD9854Boards"].append(self._add_optional_hardware_fields({
             "Version": Version,
             "Sequencer": Sequencer,
             "Address": Address,
             "ExternalClockFrequencyinMHz": ExternalClockFrequencyinMHz,
             "PLLReferenceMultiplier": PLLReferenceMultiplier,
             "FrequencyMultiplier": FrequencyMultiplier
-        })
+        }, Model=Model, SN=SN, RackNr=RackNr, SlotNr=SlotNr))
 
     def RegisterDDSAD9858Board(self, Sequencer=0, Address=50, ClockFrequencyinMHz=1200,
-                                FrequencyMultiplier=1):
-        self.config["DDSAD9858Boards"].append({
+                                FrequencyMultiplier=1, Model=None, SN=None,
+                                RackNr=None, SlotNr=None):
+        self.config["DDSAD9858Boards"].append(self._add_optional_hardware_fields({
             "Sequencer": Sequencer,
             "Address": Address,
             "ClockFrequencyinMHz": ClockFrequencyinMHz,
             "FrequencyMultiplier": FrequencyMultiplier
-        })
+        }, Model=Model, SN=SN, RackNr=RackNr, SlotNr=SlotNr))
 
     def RegisterDDSAD9958Board(self, Sequencer=0, Address=21, ClockFrequencyinMHz=300,
-                                FrequencyMultiplier=1):
-        self.config["DDSAD9958Boards"].append({
+                                FrequencyMultiplier=1, Model=None, SN=None,
+                                RackNr=None, SlotNr=None):
+        self.config["DDSAD9958Boards"].append(self._add_optional_hardware_fields({
             "Sequencer": Sequencer,
             "Address": Address,
             "ClockFrequencyinMHz": ClockFrequencyinMHz,
             "FrequencyMultiplier": FrequencyMultiplier
-        })
+        }, Model=Model, SN=SN, RackNr=RackNr, SlotNr=SlotNr))
 
-    def RegisterAnalogInBoard12bit(self, Sequencer=0, Address=80, NumberChannels=4, MinVoltage=-10, MaxVoltage=10):
-        self.config["AnalogInBoards12bit"].append({
+    def RegisterAnalogInBoard12bit(self, Sequencer=0, Address=80, NumberChannels=4, MinVoltage=-10, MaxVoltage=10,
+                                   Model=None, SN=None, RackNr=None, SlotNr=None):
+        self.config["AnalogInBoards12bit"].append(self._add_optional_hardware_fields({
             "Sequencer": Sequencer,
             "Address": Address,
             "NumberChannels": NumberChannels,
             "MinVoltage": MinVoltage,
             "MaxVoltage": MaxVoltage
-        })
+        }, Model=Model, SN=SN, RackNr=RackNr, SlotNr=SlotNr))
 
     def Save(self):
         used_addresses = set()
@@ -113,6 +139,9 @@ class ConfigBuilder:
 
         for entry in self.config["DigitalOutBoards"]:
             check_and_add(entry["Sequencer"], entry["Address"], 1, "DigitalOutBoard")
+
+        for entry in self.config["SerialPortBoards"]:
+            check_and_add(entry["Sequencer"], entry["Address"], 1, "SerialPortBoard")
 
         for entry in self.config["DDSAD9854Boards"]:
             check_and_add(entry["Sequencer"], entry["Address"], 4, "DDSAD9854Board")
@@ -140,7 +169,7 @@ class ConfigBuilder:
 if __name__ == "__main__":
     builder = ConfigBuilder()
     builder.RegisterSequencer(IP="192.168.1.10", Port=57978, ClockFrequencyinMHz=100, BusFrequencyinMHz=2, DebugOn = False) #0.104 #90.108
-
+    builder.RegisterSerialPortBoard(Sequencer=0, Address=251, RackNr=0, SlotNr=1)
     analog_out_configs = [
         (24, True, -10, 10), #each of these lines configures 4 analog outputs in consecutive order of addresses
         (28, True, -10, 10),
