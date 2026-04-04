@@ -192,7 +192,7 @@ PYBIND11_MODULE(control_light_api, m) {
 
         // Starts analog input acquisition
         .def("sequencer_start_analog_in_acquisition", &ControlLight_API::SequencerStartAnalogInAcquisition,
-            py::arg("sequencer"), py::arg("spi_port"), py::arg("spi_cs"), py::arg("channel_number"),
+            py::arg("sequencer"), py::arg("analog_in_type"), py::arg("spi_cs"), py::arg("channel_number"),
             py::arg("number_of_data_points"), py::arg("delay_between_data_points_in_ms"))
 
         // Write system time to input memory
@@ -250,8 +250,21 @@ PYBIND11_MODULE(control_light_api, m) {
 			py::arg("sequencer"), py::arg("jump_length"),
 			py::arg("unconditional_jump") = true, py::arg("condition_0") = false,
 			py::arg("condition_1") = false, py::arg("condition_PS") = false)
-			
-
+		.def("sequencer_write_i2c", [](ControlLight_API& self, unsigned int sequencer, uint8_t i2c_port, uint8_t i2c_length, py::bytes data_out) {
+				std::string payload = static_cast<std::string>(data_out);
+				self.SequencerWriteI2C(sequencer, i2c_port, i2c_length, reinterpret_cast<uint8_t*>(payload.data()));
+			}, py::arg("sequencer"), py::arg("i2c_port"), py::arg("i2c_length"), py::arg("data_out"))
+		.def("sequencer_transmit_spi", [](ControlLight_API& self, unsigned int sequencer, uint8_t chip_select, uint16_t number_of_bits_out, py::bytes data_out, uint8_t number_of_bits_in, bool start_now) {
+				std::string payload = static_cast<std::string>(data_out);
+				self.SequencerTransmitSPI(sequencer, chip_select, number_of_bits_out, reinterpret_cast<const uint8_t*>(payload.data()), number_of_bits_in, start_now);
+			}, py::arg("sequencer"), py::arg("chip_select"), py::arg("number_of_bits_out"), py::arg("data_out"), py::arg("number_of_bits_in"), py::arg("start_now"))
+		.def("sequencer_repeated_out_in", &ControlLight_API::SequencerRepeatedOutIn,
+			py::arg("sequencer"), py::arg("number_of_datapoints"), py::arg("delay_between_datapoints_in_ms"), py::arg("repeated_out_in_command"))
+		.def("sequencer_set_spi_timing", &ControlLight_API::SequencerSetSPITiming,
+			py::arg("sequencer"), py::arg("spi_delay_cs_low_start_wait"), py::arg("spi_delay_write"),
+			py::arg("spi_delay_pause_before_read"), py::arg("spi_delay_read"), py::arg("spi_delay_cs_low_end_wait"))
+		.def("sequencer_set_i2c_parameters", &ControlLight_API::SequencerSetI2CParameters,
+			py::arg("sequencer"), py::arg("i2c_0_destination"))
 
 
             // AddDeviceSequencer

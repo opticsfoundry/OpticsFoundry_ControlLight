@@ -57,10 +57,12 @@ private:
 	unsigned long receive_data_length;
 
 	std::string DebugFilename;
-public:
-	void StartXADCAnalogInAcquisition(unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms);
 private:
+	void StartSPIAnalogInAcquisition(unsigned char analog_in_type, unsigned char SPI_CS, unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms);	
+	void StartXADCAnalogInAcquisition(unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms);
 	void StartSPIAnalogInAcquisition(unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms);
+	void StartSPIAnalogInAcquisition_MCP3208(unsigned char analog_in_type, unsigned char SPI_CS, unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms);
+	void StartSPIAnalogInAcquisition_ADS1256(unsigned char analog_in_type, unsigned char SPI_CS, unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms);
 	void AddCommandAnalogInOut(uint8_t adc_register_address, uint8_t adc_write_enable, uint16_t adc_programming_out, uint8_t dont_execute_now, uint8_t only_read_write, uint32_t wait_time);
 	void AddCommandSetCoreOption_LED(bool a_core_option_LED);
 	void AddCommandSetCoreOption_SPI_CS(uint8_t a_core_option_SPI_CS);
@@ -78,11 +80,9 @@ public:
 	virtual ~CEthernetControllerFirefly();
 	bool SendSequenceToFPGA(uint32_t* buffer);
 	void AddSequencerCommandToSequenceList(uint32_t high_buffer, uint32_t low_buffer);
-	void StartAnalogInAcquisition(unsigned char SPI_port, unsigned char SPI_CS, unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms);
-	void StartSPIAnalogInAcquisition(unsigned char SPI_port, unsigned char SPI_CS, unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms);
-	void WriteReadSPI(unsigned int chip_select, unsigned int number_of_bits_out, uint64_t data_high, uint64_t data_low, unsigned int number_of_bits_in);
-	//bool AddData(uint32_t* BusData, uint32_t* Spacing, /*uint32_t* AbsoluteTime,*/ unsigned long Count);
+	void StartAnalogInAcquisition(unsigned char analog_in_type, unsigned char SPI_CS, unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms);
 	bool AddSequencePreamble();
+	//bool AddData(uint32_t* BusData, uint32_t* Spacing, /*uint32_t* AbsoluteTime,*/ unsigned long Count);
 	bool GetAktWaveformPoint(unsigned long long& DataPointsWritten, bool &running);
 	bool GetNextCycleNumber(long& NextCycleNumber);
 	bool ResetCycleNumber();
@@ -110,6 +110,7 @@ public:
 	void SetPeriodicTrigger(double aPeriodicTriggerPeriod_in_s, double aPeriodicTriggerAllowedWaitTime_in_s);
 	void WaitForPeriodicTrigger(bool aWaitForPeriodicTriggerAtBeginningOfSequence);
 	bool SetExternalClock(bool ExternalClock0, bool ExternalClock1);
+	
 	bool TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz);
 
 	void DebugBuffer(const std::string& filename);
@@ -120,14 +121,19 @@ public:
 	void SwitchDebugLED(bool OnOff);
 	void IgnoreTCPIP(bool OnOff);
 	void AddMarker(uint8_t Marker);
+
+	void AddCommandWriteI2C(uint8_t I2C_port, uint8_t I2C_length, uint8_t *data_out);
+	void AddCommandTransmitSPI(const uint8_t chip_select, const uint16_t number_of_bits_out, const uint8_t *data_out, const uint8_t number_of_bits_in, const bool start_now);
+	void AddCommandRepeatedOutIn(const uint16_t number_of_datapoints, const double delay_between_datapoints_in_ms, uint8_t RepeatedOutInCommand);
 	void AddCommandWriteSystemTimeToInputMemory();
 	void AddCommandCalcAD9854FrequencyTuningWord(uint64_t ftw0, uint8_t bit_shift);
-	void AddCommandLoadSPITiming(uint8_t SPI_delay_CS_low_start_wait, uint8_t SPI_delay_write, uint8_t SPI_delay_pause_before_read, uint8_t SPI_delay_read, uint8_t SPI_delay_CS_low_end_wait);
+	void AddCommandSetSPITiming(uint8_t SPI_delay_CS_low_start_wait, uint8_t SPI_delay_write, uint8_t SPI_delay_pause_before_read, uint8_t SPI_delay_read, uint8_t SPI_delay_CS_low_end_wait);
 	void AddCommandSetI2CParameters(uint8_t I2C_0_Destination);
 	void AddCommandWriteInputBuffer(unsigned long input_buf_mem_data, bool write_next_address = 1, unsigned long input_buf_mem_address = 0);
 	void AddCommandSetLoopCount(unsigned int loop_count);
 	void AddCommandJumpBackward(unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool loop_count_greater_zero = false);
 	void AddCommandJumpForward(unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false);
+	
 	void TransmitOnlyDifferenceBetweenCommandSequenceIfPossible(bool OnOff);
 	double MeasureEthernetBandwidth(uint32_t DataSize = 1024 * 1024, double MinimumExpected = -1);
 	bool OptimizedCommand(CString CommandString);

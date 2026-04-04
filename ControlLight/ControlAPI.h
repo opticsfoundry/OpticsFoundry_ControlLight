@@ -647,13 +647,13 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		 * The data will be returned at the end of a sequence when using
 		 * CLA_WaitTillEndOfSequenceThenGetInputData.
 		 * @param Sequencer the sequencer to use.
-		 * @param SPI_port SPI port to use
+		 * @param analog_in_type Analog in board type. 0: AQuRA MCP3208 analog in board; 1: MCP3208 12-bit ADC on SerialPortBoard; 2: ADS1256  24-bit ADC 
 		 * @param SPI_CS SPI CS setting to use
 		 * @param ChannelNumber the channel number to use.
 		 * @param NumberOfDataPoints the number of data points to acquire.
 		 * @param DelayBetweenDataPoints_in_ms the delay between data points in ms.
 		*/
-		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerStartAnalogInAcquisition)(const unsigned int& Sequencer, const uint8_t &SPI_port, const uint8_t &SPI_CS, const uint8_t& ChannelNumber, const uint32_t& NumberOfDataPoints, const double& DelayBetweenDataPoints_in_ms);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerStartAnalogInAcquisition)(const unsigned int& Sequencer, const uint8_t &analog_in_type, const uint8_t &SPI_CS, const uint8_t& ChannelNumber, const uint32_t& NumberOfDataPoints, const double& DelayBetweenDataPoints_in_ms);
 		
 		/**  @brief Writes a value to the input memory of the sequencer.
 		 * This is useful to mark the start or end of a data acquisition, or to mark the type of experimental run in the full fledged version of the ControlAPI, which can cycle sequences automatically in the background.
@@ -784,6 +784,21 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @param condition_1 true if condition 1 is met, false otherwise.
 		/// @param condition_PS true if the PS condition is met, false otherwise.
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerJumpForward)(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false);
+
+		/// @brief Writes an I2C command to the sequencer.
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerWriteI2C)(const unsigned int& Sequencer, uint8_t I2C_port, uint8_t I2C_length, uint8_t* data_out);
+
+		/// @brief Writes an SPI transmit command to the sequencer.
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerTransmitSPI)(const unsigned int& Sequencer, uint8_t chip_select, uint16_t number_of_bits_out, const uint8_t* data_out, uint8_t number_of_bits_in, bool start_now);
+
+		/// @brief Configures repeated input/output operations in the sequencer.
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerRepeatedOutIn)(const unsigned int& Sequencer, uint16_t number_of_datapoints, double delay_between_datapoints_in_ms, uint8_t RepeatedOutInCommand);
+
+		/// @brief Loads SPI timing parameters into the sequencer.
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerSetSPITiming)(const unsigned int& Sequencer, uint8_t SPI_delay_CS_low_start_wait, uint8_t SPI_delay_write, uint8_t SPI_delay_pause_before_read, uint8_t SPI_delay_read, uint8_t SPI_delay_CS_low_end_wait);
+
+		/// @brief Sets I2C parameters for the sequencer.
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerSetI2CParameters)(const unsigned int& Sequencer, uint8_t I2C_0_Destination);
 
 
 

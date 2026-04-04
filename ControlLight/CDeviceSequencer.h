@@ -96,7 +96,7 @@ public:
 	virtual bool SetValue(const unsigned int& SubAddress, const uint8_t* Data, const unsigned long& DataLength_in_bit, const uint8_t& StartBit);
 public:
 	//the following commands are intended to be used by devices connected to the sequencer, such as analog input cards.
-	void SequencerStartAnalogInAcquisition(const uint8_t& SPI_port, const uint8_t& SPI_CS, const uint8_t& ChannelNumber, const uint32_t& NumberOfDataPoints, const double& DelayBetweenDataPoints_in_ms);
+	void SequencerStartAnalogInAcquisition(const uint8_t& analog_in_type, const uint8_t& SPI_CS, const uint8_t& ChannelNumber, const uint32_t& NumberOfDataPoints, const double& DelayBetweenDataPoints_in_ms);
 	void SequencerWriteInputMemory(unsigned long input_buf_mem_data, bool write_next_address = 1, unsigned long input_buf_mem_address = 0);
 	void SequencerWriteSystemTimeToInputMemory();
 	void SequencerCalcAD9854FrequencyTuningWord(uint64_t ftw0, uint8_t bit_shift);
@@ -107,6 +107,21 @@ public:
 	void SequencerSetLoopCount(unsigned int loop_count);
 	void SequencerJumpBackward(unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool loop_count_greater_zero = false);
 	void SequencerJumpForward(unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false);
+
+
+
+	//These are new commands, where SequencerXYZ corresponds to the AddCommandXYZ of CEthernetControllerFirefly.
+	//They need to be implemented in CDeviceSequencer, similar to the commands above, e.g. SequencerStartAnalogInAcquisition.
+	//After that's done, they need to be exposed in ControlAPI, similar to how the existing SequencerXYZ functions are exposed, e.g. CLA_SequencerStartAnalogInAcquisition.
+	//Finally they need to be added to the python bindings in the bindings folder.
+	void SequencerWriteI2C(uint8_t I2C_port, uint8_t I2C_length, uint8_t *data_out);
+	void SequencerTransmitSPI(const uint8_t chip_select, const uint16_t number_of_bits_out, const uint8_t *data_out, const uint8_t number_of_bits_in, const bool start_now);
+	void SequencerRepeatedOutIn(const uint16_t number_of_datapoints, const double delay_between_datapoints_in_ms, uint8_t RepeatedOutInCommand);
+	void SequencerSetSPITiming(uint8_t SPI_delay_CS_low_start_wait, uint8_t SPI_delay_write, uint8_t SPI_delay_pause_before_read, uint8_t SPI_delay_read, uint8_t SPI_delay_CS_low_end_wait);
+	void SequencerSetI2CParameters(uint8_t I2C_0_Destination);
+	
+
+
 
 public:
 	//the following functions are used by CControlAPI to find the desired device. Used for convenience functions.

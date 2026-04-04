@@ -606,14 +606,14 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 		}
 		
 		
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerStartAnalogInAcquisition)(const unsigned int& Sequencer, const uint8_t &SPI_port, const uint8_t &SPI_CS, const uint8_t& ChannelNumber, const uint32_t& NumberOfDataPoints, const double& DelayBetweenDataPoints_in_ms) {
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerStartAnalogInAcquisition)(const unsigned int& Sequencer, const uint8_t &analog_in_type, const uint8_t &SPI_CS, const uint8_t& ChannelNumber, const uint32_t& NumberOfDataPoints, const double& DelayBetweenDataPoints_in_ms) {
 			API_LOCK_GUARD;
 			CDeviceSequencer* sequencer = GetSequencer(Sequencer);
 			//SequencerList is initialized to zero at program start, so no need to check if it is initialized
 			if (!sequencer) {
 				API_UNLOCK_RETURN_ERROR(false, "CLA_SequencerStartAnalogInAcquisition error: Invalid sequencer.");
 			}
-			sequencer->SequencerStartAnalogInAcquisition(SPI_port, SPI_CS, ChannelNumber, NumberOfDataPoints, DelayBetweenDataPoints_in_ms);
+			sequencer->SequencerStartAnalogInAcquisition(analog_in_type, SPI_CS, ChannelNumber, NumberOfDataPoints, DelayBetweenDataPoints_in_ms);
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerStartAnalogInAcquisition: error");
 		}
 
@@ -731,6 +731,56 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			}
 			sequencer->SequencerJumpForward(jump_length, unconditional_jump, condition_0, condition_1, condition_PS);
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerJumpForward: error");
+		}
+
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerWriteI2C)(const unsigned int& Sequencer, uint8_t I2C_port, uint8_t I2C_length, uint8_t* data_out) {
+			API_LOCK_GUARD;
+			CDeviceSequencer* sequencer = GetSequencer(Sequencer);
+			if (!sequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "CLA_SequencerWriteI2C: Invalid sequencer");
+			}
+			sequencer->SequencerWriteI2C(I2C_port, I2C_length, data_out);
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerWriteI2C: error");
+		}
+
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerTransmitSPI)(const unsigned int& Sequencer, uint8_t chip_select, uint16_t number_of_bits_out, const uint8_t* data_out, uint8_t number_of_bits_in, bool start_now) {
+			API_LOCK_GUARD;
+			CDeviceSequencer* sequencer = GetSequencer(Sequencer);
+			if (!sequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "CLA_SequencerTransmitSPI: Invalid sequencer");
+			}
+			sequencer->SequencerTransmitSPI(chip_select, number_of_bits_out, data_out, number_of_bits_in, start_now);
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerTransmitSPI: error");
+		}
+
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerRepeatedOutIn)(const unsigned int& Sequencer, uint16_t number_of_datapoints, double delay_between_datapoints_in_ms, uint8_t RepeatedOutInCommand) {
+			API_LOCK_GUARD;
+			CDeviceSequencer* sequencer = GetSequencer(Sequencer);
+			if (!sequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "CLA_SequencerRepeatedOutIn: Invalid sequencer");
+			}
+			sequencer->SequencerRepeatedOutIn(number_of_datapoints, delay_between_datapoints_in_ms, RepeatedOutInCommand);
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerRepeatedOutIn: error");
+		}
+
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerSetSPITiming)(const unsigned int& Sequencer, uint8_t SPI_delay_CS_low_start_wait, uint8_t SPI_delay_write, uint8_t SPI_delay_pause_before_read, uint8_t SPI_delay_read, uint8_t SPI_delay_CS_low_end_wait) {
+			API_LOCK_GUARD;
+			CDeviceSequencer* sequencer = GetSequencer(Sequencer);
+			if (!sequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "CLA_SequencerSetSPITiming: Invalid sequencer");
+			}
+			sequencer->SequencerSetSPITiming(SPI_delay_CS_low_start_wait, SPI_delay_write, SPI_delay_pause_before_read, SPI_delay_read, SPI_delay_CS_low_end_wait);
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerSetSPITiming: error");
+		}
+
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerSetI2CParameters)(const unsigned int& Sequencer, uint8_t I2C_0_Destination) {
+			API_LOCK_GUARD;
+			CDeviceSequencer* sequencer = GetSequencer(Sequencer);
+			if (!sequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "CLA_SequencerSetI2CParameters: Invalid sequencer");
+			}
+			sequencer->SequencerSetI2CParameters(I2C_0_Destination);
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerSetI2CParameters: error");
 		}
 
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SetRegister)(const unsigned int& Sequencer, const unsigned int& Address, const unsigned int& SubAddress, const uint8_t* Data, const unsigned long& DataLength_in_bit, const uint8_t& StartBit) {
@@ -1450,7 +1500,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			if (!GetSequencerBeforeInitialization(sequencer)) {
 				RETURN_ERROR(false, "CLA_AddDeviceAnalogIn12bitFromJSON: Invalid sequencer");
 			}
-			new CDeviceAnalogIn12bit(
+			new CDeviceAnalogIn(
 				SequencerList[sequencer],
 				chipSelect,
 				signedValue,
@@ -1470,7 +1520,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			if (!GetSequencerBeforeInitialization(sequencer)) {
 				API_UNLOCK_RETURN_ERROR(false, "CLA_AddDeviceAnalogIn12bit: Invalid sequencer");
 			}
-			new CDeviceAnalogIn12bit(
+			new CDeviceAnalogIn(
 				SequencerList[sequencer],
 				chipSelect,
 				signedValue,

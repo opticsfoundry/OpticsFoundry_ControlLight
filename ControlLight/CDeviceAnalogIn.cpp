@@ -22,7 +22,7 @@ static char THIS_FILE[] = __FILE__;
 
 
 
-CDeviceAnalogIn12bit::CDeviceAnalogIn12bit(
+CDeviceAnalogIn::CDeviceAnalogIn(
 	CDeviceSequencer* _MySequencer,
 	unsigned int _chipSelect,
 	bool _signedValue,
@@ -31,7 +31,7 @@ CDeviceAnalogIn12bit::CDeviceAnalogIn12bit(
 	signedValue = _signedValue;
 	minVoltage = _minVoltage;
 	maxVoltage = _maxVoltage;
-	SPI_port = 0;
+	AnalogInType = 0;
 	SPI_CS = 0;
 	ChannelNumber = 0;
 	NumberOfDataPoints = 0;
@@ -46,16 +46,16 @@ CDeviceAnalogIn12bit::CDeviceAnalogIn12bit(
 	}
 }
 
-bool CDeviceAnalogIn12bit::SetValue(const unsigned int& SubAddress, const uint8_t* Data, const unsigned long& DataLength_in_bit, const uint8_t& StartBit) {
+bool CDeviceAnalogIn::SetValue(const unsigned int& SubAddress, const uint8_t* Data, const unsigned long& DataLength_in_bit, const uint8_t& StartBit) {
 	//Commands to set parameters of the sequencer and put special commands into the sequence
 	switch (SubAddress) {
 
-	case 0: if (DataLength_in_bit == 8) SPI_port = Data[0]; else return false; break;
+	case 0: if (DataLength_in_bit == 8) AnalogInType = Data[0]; else return false; break;
 	case 1: if (DataLength_in_bit == 8) SPI_CS = Data[0]; else return false; break;
 	case 2: if (DataLength_in_bit == 8) ChannelNumber = Data[0]; else return false; break;
 	case 3: if (DataLength_in_bit == 32) NumberOfDataPoints = ((uint32_t*)Data)[0]; else return false; break;
 	case 4: if (DataLength_in_bit == 64) DelayBetweenDataPoints_in_ms = ((double*)Data)[0]; else return false; break;
-	case 5: MySequencer->SequencerStartAnalogInAcquisition(ChannelNumber, SPI_port, SPI_CS, NumberOfDataPoints, DelayBetweenDataPoints_in_ms); break;
+	case 5: MySequencer->SequencerStartAnalogInAcquisition(AnalogInType, SPI_CS, ChannelNumber, NumberOfDataPoints, DelayBetweenDataPoints_in_ms); break;
 	default: return false;//To do: throw exception
 	}
 	return true;

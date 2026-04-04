@@ -556,7 +556,7 @@ void DemoSequence(unsigned long CycleNumber) {
 	uint8_t ChannelNumber = 0;
 	uint32_t NumberOfDataPoints = 1000;
 	double DelayBetweenDataPoints_in_ms_in_ms = 0.02;
-	CLA_SetValueSerialDevice(0, 0, 0, (uint8_t*)&SPI_port, 8);
+	CLA_SetValueSerialDevice(0, 0, 0, (uint8_t*)&AnalogInType, 8);
 	CLA_SetValueSerialDevice(0, 0, 1, (uint8_t*)&SPI_CS, 8);
 	CLA_SetValueSerialDevice(0, 0, 2, (uint8_t*)&ChannelNumber, 8);
 	CLA_SetValueSerialDevice(0, 0, 3, (uint8_t*)&NumberOfDataPoints, 32);
@@ -565,7 +565,7 @@ void DemoSequence(unsigned long CycleNumber) {
 	*/
 
 	//this is the same command using a convenience function
-	CLA_SequencerStartAnalogInAcquisition(/*Sequencer_Nr*/ 0, /*SPI_port*/ 1, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 1000, /*SamplingPeriod_in_ms*/ 0.1);
+	CLA_SequencerStartAnalogInAcquisition(/*Sequencer_Nr*/ 0, /*AnalogInType*/ 0, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 1000, /*SamplingPeriod_in_ms*/ 0.1);
 
 	for (int j = 1; j < 100; j++) {
 		CLA_SetVoltage(0, 24, 10.0 * j / 100.0);
