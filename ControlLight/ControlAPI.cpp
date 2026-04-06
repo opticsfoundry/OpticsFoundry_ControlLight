@@ -673,6 +673,16 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerIgnoreTCPIP: error");
 		}
 
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(UseEdgeTriggeredLatches)(const unsigned int& Sequencer, bool UseEdgeTriggeredLatches) {
+			API_LOCK_GUARD;
+			CDeviceSequencer* sequencer = GetSequencer(Sequencer);
+			if (!sequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "CLA_UseEdgeTriggeredLatches: Invalid sequencer");
+			}
+			sequencer->UseEdgeTriggeredLatches(UseEdgeTriggeredLatches);
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_UseEdgeTriggeredLatches: error");
+		}
+
 		//API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerAddMarker)(const unsigned int& Sequencer, unsigned char marker);
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerAddMarker)(const unsigned int& Sequencer, unsigned char marker) {
 			API_LOCK_GUARD;

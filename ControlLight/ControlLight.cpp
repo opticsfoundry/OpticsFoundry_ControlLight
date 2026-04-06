@@ -533,7 +533,7 @@ bool InitializeSystem() {
 	}
 
 
-
+	//CLA_UseEdgeTriggeredLatches(0, true);  //ToDo: check that edge triggered latches work
 	CLA_SwitchDebugMode(true, "DebugSequencer");
 	if (!CLA_IsReady()) {
 		AddErrorMessage("Not all sequencers connected");

@@ -52,6 +52,7 @@ CDeviceSequencer::CDeviceSequencer(
 	startDelay = _startDelay;
 	clockFrequency = _clockFrequency;
 	FPGAClockToBusClockRatio = _FPGAClockToBusClockRatio;
+	CurrentFPGAClockToBusClockRatio = FPGAClockToBusClockRatio;
 	useExternalClock = _useExternalClock;
 	useStrobeGenerator = _useStrobeGenerator;
 	connect = _connect;
@@ -103,6 +104,16 @@ CDeviceSequencer::~CDeviceSequencer() {
 		delete MyEthernetMultiIOControllerFirefly;
 		MyEthernetMultiIOControllerFirefly = nullptr;
 	}
+}
+
+void CDeviceSequencer::UseEdgeTriggeredLatches(bool UseEdgeTriggeredLatches) {
+	if (UseEdgeTriggeredLatches) {
+		CurrentFPGAClockToBusClockRatio = (2 * FPGAClockToBusClockRatio) / 3;
+	}
+	else {
+		CurrentFPGAClockToBusClockRatio = FPGAClockToBusClockRatio;
+	}
+//	MyEthernetMultiIOControllerFirefly->SetFPGAClockToBusClockRatio(FPGAClockToBusClockRatio);
 }
 
 void CDeviceSequencer::Initialize(unsigned long _PCBufferSize_in_u64) {
@@ -209,8 +220,8 @@ void CDeviceSequencer::AddBusCommandToSequence(const uint32_t& content) {
 	}
 	uint32_t spacing = Delay_in_ms * clockFrequency / 1000.0;
 	if (spacing == 0) {
-		spacing = FPGAClockToBusClockRatio;
-		double added_time = FPGAClockToBusClockRatio / clockFrequency * 1000.0;
+		spacing = CurrentFPGAClockToBusClockRatio;
+		double added_time = CurrentFPGAClockToBusClockRatio / clockFrequency * 1000.0;
 		CurrentTimeDebt_in_ms += added_time;
 		TimeDebt_in_ms += added_time;
 	}

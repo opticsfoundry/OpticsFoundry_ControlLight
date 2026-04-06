@@ -16,6 +16,7 @@ public:
 	unsigned int startDelay;
 	double clockFrequency;
 	unsigned int FPGAClockToBusClockRatio;
+	unsigned int CurrentFPGAClockToBusClockRatio;
 	bool useExternalClock;
 	bool useStrobeGenerator;
 	bool connect;
@@ -52,6 +53,7 @@ public:
 		bool _useStrobeGenerator,
 		bool _connect);
 	virtual ~CDeviceSequencer();
+	void UseEdgeTriggeredLatches(bool UseEdgeTriggeredLatches);
 	void Initialize(unsigned long _PCBufferSize_in_u64);
 	void SwitchDebugMode(bool OnOff, const std::string &FileName);
 	void TransmitOnlyDifferenceBetweenCommandSequenceIfPossible(bool OnOff);

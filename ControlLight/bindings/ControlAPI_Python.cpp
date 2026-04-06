@@ -221,6 +221,9 @@ PYBIND11_MODULE(control_light_api, m) {
         .def("sequencer_ignore_tcpip", &ControlLight_API::SequencerIgnoreTCPIP,
             py::arg("sequencer"), py::arg("on_off"))
 
+        .def("use_edge_triggered_latches", &ControlLight_API::UseEdgeTriggeredLatches,
+            py::arg("sequencer"), py::arg("use_edge_triggered_latches"))
+
         //API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerAddMarker)(const unsigned int& Sequencer, unsigned char marker);
         // Adds a marker
         .def("sequencer_add_marker", &ControlLight_API::SequencerAddMarker,

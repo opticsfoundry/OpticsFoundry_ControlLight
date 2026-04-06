@@ -751,6 +751,11 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		 /// @return
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerIgnoreTCPIP)(const unsigned int& Sequencer, bool OnOff);
 
+		/// @brief Configures the sequencer to use edge-triggered latches.
+		/// @param Sequencer the sequencer to use.
+		/// @param UseEdgeTriggeredLatches true to enable edge-triggered latches, false to use the default latch timing.
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(UseEdgeTriggeredLatches)(const unsigned int& Sequencer, bool UseEdgeTriggeredLatches);
+
 		/// @brief Places a marker in the sequencer buffer. The FPGA SOM's CPU will see this marker and can react to it, e.g. write it to the USB-UART for debugging.
 		/// @param  
 		/// @return 
