@@ -441,7 +441,7 @@ void CDeviceSequencer::SequencerRepeatedOutIn(const uint16_t number_of_datapoint
 	MyEthernetMultiIOControllerFirefly->AddCommandRepeatedOutIn(number_of_datapoints, delay_between_datapoints_in_ms, RepeatedOutInCommand);
 }
 
-void CDeviceSequencer::SequencerSetSPITiming(uint8_t SPI_delay_CS_low_start_wait, uint8_t SPI_delay_write, uint8_t SPI_delay_pause_before_read, uint8_t SPI_delay_read, uint8_t SPI_delay_CS_low_end_wait) {
+void CDeviceSequencer::SequencerSetSPITiming(uint16_t SPI_delay_CS_low_start_wait, uint16_t SPI_delay_write, uint16_t SPI_delay_pause_before_read, uint16_t SPI_delay_read, uint16_t SPI_delay_CS_low_end_wait) {
 	MyEthernetMultiIOControllerFirefly->AddCommandSetSPITiming(SPI_delay_CS_low_start_wait, SPI_delay_write, SPI_delay_pause_before_read, SPI_delay_read, SPI_delay_CS_low_end_wait);
 }
 

@@ -763,7 +763,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerRepeatedOutIn: error");
 		}
 
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerSetSPITiming)(const unsigned int& Sequencer, uint8_t SPI_delay_CS_low_start_wait, uint8_t SPI_delay_write, uint8_t SPI_delay_pause_before_read, uint8_t SPI_delay_read, uint8_t SPI_delay_CS_low_end_wait) {
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerSetSPITiming)(const unsigned int& Sequencer, uint16_t SPI_delay_CS_low_start_wait, uint16_t SPI_delay_write, uint16_t SPI_delay_pause_before_read, uint16_t SPI_delay_read, uint16_t SPI_delay_CS_low_end_wait) {
 			API_LOCK_GUARD;
 			CDeviceSequencer* sequencer = GetSequencer(Sequencer);
 			if (!sequencer) {

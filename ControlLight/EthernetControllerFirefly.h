@@ -89,9 +89,9 @@ public:
 	bool CheckReady(double timeout_in_s = 1);
 	bool Reset();
 	bool WaitTillEndOfSequenceThenGetInputData(uint8_t*& buffer, unsigned long& buffer_length, unsigned  long& EndTimeOfCycle, double timeout_in_s = 10);
-	void AddProgramLineToSequenceList(uint8_t command, uint32_t data, uint32_t delay);
+	void AddCommandStep(uint32_t data, uint32_t delay);
 	void AddProgramLine( uint8_t command, uint32_t data, uint32_t delay);
-	//void AddCommandStep(uint32_t data, uint32_t delay);
+	void AddDelay_in_ns(uint32_t delay_in_nanoseconds);
 	void SetStrobeOptions( uint8_t strobe_choice, uint8_t strobe_low_length, uint8_t strobe_high_length);
 	void SetTriggerOptions( bool ExternalTrigger0, bool ExternalTrigger1);
 	void AddExternalTrigger( bool ExternalTrigger0, bool ExternalTrigger1, bool FPGASoftwareTrigger );
@@ -127,7 +127,7 @@ public:
 	void AddCommandRepeatedOutIn(const uint16_t number_of_datapoints, const double delay_between_datapoints_in_ms, uint8_t RepeatedOutInCommand);
 	void AddCommandWriteSystemTimeToInputMemory();
 	void AddCommandCalcAD9854FrequencyTuningWord(uint64_t ftw0, uint8_t bit_shift);
-	void AddCommandSetSPITiming(uint8_t SPI_delay_CS_low_start_wait, uint8_t SPI_delay_write, uint8_t SPI_delay_pause_before_read, uint8_t SPI_delay_read, uint8_t SPI_delay_CS_low_end_wait);
+	void AddCommandSetSPITiming(uint16_t SPI_delay_CS_low_start_wait, uint16_t SPI_delay_write, uint16_t SPI_delay_pause_before_read, uint16_t SPI_delay_read, uint16_t SPI_delay_CS_low_end_wait);
 	void AddCommandSetI2CParameters(uint8_t I2C_0_Destination);
 	void AddCommandWriteInputBuffer(unsigned long input_buf_mem_data, bool write_next_address = 1, unsigned long input_buf_mem_address = 0);
 	void AddCommandSetLoopCount(unsigned int loop_count);

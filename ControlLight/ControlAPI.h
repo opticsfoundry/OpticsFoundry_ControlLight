@@ -795,7 +795,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerRepeatedOutIn)(const unsigned int& Sequencer, uint16_t number_of_datapoints, double delay_between_datapoints_in_ms, uint8_t RepeatedOutInCommand);
 
 		/// @brief Loads SPI timing parameters into the sequencer.
-		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerSetSPITiming)(const unsigned int& Sequencer, uint8_t SPI_delay_CS_low_start_wait, uint8_t SPI_delay_write, uint8_t SPI_delay_pause_before_read, uint8_t SPI_delay_read, uint8_t SPI_delay_CS_low_end_wait);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerSetSPITiming)(const unsigned int& Sequencer, uint16_t SPI_delay_CS_low_start_wait, uint16_t SPI_delay_write, uint16_t SPI_delay_pause_before_read, uint16_t SPI_delay_read, uint16_t SPI_delay_CS_low_end_wait);
 
 		/// @brief Sets I2C parameters for the sequencer.
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerSetI2CParameters)(const unsigned int& Sequencer, uint8_t I2C_0_Destination);

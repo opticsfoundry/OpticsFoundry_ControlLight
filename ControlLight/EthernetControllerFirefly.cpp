@@ -274,7 +274,7 @@ void CEthernetControllerFirefly::StartXADCAnalogInAcquisition(unsigned int chann
 	AddSequencerCommandToSequenceList( high_buffer, low_buffer);
 	uint32_t DelayMultiplier = FPGAClockToBusClockRatio;// floor(FPGAClockFrequencyInHz / BusFrequency - 1);
 	if (DelayMultiplier < 1) DelayMultiplier = 1;
-	AddProgramLineToSequenceList(1, 0, DelayMultiplier*3-2); //CMD_STEP doing nothing, just in order to keep the time calculated by COutput aligned with the time used by the FPGA; needed because the two commands above only consume 2 FPGA cycles, but are accounted for with 2 bus cycles by COutput
+	AddCommandStep(0, DelayMultiplier*3-2); //CMD_STEP doing nothing, just in order to keep the time calculated by COutput aligned with the time used by the FPGA; needed because the two commands above only consume 2 FPGA cycles, but are accounted for with 2 bus cycles by COutput
 }
 
 /*
@@ -413,18 +413,22 @@ void CEthernetControllerFirefly::AddCommandCalcAD9854FrequencyTuningWord(uint64_
 
 
 
-//EXTENDED_CMD_LOAD_SPI_TIMING", "EXTENDED_CMD_SET_I2C_PARAMETERS
+
 /*
-							SPI_delay_CS_low_start_wait[7:0] <= extended_command[23:16];
-                            SPI_delay_write[7:0] <= extended_command[31:24];
-                            SPI_delay_pause_before_read[7:0] <= extended_command[39:32];
-                            SPI_delay_read[7:0] <= extended_command[47:40];
-                            SPI_delay_CS_low_end_wait[7:0] <= extended_command[55:48];
+EXTENDED_CMD_LOAD_SPI_TIMING: begin
+                            extended_command[10:5] <= 0;
+                            SPI_delay_CS_low_start_wait[9:0] <= extended_command[20:11];
+                            SPI_delay_write[9:0] <= extended_command[30:21];
+                            SPI_delay_pause_before_read[11:0] <= extended_command[42:31];
+                            SPI_delay_read[9:0] <= extended_command[52:43];
+                            SPI_delay_CS_low_end_wait[9:0] <= extended_command[62:53];
 							*/
-void CEthernetControllerFirefly::AddCommandSetSPITiming(uint8_t SPI_delay_CS_low_start_wait, uint8_t SPI_delay_write, uint8_t SPI_delay_pause_before_read, uint8_t SPI_delay_read, uint8_t SPI_delay_CS_low_end_wait) {
+void CEthernetControllerFirefly::AddCommandSetSPITiming(uint16_t SPI_delay_CS_low_start_wait, uint16_t SPI_delay_write, uint16_t SPI_delay_pause_before_read, uint16_t SPI_delay_read, uint16_t SPI_delay_CS_low_end_wait) {
 	unsigned char ext_command = EXTENDED_CMD_LOAD_SPI_TIMING;
-	uint32_t low_buffer = (SPI_delay_write << 24) & (SPI_delay_CS_low_start_wait << 16) & ((0x3F & ext_command) << 5) & (0x1F & CMD_LOAD_EXTENDED_COMMAND);
-	uint32_t high_buffer = (SPI_delay_CS_low_end_wait << 16) & (SPI_delay_read << 8) & SPI_delay_pause_before_read;
+	//low buffer: bits 31:0
+	uint32_t low_buffer =  ((SPI_delay_pause_before_read & 0x01) << (10+10+6+5)) &  ((SPI_delay_write & 0x3FF) << (10+6+5)) & ((SPI_delay_CS_low_start_wait & 0x3FF) << (6+5)) & ((0x3F & ext_command) << 5) & (0x1F & CMD_LOAD_EXTENDED_COMMAND);
+	//high buffer: bits 63:32
+	uint32_t high_buffer = ((SPI_delay_CS_low_end_wait & 0x3FF) << (11+10)) & ((SPI_delay_read & 0x3FF) << 11) & ((SPI_delay_pause_before_read & 0xFFF) >> 1);
 	AddSequencerCommandToSequenceList(high_buffer, low_buffer);
 }
 
@@ -759,10 +763,10 @@ void CEthernetControllerFirefly::StartSPIAnalogInAcquisition_MCP3208(unsigned ch
 	unsigned __int32 DelayMultiplier = FPGAClockToBusClockRatio;// floor(FPGAClockFrequencyInHz / BusFrequency);
 	if (DelayMultiplier < 1) DelayMultiplier = 1;
 	if (DelayMultiplier == 1) {
-		AddProgramLineToSequenceList(1, 0, DelayMultiplier * 3 - 2); //CMD_STEP doing nothing, just in order to keep the time calculated by COutput aligned with the time used by the FPGA; needed because the four commands above only consume 4 FPGA cycles, but are accounted for with 2 bus cycles by COutput
-		AddProgramLineToSequenceList(1, 0, DelayMultiplier * 3 - 2); //CMD_STEP doing nothing, just in order to keep the time calculated by COutput aligned with the time used by the FPGA; needed because the four commands above only consume 4 FPGA cycles, but are accounted for with 2 bus cycles by COutput
+		AddCommandStep(0, DelayMultiplier * 3 - 2); //CMD_STEP doing nothing, just in order to keep the time calculated by COutput aligned with the time used by the FPGA; needed because the four commands above only consume 4 FPGA cycles, but are accounted for with 2 bus cycles by COutput
+		AddCommandStep(0, DelayMultiplier * 3 - 2); //CMD_STEP doing nothing, just in order to keep the time calculated by COutput aligned with the time used by the FPGA; needed because the four commands above only consume 4 FPGA cycles, but are accounted for with 2 bus cycles by COutput
 	} else {
-		AddProgramLineToSequenceList(1, 0, DelayMultiplier * 3 - 4); //CMD_STEP doing nothing, just in order to keep the time calculated by COutput aligned with the time used by the FPGA; needed because the four commands above only consume 4 FPGA cycles, but are accounted for with 2 bus cycles by COutput
+		AddCommandStep( 0, DelayMultiplier * 3 - 4); //CMD_STEP doing nothing, just in order to keep the time calculated by COutput aligned with the time used by the FPGA; needed because the four commands above only consume 4 FPGA cycles, but are accounted for with 2 bus cycles by COutput
 	}
 
 	//debugging of BRAM operation only
@@ -771,110 +775,72 @@ void CEthernetControllerFirefly::StartSPIAnalogInAcquisition_MCP3208(unsigned ch
 	
 }
 
+void CEthernetControllerFirefly::AddDelay_in_ns(uint32_t delay_in_nanoseconds) {
+	AddCommandStep( 0, delay_in_nanoseconds * FPGAClockFrequencyInHz / (1000.0*1000.0*1000.0));
+}
+
 void CEthernetControllerFirefly::StartSPIAnalogInAcquisition_ADS1256(unsigned char analog_in_type, unsigned char SPI_CS, unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms) {
-
-	//ToDo: finish programming this, see example code in StepperMotorControlTeensy3and4OverEthernet.
-
-	//@param analog_in_type Analog in board type. 0: AQuRA MCP3208 analog in board; 1: MCP3208 12-bit ADC on SerialPortBoard; 2: ADS1256  24-bit ADC 
+	#define clockspeedMhz 7.68  //ToDo: adjust to your board's clock speed
+	// ADS1256 Register address
+	#define ADS1256_RADD_STATUS 0x00
+	#define ADS1256_RADD_MUX 0x01
+	#define ADS1256_RADD_ADCON 0x02
+	#define ADS1256_RADD_DRATE 0x03
+	#define ADS1256_RADD_IO 0x04
+	#define ADS1256_RADD_OFC0 0x05
+	#define ADS1256_RADD_OFC1 0x06
+	#define ADS1256_RADD_OFC2 0x07
+	#define ADS1256_RADD_FSC0 0x08
+	#define ADS1256_RADD_FSC1 0x09
+	#define ADS1256_RADD_FSC2 0x0A
+	// ADS1256 Command
+	#define ADS1256_CMD_WAKEUP 0x00
+	#define ADS1256_CMD_RDATA 0x01
+	#define ADS1256_CMD_RDATAC 0x03
+	#define ADS1256_CMD_SDATAC 0x0f
+	#define ADS1256_CMD_RREG 0x10
+	#define ADS1256_CMD_WREG 0x50
+	#define ADS1256_CMD_SELFCAL 0xF0
+	#define ADS1256_CMD_SELFOCAL 0xF1
+	#define ADS1256_CMD_SELFGCAL 0xF2
+	#define ADS1256_CMD_SYSOCAL 0xF3
+	#define ADS1256_CMD_SYSGCAL 0xF4
+	#define ADS1256_CMD_SYNC 0xFC
+	#define ADS1256_CMD_STANDBY 0xFD
+	#define ADS1256_CMD_RESET 0xFE
 	
 	//only for debugging
 	//AddCommandSetCoreOption_LED(true);
 	//AddCommandWriteInputBuffer(/*write_next_address*/ false, /* input_buf_mem_address */ 0, /*input_buf_mem_data*/0xDEADBEEF, /* wait_time_in_FPGA_cycles*/ 5);
 	//AddCommandWriteInputBuffer(/*write_next_address*/ false, /* input_buf_mem_address */ 1, /*input_buf_mem_data*/0x1234ABCD, /* wait_time_in_FPGA_cycles*/ 5);
 
-	AddCommandSetSPITiming(/* SPI_delay_CS_low_start_wait*/ 4, /* SPI_delay_write*/ 4, /* SPI_delay_pause_before_read*/ 4, /* SPI_delay_read*/ 23, /* SPI_delay_CS_low_end_wait*/ 4);
+	uint16_t SPI_clock_period_10ns = floor(100 * 1.0/ (clockspeedMhz / 4)); //in 10ns; this is the period of the SPI clock, which is used for timing in the FPGA; ToDo: adjust to your board's clock speed 
+	uint16_t Wait_before_read_10ns = 700;              //  t6 delay (4*tCLKIN 50*0.13 = 6.5 us)  
+	AddCommandSetSPITiming(/* SPI_delay_CS_low_start_wait*/ SPI_clock_period_10ns, /* SPI_delay_write*/ SPI_clock_period_10ns, /* SPI_delay_pause_before_read*/ Wait_before_read_10ns, /* SPI_delay_read*/ SPI_clock_period_10ns, /* SPI_delay_CS_low_end_wait*/ SPI_clock_period_10ns);
+	//_spi->beginTransaction(SPISettings(clockspeedMhz * 1000000 / 4, MSBFIRST, SPI_MODE1));
+	uint8_t MUXP = (channel_nr & 0x07) <<4;
+	constexpr uint8_t MUXN = 0x08;
+	uint8_t MUX_CHANNEL = MUXP | MUXN;
+
+	uint8_t data_out_channel_select[3] = {ADS1256_CMD_WREG | ADS1256_RADD_MUX, 0, MUX_CHANNEL}; // opcode1 Write registers starting from reg
+	AddCommandTransmitSPI(SPI_CS, /* number_of_bits_out*/ 24, data_out_channel_select, /* number_of_bits_in*/ 0, /* start_now*/ true);
+
+	AddDelay_in_ns(41*1000);
 	
-	/*
-	CMD_LOAD_REG_LOW:begin
-                            register[58:0] <= command[63:5];
-                        end
-    CMD_LOAD_REG_HIGH:begin
-                            register[117:59] <= command[63:5];
-                        end 
-	*/
+	uint8_t data_out_sync = ADS1256_CMD_SYNC;
+	AddCommandTransmitSPI(SPI_CS, /* number_of_bits_out*/ 8, &data_out_sync, /* number_of_bits_in*/ 0, /* start_now*/ true);
+ 
+	AddDelay_in_ns(41*1000);
+
+	uint8_t data_out_wakeup = ADS1256_CMD_WAKEUP;
+	AddCommandTransmitSPI(SPI_CS, /* number_of_bits_out*/ 8, &data_out_wakeup, /* number_of_bits_in*/ 0, /* start_now*/ true);
+
+	AddDelay_in_ns(206*1000);
 
 
-	unsigned __int32 SPI_SINGLE_ENDED_INPUT = 1;
-	unsigned __int32 SPI_ANALOG_IN_NR = channel_nr;
-	unsigned __int32 SPI_IN_NR_REVERSED = (((SPI_ANALOG_IN_NR & 1)>0) ? 4 : 0) + (((SPI_ANALOG_IN_NR & 2)>0) ? 2 : 0) + (((SPI_ANALOG_IN_NR & 4)>0) ? 1 : 0);
-	unsigned __int32 SPI_DATA = 1 + (SPI_SINGLE_ENDED_INPUT << 1) + (SPI_IN_NR_REVERSED << 2);
-	//SPI_DATA = 1+2;
-	
-	unsigned char command = CMD_LOAD_REG_LOW;
-	unsigned __int32 low_buffer = (SPI_DATA << 5) | command;
-	unsigned __int32 high_buffer = 0;
-	AddSequencerCommandToSequenceList( high_buffer, low_buffer);
-	
-	command = CMD_LOAD_REG_HIGH;
-	low_buffer = command;
-	high_buffer = 0;
-	AddSequencerCommandToSequenceList( high_buffer, low_buffer);
-
-
-	/*
-	CMD_SPI_OUT_IN : begin
-                            SPI_OUT_length <= command[14:8];
-                            SPI_IN_length <= command[20:16];
-                            SPI_SEL_next <= command[33:32];
-                            SPI_chip_select_next <= command[37:34];
-                            SPI_data <= register;  //Use CMD_LOAD_REG_LOW and CMD_LOAD_REG_HIGH before CMD_SPI_OUT_IN to copy 117-bit I2C data to register                                          
-                            INPUT_REPEAT_state <= INPUT_REPEAT_IDLE;
-                            if (command[40:40] == 0) SPI_state <= SPI_START;                                                         
-                        end  
-	*/
-
-	command = CMD_SPI_OUT_IN;
-	unsigned __int32 SPI_out_length = 6;
-	unsigned __int32 SPI_in_length = 13;
-	//unsigned __int32 SPI_CS = 1;  
-	unsigned __int32 wait_time = 0;
-	constexpr unsigned char SPI_port = 0;
-	unsigned char SPI_SEL_next = (SPI_port == 0) ? 0x01 : 0x02; //2 SPI ports, port 0 is controlled by bit zero here, port 1 is bit one here; 1 means active under PL control; if inactive they are under PS control
-	unsigned char SPI_chip_select_next = SPI_CS & 0x03;// 2 + 4 + 8; //3 CS lines, which go to the input of a multiplexer on the serial port board, or can be used directly, if put
-	unsigned int start_now = 0;
-	low_buffer =  (SPI_in_length << 16) | (SPI_out_length << 8) | command;
-	high_buffer = (start_now << (40-32)) | (SPI_chip_select_next << 2) | (0x03 & SPI_SEL_next);
-	AddSequencerCommandToSequenceList( high_buffer, low_buffer);
-
-	/*
-
-	CMD_INPUT_REPEATED_OUT_IN : begin   //This is a two cycle operation. The last state has to be LOAD_EXTENDED_DATA, in order to avoid writing the flg given here to the channels. The opcode I2C_OUT is encountered in that state, and argument stored. Here we use this stored argument.
-							INPUT_REPEAT_repeats <= command[27:8];
-							INPUT_REPEAT_wait <= command[55:32]; //Use LOAD_EXTENDED_DATA before INPUT_REPEATED_OUT to copy 64-bit channel content to extended_data
-							INPUT_REPEAT_trigger_secondary_interrupt_when_finished <= command[56:56];
-							INPUT_REPEAT_state <= INPUT_REPEAT_START;
-							INPUT_REPEAT_command <= command[59:57];
-							if (bus_clock) bus_clock <= 0; else bus_clock <= 1;
-							strobe_generator_state <= DELAY_CYCLE;
-						end
-
-					if (INPUT_REPEAT_command[0] == 1) SPI_state <= SPI_START;
-					if (INPUT_REPEAT_command[1] == 1) DIG_IN_state <= DIG_IN_START;
-					if (INPUT_REPEAT_command[2] == 1) ANA_IN_state <= ANA_IN_START;
-
-	*/
-	command = CMD_INPUT_REPEATED_OUT_IN;
-	unsigned __int32 INPUT_REPEAT_repeats = number_of_datapoints;
-	unsigned __int32 INPUT_REPEAT_wait = floor(delay_between_datapoints_in_ms * FPGAClockFrequencyInHz / 1000);
-	unsigned __int32 INPUT_REPEAT_command = 1;  //SPI input
-	unsigned __int32 INPUT_REPEAT_trigger_secondary_interrupt_when_finished = 1;//this is needed if input BRAM buffer should be copied to DDR when half buffer full 
-
-	low_buffer = (INPUT_REPEAT_repeats << 8) | command;
-	high_buffer = INPUT_REPEAT_wait | (INPUT_REPEAT_trigger_secondary_interrupt_when_finished << (56 - 32)) | (INPUT_REPEAT_command << (57 - 32));
-	AddSequencerCommandToSequenceList( high_buffer, low_buffer);
-
-	unsigned __int32 DelayMultiplier = FPGAClockToBusClockRatio;// floor(FPGAClockFrequencyInHz / BusFrequency);
-	if (DelayMultiplier < 1) DelayMultiplier = 1;
-	if (DelayMultiplier == 1) {
-		AddProgramLineToSequenceList(1, 0, DelayMultiplier * 3 - 2); //CMD_STEP doing nothing, just in order to keep the time calculated by COutput aligned with the time used by the FPGA; needed because the four commands above only consume 4 FPGA cycles, but are accounted for with 2 bus cycles by COutput
-		AddProgramLineToSequenceList(1, 0, DelayMultiplier * 3 - 2); //CMD_STEP doing nothing, just in order to keep the time calculated by COutput aligned with the time used by the FPGA; needed because the four commands above only consume 4 FPGA cycles, but are accounted for with 2 bus cycles by COutput
-	} else {
-		AddProgramLineToSequenceList(1, 0, DelayMultiplier * 3 - 4); //CMD_STEP doing nothing, just in order to keep the time calculated by COutput aligned with the time used by the FPGA; needed because the four commands above only consume 4 FPGA cycles, but are accounted for with 2 bus cycles by COutput
-	}
-
-	//debugging of BRAM operation only
-	//for (unsigned long n=0;n<0xFF;n++) 
-	//	AddCommandWriteInputBuffer(/*write_next_address*/ false, /* input_buf_mem_address */ n*2, /*input_buf_mem_data*/0xDEAD0000+n, /* wait_time_in_FPGA_cycles*/ 5);
+	uint8_t data_out_rdata = ADS1256_CMD_RDATA;
+	AddCommandTransmitSPI(SPI_CS, /* number_of_bits_out*/ 8, &data_out_rdata, /* number_of_bits_in*/ 24, /* start_now*/ false);
+	AddCommandRepeatedOutIn(/* number_of_datapoints*/ number_of_datapoints, /* delay_between_datapoints_in_ms*/ delay_between_datapoints_in_ms, /* RepeatedOutInCommand*/ 1); //1 means repeated SPI input
 	
 }
 
@@ -891,12 +857,12 @@ void CEthernetControllerFirefly::AddMarker(uint8_t Marker) {
 	AddCommandSetPLToPSCommand(PLToPSCommandTest | Marker);
 }
 
-void CEthernetControllerFirefly::AddProgramLineToSequenceList(uint8_t command, uint32_t data, uint32_t delay) {
+void CEthernetControllerFirefly::AddCommandStep(uint32_t data, uint32_t delay) {
 	const uint32_t delay_mask_low = 0x7FFFFFF; //27 bit
 	const uint32_t delay_mask_high = 0x0F; // 4 bit -> total of 31 bits
 	const uint32_t bus_data_mask = 0x0FFFFFFF;
 	const uint8_t command_mask = 0x1F;  //5 bit
-	//uint8_t command = 1; //CMD_STEP
+	uint8_t command = CMD_STEP;
 
 	uint32_t low_buffer = ((delay & delay_mask_low) << 5) + (command_mask & command);
 	uint32_t high_buffer = ((bus_data_mask & data) << 4) | ((delay >> 27) & delay_mask_high);
@@ -972,8 +938,8 @@ void CEthernetControllerFirefly::AddExternalTrigger( bool ExternalTrigger0, bool
 		
 	}
 	else {
-		AddProgramLine( 1, 0, 1); //CMD_STEP
-		AddProgramLine( 1, 0, 1); //CMD_STEP
+		AddCommandStep( 0, 1);
+		AddCommandStep( 0, 1);
 	}
 	
 }
@@ -1037,9 +1003,9 @@ void CEthernetControllerFirefly::SetTriggerOptions( bool ExternalTrigger0, bool 
 			AddSequencerCommand(high_buffer, low_buffer);
 		}
 		else {			
-			AddProgramLine(CMD_STEP, 0, 1); 
-			AddProgramLine(CMD_STEP, 0, 1); 
-			AddProgramLine(CMD_STEP, 0, 1);
+			AddCommandStep( 0, 1);
+			AddCommandStep( 0, 1);
+			AddCommandStep( 0, 1);
 			AddExternalTrigger(ExternalTrigger0, ExternalTrigger1, false);
 		}
 	}
@@ -1055,9 +1021,7 @@ void CEthernetControllerFirefly::SetTriggerOptions( bool ExternalTrigger0, bool 
 		high_buffer = ((core_option_PL_to_PS & 0xFF) << 24) | ((core_option_dig_out & 0xFF) << 8) | ((core_option_SPI_CS & 0x0F) << 1) | (core_option_LED & 0x01);
 		AddSequencerCommand(high_buffer, low_buffer);			
 			
-		//AddProgramLine(buffer, n, CMD_STEP, 0, 0);
-		//AddProgramLine(buffer, n + 1, CMD_STEP, 0, 0);
-		AddProgramLine(CMD_STEP, 0, 1);
+		AddCommandStep( 0, 1);
 		//buffer[(n + 2) * 2 + 0] = CMD_WAIT_FOR_PERIODIC_TRIGGER;
 		//buffer[(n + 2) * 2 + 1] = 0;
 		low_buffer = CMD_WAIT_FOR_PERIODIC_TRIGGER;
@@ -1074,17 +1038,15 @@ void CEthernetControllerFirefly::SetTriggerOptions( bool ExternalTrigger0, bool 
 		low_buffer = command;
 		high_buffer = ((core_option_PL_to_PS & 0xFF) << 24) | ((core_option_dig_out & 0xFF) << 8) | ((core_option_SPI_CS & 0x0F) << 1) | (core_option_LED & 0x01);
 		AddSequencerCommand(high_buffer, low_buffer);
-		//AddProgramLine(buffer, n + 4, CMD_STEP, 0, 0);
-		//AddProgramLine(buffer, n + 5, CMD_STEP, 0, 0);
 	}
 	else {
-		AddProgramLine(CMD_STEP, 0, 1);
-		AddProgramLine(CMD_STEP, 0, 1);
-		AddProgramLine(CMD_STEP, 0, 1);
-		AddProgramLine(CMD_STEP, 0, 1);
-		AddProgramLine(CMD_STEP, 0, 1);
-		AddProgramLine(CMD_STEP, 0, 1);
-		AddProgramLine(CMD_STEP, 0, 1);
+		AddCommandStep( 0, 1);
+		AddCommandStep( 0, 1);
+		AddCommandStep( 0, 1);
+		AddCommandStep( 0, 1);
+		AddCommandStep( 0, 1);
+		AddCommandStep( 0, 1);
+		AddCommandStep( 0, 1);
 		AddExternalTrigger(ExternalTrigger0, ExternalTrigger1, false);	
 	}
 }
