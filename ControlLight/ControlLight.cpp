@@ -1010,16 +1010,20 @@ void DemoWriteConfigEEPROM() {
 	}
 
 	constexpr size_t MaxEEPROMPayloadBytes = 256;
-	const string model_name = "Backplane";// DDSAD9959 V0.09";// "DigitalOut V0.07 16 - bit";  //"Sequencer V4.0 Z - turn";
-	const string version = "0.16";// DDSAD9959 V0.09";// "DigitalOut V0.07 16 - bit";  //"Sequencer V4.0 Z - turn";
-	const string type = "1";// DDSAD9959 V0.09";// "DigitalOut V0.07 16 - bit";  //"Sequencer V4.0 Z - turn";
+	const string model_name = "Backplane";
+	const string version = "0.16";
+	const string type = "1";
 	
 	//const string model_name = "DDSAD9959";
 	//const string version = "V0.09";
 	//const string type = "";
 
-	//const string model_name = "DDSAD9959";
-	//const string version = "0.09";
+	//const string model_name = "Sequencer";
+	//const string version = "0.04";
+	//const string type = "Z-turn V2";
+
+	//const string model_name = "SerialPort";
+	//const string version = "0.03";
 	//const string type = "";
 
 	constexpr unsigned int SNSuffix = 0;
@@ -1045,8 +1049,8 @@ void DemoWriteConfigEEPROM() {
 
 	ostringstream json_stream;
 	json_stream << "{\"Model\":\"" << model_name
-		<< ", \"Version\":\"" << version;
-	if (type!="") json_stream << ", \"Type\":\"" << type;
+		<< "\", \"Version\":\"" << version;
+	if (type!="") json_stream << "\", \"Type\":\"" << type;
 	json_stream << "\", \"SN\":\"" << serial_stream.str() << "\"}";
 	const string json_payload = json_stream.str();
 
@@ -1075,12 +1079,12 @@ void DemoReadConfigEEPROM() {
 }
 
 int main() {
-	//DemoFPGASequencerSingleRun();
+	DemoFPGASequencerSingleRun();
 	//DemoFPGASequencerCyclicSequencing();
 	//DemoSmartSequencer();
 	//DemoDDSVCO();
 	//DemoWriteConfigEEPROM();
-	DemoReadConfigEEPROM();
+	//DemoReadConfigEEPROM();
 	return 0;
 }
 

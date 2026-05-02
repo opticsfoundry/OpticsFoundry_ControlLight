@@ -173,10 +173,6 @@ void WriteConfigEEPROM(const uint8_t SequencerID, const uint8_t RackNr, const ui
 		return;
 	}
 
-	if (RackNr != 0) {
-		cout << "EEPROM write failed: RackNr " << static_cast<unsigned int>(RackNr) << " is not supported yet." << endl;
-		return;
-	}
 
 	SelectRackI2CSlot(SequencerID, RackNr, SlotNr);
 	
@@ -233,11 +229,6 @@ void ReadConfigEEPROM(const uint8_t SequencerID, const uint8_t RackNr, const uin
 		return;
 	}
 
-	if (RackNr != 0) {
-		cout << "EEPROM read failed: RackNr " << static_cast<unsigned int>(RackNr) << " is not supported yet." << endl;
-		return;
-	}
-
 	SelectRackI2CSlot(SequencerID, RackNr, SlotNr);
 	
 	//Read the complete EEPROM contents starting from memory address 0.
@@ -252,9 +243,9 @@ void ReadConfigEEPROM(const uint8_t SequencerID, const uint8_t RackNr, const uin
 
 	cout << "Rack " << static_cast<unsigned int>(RackNr)
 		<< ", slot " << static_cast<unsigned int>(SlotNr)
-		<< ", EEPROM read length: " << length << " byte(s)." << endl;
-
-	//if (length > 0) cout << read_back.data();//PrintEEPROMData("EEPROM data read back", read_back.data(), read_back.size());
+		<< ", EEPROM read length: " << length << " byte(s): ";
+	if (length > 0) cout << read_back.data();//PrintEEPROMData("EEPROM data read back", read_back.data(), read_back.size());
+	//cout << endl;
 }
 
 
@@ -262,11 +253,6 @@ void WriteConfigAddress(const uint8_t SequencerID, const uint8_t RackNr, const u
 
 	if (SlotNr >= NrSlots) {
 		cout << "Config address write failed: invalid slot number " << static_cast<unsigned int>(SlotNr) << "." << endl;
-		return;
-	}
-
-	if (RackNr != 0) {
-		cout << "Config address write failed: RackNr " << static_cast<unsigned int>(RackNr) << " is not supported yet." << endl;
 		return;
 	}
 
@@ -308,10 +294,10 @@ void ReadConfigAddress(const uint8_t SequencerID, const uint8_t RackNr, const ui
 	CLA_TransmitI2CPort(/*I2C_port*/ 0, ConfigAddressIOExpanderAddress + Read, /*send_length*/ 0, nullptr, /*receive_length*/ 1, &address, I2CClockFrequencyInHz);
 	
 	// Display the address on cout.
-	cout << "Config address read succeeded for rack " << static_cast<unsigned int>(RackNr)
-		<< ", slot " << static_cast<unsigned int>(SlotNr)
-		<< ": 0x" << hex << static_cast<unsigned int>(address) << dec << "." << endl;
-	
+	//cout << "Config address read succeeded for rack " << static_cast<unsigned int>(RackNr)
+	//	<< ", slot " << static_cast<unsigned int>(SlotNr)
+	//	<< ": 0x" << hex << static_cast<unsigned int>(address) << dec << "." << endl;
+	cout << " Address: 0x" << hex << static_cast<unsigned int>(address) << dec << "." << endl;
 }
 
 json ReadConfiguration(const std::string& filename) {
