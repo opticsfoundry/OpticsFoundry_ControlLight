@@ -59,6 +59,7 @@ public:
 	bool ConnectSocket(const std::string& host, unsigned int nPort, const std::string& SocketName, bool reconnect = false, int timeout_s = 2);
 	bool ResetConnection(unsigned long sleep_time=2000);
 	bool FlushInputBuffer();
+	bool FlushOutputBuffer();
 	void SendMsg(CString& strText);
 	bool SendData(const uint8_t* Data, unsigned long Size);
 	bool SendString(const CString& str);  // Helper for text-based protocols
@@ -79,6 +80,7 @@ public:
 	void DisconnectSocket();
 private:
 	bool WaitForRead(unsigned long timeout_ms);
+	bool WaitForWrite(unsigned long timeout_ms);
 
 public:
 	// New reconnect/retry helpers:

@@ -13,6 +13,9 @@
 #include <iostream>
 #include <cmath>
 #include <cstring>
+#include <algorithm>
+#include <limits>
+#include <vector>
 
 
 #ifdef _DEBUG
@@ -80,7 +83,7 @@ CEthernetControllerFirefly::~CEthernetControllerFirefly()
 	//delete FPGAAbsoluteTime;
 	if (SequencerCommandList) delete SequencerCommandList;
 	if (previous_command_buffer_ptr) delete previous_command_buffer_ptr;
-	if (previous_receive_data_ptr) delete previous_receive_data_ptr;
+	if (previous_receive_data_ptr) delete[] previous_receive_data_ptr;
 }
 
 bool CEthernetControllerFirefly::ConnectSocket(const std::string& host, unsigned port, unsigned int aFPGAClockToBusClockRatio, double aFPGAClockFrequencyInHz, bool aFPGAUseExternalClock, bool aFPGAUseStrobeGenerator, bool aExternalTrigger) {
@@ -1330,29 +1333,35 @@ bool CEthernetControllerFirefly::TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_a
 bool CEthernetControllerFirefly::AttemptTransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t &receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz) {
 	if (!/*Optimized*/Command("transmit_I2C")) return false;
 	if (!WriteInteger(I2C_port)) return false;
-	if (!WriteInteger(I2C_address)) return false;
+	if (!WriteInteger(I2C_address >> 1)) return false;
 	if (!WriteInteger(I2C_clock_frequency_in_Hz)) return false;
 	if (!WriteInteger(send_length)) return false;
 	if (!WriteInteger(receive_length)) return false;
+	const uint16_t receive_capacity = receive_length;
 	if (send_length>0) {
 		if (!SendData(send_data, send_length)) return false;
 	}
 	unsigned long long InputBufferContentsLength;
 	if (!ReadInt64(InputBufferContentsLength)) return false;
 	if (InputBufferContentsLength > 0) {
-		receive_length = InputBufferContentsLength;
-		if (receive_data) delete[] receive_data;
-		receive_data = new uint8_t[receive_length];
-		previous_receive_data_ptr = receive_data;
-		receive_data_length = receive_length;
-		if (Network) return Network->ReceiveData(receive_data, receive_length, /*timeout_in_ms = */ 5000);
-		else {
-			delete[] receive_data;
-			receive_data = NULL;
-			previous_receive_data_ptr = NULL;
-			receive_data_length = 0;
-			return false;
+		if (!Network) return false;
+
+		if (InputBufferContentsLength > (numeric_limits<unsigned long>::max)()) return false;
+
+		const unsigned long bytes_to_receive = static_cast<unsigned long>(InputBufferContentsLength);
+		receive_length = static_cast<uint16_t>((std::min<unsigned long long>)(InputBufferContentsLength, (numeric_limits<uint16_t>::max)()));
+
+		if (receive_data && InputBufferContentsLength <= receive_capacity) {
+			return Network->ReceiveData(receive_data, bytes_to_receive, /*timeout_in_ms = */ 5000);
 		}
+
+		// Drain the socket without writing past a caller-owned receive buffer.
+		vector<uint8_t> overflow_buffer(bytes_to_receive);
+		if (!Network->ReceiveData(overflow_buffer.data(), bytes_to_receive, /*timeout_in_ms = */ 5000)) return false;
+		if (receive_data && receive_capacity > 0) {
+			memcpy(receive_data, overflow_buffer.data(), receive_capacity);
+		}
+		return false;
 	}
 	return true;
 }
@@ -1515,6 +1524,7 @@ bool CEthernetControllerFirefly::SendSequenceToFPGA(uint32_t* buffer) {
 }
 
 double CEthernetControllerFirefly::MeasureEthernetBandwidth(uint32_t DataSize, double MinimumExpected) {
+	SwitchDebugMode(false, "");
 	bool ok = Command("send_sequence");
 	if (ok) {
 		
@@ -1833,4 +1843,3 @@ bool CEthernetControllerFirefly::AttemptWaitTillEndOfSequenceThenGetInputData(ui
 	}
 	return true;
 }
-

@@ -8,6 +8,10 @@
 #include <tchar.h>
 #else
 #include <fcntl.h>
+#include <sys/ioctl.h>
+#ifdef __linux__
+#include <linux/sockios.h>
+#endif
 #endif
 
 // Try to use CSocketException to see if the compiler sees it:
@@ -272,22 +276,30 @@ bool CNetwork::SendData(const uint8_t* Data, unsigned long Size)
 	if (!m_pSocket)	Reconnect(/*maxRetries*/ 0,/*timeout_s*/1,/*delay_ms*/0);
 	if (!m_pSocket) return false;
 	StoreLastMessage(std::format(">> SendData {}", Size));
-	int sent = 0;
+	unsigned long totalSent = 0;
+	while (totalSent < Size) {
+		int sent = 0;
 #ifdef WIN32
-	TRY
-	{		
-	 sent = m_pSocket->Send(Data, Size);
-	}
-	CATCH(CFileException, e)
-	{
-		AddErrorMessage("CNetwork::SendData : error sending data");
-		return false;
-	}
-	END_CATCH
+		TRY
+		{
+			sent = m_pSocket->Send(Data + totalSent, Size - totalSent);
+		}
+		CATCH(CFileException, e)
+		{
+			AddErrorMessage("CNetwork::SendData : error sending data");
+			return false;
+		}
+		END_CATCH
 #else
-	sent = ::send(m_socketfd, Data, Size, MSG_NOSIGNAL);
+		sent = ::send(m_socketfd, Data + totalSent, Size - totalSent, MSG_NOSIGNAL);
 #endif
-	return (sent == (int)Size);
+		if (sent <= 0) {
+			AddErrorMessage("CNetwork::SendData : socket did not accept data");
+			return false;
+		}
+		totalSent += sent;
+	}
+	return true;
 }
 
 bool CNetwork::SendString(const CString& str) {
@@ -300,6 +312,39 @@ bool CNetwork::SendString(const CString& str) {
 	const char* psz = conv;
 #endif
 	return SendData(reinterpret_cast<const uint8_t*>(psz), (unsigned long)strlen(psz));
+}
+
+bool CNetwork::FlushOutputBuffer()
+{
+	if (!m_pSocket)	Reconnect(/*maxRetries*/ 0,/*timeout_s*/1,/*delay_ms*/0);
+	if (!m_pSocket) return false;
+
+	const unsigned long timeout_ms = 5000;
+	Time start = Clock::now();
+
+#ifdef WIN32
+	if (!WaitForWrite(timeout_ms)) return false;
+
+	int socketError = 0;
+	int socketErrorSize = sizeof(socketError);
+	SOCKET s = m_pSocket->m_hSocket;
+	if (getsockopt(s, SOL_SOCKET, SO_ERROR, reinterpret_cast<char*>(&socketError), &socketErrorSize) == SOCKET_ERROR)
+		return false;
+	return socketError == 0;
+#else
+	while (milliSeconds(Clock::now() - start) < timeout_ms) {
+#ifdef SIOCOUTQ
+		int pendingBytes = 0;
+		if (ioctl(m_socketfd, SIOCOUTQ, &pendingBytes) == 0 && pendingBytes == 0)
+			return true;
+#else
+		return WaitForWrite(timeout_ms);
+#endif
+		Duration timeLeft = timeout_ms*1ms - (Clock::now() - start);
+		if (!WaitForWrite(milliSeconds(timeLeft))) return false;
+	}
+	return false;
+#endif
 }
 
 bool CNetwork::FlushInputBuffer()
@@ -366,6 +411,28 @@ bool CNetwork::FlushInputBuffer()
 	return true;
 }
 
+bool CNetwork::WaitForWrite(unsigned long timeout_ms) {
+	if (!m_pSocket)	Reconnect(/*maxRetries*/ 0,/*timeout_s*/1,/*delay_ms*/0);
+	if (!m_pSocket) return false;
+	fd_set writeSet;
+	FD_ZERO(&writeSet);
+#ifdef WIN32
+	SOCKET s = m_pSocket->m_hSocket;
+#else
+	int s = m_socketfd;
+#endif
+	FD_SET(s, &writeSet);
+	timeval tv;
+	tv.tv_sec = timeout_ms / 1000;
+	tv.tv_usec = (timeout_ms % 1000) * 1000;
+#ifdef WIN32
+	int result = select(0, nullptr, &writeSet, nullptr, &tv);
+#else
+	int result = select(s + 1, nullptr, &writeSet, nullptr, &tv);
+#endif
+	return (result > 0) && FD_ISSET(s, &writeSet);
+}
+
 bool CNetwork::WaitForRead(unsigned long timeout_ms) {
 	if (!m_pSocket)	Reconnect(/*maxRetries*/ 0,/*timeout_s*/1,/*delay_ms*/0);
 	if (!m_pSocket) return false;
@@ -380,7 +447,11 @@ bool CNetwork::WaitForRead(unsigned long timeout_ms) {
 	timeval tv;
 	tv.tv_sec = timeout_ms / 1000;
 	tv.tv_usec = (timeout_ms % 1000) * 1000;
+#ifdef WIN32
 	int result = select(0, &readSet, nullptr, nullptr, &tv);
+#else
+	int result = select(s + 1, &readSet, nullptr, nullptr, &tv);
+#endif
 	return (result > 0) && FD_ISSET(s, &readSet);
 }
 

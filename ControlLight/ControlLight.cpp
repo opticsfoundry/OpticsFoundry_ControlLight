@@ -1010,12 +1010,23 @@ void DemoWriteConfigEEPROM() {
 	}
 
 	constexpr size_t MaxEEPROMPayloadBytes = 256;
-	const string model_name = "DDSAD9958 V1.0";
+	const string model_name = "Backplane";// DDSAD9959 V0.09";// "DigitalOut V0.07 16 - bit";  //"Sequencer V4.0 Z - turn";
+	const string version = "0.16";// DDSAD9959 V0.09";// "DigitalOut V0.07 16 - bit";  //"Sequencer V4.0 Z - turn";
+	const string type = "1";// DDSAD9959 V0.09";// "DigitalOut V0.07 16 - bit";  //"Sequencer V4.0 Z - turn";
+	
+	//const string model_name = "DDSAD9959";
+	//const string version = "V0.09";
+	//const string type = "";
+
+	//const string model_name = "DDSAD9959";
+	//const string version = "0.09";
+	//const string type = "";
+
 	constexpr unsigned int SNSuffix = 0;
 
 	constexpr uint8_t SequencerNr = 0;
 	constexpr uint8_t RackNr = 0;
-	constexpr uint8_t SlotNr = 0;
+	constexpr uint8_t SlotNr = 12;
 
 	if (SNSuffix > 99) {
 		cout << "EEPROM write skipped: serial number suffix " << SNSuffix
@@ -1034,7 +1045,9 @@ void DemoWriteConfigEEPROM() {
 
 	ostringstream json_stream;
 	json_stream << "{\"Model\":\"" << model_name
-		<< "\",\"SN\":\"" << serial_stream.str() << "\"}";
+		<< ", \"Version\":\"" << version;
+	if (type!="") json_stream << ", \"Type\":\"" << type;
+	json_stream << "\", \"SN\":\"" << serial_stream.str() << "\"}";
 	const string json_payload = json_stream.str();
 
 	if (json_payload.size() > MaxEEPROMPayloadBytes) {
@@ -1043,7 +1056,7 @@ void DemoWriteConfigEEPROM() {
 		return;
 	}
 
-	CLA_WriteConfigEEPROM(SequencerNr, RackNr, SlotNr, json_payload.c_str(), json_payload.size());
+	CLA_WriteConfigEEPROM(SequencerNr, RackNr, SlotNr, json_payload.c_str(), json_payload.size()+1);
 }
 
 void DemoReadConfigEEPROM() {
@@ -1062,12 +1075,12 @@ void DemoReadConfigEEPROM() {
 }
 
 int main() {
-	DemoFPGASequencerSingleRun();
+	//DemoFPGASequencerSingleRun();
 	//DemoFPGASequencerCyclicSequencing();
 	//DemoSmartSequencer();
 	//DemoDDSVCO();
 	//DemoWriteConfigEEPROM();
-	//DemoReadConfigEEPROM();
+	DemoReadConfigEEPROM();
 	return 0;
 }
 

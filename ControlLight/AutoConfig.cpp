@@ -10,6 +10,8 @@
 #include <vector>
 #include <cstring>
 #include <cstdio>
+#include <cctype>
+#include <iomanip>
 #include "AutoConfig.h"
 
 
@@ -18,15 +20,15 @@ using namespace std;
 namespace {
 	constexpr uint8_t NrSlots = 13; // "Slot" 13 is the backplane memory.
 	constexpr uint8_t I2CMultAddr[2] = { 0xE0, 0xEE};
-	constexpr uint8_t I2CPortNr[NrSlots] = { 2, 1, 0, 7, 6, 5, 4, 0, 1, 3, 2, 6, 5 };
-	constexpr uint8_t I2CMux[NrSlots] =    { 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0 };
+	constexpr uint8_t I2CPortNr[NrSlots] = { 6, 2, 3, 1, 0, 4, 5, 6, 7, 0, 1, 2, 5 };
+	constexpr uint8_t I2CMux[NrSlots] =    { 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0 };
 	constexpr uint8_t I2CChainMult = 0;
 	constexpr uint8_t I2CChainPortNr = 7;
 	constexpr uint8_t I2CMux1PortNrOnMux0 = 4;
 	constexpr uint8_t MaxSupportedRackNr = 6;
 	constexpr uint8_t Write = 0;
 	constexpr uint8_t Read = 1;
-	constexpr uint8_t EEPROMAddress = 0xA0;
+	constexpr uint8_t EEPROMAddress = 0xA2;
 	constexpr uint8_t ConfigAddressIOExpanderAddress = 0x40;
 	constexpr uint32_t I2CClockFrequencyInHz = 100000;
 	constexpr size_t EEPROMSizeInBytes = 256;
@@ -59,12 +61,41 @@ namespace {
 		CopyFieldIfPresent(source, destination, "SN");
 	}
 
+	void PrintEEPROMData(const char* label, const uint8_t* data, const size_t length) {
+		cout << label << " (" << length << " byte(s)):" << endl;
+		cout << "ASCII: ";
+		for (size_t index = 0; index < length; ++index) {
+			const uint8_t value = data[index];
+			cout << (isprint(value) ? static_cast<char>(value) : '.');
+		}
+		cout << endl;
+
+		cout << "Hex:   ";
+		for (size_t index = 0; index < length; ++index) {
+			cout << hex << setw(2) << setfill('0') << static_cast<unsigned int>(data[index]);
+			if (index + 1 < length) {
+				cout << ' ';
+			}
+		}
+		cout << dec << setfill(' ') << endl;
+	}
+
 	std::string MakeConfigOutputFilename(const std::string& filename) {
 		std::string output_filename = filename;
 		if (output_filename.size() >= 5 && output_filename.substr(output_filename.size() - 5) == ".json") {
 			output_filename = output_filename.substr(0, output_filename.size() - 5);
 		}
 		return output_filename + "_config.json";
+	}
+
+	void ReadEEPROMBytes(const uint8_t start_address, uint8_t* data, const size_t length) {
+		if (length == 0) {
+			return;
+		}
+
+		uint8_t address = start_address;
+		CLA_TransmitI2CPort(/*I2C_port*/ 0, EEPROMAddress + Write, /*send_length*/ 1, &address, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz);
+		CLA_TransmitI2CPort(/*I2C_port*/ 0, EEPROMAddress + Read, /*send_length*/ 0, nullptr, /*receive_length*/ static_cast<uint16_t>(length), data, I2CClockFrequencyInHz);
 	}
 }
 
@@ -121,7 +152,7 @@ void SelectRackI2CSlot(const uint8_t SequencerID, const uint8_t RackNr, const ui
 		mux_address = 1+2+4;
 	}
 
-	//Set the I2C multiplexer (TCA9548A, see folder datasheet) to the correct port for the slot, or the backplane memrory (for SlotNr == 12).
+	//Set the I2C multiplexer (TCA9548A, see folder datasheet) to the correct port for the slot, or the backplane memory (for SlotNr == 12).
 	mux_select = static_cast<uint8_t>(1u << I2CPortNr[SlotNr]);
 	CLA_TransmitI2CPort(/*I2C_port*/ 0, 0xE0 + (mux_address << 1) + Write, /*send_length*/ 1, &mux_select, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz);
 }
@@ -149,25 +180,28 @@ void WriteConfigEEPROM(const uint8_t SequencerID, const uint8_t RackNr, const ui
 
 	SelectRackI2CSlot(SequencerID, RackNr, SlotNr);
 	
-	// Now write the data to the EEPROM of type M24C01-W (2kbit I2C EEPROM), see datasheet in folder datasheet, starting from memory address 0.
-	for (size_t address = 0; address < length; ++address) {
-		uint8_t write_buffer[2] = {
-			static_cast<uint8_t>(address),
-			static_cast<uint8_t>(data[address])
-		};
-		CLA_TransmitI2CPort(/*I2C_port*/ 0, EEPROMAddress + Write, /*send_length*/ 2, write_buffer, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz);
-		this_thread::sleep_for(chrono::milliseconds(10));
+	// Now write the data to the EEPROM of type M24C02-F (2kbit I2C EEPROM), see datasheet in folder datasheet, starting from memory address 0.
+
+	constexpr size_t EEPROMPageSizeInBytes = 16;
+	size_t address = 0;
+	while (address < length) {
+		const size_t write_length = (length - address >= EEPROMPageSizeInBytes) ? EEPROMPageSizeInBytes : (length - address);
+		uint8_t write_buffer[EEPROMPageSizeInBytes + 1] = {};
+		write_buffer[0] = static_cast<uint8_t>(address);
+		memcpy(&write_buffer[1], &data[address], write_length);
+
+		CLA_TransmitI2CPort(/*I2C_port*/ 0, EEPROMAddress + Write, /*send_length*/ static_cast<uint16_t>(write_length + 1), write_buffer, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz);
+		this_thread::sleep_for(chrono::milliseconds(1));
+		address += write_length;
 	}
 
 
 	//Now read the data back to verify that it was written correctly
 	vector<uint8_t> read_back(length);
-	uint8_t start_address = 0;
-	if (length > 0) {
-		CLA_TransmitI2CPort(/*I2C_port*/ 0, EEPROMAddress + Read, /*send_length*/ 1, &start_address, /*receive_length*/ static_cast<uint16_t>(length), read_back.data(), I2CClockFrequencyInHz);
-	}
+	ReadEEPROMBytes(/*start_address*/ 0, read_back.data(), read_back.size());
 
 	if (length == 0 || memcmp(data, read_back.data(), length) == 0) {
+		cout << "Wrote: " << string(data, length) << endl;
 		cout << "EEPROM write verification succeeded for rack " << static_cast<unsigned int>(RackNr)
 			<< ", slot " << static_cast<unsigned int>(SlotNr)
 			<< ", " << length << " byte(s)." << endl;
@@ -176,6 +210,8 @@ void WriteConfigEEPROM(const uint8_t SequencerID, const uint8_t RackNr, const ui
 		cout << "EEPROM write verification failed for rack " << static_cast<unsigned int>(RackNr)
 			<< ", slot " << static_cast<unsigned int>(SlotNr)
 			<< "." << endl;
+		PrintEEPROMData("EEPROM data expected", reinterpret_cast<const uint8_t*>(data), length);
+		PrintEEPROMData("EEPROM data read back", read_back.data(), read_back.size());
 	}
 
 }
@@ -206,15 +242,19 @@ void ReadConfigEEPROM(const uint8_t SequencerID, const uint8_t RackNr, const uin
 	
 	//Read the complete EEPROM contents starting from memory address 0.
 	vector<uint8_t> read_back(EEPROMSizeInBytes);
-	uint8_t start_address = 0;
-	CLA_TransmitI2CPort(/*I2C_port*/ 0, EEPROMAddress + Read, /*send_length*/ 1, &start_address, /*receive_length*/ static_cast<uint16_t>(read_back.size()), read_back.data(), I2CClockFrequencyInHz);
+	ReadEEPROMBytes(/*start_address*/ 0, read_back.data(), read_back.size());
 
 	memcpy(data, read_back.data(), read_back.size());
-	length = read_back.size();
+	//length = read_back.size();
+	
+	const void* endofstring = memchr(data, 0, read_back.size());
+	length = endofstring ? static_cast<const char*>(endofstring) - data + 1 : 0;
 
-	cout << "EEPROM read succeeded for rack " << static_cast<unsigned int>(RackNr)
+	cout << "Rack " << static_cast<unsigned int>(RackNr)
 		<< ", slot " << static_cast<unsigned int>(SlotNr)
-		<< ", " << length << " byte(s)." << endl;
+		<< ", EEPROM read length: " << length << " byte(s)." << endl;
+
+	//if (length > 0) cout << read_back.data();//PrintEEPROMData("EEPROM data read back", read_back.data(), read_back.size());
 }
 
 
@@ -262,12 +302,6 @@ void ReadConfigAddress(const uint8_t SequencerID, const uint8_t RackNr, const ui
 		return;
 	}
 
-
-	if (RackNr != 0) {
-		cout << "Config address read failed: RackNr " << static_cast<unsigned int>(RackNr) << " is not supported yet." << endl;
-		return;
-	}
-
 	SelectRackI2CSlot(SequencerID, RackNr, SlotNr);
 	
 	// Read the address from the I2C 8-bit IO chip PCF8574AP, which has all 3 address lines on ground. See datasheet in folder datasheet.
@@ -283,10 +317,10 @@ void ReadConfigAddress(const uint8_t SequencerID, const uint8_t RackNr, const ui
 json ReadConfiguration(const std::string& filename) {
 	json config;
 
-	//go over evert rack slot and the backplane memory, constructs json file containing whole configuration, including addresses stored in EEPROMS, sequencer, rack and slot number of each board or rack beackplane.
+	//go over every rack slot and the backplane memory, constructs json file containing whole configuration, including addresses stored in EEPROMS, sequencer, rack and slot number of each board or rack beackplane.
 	//store in file if filename is not empty.
-
-	for (uint8_t SequencerNr = 0 ; SequencerNr < CLA_GetNumberOfSequencers(); ++SequencerNr) {
+	constexpr uint8_t MaxNrSequencers = 7;
+	for (uint8_t SequencerNr = 0 ; SequencerNr < MaxNrSequencers; ++SequencerNr) {
 		for (uint8_t RackNr = 0; RackNr <= MaxSupportedRackNr; ++RackNr) {
 			for (uint8_t SlotNr = 0; SlotNr < NrSlots; ++SlotNr) {
 				char buffer[EEPROMSizeInBytes] = {};
@@ -458,7 +492,7 @@ json GetAutoConfigJSON(const std::string& filename) {
 					entry["FrequencyMultiplier"] = (*board_json).value("FrequencyMultiplier", 1);
 					auto_config["DDSAD9858Boards"].push_back(entry);
 				}
-				else if (model_prefix == "DDSAD9958") {
+				else if ((model_prefix == "DDSAD9958") || (model_prefix == "DDSAD9959")) {
 					json entry;
 					AddCommonMetadata(*board_json, entry, SequencerNr, RackNr, SlotNr);
 					entry["Address"] = (*board_json).value("Address", 21);

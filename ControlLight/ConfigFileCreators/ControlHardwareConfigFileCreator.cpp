@@ -2,11 +2,13 @@
 
 int main() {
 	ConfigCreator builder;
-	builder.RegisterSequencer(/*Id*/ 0, /*Type*/ "OpticsFoundrySequencerV1", /*IP*/ "192.168.1.10",
+	builder.RegisterSequencer(/*Id*/ 0, /*Type*/ "OpticsFoundrySequencerV1", /*IP*/ "192.168.1.112",
 		/*Port*/ 57978, /*Master*/ true, /*StartDelay*/ 10, /*ClockFrequencyinMHz*/ 100,
 		/*BusFrequencyinMHz*/ 2, /*UseExternalClock*/ false, /*UseStrobeGenerator*/ true,
 		/*Connect*/ true, /*DebugOn*/ false); // 0.104 #90.108
-
+	builder.Save();
+	return 0;
+	
 	const int analog_out_configs[][4] = {
 		{24, 1, -10, 10},
 		{28, 1, -10, 10},
