@@ -70,7 +70,8 @@ bool CDeviceDigitalOut::SetValue(const unsigned int& SubAddress, const uint8_t* 
 		LastValue |= static_cast<uint16_t>((data[0] & dataMask) << StartBit);
 	}
 
-	uint32_t content = MyAddress + (LastValue << 8);
-	MySequencer->AddBusCommandToSequence(content);
+	//uint32_t content = MyAddress + (LastValue << 8);
+	//MySequencer->AddBusCommandToSequence(content);
+	MySequencer->WriteBusAddressAndDataToBuffer(MyAddress, LastValue);
 	return true;
 }

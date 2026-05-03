@@ -66,8 +66,7 @@ bool CDeviceRack::SetValue(const unsigned int& SubAddress, const uint8_t* Data, 
 		LastValue |= static_cast<uint16_t>((data[0] & dataMask) << StartBit);
 	}
 
-	uint32_t content = MyAddress + (LastValue << 8);
 	//This might need to be adjusted, as arbiter is slower than a normal dig out port, to allow first-break then-make behavior.
-	MySequencer->AddBusCommandToSequence(content);
+	MySequencer->WriteBusAddressAndDataToBuffer(MyAddress, LastValue);
 	return true;
 }
