@@ -3,6 +3,7 @@
 #include "CDevice.h"
 
 class CEthernetControllerFirefly;
+class CDeviceRack;
 
 class CDeviceSequencer : public CDevice
 {
@@ -35,6 +36,7 @@ private:
 	double CurrentTimeDebt_in_ms;
 	bool LastCommandWasSpecialCommand;
 	uint32_t LastBusData;
+	CDeviceRack* MyDeviceRack;
 public:
 	static const unsigned int MaxParallelBusDevices = 8 * 256 + 1;
 	static const unsigned int MaxSerialBusDevices = 8;
@@ -121,6 +123,8 @@ public:
 	void SequencerRepeatedOutIn(const uint16_t number_of_datapoints, const double delay_between_datapoints_in_ms, uint8_t RepeatedOutInCommand);
 	void SequencerSetSPITiming(uint16_t SPI_delay_CS_low_start_wait, uint16_t SPI_delay_write, uint16_t SPI_delay_pause_before_read, uint16_t SPI_delay_read, uint16_t SPI_delay_CS_low_end_wait);
 	void SequencerSetI2CParameters(uint8_t I2C_0_Destination);
+	void SequencerSelectRackSlot(uint8_t rack_nr, uint8_t slot_nr);
+	void SequencerResetI2CMultiplexer();
 	
 
 

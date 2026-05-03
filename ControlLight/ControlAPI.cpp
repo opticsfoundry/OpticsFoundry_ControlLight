@@ -793,6 +793,30 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerSetI2CParameters: error");
 		}
 
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SelectRackSlot)(const unsigned int& Sequencer, uint8_t rack_nr, uint8_t slot_nr) {
+			API_LOCK_GUARD;
+			CDeviceSequencer* sequencer = GetSequencer(Sequencer);
+			if (!sequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "CLA_SelectRackSlot: Invalid sequencer");
+			}
+			sequencer->SequencerSelectRackSlot(rack_nr, slot_nr);
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SelectRackSlot: error");
+		}
+
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(ResetI2CMultiplexer)(const unsigned int& Sequencer) {
+			API_LOCK_GUARD;
+			CDeviceSequencer* sequencer = GetSequencer(Sequencer);
+			if (!sequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "CLA_ResetI2CMultiplexer: Invalid sequencer");
+			}
+			sequencer->SequencerResetI2CMultiplexer();
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_ResetI2CMultiplexer: error");
+		}
+
+
+		
+
+
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SetRegister)(const unsigned int& Sequencer, const unsigned int& Address, const unsigned int& SubAddress, const uint8_t* Data, const unsigned long& DataLength_in_bit, const uint8_t& StartBit) {
 			API_LOCK_GUARD;
 			CDeviceSequencer* sequencer = GetSequencer(Sequencer);
@@ -1621,7 +1645,6 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			}
 			// Create a new device sequencer and add it to the list
 			SequencerList[id] = new CDeviceSequencer(id, type, ip, port, master, startDelay, clockFrequency, FPGAClockToBusClockRatio, useExternalClock, useStrobeGenerator, connect);
-			new CDeviceRack(SequencerList[id]);
 			RETURN_ERROR(!SequencerList[id]->ErrorOccured(), "CLA_AddDeviceSequencerFromJSON: error on initialization");
 		}
 
@@ -1649,7 +1672,6 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			}
 			// Create a new device sequencer and add it to the list
 			SequencerList[id] = new CDeviceSequencer(id, type, ip, port, master, startDelay, clockFrequency, FPGAClockToBusClockRatio, useExternalClock, useStrobeGenerator, connect);
-			new CDeviceRack(SequencerList[id]);
 			API_UNLOCK_RETURN_ERROR(!SequencerList[id]->ErrorOccured(), "CLA_AddDeviceSequencer: error on initialization");
 			CATCH_MFC_EX_E
 		}

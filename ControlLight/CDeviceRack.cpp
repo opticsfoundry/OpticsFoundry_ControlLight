@@ -18,14 +18,14 @@ static char THIS_FILE[] = __FILE__;
 #define new DEBUG_NEW
 #endif
 
-
-//This is the rack backplane, which has an arbiter to select one slot as input slot
+//This class describes the whole chain of racks to which one sequencer is connected
+//All racks have a copy of an arbiter circuit to select one slot as input slot
+//i.e. sending data to once, configures all racks in the chain and selects exactly one slot
 CDeviceRack::CDeviceRack(
-	CDeviceSequencer* _MySequencer,
-	unsigned int _MyRackAddress
-) : CDevice(_MySequencer, _MyRackAddress, "Rack") {
-	MyAddress = 0xFE;
-	MyRackAddress = _MyRackAddress;
+	CDeviceSequencer* _MySequencer//,
+	//unsigned int _MyRackAddress
+) : CDevice(_MySequencer, 0xFE, "Rack") {
+	//MyRackAddress = _MyRackAddress;
 	LastValue = 0;
 	if (MySequencer->ParallelBusDeviceList[MyAddress] == nullptr) MySequencer->ParallelBusDeviceList[MyAddress] = this;
 	else {
@@ -40,7 +40,8 @@ CDeviceRack::CDeviceRack(
 
 bool CDeviceRack::SetValue(const unsigned int& SubAddress, const uint8_t* Data, const unsigned long& DataLength_in_bit, const uint8_t& StartBit) {
 	if (SubAddress > 0) return false;
-	if (DataLength_in_bit > 15) return false;
+	if (DataLength_in_bit == 0) return false;
+	if (DataLength_in_bit > 16) return false;
 	if ((StartBit + DataLength_in_bit) > 16) return false;
 	if (Data == nullptr) return false;
 	if (DataLength_in_bit == 1)
@@ -59,11 +60,14 @@ bool CDeviceRack::SetValue(const unsigned int& SubAddress, const uint8_t* Data, 
 	}
 	else {
 		uint16_t* data = (uint16_t*)(Data);
-		LastValue &= ~(0xFFFF << StartBit);
-		LastValue |= (data[0] << StartBit);
+		uint16_t dataMask = static_cast<uint16_t>((1u << DataLength_in_bit) - 1u);
+		uint16_t shiftedDataMask = static_cast<uint16_t>(dataMask << StartBit);
+		LastValue &= ~shiftedDataMask;
+		LastValue |= static_cast<uint16_t>((data[0] & dataMask) << StartBit);
 	}
 
 	uint32_t content = MyAddress + (LastValue << 8);
+	//This might need to be adjusted, as arbiter is slower than a normal dig out port, to allow first-break then-make behavior.
 	MySequencer->AddBusCommandToSequence(content);
 	return true;
 }

@@ -58,9 +58,16 @@ bool CDeviceDigitalOut::SetValue(const unsigned int& SubAddress, const uint8_t* 
 		LastValue = data[0];
 	}
 	else {
+		//Old code without data bitmask: this assumes the user does take care of bitmasking.
+		//uint16_t* data = (uint16_t*)(Data);
+		//LastValue &= ~(0xFFFF << StartBit);
+		//LastValue |= (data[0] << StartBit);
+		
 		uint16_t* data = (uint16_t*)(Data);
-		LastValue &= ~(0xFFFF << StartBit);
-		LastValue |= (data[0] << StartBit);
+		uint16_t dataMask = static_cast<uint16_t>((1u << DataLength_in_bit) - 1u);
+		uint16_t shiftedDataMask = static_cast<uint16_t>(dataMask << StartBit);
+		LastValue &= ~shiftedDataMask;
+		LastValue |= static_cast<uint16_t>((data[0] & dataMask) << StartBit);
 	}
 
 	uint32_t content = MyAddress + (LastValue << 8);

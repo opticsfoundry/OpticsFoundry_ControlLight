@@ -534,7 +534,7 @@ bool InitializeSystem() {
 
 
 	//CLA_UseEdgeTriggeredLatches(0, true);  //ToDo: check that edge triggered latches work
-	CLA_SwitchDebugMode(true, "DebugSequencer");
+	//CLA_SwitchDebugMode(true, "DebugSequencer");  //If on, FPGA sends debug info over USB COM port, which slows it down
 	if (!CLA_IsReady()) {
 		AddErrorMessage("Not all sequencers connected");
 		CLA_Cleanup();
@@ -563,7 +563,11 @@ void DemoSequence(unsigned long CycleNumber) {
 	CLA_SetValueSerialDevice(0, 0, 4, (uint8_t*)&DelayBetweenDataPoints_in_ms_in_ms, 64);
 	CLA_SetValueSerialDevice(0, 0, 5, (uint8_t*)&ChannelNumber, 8); //starts the acquisition
 	*/
-
+	for (uint8_t n = 0; n<12; n++) {
+		CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, n);
+		CLA_Wait_ms(1000);
+	}
+	CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, 5);
 	//this is the same command using a convenience function
 	CLA_SequencerStartAnalogInAcquisition(/*Sequencer_Nr*/ 0, /*AnalogInType*/ 0, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 1000, /*SamplingPeriod_in_ms*/ 0.1);
 
@@ -1075,6 +1079,7 @@ void DemoReadConfigEEPROM() {
 	CLA_ReadConfigEEPROM(SequencerNr, RackNr, SlotNr, buffer, length);
 	std::string read_data(buffer, length);
 	cout << "Read from EEPROM: " << read_data << endl;
+	cout << endl;
 	CLA_ReadConfiguration("ConfigFromEEPROMs");
 }
 

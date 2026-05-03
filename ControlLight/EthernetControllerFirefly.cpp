@@ -1346,7 +1346,7 @@ bool CEthernetControllerFirefly::AttemptTransmitI2CPort(uint8_t I2C_port, uint8_
 	if (InputBufferContentsLength > 0) {
 		if (!Network) return false;
 
-		if (InputBufferContentsLength > (numeric_limits<unsigned long>::max)()) return false;
+		if (InputBufferContentsLength > (numeric_limits<unsigned long>::max)()) return true;
 
 		const unsigned long bytes_to_receive = static_cast<unsigned long>(InputBufferContentsLength);
 		receive_length = static_cast<uint16_t>((std::min<unsigned long long>)(InputBufferContentsLength, (numeric_limits<uint16_t>::max)()));
@@ -1361,7 +1361,7 @@ bool CEthernetControllerFirefly::AttemptTransmitI2CPort(uint8_t I2C_port, uint8_
 		if (receive_data && receive_capacity > 0) {
 			memcpy(receive_data, overflow_buffer.data(), receive_capacity);
 		}
-		return false;
+		return true;
 	}
 	return true;
 }

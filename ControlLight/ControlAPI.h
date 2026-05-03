@@ -811,6 +811,17 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerSetI2CParameters)(const unsigned int& Sequencer, uint8_t I2C_0_Destination);
 
 
+		/// @brief Selects a slot in one of the racks connected in a chain to a sequencer
+		/// @param Sequencer the sequencer to use.
+		/// @param rack_nr the number of data points to read/write.
+		/// @param slot_nr
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SelectRackSlot)(const unsigned int& Sequencer, uint8_t rack_nr, uint8_t slot_nr);
+
+
+		/// @brief Selects a slot in one of the racks connected in a chain to a sequencer
+		/// @param Sequencer the sequencer to use.
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(ResetI2CMultiplexer)(const unsigned int& Sequencer);
+
 
 		//the following functions are used to add devices to the sequencer. I placed them here to aAPI_EXPORT void clutter above. They have to be called before Initialize)().	
 		/// @brief Add a device sequencer to the list.

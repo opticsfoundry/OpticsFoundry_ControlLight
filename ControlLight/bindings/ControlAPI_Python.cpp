@@ -105,9 +105,6 @@ PYBIND11_MODULE(control_light_api, m) {
                 return json_module.attr("loads")(self.GetAutoConfigJSON(filename.c_str()));
             }, py::arg("filename") = "")
         
-        //Rack control
-        .def("select_slot", &ControlLight_API::SelectSlot, py::arg("slot_nr"))
-        .def("reset_i2c_multiplexer", &ControlLight_API::ResetI2CMultiplexer)   
         
         //sequencer commands
 		.def("start_assembling_cpu_command_sequence", &ControlLight_API::StartAssemblingCPUCommandSequence)
@@ -269,6 +266,11 @@ PYBIND11_MODULE(control_light_api, m) {
 		.def("sequencer_set_i2c_parameters", &ControlLight_API::SequencerSetI2CParameters,
 			py::arg("sequencer"), py::arg("i2c_0_destination"))
 
+        //Rack control
+        .def("reset_i2c_multiplexer", &ControlLight_API::ResetI2CMultiplexer,py::arg("sequencer"))   
+        
+        .def("select_rack_slot", &ControlLight_API::SelectRackSlot,
+			py::arg("sequencer"), py::arg("rack_nr"), py::arg("slot_nr"))
 
             // AddDeviceSequencer
             .def("add_device_sequencer", &ControlLight_API::AddDeviceSequencer,

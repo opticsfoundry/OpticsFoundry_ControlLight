@@ -2,17 +2,16 @@
 
 #include "CDevice.h"
 
-
+//This class describes the whole chain of racks to which one sequencer is connected
 class CDeviceRack : public CDevice
 {
 public:
 	uint16_t LastValue;
-	uint8_t MyRackAddress;
-	uint8_t MyAddress;
+	//uint8_t MyRackAddress;
 public:
 	CDeviceRack(
-		CDeviceSequencer* _MySequencer,
-		unsigned int _MyRackAddress = 0
+		CDeviceSequencer* _MySequencer//,
+		//unsigned int _MyRackAddress = 0xFE
 	);
 	virtual ~CDeviceRack() = default;
 	//virtual bool SetValue(unsigned int SubAddress, uint8_t* Data, unsigned long DataLength);
@@ -24,8 +23,11 @@ public:
 	//virtual bool GetValue(unsigned int SubAddress, uint8_t* Data, unsigned long DataLength);
 	//virtual bool Configure();
 
-	virtual bool SelectSlot(const uint8_t& SlotNr) {
-		uint8_t Data = (SlotNr & 0x0F) | ((MyRackAddress & 0x07) << 4);
+	virtual bool SelectRackSlot(const uint8_t& RackNr, const uint8_t& SlotNr) {
+		//This conversion will need to be adjusted to each type of backplane or if we enable slot selection in enchained racks
+		uint8_t SlotAddr = (SlotNr <= 12) ? 12 - SlotNr : 12;
+
+		uint8_t Data = (SlotAddr & 0x0F) | ((RackNr & 0x07) << 4);
 		return SetValue(0, &Data, 7, 0);
 	}
 

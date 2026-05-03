@@ -37,8 +37,8 @@ public:
 	
 
 	//Rack
-	virtual bool SelectSlot(const uint8_t& SlotNr) {
-		AddErrorMessage("CDevice::SelectSlot: abstract function called");
+	virtual bool SelectRackSlot(const uint8_t& SlotNr) {
+		AddErrorMessage("CDevice::SelectRackSlot: abstract function called");
 		return false;
 	}
 

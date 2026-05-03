@@ -5,6 +5,7 @@
 #include "EthernetControllerFirefly.h"
 #include "AD9852.h"
 #include "AD9858.h"
+#include "CDeviceRack.h"
 #ifdef WIN32
 #include <tchar.h>
 #endif
@@ -76,6 +77,8 @@ CDeviceSequencer::CDeviceSequencer(
 	//NI653xEthernet->Debug(DebugFilePath + "DebugNI653xEthernet.dat");
 	//NI653xEthernet->DebugBuffer(DebugFilePath + "DebugNI653xEthernetBuffer.dat");
 	MyEthernetMultiIOControllerFirefly->MeasureEthernetBandwidth(1024 * 128, 20);
+
+	MyDeviceRack = new CDeviceRack(this);
 }
 
 CDeviceSequencer::~CDeviceSequencer() {
@@ -461,8 +464,13 @@ void CDeviceSequencer::SequencerSetI2CParameters(uint8_t I2C_0_Destination) {
 }
 
 
+void CDeviceSequencer::SequencerSelectRackSlot(uint8_t rack_nr, uint8_t slot_nr) {
+	MyDeviceRack->SelectRackSlot(rack_nr, slot_nr);
+}
 
-
+void CDeviceSequencer::SequencerResetI2CMultiplexer() {
+	MyDeviceRack->ResetI2CMultiplexer();
+}
 
 bool CDeviceSequencer::SetValue_Sequencer(const unsigned int& Address, const unsigned int& SubAddress, const uint8_t* Data, const unsigned long& DataLength_in_bit, const uint8_t& StartBit) {
 	if (Address > MaxParallelBusDevices) return false;

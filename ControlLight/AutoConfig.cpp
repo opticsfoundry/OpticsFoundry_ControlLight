@@ -110,12 +110,19 @@ void ResetRackI2CMultiplexers(const uint8_t SequencerID) {
 	//This function resets the I2C multiplexers of the specified rack, by writing 0 to the corresponding configuration register of the sequencer.
 	//This is needed before writing to the EEPROM, to make sure that the I2C communication is working and that we are writing to the correct device.
 	CLA_StartAssemblingSequence();
+
+	//The following code should be used, once it's tested and works
+	//CLA_ResetI2CMultiplexer(SequencerID);
+
+	//This is placeholder code, which works
 	uint8_t data = 1;
 	CLA_SetValue(SequencerID, /*Address*/ 0xFE, /*SubAddress*/ 0, /*Data*/ &data, /*DataLength_in_bit*/ 1, /*StartBit*/ 7);
 	CLA_Wait_ms(0.01);
 	data = 0;
 	CLA_SetValue(SequencerID, /*Address*/ 0xFE, /*SubAddress*/ 0, /*Data*/ &data, /*DataLength_in_bit*/ 1, /*StartBit*/ 7);
 	CLA_Wait_ms(0.01);
+	//end placeholder code
+
 	CLA_ExecuteSequence();
 	uint8_t *buffer = nullptr;
 	unsigned long buffer_length = 0;
@@ -305,8 +312,7 @@ json ReadConfiguration(const std::string& filename) {
 
 	//go over every rack slot and the backplane memory, constructs json file containing whole configuration, including addresses stored in EEPROMS, sequencer, rack and slot number of each board or rack beackplane.
 	//store in file if filename is not empty.
-	constexpr uint8_t MaxNrSequencers = 7;
-	for (uint8_t SequencerNr = 0 ; SequencerNr < MaxNrSequencers; ++SequencerNr) {
+	for (uint8_t SequencerNr = 0 ; SequencerNr < CLA_GetNumberOfSequencers(); ++SequencerNr) {
 		for (uint8_t RackNr = 0; RackNr <= MaxSupportedRackNr; ++RackNr) {
 			for (uint8_t SlotNr = 0; SlotNr < NrSlots; ++SlotNr) {
 				char buffer[EEPROMSizeInBytes] = {};
