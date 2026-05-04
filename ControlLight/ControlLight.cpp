@@ -577,14 +577,14 @@ void DemoSequence(unsigned long CycleNumber) {
 
 	//Test analog in with convenience function
 	//@param analog_in_type Analog in board type. 0: AQuRA MCP3208 analog in board; 1: MCP3208 12-bit ADC on SerialPortBoard; 2: ADS1256  24-bit ADC 
-	//CLA_SequencerStartAnalogInAcquisition(/*Sequencer_Nr*/ 0, /*AnalogInType*/ 2, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 10000, /*SamplingPeriod_in_ms*/ 1);
-	//CLA_Wait_ms(1000);
+	CLA_SequencerStartAnalogInAcquisition(/*Sequencer_Nr*/ 0, /*AnalogInType*/ 2, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 10000, /*SamplingPeriod_in_ms*/ 1);
+	CLA_Wait_ms(1000);
 	
 	//Test repeated digital in
 	/// @param RepeatedOutInCommand the command to execute for each data point. 0: stop; 1: repeated SPI transfer; 2: repeated digital in; 3: digital in event tagger 
 	/// for 3: if dig in changes, safes dig in on input memory bit 0:7, bit 8: counter overflow, bit 9: 4-entry fifo overflow, bit 10:31: clock cycle counter; runs till stopped by setting RepeatedOutInCommand to 0 with new SequencerRepeatedOutIn command.
-	CLA_SequencerRepeatedOutIn(/*SequencerNr*/ 0, /*NumberOfDataPoints*/ 10000, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 2);
-	CLA_Wait_ms(1000);
+	//CLA_SequencerRepeatedOutIn(/*SequencerNr*/ 0, /*NumberOfDataPoints*/ 10000, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 2);
+	//CLA_Wait_ms(1000);
 
 	//Test event time tagger
 	/// @param RepeatedOutInCommand the command to execute for each data point. 0: stop; 1: repeated SPI transfer; 2: repeated digital in; 3: digital in event tagger 
@@ -632,15 +632,26 @@ void SaveInputDataToFile(const std::string& filename,
 
 
 		//To test digital input as event time tagger
-		uint8_t low_byte = buffer[i];
-		uint8_t second_byte = buffer[i] >> 8;
-		std::string bin = std::bitset<8>(low_byte).to_string();
-		std::string bin2 = std::bitset<8>(second_byte).to_string();
-		std::fprintf(file, "%lu %lu %s %s\n", i, buffer[i] >> 10, bin2.c_str(), bin.c_str());
+		//uint8_t low_byte = buffer[i];
+		//uint8_t second_byte = buffer[i] >> 8;
+		//std::string bin = std::bitset<8>(low_byte).to_string();
+		//std::string bin2 = std::bitset<8>(second_byte).to_string();
+		//std::fprintf(file, "%lu %lu %s %s\n", i, buffer[i] >> 10, bin2.c_str(), bin.c_str());
 
 
 		//To test analog input
-		//std::fprintf(file, "%lu %lu\n", i, buffer[i]);
+		uint8_t help = buffer[i] & 0xff;
+		std::string bin0 = std::bitset<8>(help).to_string();
+		help = (buffer[i] >> 8)& 0xff;
+		std::string bin1 = std::bitset<8>(help).to_string();
+		help = (buffer[i] >> 16) & 0xff;
+
+		std::string bin2 = std::bitset<8>(help).to_string();
+		help = (buffer[i] >> 24) & 0xff;
+
+		std::string bin3 = std::bitset<8>(help).to_string();
+
+		std::fprintf(file, "%s %s %s %s %lu %lu %lu %li \n", bin3.c_str(), bin2.c_str(), bin1.c_str(), bin0.c_str(), i, buffer[i]>>24, buffer[i] & 0xFFF, (int32_t)(buffer[i]<<8));
     }
 
     std::fclose(file);

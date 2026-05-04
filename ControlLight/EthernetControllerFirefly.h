@@ -123,7 +123,7 @@ public:
 	void AddMarker(uint8_t Marker);
 
 	void AddCommandWriteI2C(uint8_t I2C_port, uint8_t I2C_length, uint8_t *data_out);
-	void AddCommandTransmitSPI(const uint8_t chip_select, const uint16_t number_of_bits_out, const uint8_t *data_out, const uint8_t number_of_bits_in, const bool start_now);
+	void AddCommandTransmitSPI(const uint8_t chip_select, const uint16_t number_of_bits_out, const uint8_t data_out[], uint8_t number_of_bits_in, const bool start_now, const bool MSB_first = false);
 	void AddCommandRepeatedOutIn(const uint16_t number_of_datapoints, const double delay_between_datapoints_in_ms, uint8_t RepeatedOutInCommand);
 	void AddCommandWriteSystemTimeToInputMemory();
 	void AddCommandCalcAD9854FrequencyTuningWord(uint64_t ftw0, uint8_t bit_shift);
