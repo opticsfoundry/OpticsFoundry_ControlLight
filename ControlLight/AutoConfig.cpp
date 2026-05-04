@@ -310,6 +310,7 @@ void ReadConfigAddress(const uint8_t SequencerID, const uint8_t RackNr, const ui
 json ReadConfiguration(const std::string& filename) {
 	json config;
 
+	CLA_SwitchDebugMode(false, ""); //Debug mode slows I2C communication considerably. Only keep on if you really do debug it.
 	//go over every rack slot and the backplane memory, constructs json file containing whole configuration, including addresses stored in EEPROMS, sequencer, rack and slot number of each board or rack beackplane.
 	//store in file if filename is not empty.
 	for (uint8_t SequencerNr = 0 ; SequencerNr < CLA_GetNumberOfSequencers(); ++SequencerNr) {

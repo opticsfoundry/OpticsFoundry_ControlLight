@@ -429,9 +429,9 @@ EXTENDED_CMD_LOAD_SPI_TIMING: begin
 void CEthernetControllerFirefly::AddCommandSetSPITiming(uint16_t SPI_delay_CS_low_start_wait, uint16_t SPI_delay_write, uint16_t SPI_delay_pause_before_read, uint16_t SPI_delay_read, uint16_t SPI_delay_CS_low_end_wait) {
 	unsigned char ext_command = EXTENDED_CMD_LOAD_SPI_TIMING;
 	//low buffer: bits 31:0
-	uint32_t low_buffer =  ((SPI_delay_pause_before_read & 0x01) << (10+10+6+5)) &  ((SPI_delay_write & 0x3FF) << (10+6+5)) & ((SPI_delay_CS_low_start_wait & 0x3FF) << (6+5)) & ((0x3F & ext_command) << 5) & (0x1F & CMD_LOAD_EXTENDED_COMMAND);
+	uint32_t low_buffer =  ((SPI_delay_pause_before_read & 0x01) << (10+10+6+5)) |  ((SPI_delay_write & 0x3FF) << (10+6+5)) | ((SPI_delay_CS_low_start_wait & 0x3FF) << (6+5)) | ((0x3F & ext_command) << 5) | (0x1F & CMD_LOAD_EXTENDED_COMMAND);
 	//high buffer: bits 63:32
-	uint32_t high_buffer = ((SPI_delay_CS_low_end_wait & 0x3FF) << (11+10)) & ((SPI_delay_read & 0x3FF) << 11) & ((SPI_delay_pause_before_read & 0xFFF) >> 1);
+	uint32_t high_buffer = ((SPI_delay_CS_low_end_wait & 0x3FF) << (11+10)) | ((SPI_delay_read & 0x3FF) << 11) | ((SPI_delay_pause_before_read & 0xFFF) >> 1);
 	AddSequencerCommandToSequenceList(high_buffer, low_buffer);
 }
 
@@ -642,7 +642,7 @@ void CEthernetControllerFirefly::AddCommandRepeatedOutIn(const uint16_t number_o
 	else if (RepeatedOutInCommand & 0x02) RepeatedOutInCommand = 2;
 	else if (RepeatedOutInCommand & 0x04) RepeatedOutInCommand = 4;
 	else RepeatedOutInCommand = 0;
-	unsigned __int32 INPUT_REPEAT_command = RepeatedOutInCommand;  //1: SPI input, 2: digital input, 4: analog in
+	unsigned __int32 INPUT_REPEAT_command = RepeatedOutInCommand;  //0: stop, 1: SPI input, 2: digital input, 3: dig_event_time_tagger, 4: analog in
 	unsigned __int32 INPUT_REPEAT_trigger_secondary_interrupt_when_finished = 1;//this is needed if input BRAM buffer should be copied to DDR when half buffer full 
 
 	uint32_t low_buffer = (INPUT_REPEAT_repeats << 8) | command;
@@ -674,9 +674,9 @@ void CEthernetControllerFirefly::StartSPIAnalogInAcquisition_MCP3208(unsigned ch
 	//AddCommandWriteInputBuffer(/*write_next_address*/ false, /* input_buf_mem_address */ 0, /*input_buf_mem_data*/0xDEADBEEF, /* wait_time_in_FPGA_cycles*/ 5);
 	//AddCommandWriteInputBuffer(/*write_next_address*/ false, /* input_buf_mem_address */ 1, /*input_buf_mem_data*/0x1234ABCD, /* wait_time_in_FPGA_cycles*/ 5);
 
-	if (analog_in_type==1) {
-		AddCommandSetSPITiming(/* SPI_delay_CS_low_start_wait*/ 4, /* SPI_delay_write*/ 4, /* SPI_delay_pause_before_read*/ 4, /* SPI_delay_read*/ 23, /* SPI_delay_CS_low_end_wait*/ 4);
-	}
+	//if (analog_in_type==1) {
+	AddCommandSetSPITiming(/* SPI_delay_CS_low_start_wait*/ 4, /* SPI_delay_write*/ 4, /* SPI_delay_pause_before_read*/ 4, /* SPI_delay_read*/ 23, /* SPI_delay_CS_low_end_wait*/ 4);
+	//}
 
 
 	/*
@@ -723,7 +723,7 @@ void CEthernetControllerFirefly::StartSPIAnalogInAcquisition_MCP3208(unsigned ch
 	unsigned __int32 SPI_in_length = 13;
 	//unsigned __int32 SPI_CS = 1;  
 	unsigned __int32 wait_time = 0;
-	constexpr unsigned char SPI_port = 0;
+	constexpr unsigned char SPI_port = 1;
 	unsigned char SPI_SEL_next = (SPI_port == 0) ? 0x01 : 0x02; //2 SPI ports, port 0 is controlled by bit zero here, port 1 is bit one here; 1 means active under PL control; if inactive they are under PS control
 	unsigned char SPI_chip_select_next;
 	if (analog_in_type==0) {

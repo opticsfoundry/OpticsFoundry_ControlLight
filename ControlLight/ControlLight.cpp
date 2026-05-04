@@ -10,6 +10,7 @@
 #include <string>
 #include <thread>
 #include <cstdio>
+#include <bitset>
 
 
 using namespace std;
@@ -550,6 +551,16 @@ void DemoSequence(unsigned long CycleNumber) {
 	CLA_SequencerWriteInputMemory(/*SequencerNr*/ 0, CycleNumber);
 	CLA_SequencerSwitchDebugLED(/*SequencerNr*/ 0, 1);
 	CLA_SequencerAddMarker(/*SequencerNr*/ 0, 1);//for debug: displays marker (here "1") on ZYNQ USB port output (use Termite or similar to see it)
+
+	//Test input board:
+	//for (uint8_t n = 0; n<12; n++) {
+	//	CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, n);
+	//	CLA_Wait_ms(100);
+	//}
+	CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, 5);
+
+
+	//Test analogIn, pedestrian way
 	//start data acquisition. This is an example for a command for which we didn't yet provide a convenience function in the DLL. 
 	//In this somewhat convoluted manner one can achieve anything without API interface changes
 	/*
@@ -563,13 +574,24 @@ void DemoSequence(unsigned long CycleNumber) {
 	CLA_SetValueSerialDevice(0, 0, 4, (uint8_t*)&DelayBetweenDataPoints_in_ms_in_ms, 64);
 	CLA_SetValueSerialDevice(0, 0, 5, (uint8_t*)&ChannelNumber, 8); //starts the acquisition
 	*/
-	for (uint8_t n = 0; n<12; n++) {
-		CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, n);
-		CLA_Wait_ms(1000);
-	}
-	CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, 5);
-	//this is the same command using a convenience function
-	CLA_SequencerStartAnalogInAcquisition(/*Sequencer_Nr*/ 0, /*AnalogInType*/ 0, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 1000, /*SamplingPeriod_in_ms*/ 0.1);
+
+	//Test analog in with convenience function
+	//@param analog_in_type Analog in board type. 0: AQuRA MCP3208 analog in board; 1: MCP3208 12-bit ADC on SerialPortBoard; 2: ADS1256  24-bit ADC 
+	//CLA_SequencerStartAnalogInAcquisition(/*Sequencer_Nr*/ 0, /*AnalogInType*/ 2, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 10000, /*SamplingPeriod_in_ms*/ 1);
+	//CLA_Wait_ms(1000);
+	
+	//Test repeated digital in
+	/// @param RepeatedOutInCommand the command to execute for each data point. 0: stop; 1: repeated SPI transfer; 2: repeated digital in; 3: digital in event tagger 
+	/// for 3: if dig in changes, safes dig in on input memory bit 0:7, bit 8: counter overflow, bit 9: 4-entry fifo overflow, bit 10:31: clock cycle counter; runs till stopped by setting RepeatedOutInCommand to 0 with new SequencerRepeatedOutIn command.
+	CLA_SequencerRepeatedOutIn(/*SequencerNr*/ 0, /*NumberOfDataPoints*/ 10000, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 2);
+	CLA_Wait_ms(1000);
+
+	//Test event time tagger
+	/// @param RepeatedOutInCommand the command to execute for each data point. 0: stop; 1: repeated SPI transfer; 2: repeated digital in; 3: digital in event tagger 
+	/// for 3: if dig in changes, safes dig in on input memory bit 0:7, bit 8: counter overflow, bit 9: 4-entry fifo overflow, bit 10:31: clock cycle counter; runs till stopped by setting RepeatedOutInCommand to 0 with new SequencerRepeatedOutIn command.
+	//CLA_SequencerRepeatedOutIn(/*SequencerNr*/ 0, /*NumberOfDataPoints*/ 10000, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 3);
+	//CLA_Wait_ms(1000);
+	//CLA_SequencerRepeatedOutIn(/*SequencerNr*/ 0, /*NumberOfDataPoints*/ 1, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 0);
 
 	for (int j = 1; j < 100; j++) {
 		CLA_SetVoltage(0, 24, 10.0 * j / 100.0);
@@ -582,14 +604,17 @@ void DemoSequence(unsigned long CycleNumber) {
 		double Frequency = 1000.0 * j / 100.0;
 		CLA_SetValue(0, 232, 0, (uint8_t*)&Frequency, 64);
 	}
-	CLA_Wait_ms(10);
+	CLA_Wait_ms(1000);
 	RampVoltage(/*Sequencer*/ 0, /*Address*/ 24, /*StartVoltage*/ -10, /* TargetVoltage*/ 10, /*Duration_in_ms*/ 100, /*StepSize_in_ms*/ 0.1);
 	CLA_SequencerSwitchDebugLED(/*SequencerNr*/ 0, 0);
 	CLA_SequencerWriteSystemTimeToInputMemory(/*SequencerNr*/ 0);
+	//CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, 0);
 }
 
+
+
 void SaveInputDataToFile(const std::string& filename,
-                         const uint16_t* buffer,
+                         const uint32_t* buffer,
                          unsigned long buffer_length)
 {
     FILE* file = std::fopen(filename.c_str(), "w");
@@ -599,17 +624,23 @@ void SaveInputDataToFile(const std::string& filename,
     }
 
     for (unsigned long i = 0; i < buffer_length; ++i) {
-        // usual 16-bit data format
-        std::fprintf(file, "%lu %u\n", i, buffer[i]);
 
-        /*
-        // for 32-bit data format (mostly for debugging)
-        unsigned long buf_high = buffer[i] >> 16;
-        unsigned long buf_low  = buffer[i] & 0xFFFF;
-        unsigned long data     = buf_low & 0xFFF;
-        std::fprintf(file, "%lu %lu %lu %lu    %lx %lx\n",
-                     i, data, buf_high, buf_low, buf_high, buf_low);
-        */
+		//To test repeated digital input reading
+		//uint8_t low_byte = buffer[i];
+		//std::string bin = std::bitset<8>(low_byte).to_string();
+		//std::fprintf(file, "%lu %u %s\n", i, buffer[i], bin.c_str());
+
+
+		//To test digital input as event time tagger
+		uint8_t low_byte = buffer[i];
+		uint8_t second_byte = buffer[i] >> 8;
+		std::string bin = std::bitset<8>(low_byte).to_string();
+		std::string bin2 = std::bitset<8>(second_byte).to_string();
+		std::fprintf(file, "%lu %lu %s %s\n", i, buffer[i] >> 10, bin2.c_str(), bin.c_str());
+
+
+		//To test analog input
+		//std::fprintf(file, "%lu %lu\n", i, buffer[i]);
     }
 
     std::fclose(file);
@@ -674,8 +705,8 @@ void DemoSequenceAnalyseData(unsigned long CycleNumber, uint32_t* buffer, const 
 
 	if (buffer != NULL) {
 		//process input data
-		std::string filename = std::format(".\\data\\input%04u.dat", CycleNumber);
-		SaveInputDataToFile(filename, (uint16_t*)buffer, buffer_length*2);
+		std::string filename = std::format("C:\\data\\input%04u.dat", CycleNumber);
+		SaveInputDataToFile(filename, buffer, buffer_length);
 		//freeing buffer is done in CAL and shouldn't be done here.
 	}
 	else {
@@ -690,7 +721,8 @@ void DemoFPGASequencerSingleRun() {
 		return;
 	}
 	uint8_t* buffer = nullptr;
-	for (unsigned long CycleNr = 0; CycleNr < 10; CycleNr++) {
+	constexpr unsigned long NrCycles = 3;
+	for (unsigned long CycleNr = 0; CycleNr < NrCycles; CycleNr++) {
 		Time starttime = Clock::now();
 		cout << "Iteration " << CycleNr << ": ";
 		DemoSequence(CycleNr);
@@ -703,6 +735,10 @@ void DemoFPGASequencerSingleRun() {
 		unsigned long EndTimeOfCycle = 0;
 		CLA_WaitTillEndOfSequenceThenGetInputData(buffer, buffer_length, EndTimeOfCycle, 10);
 		DemoSequenceAnalyseData(CycleNr, (uint32_t*)buffer, buffer_length/4, EndTimeOfCycle);
+
+		//Test SerialPortBoardI2Cboard with signals from PS; make sure that slot is selected.
+		//uint8_t address = 0xAB;
+ 		//CLA_TransmitI2CPort(/*I2C_port*/ 1, 0xFE, /*send_length*/ 1, &address, /*receive_length*/ 0, nullptr, /*I2CClockFrequencyInHz*/100000);
 
 		//Duration duration = Clock::now() - starttime;
 		//cout << "Duration: " << milliSeconds(duration) << " ms  Buffer length : " << buffer_length << endl;

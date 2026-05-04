@@ -25,8 +25,8 @@ public:
 
 	virtual bool SelectRackSlot(const uint8_t& RackNr, const uint8_t& SlotNr) {
 		//This conversion will need to be adjusted to each type of backplane or if we enable slot selection in enchained racks
-		uint8_t SlotAddr = (SlotNr <= 12) ? 12 - SlotNr : 12;
-
+		uint8_t SlotAddr = (SlotNr <= 3) ? (SlotNr + 12) : (SlotNr - 4);
+		
 		uint8_t Data = (SlotAddr & 0x0F) | ((RackNr & 0x07) << 4);
 		return SetValue(0, &Data, 7, 0);
 	}

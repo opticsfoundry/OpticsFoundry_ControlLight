@@ -247,11 +247,6 @@ void CDeviceSequencer::AddBusCommandToSequence(const uint32_t& content) {
 	LastCommandWasSpecialCommand = false;
 }
 
-void CDeviceSequencer::WriteBusAddressAndDataToBuffer(const uint16_t& MultiIOAddress, const uint16_t& Data) {
-	uint32_t content = MultiIOAddress << 16 | Data;
-	AddBusCommandToSequence(content);
-}
-
 void CDeviceSequencer::GetBufferLength(uint32_t& FilledBufferLength, uint32_t& MaxBufferLength) {
 	FilledBufferLength = BufferPosition;
 	MaxBufferLength = PCBufferSize_in_u64;

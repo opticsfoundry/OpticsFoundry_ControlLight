@@ -49,8 +49,7 @@ bool CDeviceAnalogOut::SetValue(const unsigned int& SubAddress, const uint8_t* D
 	if (StartBit > 0) return false;
 	if (Data == nullptr) return false;
 	LastValue = ((uint16_t*)(Data))[0];
-	uint32_t content = MyAddress + (LastValue << 8);
-	MySequencer->AddBusCommandToSequence(content);
+	MySequencer->WriteBusAddressAndDataToBuffer(MyAddress, LastValue);
 	return true;
 }
 

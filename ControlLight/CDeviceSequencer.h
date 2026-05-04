@@ -68,13 +68,17 @@ public:
 	bool IsSequenceRunning(bool& running, unsigned long long& DataPointsWritten);
 	bool WaitTillEndOfSequenceThenGetInputData(uint8_t*& buffer, unsigned long& buffer_length, unsigned long& EndTimeOfCycle, double timeout_in_s);
 	void AddCommandToSequence(const uint32_t& high_word, const uint32_t& low_word);
-	void WriteBusAddressAndDataToBuffer(const uint16_t& MultiIOAddress, const uint16_t& Data);
 	void AddBusCommandAndWait(uint32_t data, uint32_t delay);
 	void AddBusCommandToSequence(const uint32_t& content);
 	bool SetValue_Sequencer(const unsigned int& Address, const unsigned int& SubAddress, const uint8_t* Data, const unsigned long& DataLength_in_bit, const uint8_t& StartBit);
 	bool SetRegister_Sequencer(const unsigned int& Address, const unsigned int& SubAddress, const uint8_t* Data, const unsigned long& DataLength_in_bit, const uint8_t& StartBit);
 	bool SetValueSerialDevice_Sequencer(const unsigned int& Address, const unsigned int& SubAddress, const uint8_t* Data, const unsigned long& DataLength_in_bit, const uint8_t& StartBit);
 	bool SetRegisterSerialDevice_Sequencer(const unsigned int& Address, const unsigned int& SubAddress, const uint8_t* Data, const unsigned long& DataLength_in_bit, const uint8_t& StartBit);
+
+	void WriteBusAddressAndDataToBuffer(const uint16_t& MultiIOAddress, const uint16_t& Data) {
+		uint32_t content = MultiIOAddress << 16 | Data;
+		AddBusCommandToSequence(content);
+	}
 
 	bool Wait_ms(double time_in_ms);
 	double GetTime_ms();

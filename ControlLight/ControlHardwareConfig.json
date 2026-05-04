@@ -11,7 +11,7 @@
       "Master": true,
       "StartDelay": 10,
       "ClockFrequency": 100000000,
-      "FPGAClockToBusClockRatio": 49,
+      "FPGAClockToBusClockRatio": 499,
       "UseExternalClock": false,
       "UseStrobeGenerator": true,
       "Connect": true
