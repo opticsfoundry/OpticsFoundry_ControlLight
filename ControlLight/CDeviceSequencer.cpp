@@ -454,6 +454,10 @@ void CDeviceSequencer::SequencerSetSPITiming(uint16_t SPI_delay_CS_low_start_wai
 	MyEthernetMultiIOControllerFirefly->AddCommandSetSPITiming(SPI_delay_CS_low_start_wait, SPI_delay_write, SPI_delay_pause_before_read, SPI_delay_read, SPI_delay_CS_low_end_wait);
 }
 
+void CDeviceSequencer::SequencerSetSPIMode(uint8_t SPI_mode) {
+	MyEthernetMultiIOControllerFirefly->AddCommandSetSPIMode(SPI_mode);
+}
+
 void CDeviceSequencer::SequencerSetI2CParameters(uint8_t I2C_0_Destination) {
 	MyEthernetMultiIOControllerFirefly->AddCommandSetI2CParameters(I2C_0_Destination);
 }

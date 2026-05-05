@@ -577,7 +577,13 @@ void DemoSequence(unsigned long CycleNumber) {
 
 	//Test analog in with convenience function
 	//@param analog_in_type Analog in board type. 0: AQuRA MCP3208 analog in board; 1: MCP3208 12-bit ADC on SerialPortBoard; 2: ADS1256  24-bit ADC 
-	CLA_SequencerStartAnalogInAcquisition(/*Sequencer_Nr*/ 0, /*AnalogInType*/ 2, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 10000, /*SamplingPeriod_in_ms*/ 1);
+	//for (uint16_t n = 0; n < 1000; n++) {
+	//	CLA_SequencerStartAnalogInAcquisition(/*Sequencer_Nr*/ 0, /*AnalogInType*/ 2, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 1, /*SamplingPeriod_in_ms*/ 1);
+	//	CLA_Wait_ms(1);
+	//	CLA_SetVoltage(0, 24, 10.0 * 1 / 100.0);
+	//	CLA_Wait_ms(1);
+	//}
+	CLA_SequencerStartAnalogInAcquisition(/*Sequencer_Nr*/ 0, /*AnalogInType*/ 2, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 1000, /*SamplingPeriod_in_ms*/ 1);
 	CLA_Wait_ms(1000);
 	
 	//Test repeated digital in

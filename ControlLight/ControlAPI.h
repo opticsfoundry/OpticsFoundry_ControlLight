@@ -316,33 +316,33 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @param Sequencer the sequencer to use.
 		/// @param time_in_ms the current time in ms.
 		/// @return
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(GetTimeOfSequencer_ms)(const unsigned int& Sequencer, double& time_in_ms);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(GetTimeOfSequencer_ms)(const unsigned int& Sequencer, double& time_in_ms);
 		
 		/// @brief Get the time debtof a specific sequencer in the currently assembled sequence in ms.
 		/// @param Sequencer the sequencer to use.
 		/// @param time_debt_in_ms the current time in ms.
 		/// @return
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(GetTimeDebtOfSequencer_ms)(const unsigned int& Sequencer, double& time_debt_in_ms);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(GetTimeDebtOfSequencer_ms)(const unsigned int& Sequencer, double& time_debt_in_ms);
 
 		/// @brief Get the position of the next empty buffer slot of master sequencer in the currently assembled sequence.
 		/// @param position as unsigned long / uint32_t.
 		/// @return
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(GetNextBufferPositionOfMasterSequencer)(unsigned long& next_buffer_position);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(GetNextBufferPositionOfMasterSequencer)(unsigned long& next_buffer_position);
 
 		/// @brief Set periodic trigger
 		/// @param PeriodicTriggerPeriod_in_s the period of the periodic trigger in seconds.
 		/// @param PeriodicTriggerAllowedWaitTime_in_s the allowed wait time for the
 		/// @return 
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SetPeriodicTrigger)(double PeriodicTriggerPeriod_in_s, double PeriodicTriggerAllowedWaitTime_in_s);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SetPeriodicTrigger)(double PeriodicTriggerPeriod_in_s, double PeriodicTriggerAllowedWaitTime_in_s);
 		
 		/// @brief Get next cycle number of master sequencer.
 		/// @param NextCycleNumber the next cycle number.
 		/// @return 
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(GetNextCycleNumber)(long& NextCycleNumber);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(GetNextCycleNumber)(long& NextCycleNumber);
 
 		/// @brief Reset cycle number of master sequencer to 0.
 		/// @return 
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(ResetCycleNumber)();
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(ResetCycleNumber)();
 
 		/// @brief Read data from an I2C port.
 		/// @param I2C_port the I2C port to read from.
@@ -353,7 +353,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @param receive_data the buffer to store the received data.
 		/// @param I2C_clock_frequency_in_Hz the clock frequency of the I
 		/// @return 
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(TransmitI2CPort)(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(TransmitI2CPort)(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz);
 
 		/// @brief Write configuration data to the EEPROM of a rack slot.
 		/// @param SequencerID the sequencer to use.
@@ -362,7 +362,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @param data the configuration payload to write.
 		/// @param length the payload length in bytes.
 		/// @return
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(WriteConfigEEPROM)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, const char* data, size_t length);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(WriteConfigEEPROM)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, const char* data, size_t length);
 
 		/// @brief Read the complete configuration EEPROM of a rack slot.
 		/// @param SequencerID the sequencer to use.
@@ -371,7 +371,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @param data output buffer receiving the EEPROM contents.
 		/// @param length input: available buffer size in bytes, output: number of bytes read.
 		/// @return
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(ReadConfigEEPROM)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, char* data, size_t& length);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(ReadConfigEEPROM)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, char* data, size_t& length);
 
 		/// @brief Write the configuration address byte of a rack slot.
 		/// @param SequencerID the sequencer to use.
@@ -379,7 +379,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @param SlotNr the slot number within the rack.
 		/// @param address the address byte to write.
 		/// @return
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(WriteConfigAddress)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, uint8_t address);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(WriteConfigAddress)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, uint8_t address);
 
 		/// @brief Read the configuration address byte of a rack slot.
 		/// @param SequencerID the sequencer to use.
@@ -387,17 +387,17 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @param SlotNr the slot number within the rack.
 		/// @param address output byte receiving the current address value.
 		/// @return
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(ReadConfigAddress)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, uint8_t& address);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(ReadConfigAddress)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, uint8_t& address);
 
 		/// @brief Read the rack auto-configuration and return it as JSON text.
 		/// @param filename Optional output filename. Pass an empty string to avoid writing a file.
 		/// @return JSON text containing the discovered configuration.
-		API_EXPORT const char* CLA_FNDEF(ReadConfiguration)(const char* filename = "");
+		API_EXPORT const char* CLA_FN(ReadConfiguration)(const char* filename = "");
 
 		/// @brief Read the rack auto-configuration, convert it to the standard config schema, and return it as JSON text.
 		/// @param filename Optional base filename used for the generated output files. Pass an empty string to avoid writing files.
 		/// @return JSON text containing the generated configuration.
-		API_EXPORT const char* CLA_FNDEF(GetAutoConfigJSON)(const char* filename = "");
+		API_EXPORT const char* CLA_FN(GetAutoConfigJSON)(const char* filename = "");
 
 		//The following functions enable you to assemble a CPU command sequence on the master sequencer, which can then be executed by the CPU.
 		//These command sequences can start FPGA command sequence, analyze acquired data, modify the FPGA command sequence and repeat.
@@ -405,36 +405,36 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 
 		/// @brief Start assembling a CPU command sequence on the master sequencer
 		/// @return
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(StartAssemblingCPUCommandSequence)();
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(StartAssemblingCPUCommandSequence)();
 
 		/// @brief Add a CPU command to the currently assembled CPU command sequence on the master sequencer.
 		/// @param command string.
 		/// @return
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(AddCPUCommand)(const char* command);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(AddCPUCommand)(const char* command);
 
 		/// @brief Execute the assembled CPU command sequence.
 		/// @return
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(ExecuteCPUCommandSequence)(unsigned long ethernet_check_period_in_ms);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(ExecuteCPUCommandSequence)(unsigned long ethernet_check_period_in_ms);
 
 		/// @brief Stop CPU command sequence at next programmed stop point.
 		/// @return
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(StopCPUCommandSequence)();
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(StopCPUCommandSequence)();
 
 		/// @brief Interrupt CPU command sequence immediately.
 		/// @return
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(InterruptCPUCommandSequence)();
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(InterruptCPUCommandSequence)();
 
 		/// @brief get CPU command error messages.
 		/// @return
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(GetCPUCommandErrorMessages)();
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(GetCPUCommandErrorMessages)();
 		
 		/// @brief print CPU command error messages on FPGA UART.
 		/// @return
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(PrintCPUCommandErrorMessages)();
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(PrintCPUCommandErrorMessages)();
 		
 		/// @brief print CPU command sequence on FPGA UART.
 		/// @return
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(PrintCPUCommandSequence)();
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(PrintCPUCommandSequence)();
 
 
 		//the following are convenience functions, which allow us to define nice names to the few most important functions
@@ -728,7 +728,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		* @param bit_shift the bit shift to use. Default is 22, which corresponds to a maximum tuning range of 78kHz and a change of 1.19Hz per ADC value increment.
 		* @return
 		*/
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerCalcAD9854FrequencyTuningWord)(const unsigned int& Sequencer, uint64_t ftw0, uint8_t bit_shift = 22);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerCalcAD9854FrequencyTuningWord)(const unsigned int& Sequencer, uint64_t ftw0, uint8_t bit_shift = 22);
 
 
 		/// @brief Writes the current FPGA clock ticks to the input memory of the sequencer.
@@ -806,6 +806,9 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 
 		/// @brief Loads SPI timing parameters into the sequencer.
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerSetSPITiming)(const unsigned int& Sequencer, uint16_t SPI_delay_CS_low_start_wait, uint16_t SPI_delay_write, uint16_t SPI_delay_pause_before_read, uint16_t SPI_delay_read, uint16_t SPI_delay_CS_low_end_wait);
+
+		/// @brief Sets the SPI mode for the sequencer.
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerSetSPIMode)(const unsigned int& Sequencer, uint8_t SPI_mode);
 
 		/// @brief Sets I2C parameters for the sequencer.
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerSetI2CParameters)(const unsigned int& Sequencer, uint8_t I2C_0_Destination);

@@ -263,6 +263,8 @@ PYBIND11_MODULE(control_light_api, m) {
 		.def("sequencer_set_spi_timing", &ControlLight_API::SequencerSetSPITiming,
 			py::arg("sequencer"), py::arg("spi_delay_cs_low_start_wait"), py::arg("spi_delay_write"),
 			py::arg("spi_delay_pause_before_read"), py::arg("spi_delay_read"), py::arg("spi_delay_cs_low_end_wait"))
+		.def("sequencer_set_spi_mode", &ControlLight_API::SequencerSetSPIMode,
+			py::arg("sequencer"), py::arg("spi_mode"))
 		.def("sequencer_set_i2c_parameters", &ControlLight_API::SequencerSetI2CParameters,
 			py::arg("sequencer"), py::arg("i2c_0_destination"))
 

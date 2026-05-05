@@ -783,6 +783,16 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerSetSPITiming: error");
 		}
 
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerSetSPIMode)(const unsigned int& Sequencer, uint8_t SPI_mode) {
+			API_LOCK_GUARD;
+			CDeviceSequencer* sequencer = GetSequencer(Sequencer);
+			if (!sequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "CLA_SequencerSetSPIMode: Invalid sequencer");
+			}
+			sequencer->SequencerSetSPIMode(SPI_mode);
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerSetSPIMode: error");
+		}
+
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerSetI2CParameters)(const unsigned int& Sequencer, uint8_t I2C_0_Destination) {
 			API_LOCK_GUARD;
 			CDeviceSequencer* sequencer = GetSequencer(Sequencer);

@@ -126,6 +126,7 @@ public:
 	void SequencerTransmitSPI(const uint8_t chip_select, const uint16_t number_of_bits_out, const uint8_t *data_out, const uint8_t number_of_bits_in, const bool start_now);
 	void SequencerRepeatedOutIn(const uint16_t number_of_datapoints, const double delay_between_datapoints_in_ms, uint8_t RepeatedOutInCommand);
 	void SequencerSetSPITiming(uint16_t SPI_delay_CS_low_start_wait, uint16_t SPI_delay_write, uint16_t SPI_delay_pause_before_read, uint16_t SPI_delay_read, uint16_t SPI_delay_CS_low_end_wait);
+	void SequencerSetSPIMode(uint8_t SPI_mode);
 	void SequencerSetI2CParameters(uint8_t I2C_0_Destination);
 	void SequencerSelectRackSlot(uint8_t rack_nr, uint8_t slot_nr);
 	void SequencerResetI2CMultiplexer();
