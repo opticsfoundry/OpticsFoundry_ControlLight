@@ -109,7 +109,7 @@ int main() {
 			CLA.AddDeviceDigitalOut(0, 2, 16);
 			CLA.AddDeviceAD9854(0, 232, 2, 300000000, 1, 1);
 			CLA.AddDeviceAD9858(0, 652, 1200000000, 1);
-			CLA.AddDeviceAD9958(0, 21, 1000000000, 1);
+			CLA.AddDeviceAD9959(0, 21, 1000000000, 1);
 			CLA.Initialize();
 		}
 	}
@@ -264,7 +264,7 @@ int main() {
 			CLA_AddDeviceDigitalOut(0, 2, 16);
 			CLA_AddDeviceAD9854(0, 232, 2, 300000000, 1, 1);
 			CLA_AddDeviceAD9858(0, 652, 1200000000, 1);
-			CLA.AddDeviceAD9958(0, 21, 1000000000, 1);
+			CLA.AddDeviceAD9959(0, 21, 1000000000, 1);
 			CLA_Initialize();
 		}
 	}
@@ -406,7 +406,7 @@ int main() {
 		CLA.AddDeviceDigitalOut(0, 2, 16);
 		CLA.AddDeviceAD9854(0, 232, 2, 300000000, 1, 1);
 		CLA.AddDeviceAD9858(0, 652, 1200000000, 1);
-		CLA.AddDeviceAD9958(0, 21, 1000000000, 1);
+		CLA.AddDeviceAD9959(0, 21, 1000000000, 1);
 		CLA.Initialize();
 	}
 
@@ -529,7 +529,7 @@ bool InitializeSystem() {
 		CLA_AddDeviceDigitalOut(0, 2, 16);
 		CLA_AddDeviceAD9854(0, 232, 2, 300000000, 1, 1);
 		CLA_AddDeviceAD9858(0, 652, 1200000000, 1);
-		CLA_AddDeviceAD9958(0, 21, 1000000000, 1);
+		CLA_AddDeviceAD9959(0, 21, 1000000000, 1, false);
 		CLA_Initialize();
 	}
 
@@ -827,7 +827,7 @@ void DemoSmartSequencer() {
 	CLA_AddDeviceDigitalOut(0, DigitalOutAddress, 16);
 	CLA_AddDeviceAD9854(0, AD98450Address, 2, 300000000, 1, 1);
 	//CLA_AddDeviceAD9858(0, 652, 1200000000, 1);
-	//CLA_AddDeviceAD9958(0, 21, 1000000000, 1);
+	//CLA_AddDeviceAD9959(0, 21, 1000000000, 1);
 	CLA_Initialize();
 
 	//CLA_SwitchDebugMode(true, "DebugSequencer");
@@ -955,7 +955,7 @@ void DemoDDSVCO() {
 	CLA_AddDeviceDigitalOut(0, DigitalOutAddress, 16);
 	CLA_AddDeviceAD9854(0, AD98450Address, 2, 300000000, 1, 1);
 	//CLA_AddDeviceAD9858(0, 652, 1200000000, 1);
-	//CLA_AddDeviceAD9958(0, 21, 1000000000, 1);
+	//CLA_AddDeviceAD9959(0, 21, 1000000000, 1);
 	CLA_Initialize();
 
 	//CLA_SwitchDebugMode(true, "DebugSequencer");

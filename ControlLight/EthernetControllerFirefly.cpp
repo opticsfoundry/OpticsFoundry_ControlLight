@@ -466,11 +466,28 @@ void CEthernetControllerFirefly::AddCommandSetSPIMode(uint8_t SPI_mode) {
 	AddSequencerCommandToSequenceList(high_buffer, low_buffer);
 }
 
-//I2C_0_Destination <= extended_command[16:16];
-void CEthernetControllerFirefly::AddCommandSetI2CParameters(uint8_t I2C_0_Destination) {
+/*
+I2C_0_Destination <= extended_command[16:16];
+                                if (extended_command[56:17] != 0) begin
+                                    I2C_delay_start_stop <= (extended_command[24:17] == 0) ? 1 : extended_command[24:17];
+                                    I2C_delay_data_setup <= (extended_command[32:25] == 0) ? 1 : extended_command[32:25];
+                                    I2C_delay_clock_high <= (extended_command[40:33] == 0) ? 1 : extended_command[40:33];
+                                    I2C_delay_clock_low <= (extended_command[48:41] == 0) ? 1 : extended_command[48:41];
+                                    I2C_delay_pause_before_read <= extended_command[56:49];
+                                end
+		I2C_0_Destination <= 0;
+        I2C_delay_start_stop <= 60;
+        I2C_delay_data_setup <= 40;
+        I2C_delay_clock_high <= 60;
+        I2C_delay_clock_low <= 150;
+        I2C_delay_pause_before_read <= 0;
+*/
+void CEthernetControllerFirefly::AddCommandSetI2CParameters(uint8_t I2C_0_Destination, uint8_t I2C_delay_start_stop, uint8_t I2C_delay_data_setup, uint8_t I2C_delay_clock_high, uint8_t I2C_delay_clock_low, uint8_t I2C_delay_pause_before_read) {
 	unsigned char ext_command = EXTENDED_CMD_SET_I2C_PARAMETERS;
-	uint32_t low_buffer = (I2C_0_Destination << 16) & ((0x3F & ext_command) << 5) & (0x1F & CMD_LOAD_EXTENDED_COMMAND);
-	uint32_t high_buffer = 0;
+	//low buffer: bits 31:0
+	uint32_t low_buffer = ((I2C_delay_data_setup & 0x7F) << 25) | ((I2C_delay_start_stop & 0xFF) << 17) | ((I2C_0_Destination & 0x01) << 16) | ((0x3F & ext_command) << 5) | (0x1F & CMD_LOAD_EXTENDED_COMMAND);
+	//high buffer: bits 63:32
+	uint32_t high_buffer = ((I2C_delay_pause_before_read & 0xFF) << 17) | ((I2C_delay_clock_low & 0xFF) << 9) | ((I2C_delay_clock_high & 0xFF) << 1) | ((I2C_delay_data_setup & 0x80) >> 7);
 	AddSequencerCommandToSequenceList(high_buffer, low_buffer);
 }
 
@@ -596,7 +613,7 @@ void CEthernetControllerFirefly::AddCommandStop() {
 	AddSequencerCommandToSequenceList(high_buffer, low_buffer);
 }
 
-void CEthernetControllerFirefly::AddCommandWriteI2C(uint8_t I2C_port, uint8_t I2C_length, uint8_t *data_out) {
+void CEthernetControllerFirefly::AddCommandTransmitI2C(uint8_t I2C_port, uint8_t I2C_length_out, uint8_t I2C_length_in, uint8_t *data_out) {
 
 	//total data length can be up to 128-(2*5) = 118 bits (because we need 2x 5 bits for the two load commands).
 	uint8_t command = CMD_LOAD_REG_LOW;		
@@ -613,16 +630,17 @@ void CEthernetControllerFirefly::AddCommandWriteI2C(uint8_t I2C_port, uint8_t I2
 
 	/*
 	CMD_I2C_OUT : begin
-							I2C_length <= command_buffer[14:8];
-							I2C_SELECT_NEXT <= command_buffer[17:16];
-							I2C_data <= register;  //Use CMD_LOAD_REG_LOW and CMD_LOAD_REG_HIGH before CMD_I2C_OUT to copy 117-bit I2C data to register                
-							I2C_state <= I2C_START;
-							address <= address + 1;
-							wait_time <= 1;
+							 I2C_out_length <= command_buffer[14:8];
+                            I2C_in_length <= command_buffer[20:15];
+                            I2C_SELECT_NEXT <= command_buffer[21:20];
+                            I2C_data <= register;  //Use CMD_LOAD_REG_LOW and CMD_LOAD_REG_HIGH before CMD_I2C_OUT to copy 117-bit I2C data to register                
+                            I2C_state <= I2C_START;
+                            address <= address + 1;
+                            wait_time <= 1;
 						end
 	*/
 	command = CMD_I2C_OUT;
-	low_buffer = ((I2C_length & 0x7F) << 8) | ((I2C_port & 0x03) << 16) | (0x1F & command);
+	low_buffer = ((I2C_port & 0x03) << 20) | ((I2C_length_in & 0x3F) << 15) | ((I2C_length_out & 0x7F) << 8) | (0x1F & command);
 	high_buffer = 0; 
 	AddSequencerCommandToSequenceList( high_buffer, low_buffer);
 }
@@ -644,7 +662,7 @@ void reverse_bits_array(const uint8_t* data_out,
 	}
 }
 
-void CEthernetControllerFirefly::AddCommandTransmitSPI(const uint8_t chip_select, const uint16_t number_of_bits_out, const uint8_t data_out[], uint8_t number_of_bits_in, const bool start_now, const bool wait_for_SPI_ready_low, const bool wait_for_SPI_ready_down_edge, const bool LSB_first) {
+void CEthernetControllerFirefly::AddCommandTransmitSPI(const uint8_t chip_select, const uint16_t number_of_bits_out, const uint8_t data_out[], uint8_t number_of_bits_in, const bool start_now, const bool wait_for_SPI_ready_active, const bool wait_for_SPI_ready_edge_to_active, const bool SPI_ready_active_level, const bool LSB_first) {
 
 	uint64_t data_low;
 	uint64_t data_high;
@@ -678,7 +696,7 @@ void CEthernetControllerFirefly::AddCommandTransmitSPI(const uint8_t chip_select
 	/*
 	CMD_SPI_OUT_IN : begin
                             SPI_OUT_length <= command[14:8];
-                            SPI_IN_length <= command[20:16];
+                            SPI_IN_length <= command[21:16];
                             SPI_SEL_next <= command[33:32];
                             SPI_chip_select_next <= command[37:34];
                             SPI_data <= register;  //Use CMD_LOAD_REG_LOW and CMD_LOAD_REG_HIGH before CMD_SPI_OUT_IN to copy 117-bit I2C data to register                                          
@@ -693,7 +711,7 @@ void CEthernetControllerFirefly::AddCommandTransmitSPI(const uint8_t chip_select
 	unsigned char SPI_chip_select_next = chip_select & 0x03;// 2 + 4 + 8; //3 CS lines, which go to the input of a multiplexer on the serial port board, or can be used directly, if put
 	unsigned int start_now_i = (start_now) ? 0 : 1;
 	if (number_of_bits_in > 32) number_of_bits_in = 32;
-	low_buffer =  ((number_of_bits_in & 0x1F) << 16) | ((number_of_bits_out & 0x7F) << 8) | (((wait_for_SPI_ready_low) ? 1 : 0) << 7) | (((wait_for_SPI_ready_down_edge) ? 1 : 0) << 6) | command;
+	low_buffer =  ((number_of_bits_in & 0x3F) << 16) | ((number_of_bits_out & 0x7F) << 8) | (((wait_for_SPI_ready_active) ? 1 : 0) << 7) | (((wait_for_SPI_ready_edge_to_active) ? 1 : 0) << 6) | (((SPI_ready_active_level) ? 1 : 0) << 5) | command;
 	high_buffer = (start_now_i << (40-32)) | (SPI_chip_select_next << 2) | (0x03 & SPI_SEL_next);
 	AddSequencerCommandToSequenceList( high_buffer, low_buffer);
 }
@@ -904,12 +922,12 @@ void CEthernetControllerFirefly::StartSPIAnalogInAcquisition_ADS1256(unsigned ch
 	uint8_t data_out_channel_select[3] = { MUX_CHANNEL, 0, ADS1256_CMD_WREG | ADS1256_RADD_MUX }; // {LSByte, ..., MSByte}; opcode WREG (Write registers) starting from reg RADD_MUX; MSB written first
 	AddCommandTransmitSPI(SPI_CS, /* number_of_bits_out*/ 24, data_out_channel_select, /* number_of_bits_in*/ 0, /* start_now*/ true);
 	
-	AddDelay_in_ns(10 * 1000);//AddDelay_in_ns(41 * 1000);// +26 * 20 * SPI_clock_period_10ns);
+	AddDelay_in_ns(26 * 20 * SPI_clock_period_10ns); //AddDelay_in_ns(10 * 1000);//AddDelay_in_ns(41 * 1000);// +26 * 20 * SPI_clock_period_10ns);
 	
 	uint8_t data_out_sync = ADS1256_CMD_SYNC;
 	AddCommandTransmitSPI(SPI_CS, /* number_of_bits_out*/ 8, &data_out_sync, /* number_of_bits_in*/ 0, /* start_now*/ true);
 	
-	AddDelay_in_ns(41 * 1000);// +10 * 20 * SPI_clock_period_10ns);
+	AddDelay_in_ns(10 * 20 * SPI_clock_period_10ns);//AddDelay_in_ns(41 * 1000);// +10 * 20 * SPI_clock_period_10ns);
 
 	uint8_t data_out_wakeup = ADS1256_CMD_WAKEUP;
 	AddCommandTransmitSPI(SPI_CS, /* number_of_bits_out*/ 8, &data_out_wakeup, /* number_of_bits_in*/ 0, /* start_now*/ true);
@@ -918,8 +936,8 @@ void CEthernetControllerFirefly::StartSPIAnalogInAcquisition_ADS1256(unsigned ch
 
 	uint8_t data_out_rdata = ADS1256_CMD_RDATA;
 	
-	AddCommandTransmitSPI(SPI_CS, /* number_of_bits_out*/ 8, &data_out_rdata, /* number_of_bits_in*/ 24, /* start_now*/ number_of_datapoints == 1, /* wait_for_SPI_ready_low */ false, /*wait_for_SPI_ready_down_edge*/ true);
-	if (number_of_datapoints>1)	AddCommandRepeatedOutIn(/* number_of_datapoints*/ number_of_datapoints, /* delay_between_datapoints_in_ms*/ delay_between_datapoints_in_ms, /* RepeatedOutInCommand*/ 1, /*SPI_restart_wait_on_ready_low*/ true); //1 means repeated SPI input
+	AddCommandTransmitSPI(SPI_CS, /* number_of_bits_out*/ 8, &data_out_rdata, /* number_of_bits_in*/ 24, /* start_now*/ number_of_datapoints == 1, /* wait_for_SPI_ready_active */ false, /*wait_for_SPI_ready_edge_to_active*/ true);
+	if (number_of_datapoints>1)	AddCommandRepeatedOutIn(/* number_of_datapoints*/ number_of_datapoints, /* delay_between_datapoints_in_ms*/ delay_between_datapoints_in_ms, /* RepeatedOutInCommand*/ 1, /*SPI_restart_wait_on_ready_low*/ false); //1 means repeated SPI input
 }
 
 

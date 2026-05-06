@@ -117,7 +117,7 @@ if __name__ == "__main__":
        builder.RegisterDDSAD9854Board(Address=addr)
    for addr in range(52, 84, 4):
        builder.RegisterDDSAD9858Board(Address=addr)
-   builder.RegisterDDSAD9958Board(Address=21)
+   builder.RegisterDDSAD9959Board(Address=21)
    builder.Save()
 ```
 

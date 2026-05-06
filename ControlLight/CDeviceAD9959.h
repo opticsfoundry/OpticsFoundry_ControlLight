@@ -4,21 +4,23 @@
 
 
 
-class CAD9958;
-class CDeviceAD9958 : public CDevice
+class CAD9959;
+class CDeviceAD9959 : public CDevice
 {
 public:
 	double externalClockFrequency;
 	double frequencyMultiplier;
+	bool AD9958;
 
 public:
-	CDeviceAD9958(
+	CDeviceAD9959(
 		CDeviceSequencer* _MySequencer,
 		unsigned int _MyAddress,
 		double _externalClockFrequency,
-		unsigned int _frequencyMultiplier
+		unsigned int _frequencyMultiplier,
+		bool _AD9958
 	);
-	virtual ~CDeviceAD9958();
+	virtual ~CDeviceAD9959();
 	virtual bool SetRegister(const unsigned int& SubAddress, const uint8_t* Data, const unsigned long& DataLength_in_bit, const uint8_t& StartBit);
 	virtual bool SetValue(const unsigned int& SubAddress, const uint8_t* Data, const unsigned long& DataLength_in_bit, const uint8_t& StartBit);
 
@@ -32,5 +34,5 @@ public:
 	virtual bool SetPower(uint8_t channel, double Power);
 	virtual bool SetAttenuation(uint8_t channel, double Power);
 private:
-	CAD9958* MyAD9958;
+	CAD9959* MyAD9959;
 };

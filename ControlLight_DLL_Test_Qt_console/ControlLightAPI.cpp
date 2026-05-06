@@ -67,10 +67,10 @@ void CControlLightAPI::Set_CLA_CallsToNull() {
     SetFSKBitFunc CLA_SetFSKBit;
     SetFrequencyFunc CLA_SetFrequency;
     SetFrequencyTuningWordFunc CLA_SetFrequencyTuningWord;
-    SetAD9958FrequencyFunc CLA_SetAD9958Frequency;
-    SetAD9958FrequencyTuningWordFunc CLA_SetAD9958FrequencyTuningWord;
-    SetAD9958PhaseFunc CLA_SetAD9958Phase;
-    SetAD9958PowerFunc CLA_SetAD9958Power;
+    SetAD9959FrequencyFunc CLA_SetAD9959Frequency;
+    SetAD9959FrequencyTuningWordFunc CLA_SetAD9959FrequencyTuningWord;
+    SetAD9959PhaseFunc CLA_SetAD9959Phase;
+    SetAD9959PowerFunc CLA_SetAD9959Power;
 
     */
 
@@ -358,11 +358,11 @@ API_EXPORT ERROR_CODE_TYPE CLA_SetFSKBit(const unsigned int& Sequencer, const un
 API_EXPORT ERROR_CODE_TYPE CLA_SetFrequency(const unsigned int& Sequencer, const unsigned int& Address, double Frequency);
 API_EXPORT ERROR_CODE_TYPE CLA_SetFrequencyTuningWord(const unsigned int& Sequencer, const unsigned int& Address, uint64_t FrequencyTuningWord);
 
-//AD9958
-API_EXPORT ERROR_CODE_TYPE CLA_SetAD9958Frequency(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Frequency);
-API_EXPORT ERROR_CODE_TYPE CLA_SetAD9958FrequencyTuningWord(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, uint64_t FrequencyTuningWord);
-API_EXPORT ERROR_CODE_TYPE CLA_SetAD9958Phase(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Phase);
-API_EXPORT ERROR_CODE_TYPE CLA_SetAD9958Power(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Power);
+//AD9959
+API_EXPORT ERROR_CODE_TYPE CLA_SetAD9959Frequency(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Frequency);
+API_EXPORT ERROR_CODE_TYPE CLA_SetAD9959FrequencyTuningWord(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, uint64_t FrequencyTuningWord);
+API_EXPORT ERROR_CODE_TYPE CLA_SetAD9959Phase(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Phase);
+API_EXPORT ERROR_CODE_TYPE CLA_SetAD9959Power(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Power);
 
 
 */
@@ -761,11 +761,11 @@ API_EXPORT ERROR_CODE_TYPE CLA_SetFSKBit(const unsigned int& Sequencer, const un
 API_EXPORT ERROR_CODE_TYPE CLA_SetFrequency(const unsigned int& Sequencer, const unsigned int& Address, double Frequency);
 API_EXPORT ERROR_CODE_TYPE CLA_SetFrequencyTuningWord(const unsigned int& Sequencer, const unsigned int& Address, uint64_t FrequencyTuningWord);
 
-//AD9958
-API_EXPORT ERROR_CODE_TYPE CLA_SetAD9958Frequency(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Frequency);
-API_EXPORT ERROR_CODE_TYPE CLA_SetAD9958FrequencyTuningWord(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, uint64_t FrequencyTuningWord);
-API_EXPORT ERROR_CODE_TYPE CLA_SetAD9958Phase(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Phase);
-API_EXPORT ERROR_CODE_TYPE CLA_SetAD9958Power(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Power);
+//AD9959
+API_EXPORT ERROR_CODE_TYPE CLA_SetAD9959Frequency(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Frequency);
+API_EXPORT ERROR_CODE_TYPE CLA_SetAD9959FrequencyTuningWord(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, uint64_t FrequencyTuningWord);
+API_EXPORT ERROR_CODE_TYPE CLA_SetAD9959Phase(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Phase);
+API_EXPORT ERROR_CODE_TYPE CLA_SetAD9959Power(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Power);
 
 */
 

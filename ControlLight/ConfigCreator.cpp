@@ -20,7 +20,7 @@ ConfigCreator::ConfigCreator(const std::string& filename) : filename_(filename),
 	{"SerialPortBoards", json::array()},
 	{"DDSAD9854Boards", json::array()},
 	{"DDSAD9858Boards", json::array()},
-	{"DDSAD9958Boards", json::array()},
+	{"DDSAD9959Boards", json::array()},
 	{"AnalogInBoards12bit", json::array()}
 }) {
 }
@@ -134,17 +134,18 @@ void ConfigCreator::RegisterDDSAD9858Board(int Sequencer, int Address, int Clock
 	config_["DDSAD9858Boards"].push_back(entry);
 }
 
-void ConfigCreator::RegisterDDSAD9958Board(int Sequencer, int Address, int ClockFrequencyinMHz,
-	int FrequencyMultiplier, const optional<string>& Model, const optional<string>& SN,
+void ConfigCreator::RegisterDDSAD9959Board(int Sequencer, int Address, int ClockFrequencyinMHz,
+	int FrequencyMultiplier, bool AD9958, const optional<string>& Model, const optional<string>& SN,
 	const optional<int>& RackNr, const optional<int>& SlotNr) {
 	json entry = {
 		{"Sequencer", Sequencer},
 		{"Address", Address},
 		{"ClockFrequencyinMHz", ClockFrequencyinMHz},
-		{"FrequencyMultiplier", FrequencyMultiplier}
+		{"FrequencyMultiplier", FrequencyMultiplier},
+		{"AD9958", (AD9958) ? 1 : 0}
 	};
 	AddOptionalHardwareFields(entry, Model, SN, RackNr, SlotNr);
-	config_["DDSAD9958Boards"].push_back(entry);
+	config_["DDSAD9959Boards"].push_back(entry);
 }
 
 void ConfigCreator::RegisterAnalogInBoard12bit(int Sequencer, int Address, int NumberChannels,
@@ -200,8 +201,8 @@ bool ConfigCreator::Save() const {
 	for (const auto& entry : config_["DDSAD9858Boards"]) {
 		check_and_add(entry["Sequencer"], entry["Address"], 4, "DDSAD9858Board");
 	}
-	for (const auto& entry : config_["DDSAD9958Boards"]) {
-		check_and_add(entry["Sequencer"], entry["Address"], 1, "DDSAD9958Board");
+	for (const auto& entry : config_["DDSAD9959Boards"]) {
+		check_and_add(entry["Sequencer"], entry["Address"], 1, "DDSAD9959Board");
 	}
 	for (const auto& entry : config_["AnalogInBoards12bit"]) {
 		check_and_add(entry["Sequencer"], entry["Address"], 1, "AnalogInBoard12bit");

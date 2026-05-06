@@ -438,8 +438,8 @@ void CDeviceSequencer::SequencerJumpForward(unsigned int jump_length, bool uncon
 	MyEthernetMultiIOControllerFirefly->AddCommandJumpForward(jump_length, unconditional_jump, condition_0, condition_1, condition_PS);
 }
 
-void CDeviceSequencer::SequencerWriteI2C(uint8_t I2C_port, uint8_t I2C_length, uint8_t *data_out) {
-	MyEthernetMultiIOControllerFirefly->AddCommandWriteI2C(I2C_port, I2C_length, data_out);
+void CDeviceSequencer::SequencerTransmitI2C(uint8_t I2C_port, uint8_t I2C_length_out, uint8_t I2C_length_in, uint8_t *data_out) {
+	MyEthernetMultiIOControllerFirefly->AddCommandTransmitI2C(I2C_port, I2C_length_out, I2C_length_in, data_out);
 }
 
 void CDeviceSequencer::SequencerTransmitSPI(const uint8_t chip_select, const uint16_t number_of_bits_out, const uint8_t *data_out, const uint8_t number_of_bits_in, const bool start_now) {
@@ -458,8 +458,8 @@ void CDeviceSequencer::SequencerSetSPIMode(uint8_t SPI_mode) {
 	MyEthernetMultiIOControllerFirefly->AddCommandSetSPIMode(SPI_mode);
 }
 
-void CDeviceSequencer::SequencerSetI2CParameters(uint8_t I2C_0_Destination) {
-	MyEthernetMultiIOControllerFirefly->AddCommandSetI2CParameters(I2C_0_Destination);
+void CDeviceSequencer::SequencerSetI2CParameters(uint8_t I2C_0_Destination, uint8_t I2C_delay_start_stop, uint8_t I2C_delay_data_setup, uint8_t I2C_delay_clock_high, uint8_t I2C_delay_clock_low, uint8_t I2C_delay_pause_before_read) {
+	MyEthernetMultiIOControllerFirefly->AddCommandSetI2CParameters(I2C_0_Destination, I2C_delay_start_stop, I2C_delay_data_setup, I2C_delay_clock_high, I2C_delay_clock_low, I2C_delay_pause_before_read);
 }
 
 

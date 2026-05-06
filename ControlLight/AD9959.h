@@ -5,25 +5,27 @@
 
 class CDeviceSequencer;
 
-/*! typedef enum E_AD9958_PWR
+/*! typedef enum E_AD9959_PWR
     \brief DDS Power modes.
 */
 typedef enum
 {
-  E_AD9958_PWR_POWERED, /*!< Fully powered */
-  E_AD9958_PWR_PARTIAL, /*!< Fast recovery   - Powers down digital logic and DAC digital logic */
-  E_AD9958_PWR_DOWN     /*!< Full power down - Powers down all functions including DAC and PLL */
-} E_AD9958_PWR;
+  E_AD9959_PWR_POWERED, /*!< Fully powered */
+  E_AD9959_PWR_PARTIAL, /*!< Fast recovery   - Powers down digital logic and DAC digital logic */
+  E_AD9959_PWR_DOWN     /*!< Full power down - Powers down all functions including DAC and PLL */
+} E_AD9959_PWR;
 
-/*! typedef enum E_AD9958_CHANNEL
+/*! typedef enum E_AD9959_CHANNEL
     \brief DDS Channel.
 */
 typedef enum
 {
-  E_AD9958_CHANNEL_BOTH, /*!< Select both channels */
-  E_AD9958_CHANNEL_0,    /*!< Select channel 0 only */
-  E_AD9958_CHANNEL_1     /*!< Select channel 1 only */
-} E_AD9958_CHANNEL;
+  E_AD9959_CHANNEL_ALL, /*!< Select both channels */
+  E_AD9959_CHANNEL_0,    /*!< Select channel 0 only */
+  E_AD9959_CHANNEL_1,     /*!< Select channel 1 only */
+  E_AD9959_CHANNEL_2,     /*!< Select channel 1 only */
+  E_AD9959_CHANNEL_3     /*!< Select channel 1 only */
+} E_AD9959_CHANNEL;
 
 // Pin defines - Change to suit
 #define PWR_DWN_CTL_PORT     GPIOA
@@ -38,30 +40,31 @@ typedef enum
 #define CS_PIN               GPIO_PIN_1
 
 const unsigned int SPIBufferLength = 14;
-constexpr unsigned int AD9958NumberOfRegisters = 48;
+constexpr unsigned int AD9959NumberOfRegisters = 92;
 
-constexpr unsigned int AD9958SPIBufferLength = 14;
+constexpr unsigned int AD9959SPIBufferLength = 14;
 
-class CAD9958 : public CMultiWriteDeviceSPI
+class CAD9959 : public CMultiWriteDeviceSPI
 {
 private:
-    uint8_t SPIBuffer[AD9958SPIBufferLength];
+    uint8_t SPIBuffer[AD9959SPIBufferLength];
     unsigned char BytesToTransmit;
     double ClockSpeed;
     double InputClockSpeed;
     double MaxFrequency;
     double FrequencyScale;
     bool UpdateRegistersModeAutomatic;
+    bool AD9958;
     
-    uint32_t AktValueContents[AD9958NumberOfRegisters]; //keeps track of Value, contains value after bus buffer has been finished to be written out
-    unsigned char WritePrecision[AD9958NumberOfRegisters];
+    uint32_t AktValueContents[AD9959NumberOfRegisters]; //keeps track of Value, contains value after bus buffer has been finished to be written out
+    unsigned char WritePrecision[AD9959NumberOfRegisters];
 public:
     double FrequencyMultiplier;
 
 public:
-    CAD9958(unsigned short aBus, unsigned long aBaseAddress, double aExternalClockSpeed, double aFrequencyMultiplier, CDeviceSequencer* _MyDeviceSequencer);
+    CAD9959(unsigned short aBus, unsigned long aBaseAddress, double aExternalClockSpeed, double aFrequencyMultiplier, bool aAD9958, CDeviceSequencer* _MyDeviceSequencer);
     
-    virtual ~CAD9958();
+    virtual ~CAD9959();
     void SetIOUpdate(bool OnOff);
     void SetReset(bool OnOff);
     void SetPowerDown(bool OnOff, bool write_immediately = true);
@@ -110,34 +113,53 @@ public:
     */
     void SetPhaseOffset(uint8_t channel, float phase);
 
-    /*! void DDS_Set_Power_State(E_AD9958_PWR state)
+    /*! void DDS_Set_Power_State(E_AD9959_PWR state)
         \brief Set the power state of the DDS.
 
         \param state Desired power state.
     */
-    void SetPowerState(E_AD9958_PWR state);
+    void SetPowerState(E_AD9959_PWR state);
 
 
     void SetFrequencyCh0(double frequency);
     void SetFrequencyCh1(double frequency);
+    void SetFrequencyCh2(double frequency);
+    void SetFrequencyCh3(double frequency);
     void SetIntensityCh0(double Intensity);
-	void SetAttenuationCh0(double Attenuation);
-	void SetAttenuationCh1(double Attenuation);
     void SetIntensityCh1(double Intensity);
+    void SetIntensityCh2(double Intensity);
+    void SetIntensityCh3(double Intensity);
+
+    void SetAttenuationCh0(double Attenuation);
+	void SetAttenuationCh1(double Attenuation);
+    void SetAttenuationCh2(double Attenuation);
+    void SetAttenuationCh3(double Attenuation);
     void SetPhaseOffsetCh0(double phase);
     void SetPhaseOffsetCh1(double phase);
+    void SetPhaseOffsetCh2(double phase);
+    void SetPhaseOffsetCh3(double phase);
 
-    void SelectChannelCh0() { SetRegisterBits(0, 6, 2, 1); }
-    void SelectChannelCh1() { SetRegisterBits(0, 6, 2, 2); }
-    void SelectChannelCh0And1() { SetRegisterBits(0, 6, 2, 3); }
+    void SelectChannelCh0() { if (AD9958) SetRegisterBits(0, 6, 2, 1); else SetRegisterBits(0, 4, 4, 1); }
+    void SelectChannelCh1() { if (AD9958) SetRegisterBits(0, 6, 2, 2); else SetRegisterBits(0, 4, 4, 2); }
+    void SelectChannelCh2() { if (!AD9958) SetRegisterBits(0, 4, 4, 4); }
+    void SelectChannelCh3() { if (!AD9958) SetRegisterBits(0, 4, 4, 8); }
+    void SelectChannelCh0And1() { if (AD9958) SetRegisterBits(0, 6, 2, 3); else SetRegisterBits(0, 4, 4, 3); }
+    void SelectChannelCh0To3() { if (!AD9958) SetRegisterBits(0, 4, 4, 0xF); }
+    void SelectChannels(uint8_t channels) { if (AD9958) SetRegisterBits(0, 6, 2, 0x3 & channels); else SetRegisterBits(0, 4, 4, 0xF & channels); }
 
     //void SetFrequencyTuningWord(uint32_t ftw) { SetValue(4, ftw); }
-    void SetFrequencyTuningWord(uint8_t channel, uint32_t ftw) { SetWriteChannels(channel);  SetValue(4, ftw); }
+    void SetFrequencyTuningWord(uint8_t channel, uint32_t ftw) { if ((AD9958 && (channel < 2)) || ((!AD9958) && (channel < 4))) { SetWriteChannels(channel);  SetValue(4, ftw); } }
     void SetFrequencyTuningWordCh0(uint32_t ftw) {
         SetFrequencyTuningWord(1, ftw);
     }
     void SetFrequencyTuningWordCh1(uint32_t ftw) {
         SetFrequencyTuningWord(2, ftw);
+    }
+    void SetFrequencyTuningWordCh2(uint32_t ftw) {
+        if (!AD9958) SetFrequencyTuningWord(3, ftw);
+    }
+    void SetFrequencyTuningWordCh3(uint32_t ftw) {
+        if (!AD9958) SetFrequencyTuningWord(4, ftw);
     }
 
 private:
@@ -153,7 +175,7 @@ private:
     void SetPhaseOffset_SPI(uint8_t channel, float phase);
     void SetPowerDown_partial_SPI();
     void SetPowerDown_full_SPI();
-    uint8_t GetChannelBits(E_AD9958_CHANNEL channel);
+    uint8_t GetChannelBits(E_AD9959_CHANNEL channel);
     uint32_t calcFTW(float frequency);
     float calcFrequency(uint32_t FTW);
     uint32_t calcPOW(float degrees);
@@ -162,7 +184,7 @@ private:
     void SPI_Transmit_Byte(uint8_t byte);
 public:
     void SetWriteChannels(uint8_t channels);
-    void SetWriteChannels(bool channel0, bool channel1);
+    void SetWriteChannels(bool channel0, bool channel1, bool channel2, bool channel3);
     //Functions for CMultiWriteDevice
     void MasterReset();
     

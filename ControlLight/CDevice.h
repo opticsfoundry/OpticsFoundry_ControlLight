@@ -136,7 +136,7 @@ public:
 		return false;
 	}*/
 
-	//AD9958
+	//AD9959
 
 	virtual bool SetFrequency(uint8_t channel, double Frequency) {
 		AddErrorMessage("CDevice::SetFrequency: abstract function called");

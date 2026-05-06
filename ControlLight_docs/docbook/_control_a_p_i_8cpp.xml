@@ -209,19 +209,19 @@
 </listitem>
             <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a36fa5bbf98b9f2680225d630a3319636">SetFrequencyOfChannel</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, uint8_t channel, double Frequency)</para>
 
-<para>Sets the frequency of a multi channel DDS (for now the AD9958). </para>
+<para>Sets the frequency of a multi channel DDS (for now the AD9959). </para>
 </listitem>
             <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1ab864571d668680c9096085c5ed337592">SetFrequencyTuningWordOfChannel</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, uint8_t channel, uint64_t FrequencyTuningWord)</para>
 
-<para>Sets the frequency tuning word of a multi channel DDS (for now the AD9958). </para>
+<para>Sets the frequency tuning word of a multi channel DDS (for now the AD9959). </para>
 </listitem>
             <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a3d8f917be9190e50af5d548416f9fcd7">SetPhaseOfChannel</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, uint8_t channel, double Phase)</para>
 
-<para>Sets the phase of a multi channel DDS (for now the AD9958). </para>
+<para>Sets the phase of a multi channel DDS (for now the AD9959). </para>
 </listitem>
             <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a561caef491d5510871c71610620cd317">SetPowerOfChannel</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, uint8_t channel, double Power)</para>
 
-<para>Sets the phase of a multi channel DDS (for now the AD9958). </para>
+<para>Sets the phase of a multi channel DDS (for now the AD9959). </para>
 </listitem>
             <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> <link linkend="__control_a_p_i_8cpp_1a559c22b0fee213f47cc2bcfac3570138">Wait_ms</link> (double time_in_ms)</para>
 
@@ -1700,7 +1700,7 @@ Parameters</title>
 <indexterm><primary>ControlAPI.cpp</primary><secondary>SetFrequencyOfChannel</secondary></indexterm>
 <para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetFrequencyOfChannel (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, uint8_t channel, double Frequency)</computeroutput></para><para>
 
-<para>Sets the frequency of a multi channel DDS (for now the AD9958). </para>
+<para>Sets the frequency of a multi channel DDS (for now the AD9959). </para>
 </para>
 
 <para>
@@ -1795,7 +1795,7 @@ Parameters</title>
 <indexterm><primary>ControlAPI.cpp</primary><secondary>SetFrequencyTuningWordOfChannel</secondary></indexterm>
 <para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetFrequencyTuningWordOfChannel (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, uint8_t channel, uint64_t FrequencyTuningWord)</computeroutput></para><para>
 
-<para>Sets the frequency tuning word of a multi channel DDS (for now the AD9958). </para>
+<para>Sets the frequency tuning word of a multi channel DDS (for now the AD9959). </para>
 </para>
 
 <para>
@@ -1980,7 +1980,7 @@ Parameters</title>
 <indexterm><primary>ControlAPI.cpp</primary><secondary>SetPhaseOfChannel</secondary></indexterm>
 <para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetPhaseOfChannel (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, uint8_t channel, double Phase)</computeroutput></para><para>
 
-<para>Sets the phase of a multi channel DDS (for now the AD9958). </para>
+<para>Sets the phase of a multi channel DDS (for now the AD9959). </para>
 </para>
 
 <para>
@@ -2075,7 +2075,7 @@ Parameters</title>
 <indexterm><primary>ControlAPI.cpp</primary><secondary>SetPowerOfChannel</secondary></indexterm>
 <para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1ae89d33bd59c5669016e4694ae249bd0c">CLA_FNDEF</link> SetPowerOfChannel (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, uint8_t channel, double Power)</computeroutput></para><para>
 
-<para>Sets the phase of a multi channel DDS (for now the AD9958). </para>
+<para>Sets the phase of a multi channel DDS (for now the AD9959). </para>
 </para>
 
 <para>

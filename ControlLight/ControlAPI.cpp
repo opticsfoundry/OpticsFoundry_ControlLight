@@ -19,7 +19,7 @@ using json = nlohmann::json;
 #include "CDeviceAD9854.h"
 #include "CDeviceDigitalOut.h"
 #include "CDeviceAD9858.h"
-#include "CDeviceAD9958.h"
+#include "CDeviceAD9959.h"
 
 #include <format>
 #include <string>
@@ -743,14 +743,14 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerJumpForward: error");
 		}
 
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerWriteI2C)(const unsigned int& Sequencer, uint8_t I2C_port, uint8_t I2C_length, uint8_t* data_out) {
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerTransmitI2C)(const unsigned int& Sequencer, uint8_t I2C_port, uint8_t I2C_length_out, uint8_t I2C_length_in, uint8_t* data_out) {
 			API_LOCK_GUARD;
 			CDeviceSequencer* sequencer = GetSequencer(Sequencer);
 			if (!sequencer) {
-				API_UNLOCK_RETURN_ERROR(false, "CLA_SequencerWriteI2C: Invalid sequencer");
+				API_UNLOCK_RETURN_ERROR(false, "CLA_SequencerTransmitI2C: Invalid sequencer");
 			}
-			sequencer->SequencerWriteI2C(I2C_port, I2C_length, data_out);
-			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerWriteI2C: error");
+			sequencer->SequencerTransmitI2C(I2C_port, I2C_length_out, I2C_length_in, data_out);
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerTransmitI2C: error");
 		}
 
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerTransmitSPI)(const unsigned int& Sequencer, uint8_t chip_select, uint16_t number_of_bits_out, const uint8_t* data_out, uint8_t number_of_bits_in, bool start_now) {
@@ -793,13 +793,13 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerSetSPIMode: error");
 		}
 
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerSetI2CParameters)(const unsigned int& Sequencer, uint8_t I2C_0_Destination) {
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerSetI2CParameters)(const unsigned int& Sequencer, uint8_t I2C_0_Destination, uint8_t I2C_delay_start_stop, uint8_t I2C_delay_data_setup, uint8_t I2C_delay_clock_high, uint8_t I2C_delay_clock_low, uint8_t I2C_delay_pause_before_read) {
 			API_LOCK_GUARD;
 			CDeviceSequencer* sequencer = GetSequencer(Sequencer);
 			if (!sequencer) {
 				API_UNLOCK_RETURN_ERROR(false, "CLA_SequencerSetI2CParameters: Invalid sequencer");
 			}
-			sequencer->SequencerSetI2CParameters(I2C_0_Destination);
+			sequencer->SequencerSetI2CParameters(I2C_0_Destination, I2C_delay_start_stop, I2C_delay_data_setup, I2C_delay_clock_high, I2C_delay_clock_low, I2C_delay_pause_before_read);
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerSetI2CParameters: error");
 		}
 
@@ -1069,7 +1069,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 	
 
 
-		//AD9958
+		//AD9959
 		
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SetFrequencyOfChannel)(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Frequency) {
 			API_LOCK_GUARD;
@@ -1454,43 +1454,48 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_UNLOCK_RETURN_ERROR(!SequencerList[sequencer]->ErrorOccured(), "CLA_AddDeviceAD9858: error on initialization");
 		}
 
-		bool CLA_AddDeviceAD9958FromJSON(const json& device_json) {
+		bool CLA_AddDeviceAD9959FromJSON(const json& device_json) {
 			if (!device_json.contains("Address")) return false;
 			unsigned int address = device_json["Address"];
 			unsigned int sequencer;
 			double externalClockFrequency;
 			unsigned int frequencyMultiplier;
+			unsigned int AD9958;
 			LOAD_VALUE(sequencer, "Sequencer", 0);
 			LOAD_VALUE(externalClockFrequency, "ClockFrequency", 300000000);
 			LOAD_VALUE(frequencyMultiplier, "FrequencyMultiplier", 1);
+			LOAD_VALUE(AD9958, "AD9958", 0);
 
 			if (!GetSequencerBeforeInitialization(sequencer)) {
-				RETURN_ERROR(false, "CLA_AddDeviceAD9958FromJSON: Invalid sequencer");
+				RETURN_ERROR(false, "CLA_AddDeviceAD9959FromJSON: Invalid sequencer");
 			}
-			new CDeviceAD9958(
+			new CDeviceAD9959(
 				SequencerList[sequencer],
 				address,
 				externalClockFrequency,
-				frequencyMultiplier);
-			RETURN_ERROR(!SequencerList[sequencer]->ErrorOccured(), "CLA_AddDeviceAD9958FromJSON: error on initialization");
+				frequencyMultiplier,
+				AD9958 == 1);
+			RETURN_ERROR(!SequencerList[sequencer]->ErrorOccured(), "CLA_AddDeviceAD9959FromJSON: error on initialization");
 		}
 
 
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(AddDeviceAD9958)(
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(AddDeviceAD9959)(
 			unsigned int sequencer,
 			unsigned int address,
 			double externalClockFrequency,
-			unsigned int frequencyMultiplier) {
+			unsigned int frequencyMultiplier,
+			bool AD9958) {
 			API_LOCK_GUARD;
 			if (!GetSequencerBeforeInitialization(sequencer)) {
-				API_UNLOCK_RETURN_ERROR(false, "CLA_AddDeviceAD9958: Invalid sequencer");
+				API_UNLOCK_RETURN_ERROR(false, "CLA_AddDeviceAD9959: Invalid sequencer");
 			}
-			new CDeviceAD9958(
+			new CDeviceAD9959(
 				SequencerList[sequencer],
 				address,
 				externalClockFrequency,
-				frequencyMultiplier);
-			API_UNLOCK_RETURN_ERROR(!SequencerList[sequencer]->ErrorOccured(), "CLA_AddDeviceAD9958: error on initialization");
+				frequencyMultiplier,
+				AD9958);
+			API_UNLOCK_RETURN_ERROR(!SequencerList[sequencer]->ErrorOccured(), "CLA_AddDeviceAD9959: error on initialization");
 		}
 
 		bool CLA_AddDeviceDigitalOutFromJSON(const json& device_json) {
@@ -1741,10 +1746,10 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 				for (const auto& device_json : config["DDSAD9858Boards"])
 					success &= CLA_AddDeviceAD9858FromJSON(device_json);
 			}
-			//Add AD9958 DDS boards
-			if (config.contains("DDSAD9958Boards")) {
-				for (const auto& device_json : config["DDSAD9958Boards"])
-					success &= CLA_AddDeviceAD9958FromJSON(device_json);
+			//Add AD9959 DDS boards
+			if (config.contains("DDSAD9959Boards")) {
+				for (const auto& device_json : config["DDSAD9959Boards"])
+					success &= CLA_AddDeviceAD9959FromJSON(device_json);
 			}
 			//Add 12-bit Analog in boards
 			if (config.contains("AnalogInBoards12bit")) {

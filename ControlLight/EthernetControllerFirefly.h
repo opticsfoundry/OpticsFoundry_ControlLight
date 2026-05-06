@@ -122,14 +122,14 @@ public:
 	void IgnoreTCPIP(bool OnOff);
 	void AddMarker(uint8_t Marker);
 
-	void AddCommandWriteI2C(uint8_t I2C_port, uint8_t I2C_length, uint8_t *data_out);
-	void AddCommandTransmitSPI(const uint8_t chip_select, const uint16_t number_of_bits_out, const uint8_t data_out[], uint8_t number_of_bits_in, const bool start_now, const bool wait_for_SPI_ready_low = false, const bool wait_for_SPI_ready_down_edge = false, const bool LSB_first = false);
+	void AddCommandTransmitI2C(uint8_t I2C_port, uint8_t I2C_length_out, uint8_t I2C_length_in, uint8_t *data_out);
+	void AddCommandTransmitSPI(const uint8_t chip_select, const uint16_t number_of_bits_out, const uint8_t data_out[], uint8_t number_of_bits_in, const bool start_now, const bool wait_for_SPI_ready_active = false, const bool wait_for_SPI_ready_edge_to_active = false, const bool SPI_ready_active_level = false, const bool LSB_first = false);
 	void AddCommandRepeatedOutIn(const uint16_t number_of_datapoints, const double delay_between_datapoints_in_ms, uint8_t RepeatedOutInCommand, const bool SPI_restart_wait_on_ready_low = false);
 	void AddCommandWriteSystemTimeToInputMemory();
 	void AddCommandCalcAD9854FrequencyTuningWord(uint64_t ftw0, uint8_t bit_shift);
 	void AddCommandSetSPITiming(uint16_t SPI_delay_CS_low_start_wait, uint16_t SPI_delay_write, uint16_t SPI_delay_pause_before_read, uint16_t SPI_delay_read, uint16_t SPI_delay_CS_low_end_wait);
 	void AddCommandSetSPIMode(uint8_t SPI_mode);
-	void AddCommandSetI2CParameters(uint8_t I2C_0_Destination);
+	void AddCommandSetI2CParameters(uint8_t I2C_0_Destination, uint8_t I2C_delay_start_stop = 60, uint8_t I2C_delay_data_setup = 40, uint8_t I2C_delay_clock_high = 60, uint8_t I2C_delay_clock_low = 150, uint8_t I2C_delay_pause_before_read = 0);
 	void AddCommandWriteInputBuffer(unsigned long input_buf_mem_data, bool write_next_address = 1, unsigned long input_buf_mem_address = 0);
 	void AddCommandSetLoopCount(unsigned int loop_count);
 	void AddCommandJumpBackward(unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool loop_count_greater_zero = false);

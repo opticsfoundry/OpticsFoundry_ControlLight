@@ -422,8 +422,8 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		//API_EXPORT ERROR_CODE_TYPE CLA_FN(SetPower)(const unsigned int& Sequencer, const unsigned int& Address, double Power);//same as for AD9854, no need to redefine
 		//API_EXPORT ERROR_CODE_TYPE CLA_FN(SetAttenuation)(const unsigned int& Sequencer, const unsigned int& Address, double Power);
 
-		//AD9958
-		/// @brief Sets the frequency of a multi channel DDS (for now the AD9958).
+		//AD9959
+		/// @brief Sets the frequency of a multi channel DDS (for now the AD9959).
 		/// @param Sequencer the sequencer to use.
 		/// @param Address the address of the device to set the frequency for.
 		/// @param channel the channel number to set the frequency for.
@@ -431,7 +431,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @return
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(SetFrequencyOfChannel)(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Frequency);
 		
-		/// @brief Sets the frequency tuning word of a multi channel DDS (for now the AD9958).
+		/// @brief Sets the frequency tuning word of a multi channel DDS (for now the AD9959).
 		/// @param Sequencer the sequencer to use.
 		/// @param Address the address of the device to set the frequency tuning word for.
 		/// @param channel the channel number to set the frequency tuning word for.
@@ -439,7 +439,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @return
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(SetFrequencyTuningWordOfChannel)(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, uint64_t FrequencyTuningWord);
 		
-		/// @brief Sets the phase of a multi channel DDS (for now the AD9958).
+		/// @brief Sets the phase of a multi channel DDS (for now the AD9959).
 		/// @param Sequencer the sequencer to use.
 		/// @param Address the address of the device to set the phase for.
 		/// @param channel the channel number to set the phase for.
@@ -447,7 +447,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @return
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(SetPhaseOfChannel)(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Phase);
 
-		/// @brief Sets the phase of a multi channel DDS (for now the AD9958).
+		/// @brief Sets the phase of a multi channel DDS (for now the AD9959).
 		/// @param Sequencer the sequencer to use.
 		/// @param Address the address of the device to set the phase for.
 		/// @param channel the channel number to set the phase for.

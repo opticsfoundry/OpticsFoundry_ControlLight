@@ -164,19 +164,19 @@
 </listitem>
             <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1a508a3fd47b47db49be429d0149e6df38">CLA_FN</link> <link linkend="__control_a_p_i_8h_1a2f4fb297ff61349527cb71ddfa7b06eb">SetFrequencyOfChannel</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, uint8_t channel, double Frequency)</para>
 
-<para>Sets the frequency of a multi channel DDS (for now the AD9958). </para>
+<para>Sets the frequency of a multi channel DDS (for now the AD9959). </para>
 </listitem>
             <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1a508a3fd47b47db49be429d0149e6df38">CLA_FN</link> <link linkend="__control_a_p_i_8h_1aaf7bc23add42d0d456497d052dd98635">SetFrequencyTuningWordOfChannel</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, uint8_t channel, uint64_t FrequencyTuningWord)</para>
 
-<para>Sets the frequency tuning word of a multi channel DDS (for now the AD9958). </para>
+<para>Sets the frequency tuning word of a multi channel DDS (for now the AD9959). </para>
 </listitem>
             <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1a508a3fd47b47db49be429d0149e6df38">CLA_FN</link> <link linkend="__control_a_p_i_8h_1ac5867ffeebf13a6eda3d22d33e9dd40c">SetPhaseOfChannel</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, uint8_t channel, double Phase)</para>
 
-<para>Sets the phase of a multi channel DDS (for now the AD9958). </para>
+<para>Sets the phase of a multi channel DDS (for now the AD9959). </para>
 </listitem>
             <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1a508a3fd47b47db49be429d0149e6df38">CLA_FN</link> <link linkend="__control_a_p_i_8h_1a7a1ed99c5492fa69e87a5f7e64816307">SetPowerOfChannel</link> (const unsigned int &amp;Sequencer, const unsigned int &amp;Address, uint8_t channel, double Power)</para>
 
-<para>Sets the phase of a multi channel DDS (for now the AD9958). </para>
+<para>Sets the phase of a multi channel DDS (for now the AD9959). </para>
 </listitem>
             <listitem><para><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> void <link linkend="__control_a_p_i_8h_1a508a3fd47b47db49be429d0149e6df38">CLA_FN</link> <link linkend="__control_a_p_i_8h_1a478fffdf8106582d696c10d2023b5898">ExecuteSequence</link> ()</para>
 
@@ -1549,7 +1549,7 @@ Parameters</title>
 <indexterm><primary>ControlAPI.h</primary><secondary>SetFrequencyOfChannel</secondary></indexterm>
 <para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1a508a3fd47b47db49be429d0149e6df38">CLA_FN</link> SetFrequencyOfChannel (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, uint8_t channel, double Frequency)</computeroutput></para><para>
 
-<para>Sets the frequency of a multi channel DDS (for now the AD9958). </para>
+<para>Sets the frequency of a multi channel DDS (for now the AD9959). </para>
 </para>
 
 <para>
@@ -1644,7 +1644,7 @@ Parameters</title>
 <indexterm><primary>ControlAPI.h</primary><secondary>SetFrequencyTuningWordOfChannel</secondary></indexterm>
 <para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1a508a3fd47b47db49be429d0149e6df38">CLA_FN</link> SetFrequencyTuningWordOfChannel (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, uint8_t channel, uint64_t FrequencyTuningWord)</computeroutput></para><para>
 
-<para>Sets the frequency tuning word of a multi channel DDS (for now the AD9958). </para>
+<para>Sets the frequency tuning word of a multi channel DDS (for now the AD9959). </para>
 </para>
 
 <para>
@@ -1829,7 +1829,7 @@ Parameters</title>
 <indexterm><primary>ControlAPI.h</primary><secondary>SetPhaseOfChannel</secondary></indexterm>
 <para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1a508a3fd47b47db49be429d0149e6df38">CLA_FN</link> SetPhaseOfChannel (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, uint8_t channel, double Phase)</computeroutput></para><para>
 
-<para>Sets the phase of a multi channel DDS (for now the AD9958). </para>
+<para>Sets the phase of a multi channel DDS (for now the AD9959). </para>
 </para>
 
 <para>
@@ -1924,7 +1924,7 @@ Parameters</title>
 <indexterm><primary>ControlAPI.h</primary><secondary>SetPowerOfChannel</secondary></indexterm>
 <para><computeroutput><link linkend="__control_a_p_i_8h_1a5e3652cae8b48c1ad174f0b06bbd06d0">API_EXPORT</link> <link linkend="__control_a_p_i_8h_1aeb04e3165c1e12a3653ac311ee466995">ERROR_CODE_TYPE</link> <link linkend="__control_a_p_i_8h_1a508a3fd47b47db49be429d0149e6df38">CLA_FN</link> SetPowerOfChannel (const unsigned int &amp; Sequencer, const unsigned int &amp; Address, uint8_t channel, double Power)</computeroutput></para><para>
 
-<para>Sets the phase of a multi channel DDS (for now the AD9958). </para>
+<para>Sets the phase of a multi channel DDS (for now the AD9959). </para>
 </para>
 
 <para>

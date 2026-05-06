@@ -139,7 +139,7 @@ PYBIND11_MODULE(control_light_api, m) {
         .def("set_frequency", &ControlLight_API::SetFrequency, py::arg("sequencer"), py::arg("address"), py::arg("frequency"))
         .def("set_frequency_tuning_word", &ControlLight_API::SetFrequencyTuningWord, py::arg("sequencer"), py::arg("address"), py::arg("ftw"))
 
-        // AD9958
+        // AD9959
         .def("set_frequency_of_channel", &ControlLight_API::SetFrequencyOfChannel, py::arg("sequencer"), py::arg("address"), py::arg("channel"), py::arg("frequency"))
         .def("set_frequency_tuning_word_of_channel", &ControlLight_API::SetFrequencyTuningWordOfChannel, py::arg("sequencer"), py::arg("address"), py::arg("channel"), py::arg("ftw"))
         .def("set_phase_of_channel", &ControlLight_API::SetPhaseOfChannel, py::arg("sequencer"), py::arg("address"), py::arg("channel"), py::arg("phase"))
@@ -250,10 +250,10 @@ PYBIND11_MODULE(control_light_api, m) {
 			py::arg("sequencer"), py::arg("jump_length"),
 			py::arg("unconditional_jump") = true, py::arg("condition_0") = false,
 			py::arg("condition_1") = false, py::arg("condition_PS") = false)
-		.def("sequencer_write_i2c", [](ControlLight_API& self, unsigned int sequencer, uint8_t i2c_port, uint8_t i2c_length, py::bytes data_out) {
+		.def("sequencer_transmit_i2c", [](ControlLight_API& self, unsigned int sequencer, uint8_t i2c_port, uint8_t i2c_length_out, uint8_t i2c_length_in, py::bytes data_out) {
 				std::string payload = static_cast<std::string>(data_out);
-				self.SequencerWriteI2C(sequencer, i2c_port, i2c_length, reinterpret_cast<uint8_t*>(payload.data()));
-			}, py::arg("sequencer"), py::arg("i2c_port"), py::arg("i2c_length"), py::arg("data_out"))
+				self.SequencerTransmitI2C(sequencer, i2c_port, i2c_length_out, i2c_length_in, reinterpret_cast<uint8_t*>(payload.data()));
+			}, py::arg("sequencer"), py::arg("i2c_port"), py::arg("i2c_length_out"), py::arg("i2c_length_in"), py::arg("data_out"))
 		.def("sequencer_transmit_spi", [](ControlLight_API& self, unsigned int sequencer, uint8_t chip_select, uint16_t number_of_bits_out, py::bytes data_out, uint8_t number_of_bits_in, bool start_now) {
 				std::string payload = static_cast<std::string>(data_out);
 				self.SequencerTransmitSPI(sequencer, chip_select, number_of_bits_out, reinterpret_cast<const uint8_t*>(payload.data()), number_of_bits_in, start_now);
@@ -266,7 +266,9 @@ PYBIND11_MODULE(control_light_api, m) {
 		.def("sequencer_set_spi_mode", &ControlLight_API::SequencerSetSPIMode,
 			py::arg("sequencer"), py::arg("spi_mode"))
 		.def("sequencer_set_i2c_parameters", &ControlLight_API::SequencerSetI2CParameters,
-			py::arg("sequencer"), py::arg("i2c_0_destination"))
+			py::arg("sequencer"), py::arg("i2c_0_destination"), py::arg("i2c_delay_start_stop"),
+			py::arg("i2c_delay_data_setup"), py::arg("i2c_delay_clock_high"),
+			py::arg("i2c_delay_clock_low"), py::arg("i2c_delay_pause_before_read"))
 
         //Rack control
         .def("reset_i2c_multiplexer", &ControlLight_API::ResetI2CMultiplexer,py::arg("sequencer"))   
@@ -319,13 +321,16 @@ PYBIND11_MODULE(control_light_api, m) {
                 py::arg("address"),
                 py::arg("external_clock_frequency"),
                 py::arg("frequency_multiplier"))
+                )
 
-            // AddDeviceAD9958
-            .def("add_device_ad9958", &ControlLight_API::AddDeviceAD9958,
+            // AddDeviceAD9959
+            .def("add_device_ad9959", &ControlLight_API::AddDeviceAD9959,
                 py::arg("sequencer"),
                 py::arg("address"),
                 py::arg("external_clock_frequency"),
-                py::arg("frequency_multiplier"))
+                py::arg("frequency_multiplier"),
+                py::arg("ad9958")
+                )
 
             // AddDeviceAnalogIn12bit
             .def("add_device_analog_in_12bit", &ControlLight_API::AddDeviceAnalogIn12bit,

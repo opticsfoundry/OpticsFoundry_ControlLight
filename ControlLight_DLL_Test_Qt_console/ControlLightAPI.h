@@ -96,11 +96,11 @@ API_EXPORT ERROR_CODE_TYPE CLA_SetFSKBit(const unsigned int& Sequencer, const un
 API_EXPORT ERROR_CODE_TYPE CLA_SetFrequency(const unsigned int& Sequencer, const unsigned int& Address, double Frequency);
 API_EXPORT ERROR_CODE_TYPE CLA_SetFrequencyTuningWord(const unsigned int& Sequencer, const unsigned int& Address, uint64_t FrequencyTuningWord);
 
-//AD9958
-API_EXPORT ERROR_CODE_TYPE CLA_SetAD9958Frequency(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Frequency);
-API_EXPORT ERROR_CODE_TYPE CLA_SetAD9958FrequencyTuningWord(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, uint64_t FrequencyTuningWord);
-API_EXPORT ERROR_CODE_TYPE CLA_SetAD9958Phase(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Phase);
-API_EXPORT ERROR_CODE_TYPE CLA_SetAD9958Power(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Power);
+//AD9959
+API_EXPORT ERROR_CODE_TYPE CLA_SetAD9959Frequency(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Frequency);
+API_EXPORT ERROR_CODE_TYPE CLA_SetAD9959FrequencyTuningWord(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, uint64_t FrequencyTuningWord);
+API_EXPORT ERROR_CODE_TYPE CLA_SetAD9959Phase(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Phase);
+API_EXPORT ERROR_CODE_TYPE CLA_SetAD9959Power(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Power);
 
 
 */
@@ -235,10 +235,10 @@ typedef bool (*SetTriangleBitFunc)(const unsigned int&, const unsigned int&, boo
 typedef bool (*SetFSKBitFunc)(const unsigned int&, const unsigned int&, bool);
 typedef bool (*SetFrequencyFunc)(const unsigned int&, const unsigned int&, double);
 typedef bool (*SetFrequencyTuningWordFunc)(const unsigned int&, const unsigned int&, uint64_t);
-typedef bool (*SetAD9958FrequencyFunc)(const unsigned int&, const unsigned int&, uint8_t, double);
-typedef bool (*SetAD9958FrequencyTuningWordFunc)(const unsigned int&, const unsigned int&, uint8_t, uint64_t);
-typedef bool (*SetAD9958PhaseFunc)(const unsigned int&, const unsigned int&, uint8_t, double);
-typedef bool (*SetAD9958PowerFunc)(const unsigned int&, const unsigned int&, uint8_t, double);
+typedef bool (*SetAD9959FrequencyFunc)(const unsigned int&, const unsigned int&, uint8_t, double);
+typedef bool (*SetAD9959FrequencyTuningWordFunc)(const unsigned int&, const unsigned int&, uint8_t, uint64_t);
+typedef bool (*SetAD9959PhaseFunc)(const unsigned int&, const unsigned int&, uint8_t, double);
+typedef bool (*SetAD9959PowerFunc)(const unsigned int&, const unsigned int&, uint8_t, double);
 */
 
 
@@ -388,13 +388,13 @@ typedef bool (*SetAD9958PowerFunc)(const unsigned int&, const unsigned int&, uin
         bool SetFrequency(const unsigned int& Sequencer, const unsigned int& Address, double Frequency);
         //set the frequency tuning word of the AD9858
         bool SetFrequencyTuningWord(const unsigned int& Sequencer, const unsigned int& Address, uint64_t FrequencyTuningWord);
-        //set the frequency of the AD9958
+        //set the frequency of the AD9959
         bool SetFrequencyOfChannel(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Frequency);
-        //set the frequency tuning word of the AD9958
+        //set the frequency tuning word of the AD9959
         bool SetFrequencyTuningWordOfChannel(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, uint64_t FrequencyTuningWord);
-        //set the phase of the AD9958
+        //set the phase of the AD9959
         bool SetPhaseOfChannel(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Phase);
-        //set the power of the AD9958
+        //set the power of the AD9959
         bool SetPowerOfChannel(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Power);
 
     

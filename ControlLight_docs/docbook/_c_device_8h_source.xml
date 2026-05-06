@@ -127,7 +127,7 @@ Go to the documentation of this file.<programlisting linenumbering="unnumbered">
 123 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return&#32;false;</emphasis>
 124 <emphasis role="comment">&#32;&#32;&#32;&#32;}*/</emphasis>
 125 
-126 &#32;&#32;&#32;&#32;<emphasis role="comment">//AD9958</emphasis>
+126 &#32;&#32;&#32;&#32;<emphasis role="comment">//AD9959</emphasis>
 127 
 128 &#32;&#32;&#32;&#32;<emphasis role="keyword">virtual</emphasis>&#32;<emphasis role="keywordtype">bool</emphasis>&#32;<link linkend="_class_c_device_1a537b4320f28a041f7c792cd8ee980489">SetFrequency</link>(uint8_t&#32;channel,&#32;<emphasis role="keywordtype">double</emphasis>&#32;Frequency)&#32;{
 129 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__control_a_p_i_8cpp_1ab4216036d280f0e2357f4895feae00b3">AddErrorMessage</link>(<emphasis role="stringliteral">&quot;CDevice::SetFrequency:&#32;abstract&#32;function&#32;called&quot;</emphasis>);

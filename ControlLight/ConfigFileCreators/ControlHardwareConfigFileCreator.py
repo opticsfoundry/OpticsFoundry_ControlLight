@@ -16,7 +16,7 @@ class ConfigBuilder:
             "SerialPortBoards": [],
             "DDSAD9854Boards": [],
             "DDSAD9858Boards": [],
-            "DDSAD9958Boards": [],
+            "DDSAD9959Boards": [],
             "AnalogInBoards12bit": []
         }
 
@@ -99,14 +99,15 @@ class ConfigBuilder:
             "FrequencyMultiplier": FrequencyMultiplier
         }, Model=Model, SN=SN, RackNr=RackNr, SlotNr=SlotNr))
 
-    def RegisterDDSAD9958Board(self, Sequencer=0, Address=21, ClockFrequencyinMHz=300,
-                                FrequencyMultiplier=1, Model=None, SN=None,
+    def RegisterDDSAD9959Board(self, Sequencer=0, Address=21, ClockFrequencyinMHz=300,
+                                FrequencyMultiplier=1, AD9958 = False, Model=None, SN=None,
                                 RackNr=None, SlotNr=None):
-        self.config["DDSAD9958Boards"].append(self._add_optional_hardware_fields({
+        self.config["DDSAD9959Boards"].append(self._add_optional_hardware_fields({
             "Sequencer": Sequencer,
             "Address": Address,
             "ClockFrequencyinMHz": ClockFrequencyinMHz,
-            "FrequencyMultiplier": FrequencyMultiplier
+            "FrequencyMultiplier": FrequencyMultiplier,
+            "AD9958": "1" if AD9958 else "0"
         }, Model=Model, SN=SN, RackNr=RackNr, SlotNr=SlotNr))
 
     def RegisterAnalogInBoard12bit(self, Sequencer=0, Address=80, NumberChannels=4, MinVoltage=-10, MaxVoltage=10,
@@ -149,8 +150,8 @@ class ConfigBuilder:
         for entry in self.config["DDSAD9858Boards"]:
             check_and_add(entry["Sequencer"], entry["Address"], 4, "DDSAD9858Board")
 
-        for entry in self.config["DDSAD9958Boards"]:
-            check_and_add(entry["Sequencer"], entry["Address"], 1, "DDSAD9958Board")
+        for entry in self.config["DDSAD9959Boards"]:
+            check_and_add(entry["Sequencer"], entry["Address"], 1, "DDSAD9959Board")
 
         for entry in self.config["AnalogInBoards12bit"]:
             check_and_add(entry["Sequencer"], entry["Address"], 1, "AnalogInBoard12bit")
@@ -194,6 +195,6 @@ if __name__ == "__main__":
         builder.RegisterDDSAD9858Board(Address=addr)
     
     for addr in [1,10]:
-        builder.RegisterDDSAD9958Board(Address=addr)
+        builder.RegisterDDSAD9959Board(Address=addr)
 
     builder.Save()

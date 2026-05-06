@@ -385,7 +385,7 @@ json GetAutoConfigJSON(const std::string& filename) {
 		{"SerialPortBoards", json::array()},
 		{"DDSAD9854Boards", json::array()},
 		{"DDSAD9858Boards", json::array()},
-		{"DDSAD9958Boards", json::array()},
+		{"DDSAD9959Boards", json::array()},
 		{"AnalogInBoards12bit", json::array()}
 	};
 
@@ -485,7 +485,7 @@ json GetAutoConfigJSON(const std::string& filename) {
 					entry["FrequencyMultiplier"] = (*board_json).value("FrequencyMultiplier", 1);
 					auto_config["DDSAD9858Boards"].push_back(entry);
 				}
-				else if ((model_prefix == "DDSAD9958") || (model_prefix == "DDSAD9959")) {
+				else if ((model_prefix == "DDSAD9959") || (model_prefix == "DDSAD9959")) {
 					json entry;
 					AddCommonMetadata(*board_json, entry, SequencerNr, RackNr, SlotNr);
 					entry["Address"] = (*board_json).value("Address", 21);
@@ -500,7 +500,7 @@ json GetAutoConfigJSON(const std::string& filename) {
 						entry["ClockFrequency"] = 300000000.0;
 					}
 					entry["FrequencyMultiplier"] = (*board_json).value("FrequencyMultiplier", 1);
-					auto_config["DDSAD9958Boards"].push_back(entry);
+					auto_config["DDSAD9959Boards"].push_back(entry);
 				}
 				else if (model_prefix == "AnalogIn12bit") {
 					json entry;

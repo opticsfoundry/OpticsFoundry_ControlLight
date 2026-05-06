@@ -43,7 +43,7 @@ int main() {
 	}
 
 	for (const int address : {1, 10}) {
-		builder.RegisterDDSAD9958Board(/*Sequencer*/ 0, /*Address*/ address);
+		builder.RegisterDDSAD9959Board(/*Sequencer*/ 0, /*Address*/ address);
 	}
 
 	builder.Save();

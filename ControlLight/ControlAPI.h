@@ -563,8 +563,8 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		//API_EXPORT ERROR_CODE_TYPE CLA_FN(SetPower)(const unsigned int& Sequencer, const unsigned int& Address, double Power);//same as for AD9854, no need to redefine
 		//API_EXPORT ERROR_CODE_TYPE CLA_FN(SetAttenuation)(const unsigned int& Sequencer, const unsigned int& Address, double Power);
 
-		//AD9958
-		/// @brief Sets the frequency of a multi channel DDS (for now the AD9958).
+		//AD9959
+		/// @brief Sets the frequency of a multi channel DDS (for now the AD9959).
 		/// @param Sequencer the sequencer to use.
 		/// @param Address the address of the device to set the frequency for.
 		/// @param channel the channel number to set the frequency for.
@@ -572,7 +572,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @return
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(SetFrequencyOfChannel)(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Frequency);
 		
-		/// @brief Sets the frequency tuning word of a multi channel DDS (for now the AD9958).
+		/// @brief Sets the frequency tuning word of a multi channel DDS (for now the AD9959).
 		/// @param Sequencer the sequencer to use.
 		/// @param Address the address of the device to set the frequency tuning word for.
 		/// @param channel the channel number to set the frequency tuning word for.
@@ -580,7 +580,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @return
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(SetFrequencyTuningWordOfChannel)(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, uint64_t FrequencyTuningWord);
 		
-		/// @brief Sets the phase of a multi channel DDS (for now the AD9958).
+		/// @brief Sets the phase of a multi channel DDS (for now the AD9959).
 		/// @param Sequencer the sequencer to use.
 		/// @param Address the address of the device to set the phase for.
 		/// @param channel the channel number to set the phase for.
@@ -588,7 +588,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @return
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(SetPhaseOfChannel)(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Phase);
 
-		/// @brief Sets the phase of a multi channel DDS (for now the AD9958).
+		/// @brief Sets the phase of a multi channel DDS (for now the AD9959).
 		/// @param Sequencer the sequencer to use.
 		/// @param Address the address of the device to set the phase for.
 		/// @param channel the channel number to set the phase for.
@@ -791,7 +791,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerJumpForward)(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false);
 
 		/// @brief Writes an I2C command to the sequencer.
-		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerWriteI2C)(const unsigned int& Sequencer, uint8_t I2C_port, uint8_t I2C_length, uint8_t* data_out);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerTransmitI2C)(const unsigned int& Sequencer, uint8_t I2C_port, uint8_t I2C_length_out, uint8_t I2C_length_in, uint8_t* data_out);
 
 		/// @brief Writes an SPI transmit command to the sequencer.
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerTransmitSPI)(const unsigned int& Sequencer, uint8_t chip_select, uint16_t number_of_bits_out, const uint8_t* data_out, uint8_t number_of_bits_in, bool start_now);
@@ -811,7 +811,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerSetSPIMode)(const unsigned int& Sequencer, uint8_t SPI_mode);
 
 		/// @brief Sets I2C parameters for the sequencer.
-		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerSetI2CParameters)(const unsigned int& Sequencer, uint8_t I2C_0_Destination);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerSetI2CParameters)(const unsigned int& Sequencer, uint8_t I2C_0_Destination, uint8_t I2C_delay_start_stop, uint8_t I2C_delay_data_setup, uint8_t I2C_delay_clock_high, uint8_t I2C_delay_clock_low, uint8_t I2C_delay_pause_before_read);
 
 
 		/// @brief Selects a slot in one of the racks connected in a chain to a sequencer
@@ -908,17 +908,18 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 			double externalClockFrequency,
 			unsigned int frequencyMultiplier);
 
-		/// @brief Add a AD9958 device to the sequencer.
+		/// @brief Add a AD9959 device to the sequencer.
 		/// @param sequencer the sequencer to use.
 		/// @param address the address of the device to add.
 		/// @param externalClockFrequency the external clock frequency of the device to add.
 		/// @param frequencyMultiplier the frequency multiplier of the device to add.
 		/// @return
-		API_EXPORT ERROR_CODE_TYPE CLA_FN(AddDeviceAD9958)(
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(AddDeviceAD9959)(
 			unsigned int sequencer,
 			unsigned int address,
 			double externalClockFrequency,
-			unsigned int frequencyMultiplier);
+			unsigned int frequencyMultiplier,
+			bool AD9958);
 
 		/// @brief Add a 12 bit analog input device to the sequencer.
 		/// @param sequencer the sequencer to use.

@@ -122,12 +122,12 @@ public:
 	//They need to be implemented in CDeviceSequencer, similar to the commands above, e.g. SequencerStartAnalogInAcquisition.
 	//After that's done, they need to be exposed in ControlAPI, similar to how the existing SequencerXYZ functions are exposed, e.g. CLA_SequencerStartAnalogInAcquisition.
 	//Finally they need to be added to the python bindings in the bindings folder.
-	void SequencerWriteI2C(uint8_t I2C_port, uint8_t I2C_length, uint8_t *data_out);
+	void SequencerTransmitI2C(uint8_t I2C_port, uint8_t I2C_length_out, uint8_t I2C_length_in, uint8_t *data_out);
 	void SequencerTransmitSPI(const uint8_t chip_select, const uint16_t number_of_bits_out, const uint8_t *data_out, const uint8_t number_of_bits_in, const bool start_now);
 	void SequencerRepeatedOutIn(const uint16_t number_of_datapoints, const double delay_between_datapoints_in_ms, uint8_t RepeatedOutInCommand);
 	void SequencerSetSPITiming(uint16_t SPI_delay_CS_low_start_wait, uint16_t SPI_delay_write, uint16_t SPI_delay_pause_before_read, uint16_t SPI_delay_read, uint16_t SPI_delay_CS_low_end_wait);
 	void SequencerSetSPIMode(uint8_t SPI_mode);
-	void SequencerSetI2CParameters(uint8_t I2C_0_Destination);
+	void SequencerSetI2CParameters(uint8_t I2C_0_Destination, uint8_t I2C_delay_start_stop, uint8_t I2C_delay_data_setup, uint8_t I2C_delay_clock_high, uint8_t I2C_delay_clock_low, uint8_t I2C_delay_pause_before_read);
 	void SequencerSelectRackSlot(uint8_t rack_nr, uint8_t slot_nr);
 	void SequencerResetI2CMultiplexer();
 	
