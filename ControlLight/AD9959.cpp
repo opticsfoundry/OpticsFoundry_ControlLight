@@ -31,10 +31,10 @@
 //  [AD9958: which writes to channel 0 and/or 1 depending on bit 6 and 7 of the CSR]
 //  [AD9959: which writes to channel 0, 1, 2 and/or 3 depending on bit 4, 5, 6 and 7 of the CSR]. 
 //  When reading it provides values of channel 0
-//AktValueContents[25..46] is the channel 1 register map, and can't be written by this function. When reading it provides values of channel 1
-//AktValueContents[47..68] is the channel 2 register map, and can't be written by this function. When reading it provides values of channel 2
-//AktValueContents[69..90] is the channel 3 register map, and can't be written by this function. When reading it provides values of channel 3
-//AktValueContents[91] is the digital out port, and can't be written by this function
+//AktValueContents[25..46] is the channel 1 register map
+//AktValueContents[47..68] is the channel 2 register map
+//AktValueContents[69..90] is the channel 3 register map
+//AktValueContents[91] is the digital out port (not part of the AD9959, but placed on the same circuit board)
 uint32_t AD9959MasterResetValueContents[AD9959NumberOfRegisters] =      { 0xF0,   0,   0,   0x000302,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    0x000302,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    0x000302,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    0x000302,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0 };
 unsigned char AD9959ValueLength[AD9959NumberOfRegisters] =              {    1,   3,   2,          3,   4,   2,   3,   2,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,           3,   4,   2,   3,   2,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,           3,   4,   2,   3,   2,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,           3,   4,   2,   3,   2,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   2 };
 unsigned char AD9959ValueBaseAddress[AD9959NumberOfRegisters] =         { 0x00,0x01,0x02,       0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,        0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,        0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,           0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,0x19 };
@@ -440,6 +440,7 @@ void CAD9959::Dev_Deselect(bool read, uint8_t number_of_bits_in)
     //AD9959 has MSB first as default mode.
     //the FPGA SPI uses LSB first -> we have to sort the bits
     //As we never transfer more than 4 bytes we can use data_low and set data_high to zero
+    //ToDo: May 2026 version of FPGA has MSB first. -> don't invert and adjust bit-banged method.
     uint64_t data_low = 0;
     for (unsigned char i = 0; i < BytesToTransmit; i++) {
 
@@ -551,7 +552,8 @@ void CAD9959::MasterReset() {
 }
 
 void CAD9959::SetWriteChannels(bool channel0, bool channel1, bool channel2, bool channel3) {
-    uint8_t channelcode = ((channel0) ? 1 : 0) + ((channel1) ? 2 : 0) + ((channel2) ? 4 : 0) + ((channel3) ? 8 : 0);
+    uint8_t channelcode;
+    channelcode = ((channel0) ? 1 : 0) + ((channel1) ? 2 : 0) + ((channel2) ? 4 : 0) + ((channel3) ? 8 : 0);
     SetWriteChannels(channelcode);
 }
 
@@ -578,20 +580,22 @@ bool CAD9959::SetRegisterBit(unsigned char RegisterNr, unsigned char BitNr, bool
 //RegisterNr in [0..2]: is the control register
 //RegisterNr in [3..24]: write & read channel 0 register map
 //RegisterNr in [25..46]: write & read channel 1 register map
-//RegisterNr in [47..68]: write channel 0 and 1 register map simultaneously. If Value doesn't specify all bits of a register write, the values of channel 0 will be taken to complement Value.
-//RegisterNr = 69: write & read digital out port of this board
-constexpr uint8_t ControlRegisterNr = 69;
+// //RegisterNr in [47..68]: write & read channel 2 register map
+// //RegisterNr in [69..90]: write & read channel 3 register map
+//RegisterNr in [91..112]: write channel 0, 1, 2 and 3 register map 
+//RegisterNr = 113: write & read digital out port of this board
+constexpr uint8_t ControlRegisterNr = 113;
 uint32_t CAD9959::SetRegisterBits(unsigned char RegisterNr, unsigned char LowestBitNr, unsigned char NrBits, uint32_t Value, bool GetValue, bool DoIOUpdate, bool forceWrite)
 {
     if (!Enabled) return false;
-    if (((RegisterNr > ControlRegisterNr) && (!GetValue)) || ((RegisterNr > 46) && (RegisterNr != ControlRegisterNr) && (GetValue))) {
+    if (((RegisterNr > ControlRegisterNr) && (!GetValue)) || ((RegisterNr > 90) && (RegisterNr != ControlRegisterNr) && (GetValue))) {
         std::string buf;
-        if (GetValue) buf = std::format("CAD9959::SetRegisterBits : RegisterNr ({}) is not in range for reading, [0..46] or 68.", RegisterNr);
-        else buf = std::format("CAD9959::SetRegisterBits : RegisterNr ({}) is not in range for writing, [0..68]", RegisterNr);
+        if (GetValue) buf = std::format("CAD9959::SetRegisterBits : RegisterNr ({}) is not in range for reading, [0..90] or 113.", RegisterNr);
+        else buf = std::format("CAD9959::SetRegisterBits : RegisterNr ({}) is not in range for writing, [0..113]", RegisterNr);
         ControlMessageBox(buf);
         return 0;
     }
-    uint8_t LengthTableRegisterNr = (RegisterNr < 47) ? RegisterNr : (RegisterNr < 69) ? RegisterNr - 44 : 47;
+    uint8_t LengthTableRegisterNr = (RegisterNr < 91) ? RegisterNr : (RegisterNr < 113) ? RegisterNr - 44 : 91;
 
     if (AD9959ValueLength[LengthTableRegisterNr] * 8 < NrBits) {
         ControlMessageBox(std::format("CAD9959::SetRegisterBits : NrBits ({}) exceeds RegisterNr ({}) length ({})", NrBits, RegisterNr, AD9959ValueLength[LengthTableRegisterNr] * 8));
@@ -627,22 +631,22 @@ uint32_t CAD9959::SetRegisterBits(unsigned char RegisterNr, unsigned char Lowest
 uint32_t CAD9959::SetValue(unsigned char RegisterNr, uint32_t Value, bool GetValue, bool DoIOUpdate, bool forceWrite)
 {
     if (!Enabled) return 0;
-    if ( ((RegisterNr > ControlRegisterNr) && (!GetValue)) || ((RegisterNr > 46) && (RegisterNr!= ControlRegisterNr) && (GetValue)) ) {
+    if ( ((RegisterNr > ControlRegisterNr) && (!GetValue)) || ((RegisterNr > 90) && (RegisterNr!= ControlRegisterNr) && (GetValue)) ) {
         std::string buf;
-        if (GetValue) buf = std::format("CAD9959::SetValue : RegisterNr ({}) is not in range for reading, [0..46] or 68.", RegisterNr);
-        else buf = std::format("CAD9959::SetValue : RegisterNr ({}) is not in range for writing, [0..68]", RegisterNr);
+        if (GetValue) buf = std::format("CAD9959::SetValue : RegisterNr ({}) is not in range for reading, [0..90] or 113.", RegisterNr);
+        else buf = std::format("CAD9959::SetValue : RegisterNr ({}) is not in range for writing, [0..113]", RegisterNr);
         ControlMessageBox(buf);
         return 0;
     }
     if (GetValue) {
-		if (RegisterNr == 113) {
+		if (RegisterNr == ControlRegisterNr) {
 			//Digital out port is not in the bus buffer, so we return the value directly
             return ControlRegisterContent;
 		}
         return AktValueContents[RegisterNr];
     }
     else {
-        if ((AD9958 && (RegisterNr < 3)) || ((!AD9958) && (RegisterNr < 5))) {
+        if (RegisterNr < 3) {
             SetValueDirect(RegisterNr, Value, GetValue, DoIOUpdate, forceWrite);
             return 0;
         }
@@ -692,7 +696,7 @@ uint32_t CAD9959::SetValue(unsigned char RegisterNr, uint32_t Value, bool GetVal
 //AktValueContents[25..46] is the channel 1 register map, and can't be written by this function. When reading it provides values of channel 1
 //AktValueContents[47..68] is the channel 2 register map, and can't be written by this function. When reading it provides values of channel 2
 //AktValueContents[69..90] is the channel 3 register map, and can't be written by this function. When reading it provides values of channel 3
-//AktValueContents[91] is the digital out port, and can't be written by this function
+//AktValueContents[91] is the digital out port (not part of the AD9959, but placed on the same circuit board), and can't be written by this function
 uint32_t CAD9959::SetValueDirect(unsigned char RegisterNr, uint32_t Value, bool GetValue, bool DoIOUpdate, bool forceWrite)
 {
     if (!Enabled) return 0;
