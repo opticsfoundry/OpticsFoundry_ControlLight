@@ -39,6 +39,8 @@ CMultiWriteDeviceSPI::CMultiWriteDeviceSPI(unsigned short aBus, unsigned long aB
 	SPI_CS_bit = 0;
 	SDIO_0_bit = 0;
 	SPI_SCLK_bit = 0;
+	SPI_frequency_in_Hz = 0;
+	SPI_mode = 0;
 	/*if (DebugSPICommunication) {
 		CString filename;
 		filename.Format(*DebugFilePath + "DebugSPICommunication_%u_%u.txt", Bus, BaseAddress);
@@ -116,6 +118,12 @@ void CMultiWriteDeviceSPI::SetSPIDataOut(bool data) {
 	SetControlRegister(SDIO_0_bit, 1, (data) ? 1 : 0);
 }
 
+
+void CMultiWriteDeviceSPI::SetSPIFrequencyAndMode(double _SPI_frequency_in_Hz, const uint8_t _SPI_mode) {
+	SPI_mode = _SPI_mode;
+	SPI_frequency_in_Hz = _SPI_frequency_in_Hz;
+}
+
 std::string format_binary_64(uint64_t data, unsigned int number_of_bits_out) {
 	std::string result;
 	for (int i = number_of_bits_out - 1; i >= 0; --i) {
@@ -126,6 +134,8 @@ std::string format_binary_64(uint64_t data, unsigned int number_of_bits_out) {
 }
 
 void CMultiWriteDeviceSPI::WriteSPIBitBanged(unsigned int number_of_bits_out, uint64_t data) {
+	//ToDo: take SPI_mode and SPI_frequency_in_Hz into account
+	// MySequencer->SetFPGAClockToBusClockRatio(/* FPGAClockToBusClockRatio */ XXX, /*UpdateStrobeDuration*/ false);
 	//ToDo: make data_sent calculation more efficient
 	uint64_t data_sent = 0;
 	//This could easily be expanded into a 4-bit SPI interface

@@ -1211,12 +1211,12 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "ResetCycleNumber: error");
 		}
 
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(TransmitI2CPort)(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz) {
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(TransmitI2CPort)(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently) {
 			API_LOCK_GUARD;
 			if (!MasterSequencer) {
 				API_UNLOCK_RETURN_ERROR(false, "TransmitI2CPort: no master sequencer not found");
 			}
-			MasterSequencer->TransmitI2CPort(I2C_port, I2C_address, send_length, send_data, receive_length, receive_data, I2C_clock_frequency_in_Hz);
+			MasterSequencer->TransmitI2CPort(I2C_port, I2C_address, send_length, send_data, receive_length, receive_data, I2C_clock_frequency_in_Hz, I2C_success, fail_silently);
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "TransmitI2CPort: error");
 		}
 
@@ -1229,12 +1229,12 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "WriteConfigEEPROM: error");
 		}
 
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(ReadConfigEEPROM)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, char* data, size_t& length) {
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(ReadConfigEEPROM)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, char* data, size_t& length, bool& I2C_success) {
 			API_LOCK_GUARD;
 			if (!MasterSequencer) {
 				API_UNLOCK_RETURN_ERROR(false, "ReadConfigEEPROM: no master sequencer not found");
 			}
-			::ReadConfigEEPROM(SequencerID, RackNr, SlotNr, data, length);
+			::ReadConfigEEPROM(SequencerID, RackNr, SlotNr, data, length, I2C_success);
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "ReadConfigEEPROM: error");
 		}
 
@@ -1247,12 +1247,12 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "WriteConfigAddress: error");
 		}
 
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(ReadConfigAddress)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, uint8_t& address) {
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(ReadConfigAddress)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, uint8_t& address, bool &I2C_success) {
 			API_LOCK_GUARD;
 			if (!MasterSequencer) {
 				API_UNLOCK_RETURN_ERROR(false, "ReadConfigAddress: no master sequencer not found");
 			}
-			::ReadConfigAddress(SequencerID, RackNr, SlotNr, address);
+			::ReadConfigAddress(SequencerID, RackNr, SlotNr, address, I2C_success);
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "ReadConfigAddress: error");
 		}
 

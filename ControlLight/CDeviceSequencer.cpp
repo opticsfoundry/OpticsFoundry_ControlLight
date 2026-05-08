@@ -53,6 +53,8 @@ CDeviceSequencer::CDeviceSequencer(
 	startDelay = _startDelay;
 	clockFrequency = _clockFrequency;
 	FPGAClockToBusClockRatio = _FPGAClockToBusClockRatio;
+	if (FPGAClockToBusClockRatio < 1) FPGAClockToBusClockRatio = 1;
+	DefaultFPGAClockToBusClockRatio = FPGAClockToBusClockRatio;
 	CurrentFPGAClockToBusClockRatio = FPGAClockToBusClockRatio;
 	useExternalClock = _useExternalClock;
 	useStrobeGenerator = _useStrobeGenerator;
@@ -60,6 +62,7 @@ CDeviceSequencer::CDeviceSequencer(
 	currentBuffer = 0;
 	for (int n = 0; n < MaxBuffer; n++) Buffer[n] = nullptr;
 	LastCommandWasSpecialCommand = true;
+	DoUseEdgeTriggeredLatches = false;
 
 	AbsoluteTime_in_ms = 0;
 	BufferPosition = 0;
@@ -109,14 +112,29 @@ CDeviceSequencer::~CDeviceSequencer() {
 	}
 }
 
-void CDeviceSequencer::UseEdgeTriggeredLatches(bool UseEdgeTriggeredLatches) {
-	if (UseEdgeTriggeredLatches) {
+void CDeviceSequencer::UpdateClockRatio() {
+	if (DoUseEdgeTriggeredLatches) {
 		CurrentFPGAClockToBusClockRatio = (2 * FPGAClockToBusClockRatio) / 3;
 	}
 	else {
 		CurrentFPGAClockToBusClockRatio = FPGAClockToBusClockRatio;
 	}
-//	MyEthernetMultiIOControllerFirefly->SetFPGAClockToBusClockRatio(FPGAClockToBusClockRatio);
+	//	MyEthernetMultiIOControllerFirefly->SetFPGAClockToBusClockRatio(FPGAClockToBusClockRatio);
+}
+
+void CDeviceSequencer::UseEdgeTriggeredLatches(bool _UseEdgeTriggeredLatches) {
+	DoUseEdgeTriggeredLatches = _UseEdgeTriggeredLatches;
+	UpdateClockRatio();
+}
+
+void CDeviceSequencer::SetFPGAClockToBusClockRatio(const unsigned int _FPGAClockToBusClockRatio, const bool UpdateStrobeDuration) {
+	FPGAClockToBusClockRatio = (_FPGAClockToBusClockRatio > 0) ? _FPGAClockToBusClockRatio : DefaultFPGAClockToBusClockRatio;
+	if (FPGAClockToBusClockRatio < 1) FPGAClockToBusClockRatio = 1;
+	UpdateClockRatio();
+	if (UpdateStrobeDuration) {
+		uint8_t StrobeDuration = ((FPGAClockToBusClockRatio + 1) / 3) - 1;
+		MyEthernetMultiIOControllerFirefly->SetStrobeOptions(/* StrobeChoice: Use FPGA strobe generator */ 1, StrobeDuration, StrobeDuration);
+	}
 }
 
 void CDeviceSequencer::Initialize(unsigned long _PCBufferSize_in_u64) {
@@ -356,9 +374,9 @@ void CDeviceSequencer::ResetCycleNumber() {
 	}
 }
 
-bool CDeviceSequencer::TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz) {
+bool CDeviceSequencer::TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently) {
 	if (master) {
-		return MyEthernetMultiIOControllerFirefly->TransmitI2CPort(I2C_port, I2C_address, send_length, send_data, receive_length, receive_data, I2C_clock_frequency_in_Hz);
+		return MyEthernetMultiIOControllerFirefly->TransmitI2CPort(I2C_port, I2C_address, send_length, send_data, receive_length, receive_data, I2C_clock_frequency_in_Hz, I2C_success, fail_silently);
 	}
 	return false;
 }

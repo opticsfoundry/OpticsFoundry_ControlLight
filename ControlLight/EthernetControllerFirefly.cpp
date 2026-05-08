@@ -936,7 +936,7 @@ void CEthernetControllerFirefly::StartSPIAnalogInAcquisition_ADS1256(unsigned ch
 
 	uint8_t data_out_rdata = ADS1256_CMD_RDATA;
 	
-	AddCommandTransmitSPI(SPI_CS, /* number_of_bits_out*/ 8, &data_out_rdata, /* number_of_bits_in*/ 24, /* start_now*/ number_of_datapoints == 1, /* wait_for_SPI_ready_active */ false, /*wait_for_SPI_ready_edge_to_active*/ true);
+	AddCommandTransmitSPI(SPI_CS, /* number_of_bits_out*/ 8, &data_out_rdata, /* number_of_bits_in*/ 24, /* start_now*/ number_of_datapoints == 1, /* wait_for_SPI_ready_active */ false, /*wait_for_SPI_ready_edge_to_active*/ false);
 	if (number_of_datapoints>1)	AddCommandRepeatedOutIn(/* number_of_datapoints*/ number_of_datapoints, /* delay_between_datapoints_in_ms*/ delay_between_datapoints_in_ms, /* RepeatedOutInCommand*/ 1, /*SPI_restart_wait_on_ready_low*/ false); //1 means repeated SPI input
 }
 
@@ -1412,10 +1412,10 @@ bool CEthernetControllerFirefly::AttemptSendSequence(uint32_t DataSize, uint32_t
 
 
 
-bool CEthernetControllerFirefly::TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz) {
+bool CEthernetControllerFirefly::TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently) {
 	if (!Connected) return false;
 	unsigned int attempts = 0;
-	while ((attempts < MaxReconnectAttempts) && (!AttemptTransmitI2CPort(I2C_port, I2C_address, send_length, send_data, receive_length, receive_data, I2C_clock_frequency_in_Hz))) {
+	while ((attempts < MaxReconnectAttempts) && (!AttemptTransmitI2CPort(I2C_port, I2C_address, send_length, send_data, receive_length, receive_data, I2C_clock_frequency_in_Hz, I2C_success, fail_silently))) {
 		Network->ResetConnection();
 		this_thread::sleep_for(100ms);
 		attempts++;
@@ -1423,7 +1423,7 @@ bool CEthernetControllerFirefly::TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_a
 	return (attempts < MaxReconnectAttempts);
 }
 
-bool CEthernetControllerFirefly::AttemptTransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t &receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz) {
+bool CEthernetControllerFirefly::AttemptTransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t &receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool &I2C_success, bool fail_silently) {
 	if (!/*Optimized*/Command("transmit_I2C")) return false;
 	if (!WriteInteger(I2C_port)) return false;
 	if (!WriteInteger(I2C_address >> 1)) return false;
@@ -1434,9 +1434,41 @@ bool CEthernetControllerFirefly::AttemptTransmitI2CPort(uint8_t I2C_port, uint8_
 	if (send_length>0) {
 		if (!SendData(send_data, send_length)) return false;
 	}
+	int I2CTransmissionOk;
+	if (!ReadInt(I2CTransmissionOk)) return false;
+	if (I2CTransmissionOk != 1) {
+		if (!fail_silently) AddErrorMessage("CEthernetControllerFirefly::AttemptTransmitI2CPort : I2C transmission failed\nIs I2C device connected?\n\nFor more debug info, put FPGA sequencer into debug mode using CLA_SwitchDebugMode(true,\"Filename\")\n(or comment out CLA_SwitchDebugMode(false,\"Filename\"), if that blocks I2C debugging),\nconnect USB cable to it's UART USB output, and look at data send back on COM terminal.\nSwitch debug mode off to work at highest possible speed.");
+		return true;
+	}
 	unsigned long long InputBufferContentsLength;
 	if (!ReadInt64(InputBufferContentsLength)) return false;
 	if (InputBufferContentsLength > 0) {
+		
+
+		/*
+		//pedestrian version
+		if (InputBufferContentsLength > receive_length) {
+			AddErrorMessage("CEthernetControllerFirefly::AttemptTransmitI2CPort : input data too large");
+			return true;		
+		}
+		receive_length = InputBufferContentsLength;
+		if (receive_data) delete[] receive_data;
+		receive_data = new uint8_t[receive_length];
+		previous_receive_data_ptr = receive_data;
+		receive_data_length = receive_length;
+		if (Network) {
+			return Network->ReceiveData(receive_data, receive_length, 5000);
+		}
+		else {
+			delete[] receive_data;
+			receive_data = NULL;
+			previous_receive_data_ptr = NULL;
+			receive_data_length = 0;
+			return false;
+		}
+		*/
+		
+		
 		if (!Network) return false;
 
 		if (InputBufferContentsLength > (numeric_limits<unsigned long>::max)()) return true;
@@ -1445,16 +1477,17 @@ bool CEthernetControllerFirefly::AttemptTransmitI2CPort(uint8_t I2C_port, uint8_
 		receive_length = static_cast<uint16_t>((std::min<unsigned long long>)(InputBufferContentsLength, (numeric_limits<uint16_t>::max)()));
 
 		if (receive_data && InputBufferContentsLength <= receive_capacity) {
-			return Network->ReceiveData(receive_data, bytes_to_receive, /*timeout_in_ms = */ 5000);
+			return Network->ReceiveData(receive_data, bytes_to_receive, 5000);
 		}
 
 		// Drain the socket without writing past a caller-owned receive buffer.
 		vector<uint8_t> overflow_buffer(bytes_to_receive);
-		if (!Network->ReceiveData(overflow_buffer.data(), bytes_to_receive, /*timeout_in_ms = */ 5000)) return false;
+		if (!Network->ReceiveData(overflow_buffer.data(), bytes_to_receive,  5000)) return false;
 		if (receive_data && receive_capacity > 0) {
 			memcpy(receive_data, overflow_buffer.data(), receive_capacity);
 		}
 		return true;
+		
 	}
 	return true;
 }
@@ -1922,6 +1955,11 @@ bool CEthernetControllerFirefly::AttemptWaitTillEndOfSequenceThenGetInputData(ui
 	unsigned long long InputBufferContentsLength;
 	if (!ReadInt64(InputBufferContentsLength)) return false;
 	if (InputBufferContentsLength > 0) {
+		if (InputBufferContentsLength > 1024*1024*12024) {
+			AddErrorMessage("CEthernetControllerFirefly::AttemptWaitTillEndOfSequenceThenGetInputData : input data too large");
+			return true;
+		}
+
 		buffer = new uint8_t[InputBufferContentsLength];
 		previous_command_buffer_ptr = buffer;
 		buffer_length = InputBufferContentsLength;	

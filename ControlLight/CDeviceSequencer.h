@@ -16,6 +16,7 @@ public:
 	bool IsMaster() { return master; }
 	unsigned int startDelay;
 	double clockFrequency;
+	unsigned int DefaultFPGAClockToBusClockRatio;
 	unsigned int FPGAClockToBusClockRatio;
 	unsigned int CurrentFPGAClockToBusClockRatio;
 	bool useExternalClock;
@@ -35,6 +36,7 @@ private:
 	double MaxTimeDebt_in_ms;
 	double CurrentTimeDebt_in_ms;
 	bool LastCommandWasSpecialCommand;
+	bool DoUseEdgeTriggeredLatches;
 	uint32_t LastBusData;
 	CDeviceRack* MyDeviceRack;
 public:
@@ -56,6 +58,7 @@ public:
 		bool _connect);
 	virtual ~CDeviceSequencer();
 	void UseEdgeTriggeredLatches(bool UseEdgeTriggeredLatches);
+	void SetFPGAClockToBusClockRatio(const unsigned int _FPGAClockToBusClockRatio, const bool UpdateStrobeDuration);
 	void Initialize(unsigned long _PCBufferSize_in_u64);
 	void SwitchDebugMode(bool OnOff, const std::string &FileName);
 	void TransmitOnlyDifferenceBetweenCommandSequenceIfPossible(bool OnOff);
@@ -88,7 +91,7 @@ public:
 	void GetNextCycleNumber(long &NextCycleNumber);
 	void ResetCycleNumber();
 
-	bool TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz);
+	bool TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently);
 
 	void StartAssemblingCPUCommandSequence();
 	void AddCPUCommand(const char* command);
@@ -148,4 +151,5 @@ public:
 	}
 private:
 	void AdvanceTime();
+	void UpdateClockRatio();
 };

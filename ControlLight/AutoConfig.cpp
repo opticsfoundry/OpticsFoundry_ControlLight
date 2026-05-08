@@ -88,14 +88,14 @@ namespace {
 		return output_filename + "_config.json";
 	}
 
-	void ReadEEPROMBytes(const uint8_t start_address, uint8_t* data, const size_t length) {
+	void ReadEEPROMBytes(const uint8_t start_address, uint8_t* data, const uint32_t length, bool &I2C_success) {
 		if (length == 0) {
 			return;
 		}
 
 		uint8_t address = start_address;
-		CLA_TransmitI2CPort(/*I2C_port*/ 0, EEPROMAddress + Write, /*send_length*/ 1, &address, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz);
-		CLA_TransmitI2CPort(/*I2C_port*/ 0, EEPROMAddress + Read, /*send_length*/ 0, nullptr, /*receive_length*/ static_cast<uint16_t>(length), data, I2CClockFrequencyInHz);
+		CLA_TransmitI2CPort(/*I2C_port*/ 0, EEPROMAddress + Write, /*send_length*/ 1, &address, /*receive_length*/ 0, data, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
+		if (I2C_success) CLA_TransmitI2CPort(/*I2C_port*/ 0, EEPROMAddress + Read, /*send_length*/ 0, nullptr, /*receive_length*/ static_cast<uint16_t>(length), data, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
 	}
 }
 
@@ -130,58 +130,63 @@ void ResetRackI2CMultiplexers(const uint8_t SequencerID) {
 	CLA_WaitTillEndOfSequenceThenGetInputData(buffer, buffer_length, EndTimeOfCycle, 10);
 }
 
-void SelectRackI2CSlot(const uint8_t SequencerID, const uint8_t RackNr, const uint8_t SlotNr) {
+bool SelectRackI2CSlot(const uint8_t SequencerID, const uint8_t RackNr, const uint8_t SlotNr) {
 	//SlotNr 0..11 are rack slots.
 	//SlotNr 12 is the memory on the rack backplane.
 	if (SlotNr >= NrSlots) {
 		cout << "SelectRackI2CSlot failed: slot number " << static_cast<unsigned int>(SlotNr) << " too high (0..11 are rack slots, 12 is the backplane memory)." << endl;
-		return;
+		return false;
 	}
 
 	if (RackNr > 6) {
 		cout << "SelectRackI2CSlot failed: RackNr " << static_cast<unsigned int>(RackNr) << " is > 6 and therefore not supported. The rack still works, but auto-config doesn't." << endl;
-		return;
+		return false;
 	}
 
 	ResetRackI2CMultiplexers(SequencerID);
-
+	bool I2C_overall_success = true;
+	bool I2C_success;
 	//Mux 0 of Rack N has address N. It's port I2CMultRackAddr is connected to the next rack. Let's select the target rack.
 	uint8_t mux_select = static_cast<uint8_t>(1u << I2CChainPortNr);
 	for (uint8_t I2CMultRackAddr=0; I2CMultRackAddr < RackNr; I2CMultRackAddr++) {
 		//Set the I2C multiplexer (TCA9548A, see folder datasheet) to the correct port to access the chain rack; repeat till we reach the correct rack
-		CLA_TransmitI2CPort(/*I2C_port*/ 0, 0xE0 + (I2CMultRackAddr << 1) + Write, /*send_length*/ 1, &mux_select, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz);
+		CLA_TransmitI2CPort(/*I2C_port*/ 0, 0xE0 + (I2CMultRackAddr << 1) + Write, /*send_length*/ 1, &mux_select, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
+		I2C_overall_success &= I2C_success;
 	}
 	uint8_t mux_address = RackNr;
 	//If the desired slot is 
 	if (I2CMux[SlotNr] == 1) {
 		mux_select = static_cast<uint8_t>(1u << I2CMux1PortNrOnMux0);
-		CLA_TransmitI2CPort(/*I2C_port*/ 0, 0xE0 + (RackNr << 1) + Write, /*send_length*/ 1, &mux_select, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz);	
+		CLA_TransmitI2CPort(/*I2C_port*/ 0, 0xE0 + (RackNr << 1) + Write, /*send_length*/ 1, &mux_select, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
+		I2C_overall_success &= I2C_success;
 		mux_address = 1+2+4;
 	}
 
 	//Set the I2C multiplexer (TCA9548A, see folder datasheet) to the correct port for the slot, or the backplane memory (for SlotNr == 12).
 	mux_select = static_cast<uint8_t>(1u << I2CPortNr[SlotNr]);
-	CLA_TransmitI2CPort(/*I2C_port*/ 0, 0xE0 + (mux_address << 1) + Write, /*send_length*/ 1, &mux_select, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz);
+	CLA_TransmitI2CPort(/*I2C_port*/ 0, 0xE0 + (mux_address << 1) + Write, /*send_length*/ 1, &mux_select, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
+	I2C_overall_success &= I2C_success;
+	return I2C_overall_success;
 }
 
-void WriteConfigEEPROM(const uint8_t SequencerID, const uint8_t RackNr, const uint8_t SlotNr, const char* data, const size_t length) {
+bool WriteConfigEEPROM(const uint8_t SequencerID, const uint8_t RackNr, const uint8_t SlotNr, const char* data, const size_t length) {
 	if (data == nullptr) {
 		cout << "EEPROM write failed: data pointer is null." << endl;
-		return;
+		return false;
 	}
 
 	if (SlotNr >= NrSlots) {
 		cout << "EEPROM write failed: invalid slot number " << static_cast<unsigned int>(SlotNr) << "." << endl;
-		return;
+		return false;
 	}
 
 	if (length > EEPROMSizeInBytes) {
 		cout << "EEPROM write failed: length " << length << " exceeds EEPROM size of " << EEPROMSizeInBytes << " bytes." << endl;
-		return;
+		return false;
 	}
 
 
-	SelectRackI2CSlot(SequencerID, RackNr, SlotNr);
+	if (!SelectRackI2CSlot(SequencerID, RackNr, SlotNr)) return false;
 	
 	// Now write the data to the EEPROM of type M24C02-F (2kbit I2C EEPROM), see datasheet in folder datasheet, starting from memory address 0.
 
@@ -193,17 +198,21 @@ void WriteConfigEEPROM(const uint8_t SequencerID, const uint8_t RackNr, const ui
 		write_buffer[0] = static_cast<uint8_t>(address);
 		memcpy(&write_buffer[1], &data[address], write_length);
 
-		CLA_TransmitI2CPort(/*I2C_port*/ 0, EEPROMAddress + Write, /*send_length*/ static_cast<uint16_t>(write_length + 1), write_buffer, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz);
+		bool I2C_success;
+
+		CLA_TransmitI2CPort(/*I2C_port*/ 0, EEPROMAddress + Write, /*send_length*/ static_cast<uint16_t>(write_length + 1), write_buffer, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
 		this_thread::sleep_for(chrono::milliseconds(1));
 		address += write_length;
 	}
 
 
 	//Now read the data back to verify that it was written correctly
-	vector<uint8_t> read_back(length);
-	ReadEEPROMBytes(/*start_address*/ 0, read_back.data(), read_back.size());
+	uint8_t* read_back;
+	uint32_t read_back_size;
+	bool I2C_success;
+	ReadEEPROMBytes(/*start_address*/ 0, read_back, read_back_size, I2C_success);
 
-	if (length == 0 || memcmp(data, read_back.data(), length) == 0) {
+	if (length == 0 || memcmp(data, read_back, length) == 0) {
 		cout << "Wrote: " << string(data, length) << endl;
 		cout << "EEPROM write verification succeeded for rack " << static_cast<unsigned int>(RackNr)
 			<< ", slot " << static_cast<unsigned int>(SlotNr)
@@ -214,13 +223,14 @@ void WriteConfigEEPROM(const uint8_t SequencerID, const uint8_t RackNr, const ui
 			<< ", slot " << static_cast<unsigned int>(SlotNr)
 			<< "." << endl;
 		PrintEEPROMData("EEPROM data expected", reinterpret_cast<const uint8_t*>(data), length);
-		PrintEEPROMData("EEPROM data read back", read_back.data(), read_back.size());
+		PrintEEPROMData("EEPROM data read back", read_back, read_back_size);
 	}
 
+	return true;
 }
 
 
-void ReadConfigEEPROM(const uint8_t SequencerID, const uint8_t RackNr, const uint8_t SlotNr, char* data, size_t &length) {
+void ReadConfigEEPROM(const uint8_t SequencerID, const uint8_t RackNr, const uint8_t SlotNr, char* data, size_t &length, bool &I2C_success) {
 	if (data == nullptr) {
 		cout << "EEPROM read failed: data pointer is null." << endl;
 		return;
@@ -237,14 +247,15 @@ void ReadConfigEEPROM(const uint8_t SequencerID, const uint8_t RackNr, const uin
 	}
 
 	SelectRackI2CSlot(SequencerID, RackNr, SlotNr);
-	
+
+
 	//Read the complete EEPROM contents starting from memory address 0.
 	vector<uint8_t> read_back(EEPROMSizeInBytes);
-	ReadEEPROMBytes(/*start_address*/ 0, read_back.data(), read_back.size());
+	ReadEEPROMBytes(/*start_address*/ 0, read_back.data(), read_back.size(), I2C_success);
 
 	memcpy(data, read_back.data(), read_back.size());
 	//length = read_back.size();
-	
+
 	const void* endofstring = memchr(data, 0, read_back.size());
 	length = endofstring ? static_cast<const char*>(endofstring) - data + 1 : 0;
 
@@ -253,6 +264,23 @@ void ReadConfigEEPROM(const uint8_t SequencerID, const uint8_t RackNr, const uin
 		<< ", EEPROM read length: " << length << " byte(s): ";
 	if (length > 0) cout << read_back.data();//PrintEEPROMData("EEPROM data read back", read_back.data(), read_back.size());
 	//cout << endl;
+
+	/*
+	
+	//Read the complete EEPROM contents starting from memory address 0.
+	ReadEEPROMBytes( 0, (uint8_t*)data, length, I2C_success);
+
+	if (data != nullptr) {
+		const void* endofstring = memchr((char*&)data, 0, length);
+		length = endofstring ? static_cast<const char*>(endofstring) - (char*&)data + 1 : 0;
+
+		cout << "Rack " << static_cast<unsigned int>(RackNr)
+			<< ", slot " << static_cast<unsigned int>(SlotNr)
+			<< ", EEPROM read length: " << length << " byte(s): ";
+		if (length > 0) cout << (char*)data;//PrintEEPROMData("EEPROM data read back", read_back.data(), read_back.size());
+	}
+	//cout << endl;
+	*/
 }
 
 
@@ -267,11 +295,12 @@ void WriteConfigAddress(const uint8_t SequencerID, const uint8_t RackNr, const u
 	
 	// Now write the address to the I2C 8-bit IO chip PCF8574AP, which has all 3 address lines on ground. See datasheet in folder datasheet.
 	uint8_t write_value = address;
-	CLA_TransmitI2CPort(/*I2C_port*/ 0, ConfigAddressIOExpanderAddress + Write, /*send_length*/ 1, &write_value, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz);
+	bool I2C_success;
+	CLA_TransmitI2CPort(/*I2C_port*/ 0, ConfigAddressIOExpanderAddress + Write, /*send_length*/ 1, &write_value, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
 
 	// Now verify by reading the address back. Display an error message if no success.
 	uint8_t read_back = 0;
-	CLA_TransmitI2CPort(/*I2C_port*/ 0, ConfigAddressIOExpanderAddress + Read, /*send_length*/ 0, nullptr, /*receive_length*/ 1, &read_back, I2CClockFrequencyInHz);
+	CLA_TransmitI2CPort(/*I2C_port*/ 0, ConfigAddressIOExpanderAddress + Read, /*send_length*/ 0, nullptr, /*receive_length*/ 1, &read_back, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
 
 	if (read_back == address) {
 		cout << "Config address write verification succeeded for rack " << static_cast<unsigned int>(RackNr)
@@ -288,7 +317,7 @@ void WriteConfigAddress(const uint8_t SequencerID, const uint8_t RackNr, const u
 }
 
 
-void ReadConfigAddress(const uint8_t SequencerID, const uint8_t RackNr, const uint8_t SlotNr, uint8_t &address) {
+void ReadConfigAddress(const uint8_t SequencerID, const uint8_t RackNr, const uint8_t SlotNr, uint8_t &address, bool &I2C_success) {
 
 	if (SlotNr >= NrSlots) {
 		cout << "Config address read failed: invalid slot number " << static_cast<unsigned int>(SlotNr) << "." << endl;
@@ -298,7 +327,9 @@ void ReadConfigAddress(const uint8_t SequencerID, const uint8_t RackNr, const ui
 	SelectRackI2CSlot(SequencerID, RackNr, SlotNr);
 	
 	// Read the address from the I2C 8-bit IO chip PCF8574AP, which has all 3 address lines on ground. See datasheet in folder datasheet.
-	CLA_TransmitI2CPort(/*I2C_port*/ 0, ConfigAddressIOExpanderAddress + Read, /*send_length*/ 0, nullptr, /*receive_length*/ 1, &address, I2CClockFrequencyInHz);
+	uint8_t* data= nullptr;
+	CLA_TransmitI2CPort(/*I2C_port*/ 0, ConfigAddressIOExpanderAddress + Read, /*send_length*/ 0, nullptr, /*receive_length*/ 1, data, I2CClockFrequencyInHz, I2C_success, /* fail_silently */ true);
+	if (data != nullptr) address = data[0];
 	
 	// Display the address on cout.
 	//cout << "Config address read succeeded for rack " << static_cast<unsigned int>(RackNr)
@@ -316,11 +347,15 @@ json ReadConfiguration(const std::string& filename) {
 	for (uint8_t SequencerNr = 0 ; SequencerNr < CLA_GetNumberOfSequencers(); ++SequencerNr) {
 		for (uint8_t RackNr = 0; RackNr <= MaxSupportedRackNr; ++RackNr) {
 			for (uint8_t SlotNr = 0; SlotNr < NrSlots; ++SlotNr) {
+
+
 				char buffer[EEPROMSizeInBytes] = {};
 				size_t length = sizeof(buffer);
-				ReadConfigEEPROM(SequencerNr, RackNr, SlotNr, buffer, length);
+				bool I2C_success_EEPROM;
+				ReadConfigEEPROM(SequencerNr, RackNr, SlotNr, buffer, length, I2C_success_EEPROM);
 				uint8_t address = 0;
-				ReadConfigAddress(SequencerNr, RackNr, SlotNr, address);
+				bool I2C_success_Address;
+				ReadConfigAddress(SequencerNr, RackNr, SlotNr, address, I2C_success_Address);
 
 				size_t json_length = 0;
 				while (json_length < length && buffer[json_length] != '\0') {
@@ -332,7 +367,7 @@ json ReadConfiguration(const std::string& filename) {
 					try {
 						json slot_config = json::parse(json_str);
 						slot_config["Address"] = address;
-						if (SlotNr == NrSlots-1) {
+						if (SlotNr == NrSlots - 1) {
 							config["Sequencer" + std::to_string(SequencerNr)]["Rack" + std::to_string(RackNr)] = slot_config;
 						}
 						else {
@@ -346,6 +381,44 @@ json ReadConfiguration(const std::string& filename) {
 							<< ": " << e.what() << endl;
 					}
 				}
+
+
+				/*
+
+				char* buffer = nullptr;
+				size_t length = EEPROMSizeInBytes;
+				bool I2C_success_EEPROM;				
+				ReadConfigEEPROM(SequencerNr, RackNr, SlotNr, (uint8_t*&)buffer, length, I2C_success_EEPROM);
+				uint8_t address = 0;
+				bool I2C_success_Address;
+				ReadConfigAddress(SequencerNr, RackNr, SlotNr, address, I2C_success_Address);
+				if (buffer != nullptr) {
+					size_t json_length = 0;
+					while (json_length < length && buffer[json_length] != '\0') {
+						++json_length;
+					}
+
+					std::string json_str(buffer, json_length);
+					if (!json_str.empty()) {
+						try {
+							json slot_config = json::parse(json_str);
+							slot_config["Address"] = address;
+							if (SlotNr == NrSlots - 1) {
+								config["Sequencer" + std::to_string(SequencerNr)]["Rack" + std::to_string(RackNr)] = slot_config;
+							}
+							else {
+								config["Sequencer" + std::to_string(SequencerNr)]["Rack" + std::to_string(RackNr)]["Slot" + std::to_string(SlotNr)] = slot_config;
+							}
+						}
+						catch (const json::parse_error& e) {
+							cout << "Failed to parse JSON from EEPROM of sequencer " << static_cast<unsigned int>(SequencerNr)
+								<< ", rack " << static_cast<unsigned int>(RackNr)
+								<< ", slot " << static_cast<unsigned int>(SlotNr)
+								<< ": " << e.what() << endl;
+						}
+					}
+				}
+				*/
 			}
 		}
 	}

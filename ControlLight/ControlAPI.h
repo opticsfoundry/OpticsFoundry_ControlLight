@@ -353,7 +353,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @param receive_data the buffer to store the received data.
 		/// @param I2C_clock_frequency_in_Hz the clock frequency of the I
 		/// @return 
-		API_EXPORT ERROR_CODE_TYPE CLA_FN(TransmitI2CPort)(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(TransmitI2CPort)(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently);
 
 		/// @brief Write configuration data to the EEPROM of a rack slot.
 		/// @param SequencerID the sequencer to use.
@@ -371,7 +371,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @param data output buffer receiving the EEPROM contents.
 		/// @param length input: available buffer size in bytes, output: number of bytes read.
 		/// @return
-		API_EXPORT ERROR_CODE_TYPE CLA_FN(ReadConfigEEPROM)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, char* data, size_t& length);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(ReadConfigEEPROM)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, char* data, size_t& length, bool &I2C_success);
 
 		/// @brief Write the configuration address byte of a rack slot.
 		/// @param SequencerID the sequencer to use.
@@ -387,7 +387,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @param SlotNr the slot number within the rack.
 		/// @param address output byte receiving the current address value.
 		/// @return
-		API_EXPORT ERROR_CODE_TYPE CLA_FN(ReadConfigAddress)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, uint8_t& address);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(ReadConfigAddress)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, uint8_t& address, bool& I2C_success);
 
 		/// @brief Read the rack auto-configuration and return it as JSON text.
 		/// @param filename Optional output filename. Pass an empty string to avoid writing a file.

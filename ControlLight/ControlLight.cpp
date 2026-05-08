@@ -1127,22 +1127,37 @@ void DemoReadConfigEEPROM() {
 	constexpr uint8_t SequencerNr = 0;
 	constexpr uint8_t RackNr = 0;
 	constexpr uint8_t SlotNr = 0;
+
 	char buffer[256] = {};
 	size_t length = sizeof(buffer);
-	CLA_ReadConfigEEPROM(SequencerNr, RackNr, SlotNr, buffer, length);
+	bool I2C_success;
+	CLA_ReadConfigEEPROM(SequencerNr, RackNr, SlotNr, buffer, length, I2C_success);
 	std::string read_data(buffer, length);
 	cout << "Read from EEPROM: " << read_data << endl;
 	cout << endl;
 	CLA_ReadConfiguration("ConfigFromEEPROMs");
+
+
+	/* char* buffer = nullptr;
+	size_t length = 256;
+	bool I2C_success;
+	CLA_ReadConfigEEPROM(SequencerNr, RackNr, SlotNr, (uint8_t*&)buffer, length, I2C_success);
+	if (buffer != nullptr) {
+		std::string read_data(buffer, length);
+		cout << "Read from EEPROM: " << read_data << endl;
+		cout << endl;
+	}
+	CLA_ReadConfiguration("ConfigFromEEPROMs");
+	*/
 }
 
 int main() {
-	DemoFPGASequencerSingleRun();
+	//DemoFPGASequencerSingleRun();
 	//DemoFPGASequencerCyclicSequencing();
 	//DemoSmartSequencer();
 	//DemoDDSVCO();
 	//DemoWriteConfigEEPROM();
-	//DemoReadConfigEEPROM();
+	DemoReadConfigEEPROM();
 	return 0;
 }
 
