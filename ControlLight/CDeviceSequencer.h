@@ -57,6 +57,7 @@ public:
 		bool _useStrobeGenerator,
 		bool _connect);
 	virtual ~CDeviceSequencer();
+	void AdvanceTime();
 	void UseEdgeTriggeredLatches(bool UseEdgeTriggeredLatches);
 	void SetFPGAClockToBusClockRatio(const unsigned int _FPGAClockToBusClockRatio, const bool UpdateStrobeDuration);
 	void Initialize(unsigned long _PCBufferSize_in_u64);
@@ -150,6 +151,5 @@ public:
 		return SerialBusDeviceList[Address]; 
 	}
 private:
-	void AdvanceTime();
 	void UpdateClockRatio();
 };

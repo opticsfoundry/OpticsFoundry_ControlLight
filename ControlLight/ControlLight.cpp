@@ -583,8 +583,8 @@ void DemoSequence(unsigned long CycleNumber) {
 	//	CLA_SetVoltage(0, 24, 10.0 * 1 / 100.0);
 	//	CLA_Wait_ms(1);
 	//}
-	CLA_SequencerStartAnalogInAcquisition(/*Sequencer_Nr*/ 0, /*AnalogInType*/ 2, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 1000, /*SamplingPeriod_in_ms*/ 1);
-	CLA_Wait_ms(1000);
+	CLA_SequencerStartAnalogInAcquisition(/*Sequencer_Nr*/ 0, /*AnalogInType*/ 2, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 100, /*SamplingPeriod_in_ms*/ 1);
+	CLA_Wait_ms(100);
 	
 	//Test repeated digital in
 	/// @param RepeatedOutInCommand the command to execute for each data point. 0: stop; 1: repeated SPI transfer; 2: repeated digital in; 3: digital in event tagger 
@@ -608,7 +608,16 @@ void DemoSequence(unsigned long CycleNumber) {
 		CLA_SetValue(0, 1, 0, (uint8_t*)&data, 16);
 		CLA_Wait_ms(0.1);
 		double Frequency = 1000.0 * j / 100.0;
-		CLA_SetValue(0, 232, 0, (uint8_t*)&Frequency, 64);
+		//CLA_SetValue(0, 10, 0, (uint8_t*)&Frequency, 64);
+		CLA_SetFrequencyOfChannel(0, 10, 0, 1);//in MHz
+		CLA_SetPowerOfChannel(0, 10, 0, 100); // in %
+		CLA_SetFrequencyOfChannel(0, 10, 2, 2);//in MHz
+		CLA_SetPowerOfChannel(0, 10, 1, 100); // in %
+		CLA_SetFrequencyOfChannel(0, 10, 3, 3);//in MHz
+		CLA_SetPowerOfChannel(0, 10, 2, 100); // in %
+		CLA_SetFrequencyOfChannel(0, 10, 4, 4);//in MHz
+		CLA_SetPowerOfChannel(0, 10, 3, 100); // in %
+
 	}
 	CLA_Wait_ms(1000);
 	RampVoltage(/*Sequencer*/ 0, /*Address*/ 24, /*StartVoltage*/ -10, /* TargetVoltage*/ 10, /*Duration_in_ms*/ 100, /*StepSize_in_ms*/ 0.1);
@@ -1152,12 +1161,12 @@ void DemoReadConfigEEPROM() {
 }
 
 int main() {
-	//DemoFPGASequencerSingleRun();
+	DemoFPGASequencerSingleRun();
 	//DemoFPGASequencerCyclicSequencing();
 	//DemoSmartSequencer();
 	//DemoDDSVCO();
 	//DemoWriteConfigEEPROM();
-	DemoReadConfigEEPROM();
+	//DemoReadConfigEEPROM();
 	return 0;
 }
 

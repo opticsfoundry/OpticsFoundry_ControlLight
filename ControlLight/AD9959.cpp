@@ -548,7 +548,9 @@ void CAD9959::MasterReset() {
     // sync_io low (To enable SPI reception)
     SetSyncIO(false);    
     //Switch to QSPI mode
-    SetQSPIMode(true);
+    // 
+    // ToDo: after debugging of SPI mode ends, reenable QSPI
+ //   SetQSPIMode(true);
 }
 
 void CAD9959::SetWriteChannels(bool channel0, bool channel1, bool channel2, bool channel3) {

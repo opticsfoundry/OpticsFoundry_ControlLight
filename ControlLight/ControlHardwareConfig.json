@@ -253,7 +253,7 @@
     {
       "Sequencer": 0,
       "Address": 10,
-      "ClockFrequencyinMHz": 300,
+      "ClockFrequencyinMHz": 25,
       "FrequencyMultiplier": 1
     }
   ],

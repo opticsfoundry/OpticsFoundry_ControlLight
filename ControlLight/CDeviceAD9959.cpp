@@ -100,27 +100,37 @@ bool CDeviceAD9959::SetRegister(const unsigned int& SubAddress, const uint8_t* D
 
 
 bool CDeviceAD9959::SetFrequency(uint8_t channel, double Frequency) {
-	MyAD9959->SetFrequency(channel, Frequency);
+	MyAD9959->SetFrequency(channel + 1, Frequency);
+	MyAD9959->WriteAllToBus();
+	//MySequencer->AdvanceTime();
 	return true;
 }
 
 bool CDeviceAD9959::SetFrequencyTuningWord(uint8_t channel, uint64_t FrequencyTuningWord) {
 	MyAD9959->SetFrequencyTuningWord(channel, FrequencyTuningWord);
+	MyAD9959->WriteAllToBus();
+	//MySequencer->AdvanceTime();
 	return true;
 }
 
 bool CDeviceAD9959::SetPhase(uint8_t channel, double Phase) {
-	MyAD9959->SetPhaseOffset(channel, Phase);
+	MyAD9959->SetPhaseOffset(channel + 1, Phase);
+	MyAD9959->WriteAllToBus();
+	//MySequencer->AdvanceTime();
 	return true;
 }
 
 bool CDeviceAD9959::SetPower(uint8_t channel, double Power) {
-	MyAD9959->SetAmplitude(channel, Power);
+	MyAD9959->SetAmplitude(channel + 1, Power);
+	MyAD9959->WriteAllToBus();
+	//MySequencer->AdvanceTime();
 	return true;
 }
 
 bool CDeviceAD9959::SetAttenuation(uint8_t channel, double Attenuation) {
-	MyAD9959->SetAttenuation(channel, Attenuation);
+	MyAD9959->SetAttenuation(channel + 1, Attenuation);
+	MyAD9959->WriteAllToBus();
+	//MySequencer->AdvanceTime();
 	return true;
 }
 
