@@ -1070,6 +1070,15 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 
 
 		//AD9959
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(Reset)(const unsigned int& Sequencer, const unsigned int& Address) {
+			API_LOCK_GUARD;
+			CDevice* device = GetParallelBusDevice(Sequencer, Address);
+			if (!device) {
+				API_UNLOCK_RETURN_ERROR(false, "CLA_Reset output not found");
+			}
+			device->Reset();
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_Reset: error");
+		}
 		
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SetFrequencyOfChannel)(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Frequency) {
 			API_LOCK_GUARD;

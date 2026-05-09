@@ -138,6 +138,11 @@ public:
 
 	//AD9959
 
+	virtual bool Reset() {
+		AddErrorMessage("CDevice::Reset: abstract function called");
+		return false;
+	}
+
 	virtual bool SetFrequency(uint8_t channel, double Frequency) {
 		AddErrorMessage("CDevice::SetFrequency: abstract function called");
 		return false;

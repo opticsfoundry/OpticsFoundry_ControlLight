@@ -564,6 +564,13 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		//API_EXPORT ERROR_CODE_TYPE CLA_FN(SetAttenuation)(const unsigned int& Sequencer, const unsigned int& Address, double Power);
 
 		//AD9959
+
+		/// @brief Resets the AD9959.
+		/// @param Sequencer the sequencer to use.
+		/// @param Address the address of the device to set the frequency for.
+		/// @return
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(Reset)(const unsigned int& Sequencer, const unsigned int& Address);
+
 		/// @brief Sets the frequency of a multi channel DDS (for now the AD9959).
 		/// @param Sequencer the sequencer to use.
 		/// @param Address the address of the device to set the frequency for.

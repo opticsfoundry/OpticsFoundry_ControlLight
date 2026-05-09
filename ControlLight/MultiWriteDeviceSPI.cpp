@@ -18,6 +18,11 @@ static char THIS_FILE[]=__FILE__;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
+#ifdef Debug
+constexpr bool DebugSPICommunication = true;
+std::string DebugFilePath = "D:\\Florian\\OpticsFoundry\\OpticsFoundryControl\\Debug\\";
+#endif
+
 CMultiWriteDeviceSPI::CMultiWriteDeviceSPI(unsigned short aBus, unsigned long aBaseAddress, CDeviceSequencer* _MyDeviceSequencer)
 	: CMultiWriteDevice()
 {
@@ -41,21 +46,24 @@ CMultiWriteDeviceSPI::CMultiWriteDeviceSPI(unsigned short aBus, unsigned long aB
 	SPI_SCLK_bit = 0;
 	SPI_frequency_in_Hz = 0;
 	SPI_mode = 0;
-	/*if (DebugSPICommunication) {
-		CString filename;
-		filename.Format(*DebugFilePath + "DebugSPICommunication_%u_%u.txt", Bus, BaseAddress);
-		DebugFile = new ofstream(filename, ios::out);
+#ifdef Debug
+	if (DebugSPICommunication) {
+		std::string filename = std::format("{}DebugSPICommunication_{}_{}.txt", DebugFilePath, Bus, BaseAddress);
+		DebugFile = new std::ofstream(filename, std::ios::out);
 	}
-	else DebugFile = NULL;*/
+	else DebugFile = NULL;
+#endif
 }
 
 CMultiWriteDeviceSPI::~CMultiWriteDeviceSPI()
 {
-/*	if (DebugFile) {
+#ifdef Debug
+	if (DebugFile) {
 		DebugFile->close();
 		delete DebugFile;
 		DebugFile = NULL;
-	}*/
+	}
+#endif
 }
 
 void CMultiWriteDeviceSPI::AddToBusBuffer(unsigned short value) {
@@ -190,12 +198,12 @@ void CMultiWriteDeviceSPI::WriteSPIBitBanged(unsigned int number_of_bits_out, ui
 		}
 	}
 	SetSPIChipSelect(true);
-
-	/*if (DebugFile) {
-		CString buf;
+#ifdef Debug
+	if (DebugFile) {
 		unsigned long data_low = data_sent & 0xFFFFFFFF;
 		unsigned long data_high = (data_sent >> 32) & 0xFFFFFFFF;
-		buf.Format("Wrote %d bits, data = %08X %08X = first bit sent %s last bit sent", number_of_bits_out, data_high, data_low, format_binary_64(data_sent, number_of_bits_out).c_str());
-		*DebugFile << buf << endl;
-	}*/
+		std::string buf = std::format("Wrote {} bits, data = {:08X} {:08X} = first bit sent {} last bit sent", number_of_bits_out, data_high, data_low, format_binary_64(data_sent, number_of_bits_out));
+		*DebugFile << buf << std::endl;
+	}
+#endif
 }

@@ -61,25 +61,28 @@ bool CDeviceAD9959::SetValue(const unsigned int& SubAddress, const uint8_t* data
 	double dValue = *dValueptr;
 
 	switch (SubAddress) {
-	case 0:if (DataLength_in_bit == 64) MyAD9959->SetFrequencyCh0(dValue); break;
-	case 1:if (DataLength_in_bit == 64) MyAD9959->SetFrequencyCh1(dValue); break;
-	case 2:if (DataLength_in_bit == 64) MyAD9959->SetFrequencyCh2(dValue); break;
-	case 3:if (DataLength_in_bit == 64) MyAD9959->SetFrequencyCh3(dValue); break;
-	case 4:if (DataLength_in_bit == 64) MyAD9959->SetIntensityCh0(dValue); break;
-	case 5:if (DataLength_in_bit == 64) MyAD9959->SetIntensityCh1(dValue); break;
+	case 0:MyAD9959->MasterReset(); break;
 
-	case 6:if (DataLength_in_bit == 64) MyAD9959->SetIntensityCh2(dValue); break;
-	case 7:if (DataLength_in_bit == 64) MyAD9959->SetIntensityCh3(dValue); break;
-	case 8:if (DataLength_in_bit == 64) MyAD9959->SetPhaseOffsetCh0(dValue); break;
-	case 9:if (DataLength_in_bit == 64) MyAD9959->SetPhaseOffsetCh1(dValue); break;
-	case 10:if (DataLength_in_bit == 64) MyAD9959->SetPhaseOffsetCh2(dValue); break;
-	case 11:if (DataLength_in_bit == 64) MyAD9959->SetPhaseOffsetCh3(dValue); break;
+	case 1:if (DataLength_in_bit == 64) MyAD9959->SetFrequencyCh0(dValue); break;
+	case 2:if (DataLength_in_bit == 32) MyAD9959->SetFrequencyTuningWordCh0((uint32_t)dValue); break;
+	case 3:if (DataLength_in_bit == 64) MyAD9959->SetIntensityCh0(dValue); break;
+	case 4:if (DataLength_in_bit == 64) MyAD9959->SetPhaseOffsetCh0(dValue); break;
 
-	case 12:if (DataLength_in_bit == 32) MyAD9959->SetFrequencyTuningWordCh0((uint32_t)dValue); break;
-	case 13:if (DataLength_in_bit == 32) MyAD9959->SetFrequencyTuningWordCh1((uint32_t)dValue); break;
-	case 14:if (DataLength_in_bit == 32) MyAD9959->SetFrequencyTuningWordCh2((uint32_t)dValue); break;
-	case 15:if (DataLength_in_bit == 32) MyAD9959->SetFrequencyTuningWordCh3((uint32_t)dValue); break;
+	case 5:if (DataLength_in_bit == 64) MyAD9959->SetFrequencyCh1(dValue); break;
+	case 6:if (DataLength_in_bit == 32) MyAD9959->SetFrequencyTuningWordCh1((uint32_t)dValue); break;
+	case 7:if (DataLength_in_bit == 64) MyAD9959->SetIntensityCh1(dValue); break;
+	case 8:if (DataLength_in_bit == 64) MyAD9959->SetPhaseOffsetCh1(dValue); break;
 
+	case 9:if (DataLength_in_bit == 64) MyAD9959->SetFrequencyCh2(dValue); break;
+	case 10:if (DataLength_in_bit == 32) MyAD9959->SetFrequencyTuningWordCh2((uint32_t)dValue); break;
+	case 11:if (DataLength_in_bit == 64) MyAD9959->SetIntensityCh2(dValue); break;
+	case 12:if (DataLength_in_bit == 64) MyAD9959->SetPhaseOffsetCh2(dValue); break;
+
+	case 13:if (DataLength_in_bit == 64) MyAD9959->SetFrequencyCh3(dValue); break;
+	case 14:if (DataLength_in_bit == 32) MyAD9959->SetFrequencyTuningWordCh3((uint32_t)dValue); break;
+	case 15:if (DataLength_in_bit == 64) MyAD9959->SetIntensityCh3(dValue); break;
+	case 16:if (DataLength_in_bit == 64) MyAD9959->SetPhaseOffsetCh3(dValue); break;
+	
 	default: return false;//To do: throw exception
 	}
 	MyAD9959->WriteAllToBus();
@@ -134,4 +137,8 @@ bool CDeviceAD9959::SetAttenuation(uint8_t channel, double Attenuation) {
 	return true;
 }
 
-
+bool CDeviceAD9959::Reset() {
+	MyAD9959->MasterReset();
+	MyAD9959->WriteAllToBus();
+	return true;
+}

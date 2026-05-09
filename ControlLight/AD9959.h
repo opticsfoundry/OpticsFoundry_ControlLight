@@ -23,8 +23,8 @@ typedef enum
   E_AD9959_CHANNEL_ALL, /*!< Select both channels */
   E_AD9959_CHANNEL_0,    /*!< Select channel 0 only */
   E_AD9959_CHANNEL_1,     /*!< Select channel 1 only */
-  E_AD9959_CHANNEL_2,     /*!< Select channel 1 only */
-  E_AD9959_CHANNEL_3     /*!< Select channel 1 only */
+  E_AD9959_CHANNEL_2,     /*!< Select channel 2 only */
+  E_AD9959_CHANNEL_3     /*!< Select channel 3 only */
 } E_AD9959_CHANNEL;
 
 // Pin defines - Change to suit

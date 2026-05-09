@@ -3,6 +3,13 @@
 #include "MultiWriteDevice.h"
 #include <cstdint>
 
+
+#define Debug
+
+#ifdef Debug
+#include <fstream>
+#endif
+
 class CDeviceSequencer;
 
 class CMultiIO;
@@ -30,7 +37,9 @@ private:
 	bool QSPIMode;
 	double SPI_frequency_in_Hz; //0 means half of parallel bus speed
 	uint8_t SPI_mode;
-	//ofstream* DebugFile;
+#ifdef Debug
+	std::ofstream* DebugFile;
+#endif
 public:
 	unsigned short ControlRegisterContent;
 public:		
@@ -53,4 +62,3 @@ public:
 	void WriteSPIBitBanged(unsigned int number_of_bits_out, uint64_t data);
 	virtual void SetQSPIMode(bool OnOff);
 };
-

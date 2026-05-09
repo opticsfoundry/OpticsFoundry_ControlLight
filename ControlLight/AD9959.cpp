@@ -12,6 +12,7 @@
 #include <cmath>
 
 
+
 // Register addresses, writing to (MSB is 0 for a write)
 #define CSR     0x00            //!< Channel select register            1 Byte
 #define FR1     0x01            //!< Function register 1                3 Bytes
@@ -35,9 +36,9 @@
 //AktValueContents[47..68] is the channel 2 register map
 //AktValueContents[69..90] is the channel 3 register map
 //AktValueContents[91] is the digital out port (not part of the AD9959, but placed on the same circuit board)
-uint32_t AD9959MasterResetValueContents[AD9959NumberOfRegisters] =      { 0xF0,   0,   0,   0x000302,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    0x000302,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    0x000302,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    0x000302,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0 };
-unsigned char AD9959ValueLength[AD9959NumberOfRegisters] =              {    1,   3,   2,          3,   4,   2,   3,   2,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,           3,   4,   2,   3,   2,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,           3,   4,   2,   3,   2,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,           3,   4,   2,   3,   2,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   2 };
-unsigned char AD9959ValueBaseAddress[AD9959NumberOfRegisters] =         { 0x00,0x01,0x02,       0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,        0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,        0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,           0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,0x19 };
+uint32_t AD9959MasterResetValueContents[AD9959NumberOfRegisters] = { 0xF0,   0,   0,   0x000302,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    0x000302,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    0x000302,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    0x000302,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0 };
+unsigned char AD9959ValueLength[AD9959NumberOfRegisters] = { 1,   3,   2,          3,   4,   2,   3,   2,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,           3,   4,   2,   3,   2,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,           3,   4,   2,   3,   2,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,           3,   4,   2,   3,   2,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,   2 };
+unsigned char AD9959ValueBaseAddress[AD9959NumberOfRegisters] = { 0x00,0x01,0x02,       0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,        0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,        0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,           0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,0x19 };
 const unsigned long AD9959ValueNotInBusBuffer = 99999;
 
 
@@ -59,7 +60,7 @@ CAD9959::CAD9959(unsigned short aBus, unsigned long aBaseAddress, double aExtern
     : CMultiWriteDeviceSPI(aBus, aBaseAddress, _MyDeviceSequencer) {
     SetSPIPortBits(/* SPI_CS_bit*/14, /*SDIO_0_bit = SPI_MOSI_bit*/ 12, /*SDIO_1_bit = */ 11, /*SDIO_2_bit */ 10, /*SDIO_3_bit = Sync_IO */ 9, /*SPI_SCLK_bit*/ 13);  //SDIO_3 is the sync_io pin
     BytesToTransmit = 0;
-    
+
     InputClockSpeed = 1E6 * aExternalClockSpeed; //conversion MHz to Hz
     FrequencyMultiplier = aFrequencyMultiplier;  //This is the external frequency doubler option
     AD9958 = aAD9958;
@@ -67,8 +68,8 @@ CAD9959::CAD9959(unsigned short aBus, unsigned long aBaseAddress, double aExtern
     MaxFrequency = ClockSpeed * 0.45E-6;
     //4294967296=2^32
     FrequencyScale = 4294967296.0 * ((1.0 / FrequencyMultiplier) * 1.0E6 / ClockSpeed);
-    
-    
+
+
     for (int i = 0; i < AD9959NumberOfRegisters; i++) {
         AktValueContents[i] = AD9959MasterResetValueContents[i];
         WritePrecision[i] = AD9959ValueLength[i];
@@ -147,32 +148,36 @@ void CAD9959::SyncIO(void) {
 // Select the output frequency of desired channel/s
 void CAD9959::SetFrequency(uint8_t channel, float frequency) //frequency in MHz
 {
-  if (!((AD9958 && (channel < 2)) || ((!AD9958) && (channel < 4)))) return;
-  float freq_Hz = (frequency * 1000000.0);
-  SetFrequency_SPI(channel, freq_Hz);
+    if (channel < 1) return;
+    if (!((AD9958 && (channel <= 2)) || ((!AD9958) && (channel <= 4)))) return;
+    float freq_Hz = (frequency * 1000000.0);
+    SetFrequency_SPI(channel, freq_Hz);
 }
 
 // Set the amplitude scale factor (max 1023)
 void CAD9959::SetAmplitude(uint8_t channel, float amplitude) //amplitude in %
 {
-    if (!((AD9958 && (channel < 2)) || ((!AD9958) && (channel < 4)))) return;
+    if (channel < 1) return;
+    if (!((AD9958 && (channel <= 2)) || ((!AD9958) && (channel <= 4)))) return;
     uint32_t amp = (uint32_t)(amplitude * 10.23);
-  if (amp > 1023) amp = 1023;
-  SetAmplitude_SPI(channel, amp);
+    if (amp > 1023) amp = 1023;
+    SetAmplitude_SPI(channel, amp);
 }
 
 void CAD9959::SetAttenuation(uint8_t channel, double Attenuation) {
-    if (!((AD9958 && (channel < 2)) || ((!AD9958) && (channel < 4)))) return;
+    if (channel < 1) return;
+    if (!((AD9958 && (channel <= 2)) || ((!AD9958) && (channel <= 4)))) return;
     if (Attenuation > 0) Attenuation = 0;
     double Intensity = (unsigned int)(0x03FF * pow(10.0, Attenuation / 20.0));
-	SetAmplitude(channel, Intensity);
+    SetAmplitude(channel, Intensity);
 }
 
 // Offset the desired channel from the other
 void CAD9959::SetPhaseOffset(uint8_t channel, float phase) //phase in degree
 {
-    if (!((AD9958 && (channel < 2)) || ((!AD9958) && (channel < 4)))) return;
-  SetPhaseOffset_SPI(channel, phase);
+    if (channel < 1) return;
+    if (!((AD9958 && (channel <= 2)) || ((!AD9958) && (channel <= 4)))) return;
+    SetPhaseOffset_SPI(channel, phase);
 }
 
 
@@ -180,46 +185,46 @@ void CAD9959::SetPhaseOffset(uint8_t channel, float phase) //phase in degree
 // DDS Power control
 void CAD9959::SetPowerState(E_AD9959_PWR state)
 {
-  switch(state)
-  {
+    switch (state)
+    {
     case E_AD9959_PWR_POWERED:
     {
-      // Set PWR-DWN-CTL pin LOW to disable power-down control
-      SetPowerDown(false);
-    } 
+        // Set PWR-DWN-CTL pin LOW to disable power-down control
+        SetPowerDown(false);
+    }
     break;
-    
+
     case E_AD9959_PWR_PARTIAL:
     {
-      SetPowerDown_partial_SPI();
-      
-      // Set PWR-DWN-CTL pin HIGH to enable the selected power-down mode
-      SetPowerDown(true);
-    } 
+        SetPowerDown_partial_SPI();
+
+        // Set PWR-DWN-CTL pin HIGH to enable the selected power-down mode
+        SetPowerDown(true);
+    }
     break;
-    
+
     case E_AD9959_PWR_DOWN:
     {
-      SetPowerDown_full_SPI();
-      
-      // Set PWR-DWN-CTL pin HIGH to enable the selected power-down mode
-      SetPowerDown(true);
-    } 
+        SetPowerDown_full_SPI();
+
+        // Set PWR-DWN-CTL pin HIGH to enable the selected power-down mode
+        SetPowerDown(true);
+    }
     break;
-  
+
     default:
-      break; 
-  }
+        break;
+    }
 }
 
 
 
-void CAD9959::SetFrequencyCh0(double frequency) { 
-    SetFrequency_SPI(1, frequency); 
+void CAD9959::SetFrequencyCh0(double frequency) {
+    SetFrequency_SPI(1, frequency);
 }
 
-void CAD9959::SetFrequencyCh1(double frequency) { 
-    SetFrequency_SPI(2, frequency); 
+void CAD9959::SetFrequencyCh1(double frequency) {
+    SetFrequency_SPI(2, frequency);
 }
 
 void CAD9959::SetFrequencyCh2(double frequency) {
@@ -262,12 +267,12 @@ void CAD9959::SetAttenuationCh3(double Attenuation) {
     if (!AD9958) SetAttenuation(4, Attenuation);
 }
 
-void CAD9959::SetPhaseOffsetCh0(double phase) { 
-    SetPhaseOffset_SPI(1, phase); 
+void CAD9959::SetPhaseOffsetCh0(double phase) {
+    SetPhaseOffset_SPI(1, phase);
 }
 
-void CAD9959::SetPhaseOffsetCh1(double phase) { 
-    SetPhaseOffset_SPI(2, phase); 
+void CAD9959::SetPhaseOffsetCh1(double phase) {
+    SetPhaseOffset_SPI(2, phase);
 }
 
 void CAD9959::SetPhaseOffsetCh2(double phase) {
@@ -301,7 +306,7 @@ void CAD9959::SetQSPIMode(bool OnOff) {
 
 uint8_t CAD9959::GetChannelBits(E_AD9959_CHANNEL channel)
 {
-    if (!((AD9958 && (channel < 2)) || ((!AD9958) && (channel < 4)))) return 0;
+    //if (!((AD9958 && (channel < 2)) || ((!AD9958) && (channel < 4)))) return 0;
 
     uint8_t Channel = 0;
 
@@ -309,7 +314,7 @@ uint8_t CAD9959::GetChannelBits(E_AD9959_CHANNEL channel)
     {
     case E_AD9959_CHANNEL_ALL:
     {
-        Channel = 3;
+        Channel = (AD9958) ? 3 : 0xF;
     }
     break;
     case E_AD9959_CHANNEL_0:
@@ -395,7 +400,7 @@ void CAD9959::IO_Update_Toggle(void)
     // Minimum pulse width needs to be > 1 SYNC_CLK period (~160ns)
     // ToDo: NEED TO MAKE SURE THIS IS THE CASE FOR YOUR PLATFORM.
     SetIOUpdate(false);
-   
+
 }
 
 
@@ -414,7 +419,7 @@ void CAD9959::SPI_Transmit_Byte(uint8_t byte) {
 
 uint8_t AD9959reverseBits(uint8_t num)
 {
-    uint8_t count =  8 - 1;
+    uint8_t count = 8 - 1;
     uint8_t reverse_num = num;
 
     num >>= 1;
@@ -458,31 +463,36 @@ void CAD9959::Initialise(void)
 
 void CAD9959::Disable_SYNC_CLK(void)
 {
-	SetRegisterBit(/*RegisterNr*/FR1, /*BitNr*/ 6, /*Value*/ false, /*GetValue*/ false, /*DoIOUpdate*/ true);
+    SetRegisterBit(/*RegisterNr*/FR1, /*BitNr*/ 6, /*Value*/ false, /*GetValue*/ false, /*DoIOUpdate*/ true);
 }
 
-void CAD9959::SetFrequency_SPI(uint8_t channel, float frequency)
-{  
-    if (!((AD9958 && (channel < 2)) || ((!AD9958) && (channel < 4)))) return;
+void CAD9959::SetFrequency_SPI(uint8_t channel, float frequency) //channel: 1...4 for AD9959 or 1..2 for AD9958
+{
+    if (channel < 1) return;
+    if (!((AD9958 && (channel <= 2)) || ((!AD9958) && (channel <= 4)))) return;
     float freq_Hz = (frequency * 1000000.0);
     uint32_t FTW = calcFTW(freq_Hz);
-    SetWriteChannels(channel);
-	SetValueDirect(CFTW0, FTW,/*GetValue*/ false, /*DoIOUpdate*/true);
+    SetWriteChannels(1 << (channel - 1));
+    SetValueDirect(CFTW0, FTW,/*GetValue*/ false, /*DoIOUpdate*/true);
 }
 
 #define MAN_AMP         0x1000    //!< Enable manual amplitude control
 void CAD9959::SetAmplitude_SPI(uint8_t channel, uint32_t amplitude)
 {
-    if (!((AD9958 && (channel < 2)) || ((!AD9958) && (channel < 4)))) return;
+    if (channel < 1) return;
+    if (!((AD9958 && (channel <= 2)) || ((!AD9958) && (channel <= 4)))) return;
 
-    SetWriteChannels(channel);
+
+    SetWriteChannels(1 << (channel - 1));
     //SetValueDirect(ACR, (MAN_AMP << 8), /*GetValue*/ false, /*DoIOUpdate*/ false);
     SetValueDirect(ACR, (amplitude & 0x3ff) | MAN_AMP, /*GetValue*/ false, /*DoIOUpdate*/ true);
 }
 
 void CAD9959::SetIntensity_SPI(uint8_t channel, uint32_t intensity)
 {
-    if (!((AD9958 && (channel < 2)) || ((!AD9958) && (channel < 4)))) return;
+    if (channel < 1) return;
+    if (!((AD9958 && (channel <= 2)) || ((!AD9958) && (channel <= 4)))) return;
+
 
     double Amplitude = sqrt(intensity) * 102.3;
     if (Amplitude > 1023) Amplitude = 1023;
@@ -493,13 +503,14 @@ void CAD9959::SetIntensity_SPI(uint8_t channel, uint32_t intensity)
 
 void CAD9959::SetPhaseOffset_SPI(uint8_t channel, float phase)
 {
-    if (!((AD9958 && (channel < 2)) || ((!AD9958) && (channel < 4)))) return;
+     if (channel < 1) return;
+    if (!((AD9958 && (channel <= 2)) || ((!AD9958) && (channel <= 4)))) return;
 
     uint32_t POW = calcPOW(phase);
-    SetWriteChannels(channel);
-	SetValueDirect(CPOW, POW, /*GetValue*/ false, /*DoIOUpdate*/ false);
+    SetWriteChannels(1 << (channel - 1));
+    SetValueDirect(CPOW, POW, /*GetValue*/ false, /*DoIOUpdate*/ false);
     //clear phase accumulators of both channels
-    SetWriteChannels(3);
+    SetWriteChannels((AD9958) ? 3 : 0xF);
     SetValueDirect(CFR, 0x000302, /*GetValue*/ false, /*DoIOUpdate*/ true);
     SetValueDirect(CFR, 0x000300, /*GetValue*/ false, /*DoIOUpdate*/ true);
 }
@@ -509,7 +520,7 @@ void CAD9959::SetPhaseOffset_SPI(uint8_t channel, float phase)
 #define SYNC_DISABLE    0x1    //!< Disable the SYNC_CLK signal
 void CAD9959::SetPowerDown_partial_SPI(void)
 {
-	SetRegisterBits(/*RegisterNr*/ FR1, /*LowestBitNr*/ 5, /* NrBits*/ 2, PWR_DWN_PART | SYNC_DISABLE, /*GetValue*/ false, /*DoIOUpdate*/ true);
+    SetRegisterBits(/*RegisterNr*/ FR1, /*LowestBitNr*/ 5, /* NrBits*/ 2, PWR_DWN_PART | SYNC_DISABLE, /*GetValue*/ false, /*DoIOUpdate*/ true);
 }
 
 void CAD9959::SetPowerDown_full_SPI(void)
@@ -535,7 +546,7 @@ void CAD9959::MasterReset() {
     // Toggle external power down pin
     // This resets the digital logic in the DDS to ensure SPI comms is possible
     SetPowerState(E_AD9959_PWR_DOWN);
-    SetPowerState(E_AD9959_PWR_POWERED);    
+    SetPowerState(E_AD9959_PWR_POWERED);
     // Not using multiple DDS devices so not needed
     Disable_SYNC_CLK();
 
@@ -546,7 +557,7 @@ void CAD9959::MasterReset() {
     //Wait(0.001);
     //ToDo: check if SetSyncIO needed, seems not to have been on correct pin
     // sync_io low (To enable SPI reception)
-    SetSyncIO(false);    
+    SetSyncIO(false);
     //Switch to QSPI mode
     // 
     // ToDo: after debugging of SPI mode ends, reenable QSPI
@@ -565,8 +576,8 @@ void CAD9959::SetWriteChannels(bool channel0, bool channel1, bool channel2, bool
 //channels = 8: write to channel 3
 //or these channels, e.g. channels = 3: write to channel 0 and 1
 void CAD9959::SetWriteChannels(uint8_t channels) {
- 
-    SetRegisterBits(/*RegisterNr*/CSR, /*LowestBitNr*/ (AD9958)? 6 : 4, /* NrBits*/ (AD9958) ? 2 : 4, channels, /*GetValue*/false, /*DoIOUpdate*/ false, /*ForceWrite*/ false);
+
+    SetRegisterBits(/*RegisterNr*/CSR, /*LowestBitNr*/ (AD9958) ? 6 : 4, /* NrBits*/ (AD9958) ? 2 : 4, channels, /*GetValue*/false, /*DoIOUpdate*/ false, /*ForceWrite*/ false);
 }
 
 //RegisterNr in [0..2]: is the control register
@@ -591,22 +602,27 @@ uint32_t CAD9959::SetRegisterBits(unsigned char RegisterNr, unsigned char Lowest
 {
     if (!Enabled) return false;
     if (((RegisterNr > ControlRegisterNr) && (!GetValue)) || ((RegisterNr > 90) && (RegisterNr != ControlRegisterNr) && (GetValue))) {
-        std::string buf;
-        if (GetValue) buf = std::format("CAD9959::SetRegisterBits : RegisterNr ({}) is not in range for reading, [0..90] or 113.", RegisterNr);
-        else buf = std::format("CAD9959::SetRegisterBits : RegisterNr ({}) is not in range for writing, [0..113]", RegisterNr);
-        ControlMessageBox(buf);
+        CString buf;
+        if (GetValue) buf.Format(_T("CAD9959::SetRegisterBits : RegisterNr (%u) is not in range for reading, [0..90] or 113."), static_cast<unsigned int>(RegisterNr));
+        else buf.Format(_T("CAD9959::SetRegisterBits : RegisterNr (%u) is not in range for writing, [0..113]"), static_cast<unsigned int>(RegisterNr));
+        ControlMessageBox(CStringToStdString(buf));
         return 0;
     }
-    uint8_t LengthTableRegisterNr = (RegisterNr < 91) ? RegisterNr : (RegisterNr < 113) ? RegisterNr - 44 : 91;
+    uint8_t LengthTableRegisterNr = (RegisterNr < 91) ? RegisterNr : (RegisterNr < ControlRegisterNr) ? RegisterNr - 44 : 91;
 
     if (AD9959ValueLength[LengthTableRegisterNr] * 8 < NrBits) {
-        ControlMessageBox(std::format("CAD9959::SetRegisterBits : NrBits ({}) exceeds RegisterNr ({}) length ({})", NrBits, RegisterNr, AD9959ValueLength[LengthTableRegisterNr] * 8));
+        CString buf;
+        buf.Format(_T("CAD9959::SetRegisterBits : NrBits (%u) exceeds RegisterNr (%u) length (%u)"),
+            static_cast<unsigned int>(NrBits),
+            static_cast<unsigned int>(RegisterNr),
+            static_cast<unsigned int>(AD9959ValueLength[LengthTableRegisterNr] * 8));
+        ControlMessageBox(CStringToStdString(buf));
         return 0;
     }
     uint32_t mask = 0xFFFFFFFF >> (32 - NrBits);
-    uint8_t ReadRegisterNr = (RegisterNr < 47) ? RegisterNr : (RegisterNr < 69) ? RegisterNr - 44 : 47;
+    uint8_t ReadRegisterNr = (RegisterNr < 91) ? RegisterNr : (RegisterNr < ControlRegisterNr) ? RegisterNr - 44 : 91;
     if (GetValue) {
-		if (RegisterNr == ControlRegisterNr) return (ControlRegisterContent >> LowestBitNr) & mask;
+        if (RegisterNr == ControlRegisterNr) return (ControlRegisterContent >> LowestBitNr) & mask;
         return ((AktValueContents[ReadRegisterNr] >> LowestBitNr) & mask);
     }
     else {
@@ -633,18 +649,18 @@ uint32_t CAD9959::SetRegisterBits(unsigned char RegisterNr, unsigned char Lowest
 uint32_t CAD9959::SetValue(unsigned char RegisterNr, uint32_t Value, bool GetValue, bool DoIOUpdate, bool forceWrite)
 {
     if (!Enabled) return 0;
-    if ( ((RegisterNr > ControlRegisterNr) && (!GetValue)) || ((RegisterNr > 90) && (RegisterNr!= ControlRegisterNr) && (GetValue)) ) {
-        std::string buf;
-        if (GetValue) buf = std::format("CAD9959::SetValue : RegisterNr ({}) is not in range for reading, [0..90] or 113.", RegisterNr);
-        else buf = std::format("CAD9959::SetValue : RegisterNr ({}) is not in range for writing, [0..113]", RegisterNr);
-        ControlMessageBox(buf);
+    if (((RegisterNr > ControlRegisterNr) && (!GetValue)) || ((RegisterNr > 90) && (RegisterNr != ControlRegisterNr) && (GetValue))) {
+        CString buf;
+        if (GetValue) buf.Format(_T("CAD9959::SetValue : RegisterNr (%u) is not in range for reading, [0..90] or 113."), static_cast<unsigned int>(RegisterNr));
+        else buf.Format(_T("CAD9959::SetValue : RegisterNr (%u) is not in range for writing, [0..113]"), static_cast<unsigned int>(RegisterNr));
+        ControlMessageBox(CStringToStdString(buf));
         return 0;
     }
     if (GetValue) {
-		if (RegisterNr == ControlRegisterNr) {
-			//Digital out port is not in the bus buffer, so we return the value directly
+        if (RegisterNr == ControlRegisterNr) {
+            //Digital out port is not in the bus buffer, so we return the value directly
             return ControlRegisterContent;
-		}
+        }
         return AktValueContents[RegisterNr];
     }
     else {
@@ -653,8 +669,8 @@ uint32_t CAD9959::SetValue(unsigned char RegisterNr, uint32_t Value, bool GetVal
             return 0;
         }
         if (RegisterNr == ControlRegisterNr) {
-			SetControlRegister(0, 16, Value, /*write_immediately*/ true);
-			return 0;
+            SetControlRegister(0, 16, Value, /*write_immediately*/ true);
+            return 0;
         }
 
         bool WriteCh0;
@@ -674,12 +690,12 @@ uint32_t CAD9959::SetValue(unsigned char RegisterNr, uint32_t Value, bool GetVal
             WriteCh3 = AktValueContents[0] & 0x80; //bit 7 of CSR is set to 1 if channel 3 is selected
         }
 
-		uint8_t WriteRegisterNr = (RegisterNr <= 24) ? RegisterNr : (RegisterNr <= 46) ? RegisterNr - 22 : (RegisterNr <= 68) ? RegisterNr - 44 : (RegisterNr <= 90) ? RegisterNr - 66 : RegisterNr - 88;
+        uint8_t WriteRegisterNr = (RegisterNr <= 24) ? RegisterNr : (RegisterNr <= 46) ? RegisterNr - 22 : (RegisterNr <= 68) ? RegisterNr - 44 : (RegisterNr <= 90) ? RegisterNr - 66 : RegisterNr - 88;
         bool WriteCh0Desired = (RegisterNr <= 24) || (RegisterNr > 90);
         bool WriteCh1Desired = ((RegisterNr >= 25) && (RegisterNr >= 46)) || (RegisterNr > 90);
         bool WriteCh2Desired = ((RegisterNr >= 47) && (RegisterNr >= 68)) || (RegisterNr > 90);
         bool WriteCh3Desired = (RegisterNr > 68);
-		bool DoSetWriteChannels = (WriteCh0 != WriteCh0Desired) || (WriteCh1 != WriteCh1Desired);
+        bool DoSetWriteChannels = (WriteCh0 != WriteCh0Desired) || (WriteCh1 != WriteCh1Desired);
         if ((WriteRegisterNr > 2) && DoSetWriteChannels) SetWriteChannels(WriteCh0Desired, WriteCh1Desired, WriteCh2Desired, WriteCh3Desired);
         SetValueDirect(WriteRegisterNr, Value, GetValue, DoIOUpdate, forceWrite);
     }
@@ -703,7 +719,11 @@ uint32_t CAD9959::SetValueDirect(unsigned char RegisterNr, uint32_t Value, bool 
 {
     if (!Enabled) return 0;
     if (((RegisterNr >= 25) && (!GetValue)) || (RegisterNr >= 91)) {
-        ControlMessageBox(std::format("CAD9959::SetValueDirect : RegisterNr ({}) exceeds maximum ({})", RegisterNr, AD9959NumberOfRegisters - 1));
+        CString buf;
+        buf.Format(_T("CAD9959::SetValueDirect : RegisterNr (%u) exceeds maximum (%u)"),
+            static_cast<unsigned int>(RegisterNr),
+            AD9959NumberOfRegisters - 1);
+        ControlMessageBox(CStringToStdString(buf));
         return 0;
     }
     if (GetValue) {
