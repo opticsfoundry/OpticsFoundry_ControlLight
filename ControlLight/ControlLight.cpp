@@ -604,19 +604,19 @@ void DemoSequence(unsigned long CycleNumber) {
 	//Usually, an IOUpdate pulse is sent out automatically after each SPI command
 	//However, to program phases, we first need to send out all commands programming all channels and then finish with one IO update pulse that updates everything
 	CLA_SetIOUpdateEnabled(0, 10, false);
-	CLA_SetFrequencyOfChannel(0, 10, 0, 4);//in MHz
+	CLA_SetFrequencyOfChannel(0, 10, 0, 0.1);//in MHz
 	CLA_SetPowerOfChannel(0, 10, 0, 100); // in %
 	CLA_SetPhaseOfChannel(0, 10, 0, 0);
 
-	CLA_SetFrequencyOfChannel(0, 10, 1, 4);//in MHz
+	CLA_SetFrequencyOfChannel(0, 10, 1, 0.1);//in MHz
 	CLA_SetPowerOfChannel(0, 10, 1, 100); // in %
 	CLA_SetPhaseOfChannel(0, 10, 1, 90);
 	
-	CLA_SetFrequencyOfChannel(0, 10, 2, 4);//in MHz
+	CLA_SetFrequencyOfChannel(0, 10, 2, 0.1);//in MHz
 	CLA_SetPowerOfChannel(0, 10, 2, 100); // in %
 	CLA_SetPhaseOfChannel(0, 10, 2, 180);
 	
-	CLA_SetFrequencyOfChannel(0, 10, 3, 4);//in MHz
+	CLA_SetFrequencyOfChannel(0, 10, 3, 0.1);//in MHz
 	CLA_SetPowerOfChannel(0, 10, 3, 100); // in %
 	//We reanable automatic IO Update. The next SPI command will be written and then an IO Update will be sent that activates all newly programmed parameter values
 	CLA_SetIOUpdateEnabled(0, 10, true);
@@ -634,7 +634,7 @@ void DemoSequence(unsigned long CycleNumber) {
 		//CLA_SetFrequencyOfChannel(0, 10, 1, 4.0 * j/100.0);//in MHz
 		//CLA_SetValue(0, 10, 0, (uint8_t*)&Frequency, 64);
 	}
-	CLA_SetFrequencyOfChannel(0, 10, 1, 4);//in MHz
+	CLA_SetFrequencyOfChannel(0, 10, 1, 0.1);//in MHz
 	CLA_Wait_ms(100);
 	RampVoltage(/*Sequencer*/ 0, /*Address*/ 24, /*StartVoltage*/ -10, /* TargetVoltage*/ 10, /*Duration_in_ms*/ 100, /*StepSize_in_ms*/ 0.1);
 	CLA_SequencerSwitchDebugLED(/*SequencerNr*/ 0, 0);

@@ -49,8 +49,8 @@ class CAD9959 : public CMultiWriteDeviceSPI
 private:
     uint8_t SPIBuffer[AD9959SPIBufferLength];
     unsigned char BytesToTransmit;
-    double ClockSpeed;
-    double InputClockSpeed;
+    double ClockFrequency_in_Hz;
+    double InputClockFrequency_in_Hz;
     double MaxFrequency;
     double FrequencyScale;
     bool UpdateRegistersModeAutomatic;
@@ -63,7 +63,7 @@ public:
     double FrequencyMultiplier;
 
 public:
-    CAD9959(unsigned short aBus, unsigned long aBaseAddress, double aExternalClockSpeed, double aFrequencyMultiplier, bool aAD9958, CDeviceSequencer* _MyDeviceSequencer);
+    CAD9959(unsigned short aBus, unsigned long aBaseAddress, double aExternalClockFrequency_in_Hz, double aFrequencyMultiplier, bool aAD9958, CDeviceSequencer* _MyDeviceSequencer);
     
     virtual ~CAD9959();
     void SetIOUpdate(bool OnOff);
@@ -183,6 +183,7 @@ private:
     void Dev_Select(void);
     void Dev_Deselect(bool read = false, uint8_t number_of_bits_in = 0);
     void SPI_Transmit_Byte(uint8_t byte);
+    void AssurePulseIsLongerThanSyncClockPeriod();
 public:
     void SetWriteChannels(uint8_t channels);
     void SetWriteChannels(bool channel0, bool channel1, bool channel2, bool channel3);

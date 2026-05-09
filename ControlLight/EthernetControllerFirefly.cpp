@@ -99,7 +99,7 @@ bool CEthernetControllerFirefly::ConnectSocket(const std::string& host, unsigned
 
 double CEthernetControllerFirefly::GetBusFrequency() {
 	//return BusFrequency;
-	return FPGAClockFrequencyInHz / FPGAClockToBusClockRatio;  
+	return FPGAClockFrequencyInHz / (FPGAClockToBusClockRatio+1);  
 }
 
 void CEthernetControllerFirefly::AddSequencerCommandToBuffer(uint32_t* buffer, uint32_t n, uint32_t high_buffer, uint32_t low_buffer) {

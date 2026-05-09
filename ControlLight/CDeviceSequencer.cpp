@@ -72,8 +72,8 @@ CDeviceSequencer::CDeviceSequencer(
 	bool success = MyEthernetMultiIOControllerFirefly->ConnectSocket(ip.c_str(), port, FPGAClockToBusClockRatio, clockFrequency, useExternalClock, useStrobeGenerator, /* ExternalTrigger*/ !master);
 	if (!success) {
 		NotifyError("Failed to connect to sequencer");
-		BusFrequency = MyEthernetMultiIOControllerFirefly->GetBusFrequency();
 	}
+	BusFrequency = MyEthernetMultiIOControllerFirefly->GetBusFrequency();
 
 	//Sequencer0->SwitchDebugMode(On);
 	//Timestamp.StartDebug(DebugFilePath + "TimingDebug.dat");

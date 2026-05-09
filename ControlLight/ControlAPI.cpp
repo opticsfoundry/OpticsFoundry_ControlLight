@@ -1478,11 +1478,11 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			if (!device_json.contains("Address")) return false;
 			unsigned int address = device_json["Address"];
 			unsigned int sequencer;
-			double externalClockFrequency;
+			double externalClockFrequency_in_MHz;
 			unsigned int frequencyMultiplier;
 			unsigned int AD9958;
 			LOAD_VALUE(sequencer, "Sequencer", 0);
-			LOAD_VALUE(externalClockFrequency, "ClockFrequency", 300000000);
+			LOAD_VALUE(externalClockFrequency_in_MHz, "ClockFrequencyinMHz", 300000000);
 			LOAD_VALUE(frequencyMultiplier, "FrequencyMultiplier", 1);
 			LOAD_VALUE(AD9958, "AD9958", 0);
 
@@ -1492,7 +1492,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			new CDeviceAD9959(
 				SequencerList[sequencer],
 				address,
-				externalClockFrequency,
+				externalClockFrequency_in_MHz,
 				frequencyMultiplier,
 				AD9958 == 1);
 			RETURN_ERROR(!SequencerList[sequencer]->ErrorOccured(), "CLA_AddDeviceAD9959FromJSON: error on initialization");

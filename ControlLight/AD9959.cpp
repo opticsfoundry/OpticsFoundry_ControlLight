@@ -56,18 +56,18 @@ uint32_t AD9959WriteReadSPINothing(unsigned int chip_select, unsigned int number
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CAD9959::CAD9959(unsigned short aBus, unsigned long aBaseAddress, double aExternalClockSpeed, double aFrequencyMultiplier, bool aAD9958, CDeviceSequencer* _MyDeviceSequencer)
+CAD9959::CAD9959(unsigned short aBus, unsigned long aBaseAddress, double aExternalClockFrequency_in_Hz, double aFrequencyMultiplier, bool aAD9958, CDeviceSequencer* _MyDeviceSequencer)
     : CMultiWriteDeviceSPI(aBus, aBaseAddress, _MyDeviceSequencer) {
     SetSPIPortBits(/* SPI_CS_bit*/14, /*SDIO_0_bit = SPI_MOSI_bit*/ 12, /*SDIO_1_bit = */ 11, /*SDIO_2_bit */ 10, /*SDIO_3_bit = Sync_IO */ 9, /*SPI_SCLK_bit*/ 13);  //SDIO_3 is the sync_io pin
     BytesToTransmit = 0;
 
-    InputClockSpeed = 1E6 * aExternalClockSpeed; //conversion MHz to Hz
+    InputClockFrequency_in_Hz = 1E6 * aExternalClockFrequency_in_Hz; //conversion MHz to Hz
     FrequencyMultiplier = aFrequencyMultiplier;  //This is the external frequency doubler option
     AD9958 = aAD9958;
-    ClockSpeed = InputClockSpeed;
-    MaxFrequency = ClockSpeed * 0.45E-6;
+    ClockFrequency_in_Hz = InputClockFrequency_in_Hz;
+    MaxFrequency = ClockFrequency_in_Hz * 0.45E-6;
     //4294967296=2^32
-    FrequencyScale = 4294967296.0 * ((1.0 / FrequencyMultiplier) * 1.0E6 / ClockSpeed);
+    FrequencyScale = 4294967296.0 * ((1.0 / FrequencyMultiplier) * 1.0E6 / ClockFrequency_in_Hz);
     IOUpdateEnabled = true;
 
 
@@ -151,8 +151,8 @@ void CAD9959::SetFrequency(uint8_t channel, float frequency) //frequency in MHz
 {
     if (channel < 1) return;
     if (!((AD9958 && (channel <= 2)) || ((!AD9958) && (channel <= 4)))) return;
-    float freq_Hz = (frequency * 1000000.0);
-    SetFrequency_SPI(channel, freq_Hz);
+    //float freq_Hz = (frequency * 1000000.0);
+    SetFrequency_SPI(channel, frequency);
 }
 
 // Set the amplitude scale factor (max 1023)
@@ -377,7 +377,7 @@ uint32_t CAD9959::calcFTW(float frequency)
 {
     uint32_t setPoint = 0;
 
-    setPoint = (uint32_t)(frequency / (ClockSpeed / TUNEWORD_BITS));
+    setPoint = (uint32_t)(frequency / (ClockFrequency_in_Hz / TUNEWORD_BITS));
 
     return setPoint;
 }
@@ -386,7 +386,7 @@ uint32_t CAD9959::calcFTW(float frequency)
 float CAD9959::calcFrequency(uint32_t FTW)
 {
     float frequency = 0;
-    frequency = (FTW * (ClockSpeed / TUNEWORD_BITS));
+    frequency = (FTW * (ClockFrequency_in_Hz / TUNEWORD_BITS));
     return frequency;
 }
 
@@ -406,7 +406,7 @@ void CAD9959::IO_Update_Toggle(void)
     if (IOUpdateEnabled) {
         SetIOUpdate(true);
         // Minimum pulse width needs to be > 1 SYNC_CLK period (~160ns)
-        // ToDo: NEED TO MAKE SURE THIS IS THE CASE FOR YOUR PLATFORM.
+        AssurePulseIsLongerThanSyncClockPeriod();
         SetIOUpdate(false);
     }
 }
@@ -474,7 +474,7 @@ void CAD9959::Disable_SYNC_CLK(void)
     SetRegisterBit(/*RegisterNr*/FR1, /*BitNr*/ 6, /*Value*/ false, /*GetValue*/ false, /*DoIOUpdate*/ true);
 }
 
-void CAD9959::SetFrequency_SPI(uint8_t channel, float frequency) //channel: 1...4 for AD9959 or 1..2 for AD9958
+void CAD9959::SetFrequency_SPI(uint8_t channel, float frequency) //channel: 1...4 for AD9959 or 1..2 for AD9958 //frequency in MHz
 {
     if (channel < 1) return;
     if (!((AD9958 && (channel <= 2)) || ((!AD9958) && (channel <= 4)))) return;
@@ -537,6 +537,15 @@ void CAD9959::SetPowerDown_full_SPI(void)
 }
 
 
+void CAD9959::AssurePulseIsLongerThanSyncClockPeriod() {
+    double MinimumResetPulseDuration_in_ms = 1000.0 / (ClockFrequency_in_Hz / 4.0);//SYNC_CLK frequency = ClockFrequency_in_Hz/4.0
+    double BusPeriod_in_ms = 1000.0 / MyDeviceSequencer->BusFrequency;
+    if (BusPeriod_in_ms < MinimumResetPulseDuration_in_ms) {
+        WriteAllToBus();
+        MyDeviceSequencer->Wait_ms(1.5 * MinimumResetPulseDuration_in_ms);
+    }
+}
+
 void CAD9959::MasterReset() {
     if (!Enabled) return;
     for (int i = 0; i < AD9959NumberOfRegisters; i++) {
@@ -548,7 +557,8 @@ void CAD9959::MasterReset() {
     // Toggle MASTER_RESET
     SetReset(true);
     // Minimum pulse width needs to be > 1 SYNC_CLK period (~160ns)
-    // NEED TO MAKE SURE THIS IS THE CASE FOR YOUR PLATFORM.
+    AssurePulseIsLongerThanSyncClockPeriod();
+    
     SetReset(false);
     // Set PWR-DWN-CTL pin LOW to disable power-down control
     SetPowerDown(false);

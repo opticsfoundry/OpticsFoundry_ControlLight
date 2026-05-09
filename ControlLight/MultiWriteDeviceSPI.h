@@ -19,7 +19,6 @@ const unsigned int MultiWriteDeviceSPIMaxBusBuffer = 1024*128;
 class CMultiWriteDeviceSPI : public CMultiWriteDevice
 {
 private:
-	CDeviceSequencer* MyDeviceSequencer;
 	unsigned long BaseAddress;
 	unsigned short Bus;
 	//Ring buffer for bus writing
@@ -42,6 +41,7 @@ private:
 #endif
 public:
 	unsigned short ControlRegisterContent;
+	CDeviceSequencer* MyDeviceSequencer;
 public:		
 	virtual bool WriteToBus();
 	void WriteAllToBus();
