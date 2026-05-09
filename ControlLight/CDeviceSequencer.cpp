@@ -235,6 +235,7 @@ inline void CDeviceSequencer::AddBusCommandAndWait(uint32_t busdata, uint32_t de
 }
 
 void CDeviceSequencer::AddBusCommandToSequence(const uint32_t& content) {
+	//static uint32_t LeftoverSpacing = 0;
 	if (BufferPosition >= PCBufferSize_in_u64) {
 		AddErrorMessage("Buffer overflow"); //ToDo: throw exception
 		return;
@@ -251,7 +252,9 @@ void CDeviceSequencer::AddBusCommandToSequence(const uint32_t& content) {
 		//at the beginning of a special command, the LastBusData is written out and the remaining wait time is waited.
 		//Therefore nothing to write out now.
 		//We just put this bus data onto the todo list for next time.
+		if (spacing>0) AddBusCommandAndWait(0, spacing);
 		LastBusData = content;
+		//LeftoverSpacing = spacing;
 	}
 	else {
 		//Challenge: each bus data command is accompanied by the wait time till the next command, after the bus was updated, not before.
@@ -259,8 +262,9 @@ void CDeviceSequencer::AddBusCommandToSequence(const uint32_t& content) {
 		// Solution: we store the bus data that should be put out in LastBusData.
 		// Then we here execute the last bus data command and the wait time till this one.
 		// Finally we store the requested bus data update as to be done next time.
-		AddBusCommandAndWait(LastBusData, spacing);
+		AddBusCommandAndWait(LastBusData, /*LeftoverSpacing + */spacing);
 		LastBusData = content;
+		//LeftoverSpacing = 0;
 	}
 	LastCommandWasSpecialCommand = false;
 }

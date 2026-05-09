@@ -584,7 +584,7 @@ void DemoSequence(unsigned long CycleNumber) {
 	//	CLA_Wait_ms(1);
 	//}
 	CLA_SequencerStartAnalogInAcquisition(/*Sequencer_Nr*/ 0, /*AnalogInType*/ 2, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 100, /*SamplingPeriod_in_ms*/ 1);
-	CLA_Wait_ms(100);
+	CLA_Wait_ms(1000);
 	
 	//Test repeated digital in
 	/// @param RepeatedOutInCommand the command to execute for each data point. 0: stop; 1: repeated SPI transfer; 2: repeated digital in; 3: digital in event tagger 
@@ -601,17 +601,25 @@ void DemoSequence(unsigned long CycleNumber) {
 
 	//Test AD9959 DDS
 	CLA_Reset(0, 10);
+	//Usually, an IOUpdate pulse is sent out automatically after each SPI command
+	//However, to program phases, we first need to send out all commands programming all channels and then finish with one IO update pulse that updates everything
+	CLA_SetIOUpdateEnabled(0, 10, false);
 	CLA_SetFrequencyOfChannel(0, 10, 0, 4);//in MHz
 	CLA_SetPowerOfChannel(0, 10, 0, 100); // in %
 	CLA_SetPhaseOfChannel(0, 10, 0, 0);
+
 	CLA_SetFrequencyOfChannel(0, 10, 1, 4);//in MHz
 	CLA_SetPowerOfChannel(0, 10, 1, 100); // in %
 	CLA_SetPhaseOfChannel(0, 10, 1, 90);
+	
 	CLA_SetFrequencyOfChannel(0, 10, 2, 4);//in MHz
 	CLA_SetPowerOfChannel(0, 10, 2, 100); // in %
 	CLA_SetPhaseOfChannel(0, 10, 2, 180);
+	
 	CLA_SetFrequencyOfChannel(0, 10, 3, 4);//in MHz
 	CLA_SetPowerOfChannel(0, 10, 3, 100); // in %
+	//We reanable automatic IO Update. The next SPI command will be written and then an IO Update will be sent that activates all newly programmed parameter values
+	CLA_SetIOUpdateEnabled(0, 10, true);
 	CLA_SetPhaseOfChannel(0, 10, 3, 270);
 
 	for (int j = 1; j < 100; j++) {
@@ -623,7 +631,7 @@ void DemoSequence(unsigned long CycleNumber) {
 		CLA_SetValue(0, 1, 0, (uint8_t*)&data, 16);
 		CLA_Wait_ms(0.1);
 		//double Frequency = 1000.0 * j / 100.0;
-		CLA_SetFrequencyOfChannel(0, 10, 1, 4.0 * j/100.0);//in MHz
+		//CLA_SetFrequencyOfChannel(0, 10, 1, 4.0 * j/100.0);//in MHz
 		//CLA_SetValue(0, 10, 0, (uint8_t*)&Frequency, 64);
 	}
 	CLA_SetFrequencyOfChannel(0, 10, 1, 4);//in MHz

@@ -145,6 +145,7 @@ PYBIND11_MODULE(control_light_api, m) {
         .def("set_frequency_tuning_word_of_channel", &ControlLight_API::SetFrequencyTuningWordOfChannel, py::arg("sequencer"), py::arg("address"), py::arg("channel"), py::arg("ftw"))
         .def("set_phase_of_channel", &ControlLight_API::SetPhaseOfChannel, py::arg("sequencer"), py::arg("address"), py::arg("channel"), py::arg("phase"))
         .def("set_power_of_channel", &ControlLight_API::SetPowerOfChannel, py::arg("sequencer"), py::arg("address"), py::arg("channel"), py::arg("power"))
+        .def("set_io_update_enabled", &ControlLight_API::SetIOUpdateEnabled, py::arg("sequencer"), py::arg("address"), py::arg("IOUpdateEnabled"))
 
         // Send the assembled sequence to FPGA, but do not execute it
 		.def("send_sequence", & ControlLight_API::SendSequence)

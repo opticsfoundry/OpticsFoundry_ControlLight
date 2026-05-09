@@ -68,6 +68,7 @@ CAD9959::CAD9959(unsigned short aBus, unsigned long aBaseAddress, double aExtern
     MaxFrequency = ClockSpeed * 0.45E-6;
     //4294967296=2^32
     FrequencyScale = 4294967296.0 * ((1.0 / FrequencyMultiplier) * 1.0E6 / ClockSpeed);
+    IOUpdateEnabled = true;
 
 
     for (int i = 0; i < AD9959NumberOfRegisters; i++) {
@@ -389,6 +390,12 @@ float CAD9959::calcFrequency(uint32_t FTW)
     return frequency;
 }
 
+
+
+void CAD9959::SetIOUpdateEnabled(bool _IOUpdateEnabled) {
+    IOUpdateEnabled = _IOUpdateEnabled;
+}
+
 /*! static void IO_Update_Toggle()
     \brief Toggles I/O Update pin on DDS to force register changes.
 
@@ -396,11 +403,12 @@ float CAD9959::calcFrequency(uint32_t FTW)
 */
 void CAD9959::IO_Update_Toggle(void)
 {
-    SetIOUpdate(true);
-    // Minimum pulse width needs to be > 1 SYNC_CLK period (~160ns)
-    // ToDo: NEED TO MAKE SURE THIS IS THE CASE FOR YOUR PLATFORM.
-    SetIOUpdate(false);
-
+    if (IOUpdateEnabled) {
+        SetIOUpdate(true);
+        // Minimum pulse width needs to be > 1 SYNC_CLK period (~160ns)
+        // ToDo: NEED TO MAKE SURE THIS IS THE CASE FOR YOUR PLATFORM.
+        SetIOUpdate(false);
+    }
 }
 
 
@@ -535,6 +543,8 @@ void CAD9959::MasterReset() {
         AktValueContents[i] = AD9959MasterResetValueContents[i];
         WritePrecision[i] = AD9959ValueLength[i];
     }
+    SetIOUpdateEnabled(true);
+    CMultiWriteDeviceSPI::SetQSPIMode(false);
     // Toggle MASTER_RESET
     SetReset(true);
     // Minimum pulse width needs to be > 1 SYNC_CLK period (~160ns)
@@ -561,7 +571,7 @@ void CAD9959::MasterReset() {
     //Switch to QSPI mode
     // 
     // ToDo: after debugging of SPI mode ends, reenable QSPI
- //   SetQSPIMode(true);
+    SetQSPIMode(true);
 }
 
 void CAD9959::SetWriteChannels(bool channel0, bool channel1, bool channel2, bool channel3) {

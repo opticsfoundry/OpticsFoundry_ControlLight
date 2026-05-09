@@ -128,6 +128,7 @@ void CControlLightAPI::Set_CLA_CallsToNull() {
     CLA_SetFrequencyTuningWordOfChannel = nullptr;
     CLA_SetPhaseOfChannel = nullptr;
     CLA_SetPowerOfChannel = nullptr;
+    CLA_SetOUpdateEnabled = nullptr;
 
 }
 
@@ -236,6 +237,7 @@ bool CControlLightAPI::LoadDLL() {
     TRY_RESOLVE(CLA_SetFrequencyTuningWordOfChannel);
     TRY_RESOLVE(CLA_SetPhaseOfChannel);
     TRY_RESOLVE(CLA_SetPowerOfChannel);
+    TRY_RESOLVE(CLA_SetOUpdateEnabled);
 
     //TRY_RESOLVE(CLA_GetInstance);
 
@@ -425,6 +427,7 @@ API_EXPORT ERROR_CODE_TYPE CLA_SetAD9959Power(const unsigned int& Sequencer, con
     CLA_SetFrequencyTuningWordOfChannel = (SetFrequencyTuningWordOfChannelFunc)CLA_Lib->resolve("CLA_SetFrequencyTuningWordOfChannel");
     CLA_SetPhaseOfChannel = (SetPhaseOfChannelFunc)CLA_Lib->resolve("CLA_SetPhaseOfChannel");
     CLA_SetPowerOfChannel = (SetPowerOfChannelFunc)CLA_Lib->resolve("CLA_SetPowerOfChannel");
+    CLA_SetOUpdateEnabled = (SetOUpdateEnabledFunc)CLA_Lib->resolve("CLA_SetOUpdateEnabled");
 
     
     //now check if all functions were loaded correctly
@@ -483,9 +486,9 @@ API_EXPORT ERROR_CODE_TYPE CLA_SetAD9959Power(const unsigned int& Sequencer, con
         !CLA_SetFrequencyOfChannel ||
         !CLA_SetFrequencyTuningWordOfChannel ||
         !CLA_SetPhaseOfChannel ||
-        !CLA_SetPowerOfChannel
-
-        
+        !CLA_SetPowerOfChannel ||
+        !CLA_SetOUpdateEnabledl
+      
         ) {
         qDebug() << "Failed to resolve one or more ControlAPI symbols.";
         Cleanup();
@@ -818,6 +821,13 @@ bool CControlLightAPI::SetAttenuation(const unsigned int& Sequencer, const unsig
         return false;
 }
 
+bool CControlLightAPI::SetSetIOUpdateEnabled(const unsigned int& Sequencer, const unsigned int& Address, bool EnabkeIOUpdate) {
+    if (CLA_SetIOUpdateEnabled)
+        return CLA_SetIOUpdateEnabled(Sequencer, Address, EnabkeIOUpdate);
+    else
+        return false;
+}
+
 bool CControlLightAPI::SetStartFrequencyTuningWord(const unsigned int& Sequencer, const unsigned int& Address, uint64_t FrequencyTuningWord) {
     if (CLA_SetStartFrequencyTuningWord)
         return CLA_SetStartFrequencyTuningWord(Sequencer, Address, FrequencyTuningWord);
@@ -909,6 +919,12 @@ bool CControlLightAPI::SetPowerOfChannel(const unsigned int& Sequencer, const un
         return false;
 }
 
+bool CControlLightAPI::SetPEnableIOUpdate(const unsigned int& Sequencer, const unsigned int& Address, bool EnableIOUpdate) {
+    if (CLA_SetPEnableIOUpdate)
+        return CLA_SetPEnableIOUpdate(Sequencer, Address, EnableIOUpdate);
+    else
+        return false;
+}
 
 
 

@@ -494,6 +494,14 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @return 
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(SetAttenuation)(const unsigned int& Sequencer, const unsigned int& Address, double Attenuation);
 
+
+		/// @brief Sets the attenuation of a DDS (for now a AD9854 DDS).
+		/// @param Sequencer the sequencer to use.
+		/// @param Address the address of the device to set the attenuation for.
+		/// @param IOUpdateEnabled Enable automatic IOUpdate after each SPI command
+		/// @return 
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SetIOUpdateEnabled)(const unsigned int& Sequencer, const unsigned int& Address, bool IOUpdateEnabled);
+
 		/// @brief Sets the start frequency tuning word of a DDS (for now a AD9854 DDS).
 		/// @param Sequencer the sequencer to use.
 		/// @param Address the address of the device to set the start frequency tuning word for.

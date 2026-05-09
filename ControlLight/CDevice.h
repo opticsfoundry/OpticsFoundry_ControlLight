@@ -164,7 +164,10 @@ public:
 		return false;
 	}
 
-
+	virtual bool SetIOUpdateEnabled(bool _IOUpdateEnabled) {
+		AddErrorMessage("CDevice::SetIOUpdateEnabled: abstract function called");
+		return false;
+	}
 
 
 

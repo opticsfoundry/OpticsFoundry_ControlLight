@@ -82,6 +82,8 @@ bool CDeviceAD9959::SetValue(const unsigned int& SubAddress, const uint8_t* data
 	case 14:if (DataLength_in_bit == 32) MyAD9959->SetFrequencyTuningWordCh3((uint32_t)dValue); break;
 	case 15:if (DataLength_in_bit == 64) MyAD9959->SetIntensityCh3(dValue); break;
 	case 16:if (DataLength_in_bit == 64) MyAD9959->SetPhaseOffsetCh3(dValue); break;
+
+	case 17: if (DataLength_in_bit == 1) MyAD9959->SetIOUpdateEnabled(data[0] == 1); else return false; break;
 	
 	default: return false;//To do: throw exception
 	}
@@ -139,6 +141,13 @@ bool CDeviceAD9959::SetAttenuation(uint8_t channel, double Attenuation) {
 
 bool CDeviceAD9959::Reset() {
 	MyAD9959->MasterReset();
+	MyAD9959->WriteAllToBus();
+	return true;
+}
+
+bool CDeviceAD9959::SetIOUpdateEnabled(bool _IOUpdateEnabled)
+{
+	MyAD9959->SetIOUpdateEnabled(_IOUpdateEnabled);
 	MyAD9959->WriteAllToBus();
 	return true;
 }

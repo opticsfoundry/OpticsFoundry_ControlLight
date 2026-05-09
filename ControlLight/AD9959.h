@@ -55,6 +55,7 @@ private:
     double FrequencyScale;
     bool UpdateRegistersModeAutomatic;
     bool AD9958;
+    bool IOUpdateEnabled;
     
     uint32_t AktValueContents[AD9959NumberOfRegisters]; //keeps track of Value, contains value after bus buffer has been finished to be written out
     unsigned char WritePrecision[AD9959NumberOfRegisters];
@@ -161,7 +162,7 @@ public:
     void SetFrequencyTuningWordCh3(uint32_t ftw) {
         if (!AD9958) SetFrequencyTuningWord(4, ftw);
     }
-
+    void SetIOUpdateEnabled(bool _IOUpdateEnabled);
 private:
     void IO_Update_Toggle();
     //void Reset(void);

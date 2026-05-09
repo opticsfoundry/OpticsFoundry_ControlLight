@@ -285,6 +285,7 @@ typedef bool (*SetAD9959PowerFunc)(const unsigned int&, const unsigned int&, uin
     SetModulationFrequencyFunc CLA_SetModulationFrequency;
     SetPowerFunc CLA_SetPower;
     SetAttenuationFunc CLA_SetAttenuation;
+    SetIOUpdateEnabledFunc CLA_SetIOUpdateEnabled;
     SetStartFrequencyTuningWordFunc CLA_SetStartFrequencyTuningWord;
     SetStopFrequencyTuningWordFunc CLA_SetStopFrequencyTuningWord;
     SetFSKModeFunc CLA_SetFSKMode;
@@ -298,7 +299,7 @@ typedef bool (*SetAD9959PowerFunc)(const unsigned int&, const unsigned int&, uin
     SetFrequencyTuningWordOfChannelFunc CLA_SetFrequencyTuningWordOfChannel;
     SetPhaseOfChannelFunc CLA_SetPhaseOfChannel;
     SetPowerOfChannelFunc CLA_SetPowerOfChannel;
-
+    SetOUpdateEnabledFunc CLA_SetOUpdateEnabled;
 
 
     HControlLightAPI CLA_Handle;
@@ -396,6 +397,8 @@ typedef bool (*SetAD9959PowerFunc)(const unsigned int&, const unsigned int&, uin
         bool SetPhaseOfChannel(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Phase);
         //set the power of the AD9959
         bool SetPowerOfChannel(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Power);
+        //set auto IOUpdate for the AD9959
+        bool SetPEnableIOUpdate(const unsigned int& Sequencer, const unsigned int& Address, bool EnableIOUpdate);
 
     
 

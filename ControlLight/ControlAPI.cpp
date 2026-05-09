@@ -1126,6 +1126,17 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SetPowerOfChannel: error");
 		}
 
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SetIOUpdateEnabled)(const unsigned int& Sequencer, const unsigned int& Address, bool EnableIOUpdate)
+		{
+			API_LOCK_GUARD;
+			CDevice* device = GetParallelBusDevice(Sequencer, Address);
+			if (!device) {
+				API_UNLOCK_RETURN_ERROR(false, "CLA_SetOUpdateEnabled: output not found");
+			}
+			device->SetIOUpdateEnabled(EnableIOUpdate);
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SetOUpdateEnabled: error");
+		}
+
 		//End of convenience functions
 
 

@@ -33,6 +33,7 @@ public:
 	virtual bool SetPhase(uint8_t channel, double Phase);
 	virtual bool SetPower(uint8_t channel, double Power);
 	virtual bool SetAttenuation(uint8_t channel, double Power);
+	virtual bool SetIOUpdateEnabled(bool _IOUpdateEnabled);
 private:
 	CAD9959* MyAD9959;
 };
