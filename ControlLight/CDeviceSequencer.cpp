@@ -119,7 +119,7 @@ double CDeviceSequencer::GetBusFrequency_in_Hz() {
 
 void CDeviceSequencer::UpdateClockRatio() {
 	if (DoUseEdgeTriggeredLatches) {
-		CurrentFPGAClockToBusClockRatio = 2 + (2 * FPGAClockToBusClockRatio) / 3;
+		CurrentFPGAClockToBusClockRatio = 0 + ((2 * FPGAClockToBusClockRatio) / 3) ;
 	}
 	else {
 		CurrentFPGAClockToBusClockRatio = FPGAClockToBusClockRatio;

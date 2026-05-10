@@ -18,7 +18,7 @@ static char THIS_FILE[]=__FILE__;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-#ifdef Debug
+#ifdef DebugSPI
 constexpr bool DebugSPICommunication = true;
 std::string DebugFilePath = "D:\\Florian\\OpticsFoundry\\OpticsFoundryControl\\Debug\\";
 #endif
@@ -49,7 +49,7 @@ CMultiWriteDeviceSPI::CMultiWriteDeviceSPI(unsigned short aBus, unsigned long aB
 	SPI_CPOL = false;
 	SPI_CPHA = false;
 	//SetSPIFrequencyAndMode(0,/*SPI_mode*/0);
-#ifdef Debug
+#ifdef DebugSPI
 	if (DebugSPICommunication) {
 		std::string filename = std::format("{}DebugSPICommunication_{}_{}.txt", DebugFilePath, Bus, BaseAddress);
 		DebugFile = new std::ofstream(filename, std::ios::out);
@@ -60,13 +60,22 @@ CMultiWriteDeviceSPI::CMultiWriteDeviceSPI(unsigned short aBus, unsigned long aB
 
 CMultiWriteDeviceSPI::~CMultiWriteDeviceSPI()
 {
-#ifdef Debug
+#ifdef DebugSPI
 	if (DebugFile) {
 		DebugFile->close();
 		delete DebugFile;
 		DebugFile = NULL;
 	}
 #endif
+}
+
+void CMultiWriteDeviceSPI::AssureMinimumSPIClockPeriodLength() {
+	double MinimumClockHalfPeriod_in_ms = 500.0 / SPI_frequency_in_Hz;
+	double BusPeriod_in_ms = 1000.0 / MyDeviceSequencer->BusFrequency_in_Hz;
+	if (BusPeriod_in_ms < MinimumClockHalfPeriod_in_ms) {
+		WriteAllToBus();
+		MyDeviceSequencer->Wait_ms(MinimumClockHalfPeriod_in_ms);
+	}
 }
 
 void CMultiWriteDeviceSPI::AddToBusBuffer(unsigned short value) {
@@ -79,6 +88,7 @@ void CMultiWriteDeviceSPI::AddToBusBuffer(unsigned short value) {
 	BusBufferLength++;
 	BusBufferEnd++;
 	if (BusBufferEnd >= MultiWriteDeviceSPIMaxBusBuffer) BusBufferEnd = 0;
+	AssureMinimumSPIClockPeriodLength();
 }
 
 bool CMultiWriteDeviceSPI::WriteToBus()
@@ -246,7 +256,7 @@ void CMultiWriteDeviceSPI::WriteSPIBitBangedMode0Simple(unsigned int number_of_b
 
 	SetSPIChipSelect(true);
 
-#ifdef Debug
+#ifdef DebugSPI
 	if (DebugFile) {
 		unsigned long data_low = data_sent & 0xFFFFFFFF;
 		unsigned long data_high = (data_sent >> 32) & 0xFFFFFFFF;
@@ -261,11 +271,6 @@ void CMultiWriteDeviceSPI::WriteSPIBitBangedMode0Simple(unsigned int number_of_b
 	}
 #endif
 }
-
-
-
-
-
 
 //Generalized code, implementing any SPI mode
 void CMultiWriteDeviceSPI::WriteSPIBitBanged(unsigned int number_of_bits_out, uint64_t data) {
@@ -282,8 +287,6 @@ void CMultiWriteDeviceSPI::WriteSPIBitBanged(unsigned int number_of_bits_out, ui
 	if (QSPIMode && (number_of_bits_out % 4 != 0)) {
 		return; // or throw
 	}
-
-	uint64_t data_sent = 0;
 
 	const bool clock_idle = SPI_CPOL;
 	const bool clock_active = !SPI_CPOL;
@@ -321,11 +324,6 @@ void CMultiWriteDeviceSPI::WriteSPIBitBanged(unsigned int number_of_bits_out, ui
 			unsigned int bit_to_send_1 = GetBitMSBFirst(i + 2);
 			unsigned int bit_to_send_0 = GetBitMSBFirst(i + 3);
 
-			data_sent <<= 1; data_sent |= bit_to_send_3;
-			data_sent <<= 1; data_sent |= bit_to_send_2;
-			data_sent <<= 1; data_sent |= bit_to_send_1;
-			data_sent <<= 1; data_sent |= bit_to_send_0;
-
 			if (!SPI_CPHA) {
 				// CPHA = 0:
 				// First bit group: data must be written before sample edge.
@@ -361,9 +359,6 @@ void CMultiWriteDeviceSPI::WriteSPIBitBanged(unsigned int number_of_bits_out, ui
 	else {
 		for (unsigned int i = 0; i < number_of_bits_out; i++) {
 			unsigned int bit_to_send = GetBitMSBFirst(i);
-
-			data_sent <<= 1;
-			data_sent |= bit_to_send;
 
 			if (!SPI_CPHA) {
 				// CPHA = 0:
@@ -404,16 +399,16 @@ void CMultiWriteDeviceSPI::WriteSPIBitBanged(unsigned int number_of_bits_out, ui
 
 	SetSPIChipSelect(true);
 
-#ifdef Debug
+#ifdef DebugSPI
 	if (DebugFile) {
-		unsigned long data_low = data_sent & 0xFFFFFFFF;
-		unsigned long data_high = (data_sent >> 32) & 0xFFFFFFFF;
+		unsigned long data_low = data & 0xFFFFFFFF;
+		unsigned long data_high = (data >> 32) & 0xFFFFFFFF;
 		std::string buf = std::format(
 			"Wrote {} bits, data = {:08X} {:08X} = first bit sent {} last bit sent",
 			number_of_bits_out,
 			data_high,
 			data_low,
-			format_binary_64(data_sent, number_of_bits_out)
+			format_binary_64(data, number_of_bits_out)
 		);
 		*DebugFile << buf << std::endl;
 	}

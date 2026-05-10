@@ -4,9 +4,9 @@
 #include <cstdint>
 
 
-#define Debug
+//#define DebugSPI
 
-#ifdef Debug
+#ifdef DebugSPI
 #include <fstream>
 #endif
 
@@ -38,7 +38,7 @@ private:
 	bool SPI_CPOL;
 	double SPI_frequency_in_Hz; //0 means half of parallel bus speed
 	uint8_t SPI_mode;
-#ifdef Debug
+#ifdef DebugSPI
 	std::ofstream* DebugFile;
 #endif
 public:
@@ -64,4 +64,6 @@ public:
 	void WriteSPIBitBanged(unsigned int number_of_bits_out, uint64_t data);
 	void WriteSPIBitBangedMode0Simple(unsigned int number_of_bits_out, uint64_t data);
 	virtual void SetQSPIMode(bool OnOff);
+private:
+	void AssureMinimumSPIClockPeriodLength();
 };

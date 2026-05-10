@@ -76,6 +76,9 @@ CAD9959::CAD9959(unsigned short aBus, unsigned long aBaseAddress, double aExtern
         WritePrecision[i] = AD9959ValueLength[i];
     }
     UpdateRegistersModeAutomatic = true;
+
+    //SetSPIFrequencyAndMode(/*SPI_frequency_in_Hz*/ 200.0/500.0*InputClockFrequency_in_Hz, /*SPI_mode*/ 0);
+    SetSPIFrequencyAndMode(/*SPI_frequency_in_Hz*/ 4000000, /*SPI_mode*/ 0);
 }
 
 CAD9959::~CAD9959() {
@@ -425,52 +428,12 @@ void CAD9959::SPI_Transmit_Byte(uint8_t byte) {
     if (BytesToTransmit < (SPIBufferLength - 1)) BytesToTransmit++; else ControlMessageBox("CAD9959::SPI_Transmit_Byte : too many bytes");
 }
 
-uint8_t AD9959reverseBits(uint8_t num)
-{
-    uint8_t count = 8 - 1;
-    uint8_t reverse_num = num;
-
-    num >>= 1;
-    while (num) {
-        reverse_num <<= 1;
-        reverse_num |= num & 1;
-        num >>= 1;
-        count--;
-    }
-    reverse_num <<= count;
-    return reverse_num;
-}
-
 void CAD9959::Dev_Deselect(bool read, uint8_t number_of_bits_in)
 {
-
     //SPIBuffer[0] is MSB, SPIBuffer[BytesToTransmit-1] is LSB
-
-   /* uint8_t InvertedSPIBuffer[SPIBufferLength];
-    for (int i = 0; i < SPIBufferLength; i++)InvertedSPIBuffer[i] = 0;
-    uint8_t DataToTransmit = BytesToTransmit - 1;
-    InvertedSPIBuffer[0] = SPIBuffer[0];
-    for (uint8_t i = 0; i < DataToTransmit; i++) {
-        InvertedSPIBuffer[DataToTransmit - i] = SPIBuffer[i + 1];
-    } */
-
-    //AD9959 has MSB first as default mode.
-    //the FPGA SPI uses LSB first -> we have to sort the bits
-    //As we never transfer more than 4 bytes we can use data_low and set data_high to zero
-    //ToDo: May 2026 version of FPGA has MSB first. -> don't invert and adjust bit-banged method.
-    //uint64_t data_low = 0;
-    //for (unsigned char i = 0; i < BytesToTransmit; i++) {
-
-        //data_low = data_low | (AD9959reverseBits(SPIBuffer[i]) << (8 * i));
-        //uint64_t help = AD9959reverseBits(InvertedSPIBuffer[i]);
-        //data_low |= (help << (8 * i));
-    //}
-
     //data_low must contain data in MSB first order
     uint64_t data_low = 0;
     for (unsigned char i = 0; i < BytesToTransmit; i++) {
-
-        //data_low = data_low | (AD9959reverseBits(SPIBuffer[i]) << (8 * i));
         uint64_t help = SPIBuffer[i];
         data_low |= (help << (8 * ( BytesToTransmit - 1 - i ) ));
     }
