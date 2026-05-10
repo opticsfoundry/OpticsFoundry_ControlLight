@@ -55,6 +55,12 @@ if(BUILD_MODE STREQUAL "EXE")
     #To create an executable for testing
     add_executable(ControlLight ${SOURCES})
 
+    if (MSVC)
+        target_compile_definitions(ControlLight PRIVATE WIN32 _WINDOWS)
+        target_compile_options(ControlLight PRIVATE /W3 /GR /EHsc $<$<CONFIG:Debug>:/MDd> $<$<CONFIG:Debug>:/ZI> $<$<CONFIG:Debug>:/Ob0> $<$<CONFIG:Debug>:/Od> $<$<CONFIG:Debug>:/RTC1> $<$<NOT:$<CONFIG:Debug>>:/MD>)
+        target_link_options(ControlLight PRIVATE /machine:$<IF:$<STREQUAL:${CMAKE_SIZEOF_VOID_P},8>,x64,x86> $<$<CONFIG:Debug>:/debug> $<$<CONFIG:Debug>:/INCREMENTAL>)
+    endif()
+
     target_compile_definitions(ControlLight PRIVATE USING_DLL)
     target_compile_definitions(ControlLight PRIVATE _AFXDLL)
     target_compile_definitions(ControlLight PRIVATE C_API) #if you do not want a C++ API; comment out if you want C++ API
@@ -77,6 +83,11 @@ elseif(BUILD_MODE STREQUAL "DLL")
     file(GLOB SOURCES "*.cpp" "*.h")
     #To create DLL for C or C++
     add_library(ControlLight SHARED ${SOURCES})
+    if (MSVC)
+        target_compile_definitions(ControlLight PRIVATE WIN32 _WINDOWS)
+        target_compile_options(ControlLight PRIVATE /W3 /GR /EHsc $<$<CONFIG:Debug>:/MDd> $<$<CONFIG:Debug>:/ZI> $<$<CONFIG:Debug>:/Ob0> $<$<CONFIG:Debug>:/Od> $<$<CONFIG:Debug>:/RTC1> $<$<NOT:$<CONFIG:Debug>>:/MD>)
+        target_link_options(ControlLight PRIVATE /machine:$<IF:$<STREQUAL:${CMAKE_SIZEOF_VOID_P},8>,x64,x86> $<$<CONFIG:Debug>:/debug> $<$<CONFIG:Debug>:/INCREMENTAL>)
+    endif()
     target_compile_definitions(ControlLight PRIVATE BUILDING_DLL)
     target_compile_definitions(ControlLight PRIVATE C_API) #if you do not want a C++ API; comment out if you want C++ API
     target_compile_definitions(ControlLight PRIVATE _AFXDLL)
@@ -109,6 +120,11 @@ elseif(BUILD_MODE STREQUAL "PYD")
 
     # Add ControlLight core library
     add_library(ControlLight SHARED ${SOURCES})
+    if (MSVC)
+        target_compile_definitions(ControlLight PRIVATE WIN32 _WINDOWS)
+        target_compile_options(ControlLight PRIVATE /W3 /GR /EHsc $<$<CONFIG:Debug>:/MDd> $<$<CONFIG:Debug>:/ZI> $<$<CONFIG:Debug>:/Ob0> $<$<CONFIG:Debug>:/Od> $<$<CONFIG:Debug>:/RTC1> $<$<NOT:$<CONFIG:Debug>>:/MD>)
+        target_link_options(ControlLight PRIVATE /machine:$<IF:$<STREQUAL:${CMAKE_SIZEOF_VOID_P},8>,x64,x86> $<$<CONFIG:Debug>:/debug> $<$<CONFIG:Debug>:/INCREMENTAL>)
+    endif()
     target_compile_definitions(ControlLight PRIVATE PYTHON_API THROW_EXCEPTIONS API_CLASS _AFXDLL)
     target_include_directories(ControlLight PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 

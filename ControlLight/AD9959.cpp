@@ -443,24 +443,38 @@ uint8_t AD9959reverseBits(uint8_t num)
 
 void CAD9959::Dev_Deselect(bool read, uint8_t number_of_bits_in)
 {
-    uint8_t InvertedSPIBuffer[SPIBufferLength];
+
+    //SPIBuffer[0] is MSB, SPIBuffer[BytesToTransmit-1] is LSB
+
+   /* uint8_t InvertedSPIBuffer[SPIBufferLength];
     for (int i = 0; i < SPIBufferLength; i++)InvertedSPIBuffer[i] = 0;
     uint8_t DataToTransmit = BytesToTransmit - 1;
     InvertedSPIBuffer[0] = SPIBuffer[0];
     for (uint8_t i = 0; i < DataToTransmit; i++) {
         InvertedSPIBuffer[DataToTransmit - i] = SPIBuffer[i + 1];
-    }
+    } */
+
     //AD9959 has MSB first as default mode.
     //the FPGA SPI uses LSB first -> we have to sort the bits
     //As we never transfer more than 4 bytes we can use data_low and set data_high to zero
     //ToDo: May 2026 version of FPGA has MSB first. -> don't invert and adjust bit-banged method.
+    //uint64_t data_low = 0;
+    //for (unsigned char i = 0; i < BytesToTransmit; i++) {
+
+        //data_low = data_low | (AD9959reverseBits(SPIBuffer[i]) << (8 * i));
+        //uint64_t help = AD9959reverseBits(InvertedSPIBuffer[i]);
+        //data_low |= (help << (8 * i));
+    //}
+
+    //data_low must contain data in MSB first order
     uint64_t data_low = 0;
     for (unsigned char i = 0; i < BytesToTransmit; i++) {
 
         //data_low = data_low | (AD9959reverseBits(SPIBuffer[i]) << (8 * i));
-        uint64_t help = AD9959reverseBits(InvertedSPIBuffer[i]);
-        data_low |= (help << (8 * i));
+        uint64_t help = SPIBuffer[i];
+        data_low |= (help << (8 * ( BytesToTransmit - 1 - i ) ));
     }
+
     WriteSPIBitBanged(/*  number_of_bits_out*/BytesToTransmit * 8, /*uint64_t*/ data_low);
 }
 
@@ -539,10 +553,11 @@ void CAD9959::SetPowerDown_full_SPI(void)
 
 void CAD9959::AssurePulseIsLongerThanSyncClockPeriod() {
     double MinimumResetPulseDuration_in_ms = 1000.0 / (ClockFrequency_in_Hz / 4.0);//SYNC_CLK frequency = ClockFrequency_in_Hz/4.0
-    double BusPeriod_in_ms = 1000.0 / MyDeviceSequencer->BusFrequency;
-    if (BusPeriod_in_ms < MinimumResetPulseDuration_in_ms) {
+    double BusPeriod_in_ms = 1000.0 / MyDeviceSequencer->BusFrequency_in_Hz;
+    constexpr double safetymargin = 1.5;
+    if (BusPeriod_in_ms < safetymargin * MinimumResetPulseDuration_in_ms) {
         WriteAllToBus();
-        MyDeviceSequencer->Wait_ms(1.5 * MinimumResetPulseDuration_in_ms);
+        MyDeviceSequencer->Wait_ms(safetymargin * MinimumResetPulseDuration_in_ms);
     }
 }
 
@@ -793,8 +808,8 @@ uint32_t CAD9959::SetValueDirect(unsigned char RegisterNr, uint32_t Value, bool 
             }
             Dev_Select();
             SPI_Transmit_Byte(RegisterNr);
-            for (int i = 0; i < AD9959ValueLength[RegisterNr]; i++)
-                SPI_Transmit_Byte(((uint8_t*)&Value)[i]);
+            for (int i = AD9959ValueLength[RegisterNr] - 1; i >= 0 ; i--) //MSB first
+                SPI_Transmit_Byte(((uint8_t*)&Value)[i]);   
             Dev_Deselect();
             if (DoIOUpdate) IO_Update_Toggle();
         }

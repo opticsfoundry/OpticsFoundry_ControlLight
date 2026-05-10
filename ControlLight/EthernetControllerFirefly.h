@@ -97,7 +97,7 @@ public:
 	void AddExternalTrigger( bool ExternalTrigger0, bool ExternalTrigger1, bool FPGASoftwareTrigger );
 	void WriteBufferToFile(uint32_t* buffer, unsigned long length);
 	bool ConnectSocket(const std::string& host, unsigned int port, unsigned int aFPGAClockToBusClockRatio, double aFPGAClockFrequencyInHz, bool aFPGAUseExternalClock, bool aFPGAUseStrobeGenerator, bool ExternalTrigger);
-	double GetBusFrequency();
+	double GetFPGAClockFrequency_in_Hz();
 	bool WaitTillFinished();
 	bool Start();
 	bool Stop();

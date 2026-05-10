@@ -34,6 +34,8 @@ private:
 	unsigned char SDIO_3_bit;
 	unsigned char SPI_SCLK_bit;
 	bool QSPIMode;
+	bool SPI_CPHA;
+	bool SPI_CPOL;
 	double SPI_frequency_in_Hz; //0 means half of parallel bus speed
 	uint8_t SPI_mode;
 #ifdef Debug
@@ -60,5 +62,6 @@ public:
 	void SetSPIDataOut(bool clock);
 	void SetSPIFrequencyAndMode(double _SPI_frequency_in_Hz, const uint8_t _SPI_mode);
 	void WriteSPIBitBanged(unsigned int number_of_bits_out, uint64_t data);
+	void WriteSPIBitBangedMode0Simple(unsigned int number_of_bits_out, uint64_t data);
 	virtual void SetQSPIMode(bool OnOff);
 };

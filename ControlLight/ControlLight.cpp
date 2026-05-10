@@ -102,7 +102,7 @@ int main() {
 		if (!LoadControlHardwareInterface()) {
 			AddErrorMessage("Error loading hardware configuration file 2");
 
-			CLA.AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.1.90", 7, true, 0, 100000000, 2000000, false, true, true);
+			CLA.AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.1.90", 7, true, 0, 100000000, 2000000, false, true, true, true);
 			CLA.AddDeviceAnalogOut16bit(0, 24, 4, true, -10, 10);
 			CLA.AddDeviceAnalogOut16bit(0, 552, 4, true, -10, 10);
 			CLA.AddDeviceDigitalOut(0, 1, 16);
@@ -257,7 +257,7 @@ int main() {
 		if (!LoadControlHardwareInterface()) {
 			AddErrorMessage("Error loading hardware configuration file 2");
 
-			CLA_AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.1.90", 7, true, 0, 100000000, 2000000, false, true, true);
+			CLA_AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.1.90", 7, true, 0, 100000000, 2000000, false, true, true, true);
 			CLA_AddDeviceAnalogOut16bit(0, 24, 4, true, -10, 10);
 			CLA_AddDeviceAnalogOut16bit(0, 552, 4, true, -10, 10);
 			CLA_AddDeviceDigitalOut(0, 1, 16);
@@ -399,7 +399,7 @@ int main() {
 	if (!LoadControlHardwareInterface()) {
 		AddErrorMessage("Error loading hardware configuration file 2");
 
-		CLA.AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.1.90", 7, true, 0, 100000000, 2000000, false, true, true);
+		CLA.AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.1.90", 7, true, 0, 100000000, 2000000, false, true, true, true);
 		CLA.AddDeviceAnalogOut16bit(0, 24, 4, true, -10, 10);
 		CLA.AddDeviceAnalogOut16bit(0, 552, 4, true, -10, 10);
 		CLA.AddDeviceDigitalOut(0, 1, 16);
@@ -522,7 +522,7 @@ bool InitializeSystem() {
 	if (!LoadControlHardwareInterface()) {
 		AddErrorMessage("Error loading hardware configuration file 2");
 
-		CLA_AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.1.90", 7, true, 0, 100000000, 2000000, false, true, true);
+		CLA_AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.1.90", 7, true, 0, 100000000, 2000000, false, true, true, true);
 		CLA_AddDeviceAnalogOut16bit(0, 24, 4, true, -10, 10);
 		CLA_AddDeviceAnalogOut16bit(0, 552, 4, true, -10, 10);
 		CLA_AddDeviceDigitalOut(0, 1, 16);
@@ -557,8 +557,18 @@ void DemoSequence(unsigned long CycleNumber) {
 	//	CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, n);
 	//	CLA_Wait_ms(100);
 	//}
+	
+	//Test reliability of select rack slot
+	//for (int j = 1; j < 100; j++) {
+	//	CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, 5);
+	//	CLA_Wait_ms(100);
+	//	uint8_t r = 16*(rand()/RAND_MAX);
+	//	if (r == 5) r = 4;
+	//	CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, r);
+	//	CLA_Wait_ms(100);
+	//}
+	
 	CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, 5);
-
 
 	//Test analogIn, pedestrian way
 	//start data acquisition. This is an example for a command for which we didn't yet provide a convenience function in the DLL. 
@@ -584,7 +594,7 @@ void DemoSequence(unsigned long CycleNumber) {
 	//	CLA_Wait_ms(1);
 	//}
 	CLA_SequencerStartAnalogInAcquisition(/*Sequencer_Nr*/ 0, /*AnalogInType*/ 2, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 100, /*SamplingPeriod_in_ms*/ 1);
-	CLA_Wait_ms(1000);
+	CLA_Wait_ms(100);
 	
 	//Test repeated digital in
 	/// @param RepeatedOutInCommand the command to execute for each data point. 0: stop; 1: repeated SPI transfer; 2: repeated digital in; 3: digital in event tagger 
@@ -631,8 +641,9 @@ void DemoSequence(unsigned long CycleNumber) {
 		CLA_SetValue(0, 1, 0, (uint8_t*)&data, 16);
 		CLA_Wait_ms(0.1);
 		//double Frequency = 1000.0 * j / 100.0;
-		//CLA_SetFrequencyOfChannel(0, 10, 1, 4.0 * j/100.0);//in MHz
+		CLA_SetFrequencyOfChannel(0, 10, 1, 4.0 * j/100.0);//in MHz
 		//CLA_SetValue(0, 10, 0, (uint8_t*)&Frequency, 64);
+		CLA_Wait_ms(10);
 	}
 	CLA_SetFrequencyOfChannel(0, 10, 1, 0.1);//in MHz
 	CLA_Wait_ms(100);
@@ -847,7 +858,7 @@ void DemoSmartSequencer() {
 	unsigned int AnalogOutBoardStartAddress = 20;
 	unsigned int DigitalOutAddress = 10;
 
-	CLA_AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.1.90", 7, true, 0, 100000000, 3, false, true, true);
+	CLA_AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.1.90", 7, true, 0, 100000000, 3, false, true, true, true);
 	CLA_AddDeviceAnalogOut16bit(0, AnalogOutBoardStartAddress, 4, true, -10, 10);
 	CLA_AddDeviceDigitalOut(0, DigitalOutAddress, 16);
 	CLA_AddDeviceAD9854(0, AD98450Address, 2, 300000000, 1, 1);
@@ -975,7 +986,7 @@ void DemoDDSVCO() {
 	unsigned int AnalogOutBoardStartAddress = 20;
 	unsigned int DigitalOutAddress = 10;
 
-	CLA_AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.1.90", 7, true, 0, 100000000, 3, false, true, true);
+	CLA_AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.1.90", 7, true, 0, 100000000, 3, false, true, true, true);
 	CLA_AddDeviceAnalogOut16bit(0, AnalogOutBoardStartAddress, 4, true, -10, 10);
 	CLA_AddDeviceDigitalOut(0, DigitalOutAddress, 16);
 	CLA_AddDeviceAD9854(0, AD98450Address, 2, 300000000, 1, 1);

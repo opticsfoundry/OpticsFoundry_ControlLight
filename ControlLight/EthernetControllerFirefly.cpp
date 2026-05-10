@@ -38,13 +38,15 @@ constexpr bool MinimizeEthernetCommunicationDirectionChanges = true;
 
 CEthernetControllerFirefly::CEthernetControllerFirefly(CDeviceSequencer* _MySequencer) :
 	CNetworkClient(/*ethernet communication mode */ 3, /* FastWrite*/false) {
+	FPGAClockToBusClockRatio = 49;
+	FPGAClockFrequencyInHz = 100000000;
+	FPGAUseExternalClock = false;
 	DebugFilename = "DebugBufferSequencer";
 	MySequencer = _MySequencer;
 	previous_command_buffer = NULL;
 	previous_command_buffer_length = 0;
 	DoTransmitOnlyDifferenceBetweenCommandSequenceIfPossible = false;
-//	SequencerCommandList = new uint32_t[2 * MaxSequencerCommandListSize];
-//	SequencerCommandListSize = 0;
+	SequencerCommandListSize = 0;
 	SequencerCommandList = nullptr;
 	Connected = false;
 	DebugBufferOn = false;
@@ -72,6 +74,10 @@ CEthernetControllerFirefly::CEthernetControllerFirefly(CDeviceSequencer* _MySequ
 
 	previous_receive_data_ptr = nullptr;
 	receive_data_length = 0;
+
+	MyMultiIO = 0;
+
+	StartTickCounts = Clock::now();
 }
 
 CEthernetControllerFirefly::~CEthernetControllerFirefly()
@@ -97,9 +103,9 @@ bool CEthernetControllerFirefly::ConnectSocket(const std::string& host, unsigned
 	return Connected;
 }
 
-double CEthernetControllerFirefly::GetBusFrequency() {
+double CEthernetControllerFirefly::GetFPGAClockFrequency_in_Hz() {
 	//return BusFrequency;
-	return FPGAClockFrequencyInHz / (FPGAClockToBusClockRatio+1);  
+	return FPGAClockFrequencyInHz;  
 }
 
 void CEthernetControllerFirefly::AddSequencerCommandToBuffer(uint32_t* buffer, uint32_t n, uint32_t high_buffer, uint32_t low_buffer) {

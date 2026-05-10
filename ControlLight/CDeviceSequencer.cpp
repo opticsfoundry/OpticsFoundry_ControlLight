@@ -35,8 +35,11 @@ CDeviceSequencer::CDeviceSequencer(
 	unsigned int _FPGAClockToBusClockRatio,
 	bool _useExternalClock,
 	bool _useStrobeGenerator,
+	bool _useEdgeTriggeredLatches,
 	bool _connect) {
 	MySequencer = this;
+	// Initialize the device
+	MyEthernetMultiIOControllerFirefly = new CEthernetControllerFirefly(this);
 	for (unsigned int i = 0; i < MaxParallelBusDevices; i++)
 		ParallelBusDeviceList[i] = nullptr;
 	for (unsigned int i = 0; i < MaxSerialBusDevices; i++)
@@ -62,18 +65,15 @@ CDeviceSequencer::CDeviceSequencer(
 	currentBuffer = 0;
 	for (int n = 0; n < MaxBuffer; n++) Buffer[n] = nullptr;
 	LastCommandWasSpecialCommand = true;
-	DoUseEdgeTriggeredLatches = false;
+	DoUseEdgeTriggeredLatches = _useEdgeTriggeredLatches;
+	UpdateClockRatio();
 
 	AbsoluteTime_in_ms = 0;
 	BufferPosition = 0;
-	BusFrequency = 2000000;
-	// Initialize the device
-	MyEthernetMultiIOControllerFirefly = new CEthernetControllerFirefly(this);
 	bool success = MyEthernetMultiIOControllerFirefly->ConnectSocket(ip.c_str(), port, FPGAClockToBusClockRatio, clockFrequency, useExternalClock, useStrobeGenerator, /* ExternalTrigger*/ !master);
 	if (!success) {
 		NotifyError("Failed to connect to sequencer");
 	}
-	BusFrequency = MyEthernetMultiIOControllerFirefly->GetBusFrequency();
 
 	//Sequencer0->SwitchDebugMode(On);
 	//Timestamp.StartDebug(DebugFilePath + "TimingDebug.dat");
@@ -112,14 +112,20 @@ CDeviceSequencer::~CDeviceSequencer() {
 	}
 }
 
+
+double CDeviceSequencer::GetBusFrequency_in_Hz() {
+	return MyEthernetMultiIOControllerFirefly->GetFPGAClockFrequency_in_Hz() / (CurrentFPGAClockToBusClockRatio + 1);
+}
+
 void CDeviceSequencer::UpdateClockRatio() {
 	if (DoUseEdgeTriggeredLatches) {
-		CurrentFPGAClockToBusClockRatio = (2 * FPGAClockToBusClockRatio) / 3;
+		CurrentFPGAClockToBusClockRatio = 2 + (2 * FPGAClockToBusClockRatio) / 3;
 	}
 	else {
 		CurrentFPGAClockToBusClockRatio = FPGAClockToBusClockRatio;
 	}
 	//	MyEthernetMultiIOControllerFirefly->SetFPGAClockToBusClockRatio(FPGAClockToBusClockRatio);
+	BusFrequency_in_Hz = GetBusFrequency_in_Hz();
 }
 
 void CDeviceSequencer::UseEdgeTriggeredLatches(bool _UseEdgeTriggeredLatches) {

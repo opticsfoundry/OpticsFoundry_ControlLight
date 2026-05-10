@@ -46,6 +46,9 @@ CMultiWriteDeviceSPI::CMultiWriteDeviceSPI(unsigned short aBus, unsigned long aB
 	SPI_SCLK_bit = 0;
 	SPI_frequency_in_Hz = 0;
 	SPI_mode = 0;
+	SPI_CPOL = false;
+	SPI_CPHA = false;
+	//SetSPIFrequencyAndMode(0,/*SPI_mode*/0);
 #ifdef Debug
 	if (DebugSPICommunication) {
 		std::string filename = std::format("{}DebugSPICommunication_{}_{}.txt", DebugFilePath, Bus, BaseAddress);
@@ -127,8 +130,24 @@ void CMultiWriteDeviceSPI::SetSPIDataOut(bool data) {
 }
 
 
+/*
+SPI is defined by two parameters:
+
+CPOL (clock polarity) -> idle level of SCLK
+CPHA (clock phase) -> which edge is used to sample
+
+This gives 4 modes:
+
+Mode	CPOL	CPHA	Sample edge
+0	0	0	rising edge
+1	0	1	falling edge
+2	1	0	falling edge
+3	1	1	rising edge
+							*/
 void CMultiWriteDeviceSPI::SetSPIFrequencyAndMode(double _SPI_frequency_in_Hz, const uint8_t _SPI_mode) {
 	SPI_mode = _SPI_mode;
+	SPI_CPHA = (_SPI_mode & 1) > 0;
+	SPI_CPOL = (_SPI_mode & 2) > 0;
 	SPI_frequency_in_Hz = _SPI_frequency_in_Hz;
 }
 
@@ -141,37 +160,62 @@ std::string format_binary_64(uint64_t data, unsigned int number_of_bits_out) {
 	return result;
 }
 
-void CMultiWriteDeviceSPI::WriteSPIBitBanged(unsigned int number_of_bits_out, uint64_t data) {
+
+//I keep this code around for reference, as it works well
+void CMultiWriteDeviceSPI::WriteSPIBitBangedMode0Simple(unsigned int number_of_bits_out, uint64_t data) {  //
+	// data bit 0 = LSB
+	// data bit number_of_bits_out - 1 = MSB
+	// SPI must send MSB first
+
 	//ToDo: take SPI_mode and SPI_frequency_in_Hz into account
 	// MySequencer->SetFPGAClockToBusClockRatio(/* FPGAClockToBusClockRatio */ XXX, /*UpdateStrobeDuration*/ false);
-	//ToDo: make data_sent calculation more efficient
+
+	if (number_of_bits_out == 0 || number_of_bits_out > 64) {
+		return; // or throw
+	}
+
+	if (QSPIMode && (number_of_bits_out % 4 != 0)) {
+		return; // or throw
+	}
+
 	uint64_t data_sent = 0;
-	//This could easily be expanded into a 4-bit SPI interface
+
+	auto GetBitMSBFirst = [&](unsigned int bit_index) -> unsigned int {
+		// Input convention:
+		// bit 0 = LSB
+		// bit number_of_bits_out - 1 = MSB
+		//
+		// Output convention:
+		// send MSB first
+		return static_cast<unsigned int>(
+			(data >> (number_of_bits_out - 1 - bit_index)) & 0x1
+			);
+		};
+
 	SetSPIChipSelect(false);
 	SetSPIClock(false);
+
 	if (QSPIMode) {
 		unsigned int bit_to_send_0;
 		unsigned int bit_to_send_1;
 		unsigned int bit_to_send_2;
 		unsigned int bit_to_send_3;
-		for (int i = 0; i < number_of_bits_out; i = i + 4) {
-			bit_to_send_3 = data & 0x1;
-			data >>= 1;
+
+		for (unsigned int i = 0; i < number_of_bits_out; i += 4) {
+			bit_to_send_3 = GetBitMSBFirst(i + 0);
+			bit_to_send_2 = GetBitMSBFirst(i + 1);
+			bit_to_send_1 = GetBitMSBFirst(i + 2);
+			bit_to_send_0 = GetBitMSBFirst(i + 3);
+
 			data_sent <<= 1;
 			data_sent |= bit_to_send_3;
 
-			bit_to_send_2 = data & 0x1;
-			data >>= 1;
 			data_sent <<= 1;
 			data_sent |= bit_to_send_2;
 
-			bit_to_send_1 = data & 0x1;
-			data >>= 1;
 			data_sent <<= 1;
 			data_sent |= bit_to_send_1;
 
-			bit_to_send_0 = data & 0x1;
-			data >>= 1;
 			data_sent <<= 1;
 			data_sent |= bit_to_send_0;
 
@@ -183,26 +227,194 @@ void CMultiWriteDeviceSPI::WriteSPIBitBanged(unsigned int number_of_bits_out, ui
 			SetSPIClock(true);
 			SetSPIClock(false, /*write_immediately*/ false);
 		}
-
 	}
 	else {
 		unsigned int bit_to_send = 0x0;
-		for (int i = 0; i < number_of_bits_out; i++) {
+
+		for (unsigned int i = 0; i < number_of_bits_out; i++) {
 			data_sent <<= 1;
-			bit_to_send = data & 0x1;
-			data >>= 1;
+
+			bit_to_send = GetBitMSBFirst(i);
+
 			SetSPIDataOut(bit_to_send > 0);
 			data_sent |= bit_to_send;
+
 			SetSPIClock(true);
 			SetSPIClock(false, /*write_immediately*/ false);
 		}
 	}
+
 	SetSPIChipSelect(true);
+
 #ifdef Debug
 	if (DebugFile) {
 		unsigned long data_low = data_sent & 0xFFFFFFFF;
 		unsigned long data_high = (data_sent >> 32) & 0xFFFFFFFF;
-		std::string buf = std::format("Wrote {} bits, data = {:08X} {:08X} = first bit sent {} last bit sent", number_of_bits_out, data_high, data_low, format_binary_64(data_sent, number_of_bits_out));
+		std::string buf = std::format(
+			"Wrote {} bits, data = {:08X} {:08X} = first bit sent {} last bit sent",
+			number_of_bits_out,
+			data_high,
+			data_low,
+			format_binary_64(data_sent, number_of_bits_out)
+		);
+		*DebugFile << buf << std::endl;
+	}
+#endif
+}
+
+
+
+
+
+
+//Generalized code, implementing any SPI mode
+void CMultiWriteDeviceSPI::WriteSPIBitBanged(unsigned int number_of_bits_out, uint64_t data) {
+	// data bit 0 = LSB
+	// data bit number_of_bits_out - 1 = MSB
+	// SPI must send MSB first
+
+
+
+	if (number_of_bits_out == 0 || number_of_bits_out > 64) {
+		return; // or throw
+	}
+
+	if (QSPIMode && (number_of_bits_out % 4 != 0)) {
+		return; // or throw
+	}
+
+	uint64_t data_sent = 0;
+
+	const bool clock_idle = SPI_CPOL;
+	const bool clock_active = !SPI_CPOL;
+
+	auto GetBitMSBFirst = [&](unsigned int bit_index) -> unsigned int {
+		return static_cast<unsigned int>(
+			(data >> (number_of_bits_out - 1 - bit_index)) & 0x1
+			);
+		};
+
+	auto WriteSingleSPIDataOut = [&](unsigned int bit_value, bool write_immediately) {
+		// Assumption: normal SPI MOSI is SDIO_0.
+		// If SetSPIDataOut() uses a different bit internally, replace SDIO_0_bit here.
+		SetControlRegister(SDIO_0_bit, 1, bit_value ? 1 : 0, write_immediately);
+		};
+
+	auto WriteQSPIDataOut = [&](unsigned int bit0,
+		unsigned int bit1,
+		unsigned int bit2,
+		unsigned int bit3,
+		bool write_immediately) {
+			SetControlRegister(SDIO_0_bit, 1, bit0 ? 1 : 0, false);
+			SetControlRegister(SDIO_1_bit, 1, bit1 ? 1 : 0, false);
+			SetControlRegister(SDIO_2_bit, 1, bit2 ? 1 : 0, false);
+			SetControlRegister(SDIO_3_bit, 1, bit3 ? 1 : 0, write_immediately);
+		};
+
+	SetSPIClock(clock_idle);
+	SetSPIChipSelect(false);
+
+	if (QSPIMode) {
+		for (unsigned int i = 0; i < number_of_bits_out; i += 4) {
+			unsigned int bit_to_send_3 = GetBitMSBFirst(i + 0);
+			unsigned int bit_to_send_2 = GetBitMSBFirst(i + 1);
+			unsigned int bit_to_send_1 = GetBitMSBFirst(i + 2);
+			unsigned int bit_to_send_0 = GetBitMSBFirst(i + 3);
+
+			data_sent <<= 1; data_sent |= bit_to_send_3;
+			data_sent <<= 1; data_sent |= bit_to_send_2;
+			data_sent <<= 1; data_sent |= bit_to_send_1;
+			data_sent <<= 1; data_sent |= bit_to_send_0;
+
+			if (!SPI_CPHA) {
+				// CPHA = 0:
+				// First bit group: data must be written before sample edge.
+				// Later bit groups: previous trailing edge + next data setup are combined.
+
+				if (i == 0) {
+					WriteQSPIDataOut(bit_to_send_0, bit_to_send_1, bit_to_send_2, bit_to_send_3, true);
+				}
+				else {
+					SetSPIClock(clock_idle, false);
+					WriteQSPIDataOut(bit_to_send_0, bit_to_send_1, bit_to_send_2, bit_to_send_3, true);
+				}
+
+				// Leading edge = sample edge
+				SetSPIClock(clock_active);
+			}
+			else {
+				// CPHA = 1:
+				// Data may change on the leading edge.
+				// Therefore data update + leading edge can be combined.
+				// Trailing edge = sample edge.
+
+				WriteQSPIDataOut(bit_to_send_0, bit_to_send_1, bit_to_send_2, bit_to_send_3, false);
+
+				// Leading edge + data update
+				SetSPIClock(clock_active);
+
+				// Trailing edge = sample edge
+				SetSPIClock(clock_idle);
+			}
+		}
+	}
+	else {
+		for (unsigned int i = 0; i < number_of_bits_out; i++) {
+			unsigned int bit_to_send = GetBitMSBFirst(i);
+
+			data_sent <<= 1;
+			data_sent |= bit_to_send;
+
+			if (!SPI_CPHA) {
+				// CPHA = 0:
+				// First bit: data setup must be written before sample edge.
+				// Later bits: previous trailing edge + next data setup are combined.
+
+				if (i == 0) {
+					WriteSingleSPIDataOut(bit_to_send, true);
+				}
+				else {
+					SetSPIClock(clock_idle, false);
+					WriteSingleSPIDataOut(bit_to_send, true);
+				}
+
+				// Leading edge = sample edge
+				SetSPIClock(clock_active);
+			}
+			else {
+				// CPHA = 1:
+				// Data changes on leading edge.
+				// Sample happens on trailing edge.
+
+				WriteSingleSPIDataOut(bit_to_send, false);
+
+				// Leading edge + data update
+				SetSPIClock(clock_active);
+
+				// Trailing edge = sample edge
+				SetSPIClock(clock_idle);
+			}
+		}
+	}
+
+	// Finish final half-cycle for CPHA = 0.
+	if (!SPI_CPHA) {
+		SetSPIClock(clock_idle);
+	}
+
+	SetSPIChipSelect(true);
+
+#ifdef Debug
+	if (DebugFile) {
+		unsigned long data_low = data_sent & 0xFFFFFFFF;
+		unsigned long data_high = (data_sent >> 32) & 0xFFFFFFFF;
+		std::string buf = std::format(
+			"Wrote {} bits, data = {:08X} {:08X} = first bit sent {} last bit sent",
+			number_of_bits_out,
+			data_high,
+			data_low,
+			format_binary_64(data_sent, number_of_bits_out)
+		);
 		*DebugFile << buf << std::endl;
 	}
 #endif

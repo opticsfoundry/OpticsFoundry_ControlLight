@@ -67,7 +67,7 @@ bool CDeviceRack::SetValue(const unsigned int& SubAddress, const uint8_t* Data, 
 	}
 
 	//Reduce bus speed, as arbiter is slower than a normal dig out port to allow first-break then-make behavior.
-	MySequencer->SetFPGAClockToBusClockRatio(/* FPGAClockToBusClockRatio */ 499,  /*UpdateStrobeDuration*/ true); //499: 0.2MHz, which might be unnecessarily slow
+	MySequencer->SetFPGAClockToBusClockRatio(/* FPGAClockToBusClockRatio */ 49,  /*UpdateStrobeDuration*/ true); //499: 0.2MHz, which might be unnecessarily slow
 	MySequencer->WriteBusAddressAndDataToBuffer(MyAddress, LastValue);
 	MySequencer->SetFPGAClockToBusClockRatio(/* FPGAClockToBusClockRatio == 0: use default ratio */ 0, /*UpdateStrobeDuration*/ true);
 	return true;

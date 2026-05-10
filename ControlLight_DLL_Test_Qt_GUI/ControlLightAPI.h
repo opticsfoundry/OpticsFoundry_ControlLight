@@ -137,7 +137,7 @@ typedef bool (*SequencerIgnoreTCPIPFunc)(const unsigned int&, bool);
 typedef bool (*SequencerAddMarkerFunc)(const unsigned int&, unsigned char);
 typedef bool (*AddDeviceSequencerFunc)(
     unsigned int, const char*, const char*, unsigned int, bool, unsigned int,
-    double, unsigned long, bool, bool, bool);
+    double, unsigned long, bool, bool, bool, bool);
 typedef bool (*AddDeviceAnalogOut16bitFunc)(
     unsigned int, unsigned int, unsigned int, bool, double, double);
 typedef bool (*AddDeviceDigitalOutFunc)(
@@ -433,6 +433,7 @@ typedef bool (*SetAD9959PowerFunc)(const unsigned int&, const unsigned int&, uin
             unsigned long FPGAClockToBusClockRatio,
             bool useExternalClock,
             bool useStrobeGenerator,
+            bool useEdgeTriggeredLatches,
             bool connect);
     
         bool AddDeviceAnalogOut16bit(

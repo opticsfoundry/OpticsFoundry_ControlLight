@@ -46,7 +46,7 @@ void ConfigCreator::AddOptionalHardwareFields(json& entry,
 
 void ConfigCreator::RegisterSequencer(int Id, const std::string& Type, const std::string& IP, int Port,
 	bool Master, int StartDelay, int ClockFrequencyinMHz, int BusFrequencyinMHz, bool UseExternalClock,
-	bool UseStrobeGenerator, bool Connect, bool DebugOn, const optional<string>& Model,
+	bool UseStrobeGenerator, bool UseEdgeTriggeredLatches, bool Connect, bool DebugOn, const optional<string>& Model,
 	const optional<string>& SN, const optional<int>& RackNr, const optional<int>& SlotNr) {
 	json entry = {
 		{"Id", Id},
@@ -59,6 +59,7 @@ void ConfigCreator::RegisterSequencer(int Id, const std::string& Type, const std
 		{"BusFrequencyinMHz", BusFrequencyinMHz},
 		{"UseExternalClock", UseExternalClock},
 		{"UseStrobeGenerator", UseStrobeGenerator},
+		{"UseEdgeTriggeredLatches", UseEdgeTriggeredLatches},
 		{"Connect", Connect},
 		{"DebugOn", DebugOn}
 	};

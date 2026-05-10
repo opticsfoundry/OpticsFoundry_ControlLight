@@ -22,8 +22,8 @@ public:
 	bool useExternalClock;
 	bool useStrobeGenerator;
 	bool connect;
-	double BusFrequency;
 	CEthernetControllerFirefly* MyEthernetMultiIOControllerFirefly;
+	double BusFrequency_in_Hz;
 private:
 	unsigned long PCBufferSize_in_u64;
 	static const uint8_t MaxBuffer = 2;
@@ -55,8 +55,10 @@ public:
 		unsigned int _FPGAClockToBusClockRatio,
 		bool _useExternalClock,
 		bool _useStrobeGenerator,
+		bool _useEdgeTriggeredLatches,
 		bool _connect);
 	virtual ~CDeviceSequencer();
+	double GetBusFrequency_in_Hz();
 	void AdvanceTime();
 	void UseEdgeTriggeredLatches(bool UseEdgeTriggeredLatches);
 	void SetFPGAClockToBusClockRatio(const unsigned int _FPGAClockToBusClockRatio, const bool UpdateStrobeDuration);

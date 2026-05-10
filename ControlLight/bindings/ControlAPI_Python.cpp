@@ -290,6 +290,7 @@ PYBIND11_MODULE(control_light_api, m) {
                 py::arg("fpga_clock_to_bus_clock_ratio"),
                 py::arg("use_external_clock"),
                 py::arg("use_strobe_generator"),
+                py::arg("use_edge_triggered_latches"),
                 py::arg("connect"))
 
 

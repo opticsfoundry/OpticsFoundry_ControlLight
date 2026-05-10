@@ -561,6 +561,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 			unsigned long FPGAClockToBusClockRatio,
 			bool useExternalClock,
 			bool useStrobeGenerator,
+			bool useEdgeTriggeredLatches,
 			bool connect);
 
 		/// @brief Add a 16 bit analog output device to the sequencer.

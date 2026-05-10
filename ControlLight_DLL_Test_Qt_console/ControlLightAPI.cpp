@@ -992,9 +992,10 @@ bool CControlLightAPI::AddDeviceSequencer(
     unsigned long FPGAClockToBusClockRatio,
     bool useExternalClock,
     bool useStrobeGenerator,
+    bool useEdgeTriggeredLatches,
     bool connect) {
     if (CLA_AddDeviceSequencer)
-        return CLA_AddDeviceSequencer(id, type, ip, port, master, startDelay, clockFrequency, FPGAClockToBusClockRatio, useExternalClock, useStrobeGenerator, connect);
+        return CLA_AddDeviceSequencer(id, type, ip, port, master, startDelay, clockFrequency, FPGAClockToBusClockRatio, useExternalClock, useStrobeGenerator, useEdgeTriggeredLatches, connect);
     else
         return false;
 }

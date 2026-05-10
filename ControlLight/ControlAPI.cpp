@@ -1660,6 +1660,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			unsigned long FPGAClockToBusClockRatio;
 			bool useExternalClock;
 			bool useStrobeGenerator;
+			bool useEdgeTriggeredLatches;
 			bool connect;
 			LOAD_VALUE(id, "Id", 0);
 			LOAD_VALUE(type, "Type", "OpticsFoundrySequencerV1");
@@ -1670,6 +1671,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			LOAD_VALUE(FPGAClockToBusClockRatio, "FPGAClockToBusClockRatio", 49);
 			LOAD_VALUE(useExternalClock, "UseExternalClock", false);
 			LOAD_VALUE(useStrobeGenerator, "UseStrobeGenerator", true);
+			LOAD_VALUE(useEdgeTriggeredLatches, "UseEdgeTriggeredLatches", true);
 			LOAD_VALUE(connect, "Connect", true);
 
 			if (!created) {
@@ -1679,7 +1681,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 				RETURN_ERROR(false, "CLA_AddDeviceSequencerFromJSON: sequencer id already in use.");
 			}
 			// Create a new device sequencer and add it to the list
-			SequencerList[id] = new CDeviceSequencer(id, type, ip, port, master, startDelay, clockFrequency, FPGAClockToBusClockRatio, useExternalClock, useStrobeGenerator, connect);
+			SequencerList[id] = new CDeviceSequencer(id, type, ip, port, master, startDelay, clockFrequency, FPGAClockToBusClockRatio, useExternalClock, useStrobeGenerator, useEdgeTriggeredLatches, connect);
 			RETURN_ERROR(!SequencerList[id]->ErrorOccured(), "CLA_AddDeviceSequencerFromJSON: error on initialization");
 		}
 
@@ -1696,6 +1698,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			unsigned long FPGAClockToBusClockRatio,
 			bool useExternalClock,
 			bool useStrobeGenerator,
+			bool useEdgeTriggeredLatches,
 			bool connect) {
 			CATCH_MFC_EX_S
 			API_LOCK_GUARD;
@@ -1706,7 +1709,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 				API_UNLOCK_RETURN_ERROR(false, "CLA_AddDeviceSequencer: sequencer id already in use.");
 			}
 			// Create a new device sequencer and add it to the list
-			SequencerList[id] = new CDeviceSequencer(id, type, ip, port, master, startDelay, clockFrequency, FPGAClockToBusClockRatio, useExternalClock, useStrobeGenerator, connect);
+			SequencerList[id] = new CDeviceSequencer(id, type, ip, port, master, startDelay, clockFrequency, FPGAClockToBusClockRatio, useExternalClock, useStrobeGenerator, useEdgeTriggeredLatches, connect);
 			API_UNLOCK_RETURN_ERROR(!SequencerList[id]->ErrorOccured(), "CLA_AddDeviceSequencer: error on initialization");
 			CATCH_MFC_EX_E
 		}
