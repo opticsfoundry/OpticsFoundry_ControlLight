@@ -333,7 +333,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @param PeriodicTriggerPeriod_in_s the period of the periodic trigger in seconds.
 		/// @param PeriodicTriggerAllowedWaitTime_in_s the allowed wait time for the
 		/// @return 
-		API_EXPORT ERROR_CODE_TYPE CLA_FN(SetPeriodicTrigger)(double PeriodicTriggerPeriod_in_s, double PeriodicTriggerAllowedWaitTime_in_s);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SetPeriodicTrigger_ms)(double PeriodicTriggerPeriod_in_ms, double PeriodicTriggerAllowedWaitTime_in_ms);
 		
 		/// @brief Get next cycle number of master sequencer.
 		/// @param NextCycleNumber the next cycle number.

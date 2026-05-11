@@ -100,10 +100,12 @@ bool CNetworkClient::WriteDouble(double d) {
 #endif
 }
 
-bool CNetworkClient::SendData(uint8_t* Data, unsigned long Size) {
+bool CNetworkClient::SendData(uint8_t* Data, unsigned long Size, bool SendReady) {
 	if (Network) {
 		Network->FlushOutputBuffer();
-		if (!Ready()) return false;
+		if (SendReady) {
+			if (!Ready()) return false;
+		}
 		return Network->SendData(Data, Size);
 	}
 	else return true;

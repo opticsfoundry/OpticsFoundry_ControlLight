@@ -90,7 +90,7 @@ public:
 	double GetTime_ms();
 	double GetTimeDebt_ms() { return TimeDebt_in_ms; };
 	unsigned long GetNextBufferPosition() { return BufferPosition; }
-	void SetPeriodicTrigger(double periodicTriggerPeriod_in_s, double periodicTriggerAllowedWaitTime_in_s);
+	void SetPeriodicTrigger_ms(double periodicTriggerPeriod_in_ms, double periodicTriggerAllowedWaitTime_in_ms);
 	void GetNextCycleNumber(long &NextCycleNumber);
 	void ResetCycleNumber();
 

@@ -549,9 +549,19 @@ void DemoSequence(unsigned long CycleNumber) {
 	CLA_StartAssemblingSequence();
 	CLA_SequencerWriteSystemTimeToInputMemory(/*SequencerNr*/ 0);
 	CLA_SequencerWriteInputMemory(/*SequencerNr*/ 0, CycleNumber);
+	CLA_SequencerWriteInputMemory(/*SequencerNr*/ 0, 6);  //a narker, just to see we can write to the input memory
+	CLA_SequencerWriteInputMemory(/*SequencerNr*/ 0, 7);  //a narker, just to see we can write to the input memory
+
 	CLA_SequencerSwitchDebugLED(/*SequencerNr*/ 0, 1);
 	CLA_SequencerAddMarker(/*SequencerNr*/ 0, 1);//for debug: displays marker (here "1") on ZYNQ USB port output (use Termite or similar to see it)
-
+	CLA_SetDigitalOutput(/*SequencerNr*/ 0, /*Addr*/ 2, /* BitNr */ 0, true);
+	CLA_Wait_ms(40);
+	for (int n = 0; n < 5; n++) {
+		CLA_SetDigitalOutput(/*SequencerNr*/ 0, /*Addr*/ 2, /* BitNr */ 0, false);
+		CLA_Wait_ms(10);
+		CLA_SetDigitalOutput(/*SequencerNr*/ 0, /*Addr*/ 2, /* BitNr */ 0, true);
+		CLA_Wait_ms(10);
+	}
 	//Test input board:
 	//for (uint8_t n = 0; n<12; n++) {
 	//	CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, n);
@@ -632,7 +642,7 @@ void DemoSequence(unsigned long CycleNumber) {
 	CLA_SetIOUpdateEnabled(0, 10, true);
 	CLA_SetPhaseOfChannel(0, 10, 3, 270);
 
-	for (int j = 1; j < 100; j++) {
+	for (int j = 1; j < 10; j++) {
 		CLA_SetVoltage(0, 24, 10.0 * j / 100.0);
 		uint16_t data = 0xffff;
 		CLA_SetValue(0, 1, 0, (uint8_t*)&data, 16);
@@ -646,9 +656,11 @@ void DemoSequence(unsigned long CycleNumber) {
 		CLA_Wait_ms(10);
 	}
 	CLA_SetFrequencyOfChannel(0, 10, 1, 0.1);//in MHz
-	CLA_Wait_ms(100);
+	CLA_Wait_ms(10);
 	RampVoltage(/*Sequencer*/ 0, /*Address*/ 24, /*StartVoltage*/ -10, /* TargetVoltage*/ 10, /*Duration_in_ms*/ 100, /*StepSize_in_ms*/ 0.1);
 	CLA_SequencerSwitchDebugLED(/*SequencerNr*/ 0, 0);
+	CLA_SetDigitalOutput(/*SequencerNr*/ 0, /*Addr*/ 2, /* BitNr */ 0, false);
+	CLA_Wait_ms(10);
 	CLA_SequencerWriteSystemTimeToInputMemory(/*SequencerNr*/ 0);
 	//CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, 0);
 }
@@ -699,10 +711,9 @@ void SaveInputDataToFile(const std::string& filename,
     std::fclose(file);
 }
 
-void DemoSequenceAnalyseData(unsigned long CycleNumber, uint32_t* buffer, const unsigned long& buffer_length, const unsigned long& EndTimeOfCycle) {
+void DemoSequenceAnalyseData(unsigned long CycleNumber, uint32_t* buffer, const unsigned long& buffer_length, const unsigned long& EndTimeOfCycle, double PeriodicTriggerPeriod_in_ms) {
 	static unsigned long long PreviousFPGASystemTime = 0;
 	static unsigned int NumberOfTimesFailedRun = 0;
-	static double PeriodicTriggerPeriod_in_ms = 0;
 	static Time starttime = Clock::now();
 	static Time last_starttime = Clock::now();
 
@@ -725,13 +736,15 @@ void DemoSequenceAnalyseData(unsigned long CycleNumber, uint32_t* buffer, const 
 	//The blue MOT duration is ElapsedFPGASystemTime - the duration of the last sequence.
 	//We don't calculate the blue MOT duration explicitly, but check if ElapsedFPGASystemTime is within the expected range.
 	unsigned long long ElapsedFPGASystemTime = FPGASystemTime - PreviousFPGASystemTime;
+	unsigned long long SoftToHardTriggerDelay = FPGASystemTime - FPGASystemTimeStart;
+	double CyclePeriodError = ElapsedFPGASystemTime - (PeriodicTriggerPeriod_in_ms * 100000);
 	std::string ErrorMessages = "";
 	if (ElapsedFPGASystemTime > PeriodicTriggerPeriod_in_ms * 100000 + 10) {
-		ErrorMessages += " Overtime.";
+		ErrorMessages += " Overtime by " + std::format("{}", CyclePeriodError/100000) + " ms.";
 		CycleSuccessful = false;
 	}
 	else if (ElapsedFPGASystemTime < PeriodicTriggerPeriod_in_ms * 100000 - 10) {
-		ErrorMessages += " Undertime.";
+		ErrorMessages += " Undertime by " + std::format("{}", CyclePeriodError / 100000) + " ms.";
 		CycleSuccessful = false;
 	}
 	if (CycleNumber != CycleNrFromBuffer) {
@@ -743,22 +756,25 @@ void DemoSequenceAnalyseData(unsigned long CycleNumber, uint32_t* buffer, const 
 	last_starttime = starttime;
 	starttime = Clock::now();
 	Duration duration = last_starttime - starttime;
-	std::string out_buf = std::format("%4u %4u %4u %4.0f %10llu %03X %08X f%03u rc%u %u",
+	std::string out_buf = std::format("{:4} {:4} {:4} {:4.0f} {:4.0f} {:4.0f} {:10} {:03X} {:08X} f{:03} rc{} {}",
 		CycleNrFromBuffer,
 		buffer_length,
+		SoftToHardTriggerDelay,
+		CyclePeriodError,
 		milliSeconds(duration),
 		WaitForTriggerTime,
 		ElapsedFPGASystemTime,
 		FPGASystemTimeHigh,
 		FPGASystemTimeLow,
 		NumberOfTimesFailedRun,
-		(CycleSuccessful) ? 1 : 0);
+		(CycleSuccessful) ? 1 : 0,
+		EndTimeOfCycle);
 	std::string status = out_buf + ErrorMessages;
 	cout << status << endl;
 
 	if (buffer != NULL) {
 		//process input data
-		std::string filename = std::format("C:\\data\\input%04u.dat", CycleNumber);
+		std::string filename = std::format("C:\\data\\input{:04}.dat", CycleNumber);
 		SaveInputDataToFile(filename, buffer, buffer_length);
 		//freeing buffer is done in CAL and shouldn't be done here.
 	}
@@ -774,7 +790,7 @@ void DemoFPGASequencerSingleRun() {
 		return;
 	}
 	uint8_t* buffer = nullptr;
-	constexpr unsigned long NrCycles = 3;
+	constexpr unsigned long NrCycles = 10;
 	for (unsigned long CycleNr = 0; CycleNr < NrCycles; CycleNr++) {
 		Time starttime = Clock::now();
 		cout << "Iteration " << CycleNr << ": ";
@@ -787,7 +803,7 @@ void DemoFPGASequencerSingleRun() {
 		unsigned long buffer_length = 0;
 		unsigned long EndTimeOfCycle = 0;
 		CLA_WaitTillEndOfSequenceThenGetInputData(buffer, buffer_length, EndTimeOfCycle, 10);
-		DemoSequenceAnalyseData(CycleNr, (uint32_t*)buffer, buffer_length/4, EndTimeOfCycle);
+		DemoSequenceAnalyseData(CycleNr, (uint32_t*)buffer, buffer_length/4, EndTimeOfCycle, 0);
 
 		//Test SerialPortBoardI2Cboard with signals from PS; make sure that slot is selected.
 		//uint8_t address = 0xAB;
@@ -809,13 +825,13 @@ void DemoFPGASequencerCyclicSequencing() {
 	double SequenceDuration_in_ms;
 	CLA_GetTime_ms(SequenceDuration_in_ms);
 	double WaitTimeAfterSequence_in_ms = 300;
-	double PeriodicTriggerPeriod_in_s = 0.001*(SequenceDuration_in_ms + WaitTimeAfterSequence_in_ms);
-	double PeriodicTriggerAllowedWaitTime_in_s = 2;
-	cout << "Cycling with " << PeriodicTriggerPeriod_in_s*1000 << " ms period of which " << SequenceDuration_in_ms << " ms sequence duration." << endl;
+	double PeriodicTriggerPeriod_in_ms = (SequenceDuration_in_ms + WaitTimeAfterSequence_in_ms);
+	double PeriodicTriggerAllowedWaitTime_in_ms = PeriodicTriggerPeriod_in_ms + 2000;
+	cout << "Cycling with " << PeriodicTriggerPeriod_in_ms << " ms period of which " << SequenceDuration_in_ms << " ms sequence duration." << endl;
 
 
 	//Tell sequencer that we'll use cyclic sequencing. This updates trigger settings.
-	CLA_SetPeriodicTrigger(PeriodicTriggerPeriod_in_s, PeriodicTriggerAllowedWaitTime_in_s);
+	CLA_SetPeriodicTrigger_ms(PeriodicTriggerPeriod_in_ms, PeriodicTriggerAllowedWaitTime_in_ms);
 	
 	//to speed up TCP/IP transmission of data from PC to sequencer, transmit only changes of sequence, if possible.
 	CLA_TransmitOnlyDifferenceBetweenCommandSequenceIfPossible(true);
@@ -833,12 +849,19 @@ void DemoFPGASequencerCyclicSequencing() {
 		unsigned long buffer_length = 0;
 		unsigned long EndTimeOfCycle = 0;
 		CLA_WaitTillEndOfSequenceThenGetInputData(buffer, buffer_length, EndTimeOfCycle, 10);
-		DemoSequenceAnalyseData(CycleNr, (uint32_t*)buffer, buffer_length/4, EndTimeOfCycle);
+		DemoSequenceAnalyseData(CycleNr, (uint32_t*)buffer, buffer_length/4, EndTimeOfCycle, PeriodicTriggerPeriod_in_ms);
+
+		//wait a random timespan to test resynchronization
+		double r = (1.0*rand()) / RAND_MAX;
+		//cout << "Waiting " << 1000 * r << " ms to simulate large fluctuation in software command to start next sequence;";
+		this_thread::sleep_for(r*150ms);
+		//cout << " done" <<endl;
+
 		//Duration duration = Clock::now() - starttime;
 		//cout << "Duration: " << milliSeconds(duration) << " ms  Buffer length : " << buffer_length << endl;
 	}
 	//Switch periodic trigger off by setting its period to 0ms.
-	CLA_SetPeriodicTrigger(0, 0);
+	CLA_SetPeriodicTrigger_ms(0, 0);
 }
 
 void DemoSmartSequencer() {
@@ -1188,8 +1211,8 @@ void DemoReadConfigEEPROM() {
 }
 
 int main() {
-	DemoFPGASequencerSingleRun();
-	//DemoFPGASequencerCyclicSequencing();
+	//DemoFPGASequencerSingleRun();
+	DemoFPGASequencerCyclicSequencing();
 	//DemoSmartSequencer();
 	//DemoDDSVCO();
 	//DemoWriteConfigEEPROM();

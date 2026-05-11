@@ -24,8 +24,8 @@ public:
 	std::ofstream* DebugBufferFile;
 	bool ExternalTrigger0;
 	bool ExternalTrigger1;
-	double PeriodicTriggerPeriod_in_s;
-	double PeriodicTriggerAllowedWait_in_s;
+	double PeriodicTriggerPeriod_in_ms;
+	double PeriodicTriggerAllowedWait_in_ms;
 	bool ExternalClock0;
 	bool ExternalClock1;
 	//double BusFrequency;
@@ -38,7 +38,7 @@ public:
 	//uint32_t* FPGAAbsoluteTime;
 	//uint32_t FPGABufferUsed;
 	//COutput* myOutput;
-	double LastPeriodicTriggerPeriod_in_s;
+	double LastPeriodicTriggerPeriod_in_ms;
 	bool DebugModeOn;
 private:
 	bool core_option_LED; 
@@ -55,6 +55,8 @@ private:
 
 	uint8_t* previous_receive_data_ptr;
 	unsigned long receive_data_length;
+
+	uint8_t* previous_input_buffer_ptr;
 
 	std::string DebugFilename;
 private:
@@ -107,7 +109,7 @@ public:
 	bool GetFrequency(double& Frequency);
 	bool GetPeriodicTriggerError(bool& Error);
 	void SetExternalTrigger(bool aExternalTrigger0, bool aExternalTrigger1);
-	void SetPeriodicTrigger(double aPeriodicTriggerPeriod_in_s, double aPeriodicTriggerAllowedWaitTime_in_s);
+	void SetPeriodicTrigger_ms(double aPeriodicTriggerPeriod_in_ms, double aPeriodicTriggerAllowedWaitTime_in_ms);
 	void WaitForPeriodicTrigger(bool aWaitForPeriodicTriggerAtBeginningOfSequence);
 	bool SetExternalClock(bool ExternalClock0, bool ExternalClock1);
 	

@@ -65,7 +65,7 @@ PYBIND11_MODULE(control_light_api, m) {
 		        return next_buffer_position;
 			})
 
-        .def("set_periodic_trigger", &ControlLight_API::SetPeriodicTrigger, py::arg("periodic_trigger_period_in_s"), py::arg("periodic_trigger_allowed_wait_time_in_s"))
+        .def("set_periodic_trigger_ms", &ControlLight_API::SetPeriodicTrigger_ms, py::arg("periodic_trigger_period_in_ms"), py::arg("periodic_trigger_allowed_wait_time_in_ms"))
         .def("get_next_cycle_number", [](ControlLight_API& self) {
                 long next_cycle_number = 0;
                 self.GetNextCycleNumber(next_cycle_number);

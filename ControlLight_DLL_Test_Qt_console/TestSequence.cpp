@@ -254,7 +254,7 @@ void InitializeCycleSequence() {
     //When we launch a sequence the FPGA will wait till at least that time has elapsed since the last time we did run
     if (!CheckSequencer()) return;
     //Here we define the cycle time. This resets the cycle.
-    CA.SetPeriodicTrigger(/*PeriodicTriggerPeriod_in_ms*/10000, /*PeriodicTriggerAllowedWaitTime_in_ms*/ 10000);
+    CA.SetPeriodicTrigger_ms(/*PeriodicTriggerPeriod_in_ms*/10000, /*PeriodicTriggerAllowedWaitTime_in_ms*/ 10000);
  }
 
 bool StartCycleSequence(bool take_photodiode_data) {
@@ -418,7 +418,7 @@ bool CycleSequenceWithIndividualCommandUpdate() {
     //Next we define the cycle time. This resets the cycle.
     //When we launch a sequence the FPGA will wait till at least PeriodicTriggerPeriod_in_ms has elapsed since the last time we did run.
     //If FPGA needs to wait longer than PeriodicTriggerAllowedWaitTime_in_ms, the CycleError flag is set high. That flag is retrieved with GetCycleData().
-    CA.SetPeriodicTrigger(PeriodicTriggerPeriod_in_ms, /*PeriodicTriggerAllowedWaitTime_in_ms*/ SequenceDuration_in_ms + WaitTimeBetweenSequences_in_ms);
+    CA.SetPeriodicTrigger_ms(PeriodicTriggerPeriod_in_ms, /*PeriodicTriggerAllowedWaitTime_in_ms*/ SequenceDuration_in_ms + WaitTimeBetweenSequences_in_ms);
 
     long NextCycleNumber = 0;
     long TimeTillNextCycleStart_in_ms = 0;

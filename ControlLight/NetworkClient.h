@@ -35,7 +35,7 @@ public:
 	bool ReadLong(long& Value);
 	bool ReadInt64(unsigned long long& Value);
 	bool SendCommand(const CString &comand);
-	bool SendData(uint8_t* Data, unsigned long Size);
+	bool SendData(uint8_t* Data, unsigned long Size, bool SendReady = true);
 	bool WriteDouble(double d);
 	bool WriteInteger(long i);
 	bool WriteBoolean(bool b);

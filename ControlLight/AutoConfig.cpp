@@ -112,15 +112,15 @@ void ResetRackI2CMultiplexers(const uint8_t SequencerID) {
 	CLA_StartAssemblingSequence();
 
 	//The following code should be used, once it's tested and works
-	//CLA_ResetI2CMultiplexer(SequencerID);
+	CLA_ResetI2CMultiplexer(SequencerID);
 
 	//This is placeholder code, which works
-	uint8_t data = 1;
-	CLA_SetValue(SequencerID, /*Address*/ 0xFE, /*SubAddress*/ 0, /*Data*/ &data, /*DataLength_in_bit*/ 1, /*StartBit*/ 7);
-	CLA_Wait_ms(0.01);
-	data = 0;
-	CLA_SetValue(SequencerID, /*Address*/ 0xFE, /*SubAddress*/ 0, /*Data*/ &data, /*DataLength_in_bit*/ 1, /*StartBit*/ 7);
-	CLA_Wait_ms(0.01);
+	//uint8_t data = 1;
+	//CLA_SetValue(SequencerID, /*Address*/ 0xFE, /*SubAddress*/ 0, /*Data*/ &data, /*DataLength_in_bit*/ 1, /*StartBit*/ 7);
+	//CLA_Wait_ms(0.01);
+	//data = 0;
+	//CLA_SetValue(SequencerID, /*Address*/ 0xFE, /*SubAddress*/ 0, /*Data*/ &data, /*DataLength_in_bit*/ 1, /*StartBit*/ 7);
+	//CLA_Wait_ms(0.01);
 	//end placeholder code
 
 	CLA_ExecuteSequence();

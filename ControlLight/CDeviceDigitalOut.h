@@ -21,7 +21,7 @@ public:
 	//virtual bool Configure();
 
 	virtual bool SetDigitalOutput(uint8_t BitNr, bool OnOff) {
-		uint16_t Data = 1;
+		uint8_t Data = (OnOff) ? 1 : 0;
 		return SetValue(0, (uint8_t*) &Data, 1, BitNr);
 	}
 };

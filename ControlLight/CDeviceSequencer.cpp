@@ -23,6 +23,12 @@ static char THIS_FILE[] = __FILE__;
 #define new DEBUG_NEW
 #endif
 
+#define DebugSequencer
+
+#ifdef DebugSequencer
+std::string DebugFilePath = "D:\\Florian\\OpticsFoundry\\OpticsFoundryControl\\Debug\\";
+#endif
+
 
 CDeviceSequencer::CDeviceSequencer(
 	unsigned int _id,
@@ -78,7 +84,9 @@ CDeviceSequencer::CDeviceSequencer(
 	//Sequencer0->SwitchDebugMode(On);
 	//Timestamp.StartDebug(DebugFilePath + "TimingDebug.dat");
 	//NI653xEthernet->Debug(DebugFilePath + "DebugNI653xEthernet.dat");
-	//NI653xEthernet->DebugBuffer(DebugFilePath + "DebugNI653xEthernetBuffer.dat");
+#ifdef DebugSequencer
+	MyEthernetMultiIOControllerFirefly->DebugBuffer(DebugFilePath + "DebugNI653xEthernetBuffer.dat");
+#endif
 	MyEthernetMultiIOControllerFirefly->MeasureEthernetBandwidth(1024 * 128, 20);
 
 	MyDeviceRack = new CDeviceRack(this);
@@ -366,9 +374,9 @@ void CDeviceSequencer::PrintCPUCommandSequence() {
 	}
 }
 
-void CDeviceSequencer::SetPeriodicTrigger(double periodicTriggerPeriod_in_s, double periodicTriggerAllowedWaitTime_in_s) {
+void CDeviceSequencer::SetPeriodicTrigger_ms(double periodicTriggerPeriod_in_ms, double periodicTriggerAllowedWaitTime_in_ms) {
 	if (master) {
-		MyEthernetMultiIOControllerFirefly->SetPeriodicTrigger(periodicTriggerPeriod_in_s, periodicTriggerAllowedWaitTime_in_s);
+		MyEthernetMultiIOControllerFirefly->SetPeriodicTrigger_ms(periodicTriggerPeriod_in_ms, periodicTriggerAllowedWaitTime_in_ms);
 	}
 }
 

@@ -1204,12 +1204,12 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "GetNextBufferPositionOfMasterSequencer: error");
 		}
 
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SetPeriodicTrigger)(double PeriodicTriggerPeriod_in_s, double PeriodicTriggerAllowedWaitTime_in_s) {
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SetPeriodicTrigger_ms)(double PeriodicTriggerPeriod_in_ms, double PeriodicTriggerAllowedWaitTime_in_ms) {
 			API_LOCK_GUARD;
 			if (!MasterSequencer) {
 				API_UNLOCK_RETURN_ERROR(false, "SetPeriodicTrigger: no master sequencer not found");
 			}
-			MasterSequencer->SetPeriodicTrigger(PeriodicTriggerPeriod_in_s, PeriodicTriggerAllowedWaitTime_in_s);
+			MasterSequencer->SetPeriodicTrigger_ms(PeriodicTriggerPeriod_in_ms, PeriodicTriggerAllowedWaitTime_in_ms);
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "SetPeriodicTrigger: error");
 		}
 

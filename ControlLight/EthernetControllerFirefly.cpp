@@ -55,8 +55,8 @@ CEthernetControllerFirefly::CEthernetControllerFirefly(CDeviceSequencer* _MySequ
 	ExternalTrigger1 = false;
 	ExternalClock0 = false;
 	ExternalClock1 = false;
-	PeriodicTriggerPeriod_in_s = 0;
-	PeriodicTriggerAllowedWait_in_s = 0;
+	PeriodicTriggerPeriod_in_ms = 0;
+	PeriodicTriggerAllowedWait_in_ms = 0;
 	FPGAUseStrobeGenerator = false;
 	//FPGABuffer = new uint32_t[MaxFPGAProgramLength * 4];
 	//FPGAAbsoluteTime = new uint32_t[MaxFPGAProgramLength];
@@ -68,12 +68,12 @@ CEthernetControllerFirefly::CEthernetControllerFirefly(CDeviceSequencer* _MySequ
 	SetPeriodicTriggerAtBeginningOfNextSequence = false;
 	WaitForPeriodicTriggerAtBeginningOfSequence = false;
 	ChangePeriodicTriggerPeriodWhileCycling = false;
-	LastPeriodicTriggerPeriod_in_s = 0;
+	LastPeriodicTriggerPeriod_in_ms = 0;
 	DebugModeOn = false;
-	previous_command_buffer_ptr = nullptr;
 
 	previous_receive_data_ptr = nullptr;
 	receive_data_length = 0;
+	previous_input_buffer_ptr = nullptr;
 
 	MyMultiIO = 0;
 
@@ -83,13 +83,13 @@ CEthernetControllerFirefly::CEthernetControllerFirefly(CDeviceSequencer* _MySequ
 CEthernetControllerFirefly::~CEthernetControllerFirefly()
 {
 	if (DebugBufferFile) delete DebugBufferFile;
-	//if (previous_command_buffer) delete previous_command_buffer;
 	if (Connected) CloseConnection();
-	//delete FPGABuffer;
-	//delete FPGAAbsoluteTime;
+	//if (FPGABuffer) delete FPGABuffer;
+	//if (FPGAAbsoluteTime) delete FPGAAbsoluteTime;
 	if (SequencerCommandList) delete SequencerCommandList;
 	if (previous_command_buffer_ptr) delete previous_command_buffer_ptr;
 	if (previous_receive_data_ptr) delete[] previous_receive_data_ptr;
+	if (previous_input_buffer_ptr) delete[] previous_input_buffer_ptr;
 }
 
 bool CEthernetControllerFirefly::ConnectSocket(const std::string& host, unsigned port, unsigned int aFPGAClockToBusClockRatio, double aFPGAClockFrequencyInHz, bool aFPGAUseExternalClock, bool aFPGAUseStrobeGenerator, bool aExternalTrigger) {
@@ -364,6 +364,7 @@ void CEthernetControllerFirefly::AddCommandWriteSystemTimeToInputMemory() {
 	uint32_t low_buffer =  (0x1F & command);
 	uint32_t high_buffer = 0;
 	AddSequencerCommandToSequenceList(high_buffer, low_buffer);
+	AddCommandWait(3);//Writing FPGA time to input memory takes 4 clock cycles. We need to wait these 3 additional clock cycles, as the next command could also try to write and then we have a conflict.
 }
 
 
@@ -1049,12 +1050,12 @@ void CEthernetControllerFirefly::AddExternalTrigger( bool ExternalTrigger0, bool
 void CEthernetControllerFirefly::SetTriggerOptions( bool ExternalTrigger0, bool ExternalTrigger1) {
 	uint32_t low_buffer;
 	uint32_t high_buffer;
-	if (SetPeriodicTriggerAtBeginningOfNextSequence && (PeriodicTriggerPeriod_in_s > 0)) {
+	if (SetPeriodicTriggerAtBeginningOfNextSequence && (PeriodicTriggerPeriod_in_ms > 0)) {
 		SetPeriodicTriggerAtBeginningOfNextSequence = false;
 		//CMD_SET_PERIODIC_TRIGGER_PERIOD: begin
 		//	periodic_trigger_period <= command[55:8]; // >>8 =  [47:0] = 48 bit;  55:32 = 23:0 = 24 bit 
 		//end
-		uint64_t PeriodicTriggerPeriod = floor(PeriodicTriggerPeriod_in_s * FPGAClockFrequencyInHz / 1000);
+		uint64_t PeriodicTriggerPeriod = floor(PeriodicTriggerPeriod_in_ms * FPGAClockFrequencyInHz / 1000);
 		const uint8_t command_mask = 0x1F;  //5 bit
 		uint8_t command = CMD_SET_PERIODIC_TRIGGER_PERIOD;
 		low_buffer = ((PeriodicTriggerPeriod & 0xFFFFFF) << 8) | (command_mask & CMD_LOAD_COMMAND_BUFFER);  //low 24 bit << 8
@@ -1067,7 +1068,7 @@ void CEthernetControllerFirefly::SetTriggerOptions( bool ExternalTrigger0, bool 
 		//CMD_SET_PERIODIC_TRIGGER_ALLOWED_WAIT_TIME: begin 
 		//	periodic_trigger_allowed_wait_cycles <= command[55:8]; // >>8 =  [47:0] = 48 bit;  55:32 = 23:0 = 24 bit 
 		//end
-		uint64_t PeriodicTriggerAllowedWaitCycles = floor(PeriodicTriggerAllowedWait_in_s * FPGAClockFrequencyInHz / 1000);
+		uint64_t PeriodicTriggerAllowedWaitCycles = floor(PeriodicTriggerAllowedWait_in_ms * FPGAClockFrequencyInHz / 1000);
 		command = CMD_SET_PERIODIC_TRIGGER_ALLOWED_WAIT_TIME;
 		low_buffer = ((PeriodicTriggerAllowedWaitCycles & 0xFFFFFF) << 8) | (command_mask & CMD_LOAD_COMMAND_BUFFER);  //low 24 bit << 8
 		high_buffer = (PeriodicTriggerAllowedWaitCycles >> 24) & 0xFFFFFF; // high 24 bit
@@ -1075,7 +1076,7 @@ void CEthernetControllerFirefly::SetTriggerOptions( bool ExternalTrigger0, bool 
 		low_buffer  = ((PeriodicTriggerAllowedWaitCycles & 0xFFFFFF) << 8) | (command_mask & command);  //low 24 bit << 8
 		high_buffer = (PeriodicTriggerAllowedWaitCycles >> 24) & 0xFFFFFF; // high 24 bit
 		AddSequencerCommand(high_buffer, low_buffer);
-		LastPeriodicTriggerPeriod_in_s = PeriodicTriggerPeriod_in_s;
+		LastPeriodicTriggerPeriod_in_ms = PeriodicTriggerPeriod_in_ms;
 
 		if (ChangePeriodicTriggerPeriodWhileCycling) {
 			//switch LED on to indicate to user that we are waiting for the periodic trigger
@@ -1111,7 +1112,7 @@ void CEthernetControllerFirefly::SetTriggerOptions( bool ExternalTrigger0, bool 
 			AddExternalTrigger(ExternalTrigger0, ExternalTrigger1, false);
 		}
 	}
-	else if (WaitForPeriodicTriggerAtBeginningOfSequence && (LastPeriodicTriggerPeriod_in_s > 0)) {	
+	else if (WaitForPeriodicTriggerAtBeginningOfSequence && (LastPeriodicTriggerPeriod_in_ms > 0)) {	
 		//switch LED on to indicate to user that we are waiting for the periodic trigger
 		core_option_LED = true;
 		uint8_t command = CMD_LOAD_COMMAND_BUFFER;
@@ -1350,10 +1351,10 @@ void CEthernetControllerFirefly::WriteBufferToFile(uint32_t* buffer, unsigned lo
 	out.close();
 }
 
-void CEthernetControllerFirefly::SetPeriodicTrigger(double aPeriodicTriggerPeriod_in_s, double aPeriodicTriggerAllowedWaitTime_in_s) {
-	WaitForPeriodicTrigger(aPeriodicTriggerPeriod_in_s > 0);
-	PeriodicTriggerPeriod_in_s = aPeriodicTriggerPeriod_in_s;
-	PeriodicTriggerAllowedWait_in_s = aPeriodicTriggerAllowedWaitTime_in_s;
+void CEthernetControllerFirefly::SetPeriodicTrigger_ms(double aPeriodicTriggerPeriod_in_ms, double aPeriodicTriggerAllowedWaitTime_in_ms) {
+	WaitForPeriodicTrigger(aPeriodicTriggerPeriod_in_ms > 0);
+	PeriodicTriggerPeriod_in_ms = aPeriodicTriggerPeriod_in_ms;
+	PeriodicTriggerAllowedWait_in_ms = aPeriodicTriggerAllowedWaitTime_in_ms;
 	SetPeriodicTriggerAtBeginningOfNextSequence = true;
 	ChangePeriodicTriggerPeriodWhileCycling = WaitForPeriodicTriggerAtBeginningOfSequence;
 }
@@ -1365,7 +1366,7 @@ void CEthernetControllerFirefly::WaitForPeriodicTrigger(bool aWaitForPeriodicTri
 void CEthernetControllerFirefly::TransmitOnlyDifferenceBetweenCommandSequenceIfPossible(bool aDoTransmitOnlyDifferenceBetweenCommandSequenceIfPossible) {
 	DoTransmitOnlyDifferenceBetweenCommandSequenceIfPossible = aDoTransmitOnlyDifferenceBetweenCommandSequenceIfPossible;
 	if (!DoTransmitOnlyDifferenceBetweenCommandSequenceIfPossible) {
-		//delete previous_command_buffer;
+		if (previous_command_buffer) delete previous_command_buffer;
 		previous_command_buffer = NULL;
 		previous_command_buffer_length = 0;
 	}
@@ -1393,7 +1394,7 @@ bool CEthernetControllerFirefly::AttemptModifySequence(unsigned long differences
 	if (!/*Optimized*/Command("modify_sequence")) return false;
 	if (!WriteInteger(12 * differences)) return false;
 	if (!SendData((uint8_t*)difference_index_table, 4 * differences)) return false;
-	if (!SendData((uint8_t*)difference_command_table, 8 * differences)) return false;
+	if (!SendData((uint8_t*)difference_command_table, 8 * differences,/*SendReady*/ false)) return false;
 	return true;
 }
 
@@ -1527,7 +1528,7 @@ bool CEthernetControllerFirefly::AddSequencePreamble() {
 	if (DelayMultiplier < 1) DelayMultiplier = 1;
 
 	unsigned int StrobeDelay = ((DelayMultiplier + 1) / 3) - 1;
-
+	AddCommandWriteSystemTimeToInputMemory(); //write time stamp to first command line
 	//strobe/clock output pin content: 0: clock 1: strobe, 2: low, 3: high, 4: flags_hi[31]
 	SetStrobeOptions( (FPGAUseStrobeGenerator) ? 1 : 0, StrobeDelay, StrobeDelay); // this command fills 2 command lines
 	SetTriggerOptions(  ExternalTrigger0, ExternalTrigger1); // this command fills 6 command lines
@@ -1605,13 +1606,13 @@ bool CEthernetControllerFirefly::SendSequenceToFPGA(uint32_t* buffer) {
 						difference_index_table[differences] = n;
 						difference_command_table[2 * differences] = buffer[2 * n ];
 						difference_command_table[2 * differences + 1] = buffer[2 * n + 1];
-						previous_command_buffer[2 * n] = buffer[2 * n];
-						previous_command_buffer[2 * n + 1] = buffer[2 * n + 1];
+						//previous_command_buffer[2 * n] = buffer[2 * n];
+						//previous_command_buffer[2 * n + 1] = buffer[2 * n + 1];
 						differences++;
 					}
 					else {
 						possible = false;
-						//delete previous_command_buffer;
+						//delete previous_command_buffer; //don't delete previous_command_buffer, as it is just a copy of buffer. 
 						previous_command_buffer = NULL;
 						previous_command_buffer_length = 0;
 						break;
@@ -1631,6 +1632,8 @@ bool CEthernetControllerFirefly::SendSequenceToFPGA(uint32_t* buffer) {
 					ModifySequence(differences, difference_index_table, difference_command_table);					
 				}
 				//Command("print_sequence");//only for debug
+				previous_command_buffer = buffer;
+				previous_command_buffer_length = DataSize;
 				ClearSequencerCommandList();
 				return true;
 			}
@@ -1641,9 +1644,7 @@ bool CEthernetControllerFirefly::SendSequenceToFPGA(uint32_t* buffer) {
 	if (ok) {
 		std::string buf = std::format("send data, {} bytes sent", DataSize);
 		////Timestamp.Mark(buf);
-		//if (previous_command_buffer) {
-		//	delete previous_command_buffer;
-		//}
+		//if (previous_command_buffer) delete previous_command_buffer; //don't delete previous_command_buffer, as it is just a copy of buffer. 
 		previous_command_buffer = buffer;
 		previous_command_buffer_length = DataSize;
 		ClearSequencerCommandList();
@@ -1934,9 +1935,10 @@ bool CEthernetControllerFirefly::WaitTillEndOfSequenceThenGetInputData(uint8_t*&
 }
 
 bool CEthernetControllerFirefly::AttemptWaitTillEndOfSequenceThenGetInputData(uint8_t * &buffer, unsigned long & buffer_length, unsigned  long& EndTimeOfCycle, double timeout_in_s) {
-	if (buffer) delete[] buffer;
-	buffer = NULL;
-	previous_command_buffer_ptr = NULL;
+	if (previous_input_buffer_ptr) {
+		delete[] previous_input_buffer_ptr;
+		previous_input_buffer_ptr = NULL;
+	}
 	buffer_length = 0;
 	//progress bar without communication
 	//unsigned  long TickCounts = GetTickCount();
@@ -1967,13 +1969,13 @@ bool CEthernetControllerFirefly::AttemptWaitTillEndOfSequenceThenGetInputData(ui
 		}
 
 		buffer = new uint8_t[InputBufferContentsLength];
-		previous_command_buffer_ptr = buffer;
+		previous_input_buffer_ptr = buffer;
 		buffer_length = InputBufferContentsLength;	
 		if (Network) return Network->ReceiveData(buffer, buffer_length, /*timeout_in_ms = */ 5000);
 		else {
 			delete[] buffer;
 			buffer = NULL;
-			previous_command_buffer_ptr = NULL;
+			previous_input_buffer_ptr = NULL;
 			buffer_length = 0;
 			return false;
 		}
