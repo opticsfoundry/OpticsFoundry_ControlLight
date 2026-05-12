@@ -12,8 +12,53 @@
 #include <cstdio>
 #include <bitset>
 
+#ifdef _WIN32
+#include <conio.h>
+#else
+#include <sys/select.h>
+#include <termios.h>
+#include <unistd.h>
+#endif
+
 
 using namespace std;
+
+#ifdef _WIN32
+bool ConsoleKeyPressed() {
+	if (_kbhit()) {
+		_getch();
+		return true;
+	}
+	return false;
+}
+#else
+bool ConsoleKeyPressed() {
+	termios oldTerminalSettings;
+	if (tcgetattr(STDIN_FILENO, &oldTerminalSettings) != 0) {
+		return false;
+	}
+
+	termios newTerminalSettings = oldTerminalSettings;
+	newTerminalSettings.c_lflag &= ~(ICANON | ECHO);
+	if (tcsetattr(STDIN_FILENO, TCSANOW, &newTerminalSettings) != 0) {
+		return false;
+	}
+
+	fd_set readFileDescriptors;
+	FD_ZERO(&readFileDescriptors);
+	FD_SET(STDIN_FILENO, &readFileDescriptors);
+	timeval timeout = { 0, 0 };
+	int selected = select(STDIN_FILENO + 1, &readFileDescriptors, nullptr, nullptr, &timeout);
+
+	if (selected > 0) {
+		char key;
+		(void)read(STDIN_FILENO, &key, 1);
+	}
+
+	tcsetattr(STDIN_FILENO, TCSANOW, &oldTerminalSettings);
+	return selected > 0;
+}
+#endif
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -558,10 +603,17 @@ void DemoSequence(unsigned long CycleNumber) {
 	CLA_Wait_ms(40);
 	for (int n = 0; n < 5; n++) {
 		CLA_SetDigitalOutput(/*SequencerNr*/ 0, /*Addr*/ 2, /* BitNr */ 0, false);
+		//CLA_SetSequencerDigitalOut(/*SequencerNr*/ 0, 0);
+		//CLA_SwitchSequencerBuzzer(/*SequencerNr*/ 0, false);
+		CLA_SequencerSwitchDebugLED(/*SequencerNr*/ 0, 0);
 		CLA_Wait_ms(10);
 		CLA_SetDigitalOutput(/*SequencerNr*/ 0, /*Addr*/ 2, /* BitNr */ 0, true);
+		//CLA_SetSequencerDigitalOut(/*SequencerNr*/ 0, 128);
+		//CLA_SwitchSequencerBuzzer(/*SequencerNr*/ 0, true);
+		CLA_SequencerSwitchDebugLED(/*SequencerNr*/ 0, 1);
 		CLA_Wait_ms(10);
 	}
+	CLA_SetSequencerDigitalOut(/*SequencerNr*/ 0, 0);
 	//Test input board:
 	//for (uint8_t n = 0; n<12; n++) {
 	//	CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, n);
@@ -815,6 +867,25 @@ void DemoFPGASequencerSingleRun() {
 	CLA_Cleanup();
 }
 
+void DemoFPGASequencerSoundBuzzer() {
+	if (!InitializeSystem()) {
+		return;
+	}
+	CLA_StartAssemblingSequence();
+	CLA_SwitchSequencerBuzzer(/*SequencerNr*/ 0, true);
+	CLA_SetDigitalOutput(/*SequencerNr*/ 0, /*Addr*/ 2, /* BitNr */ 0, true);
+	CLA_Wait_ms(100);
+	CLA_SwitchSequencerBuzzer(/*SequencerNr*/ 0, false);
+	CLA_ExecuteSequence();
+	unsigned long long DataPointsWritten = 0;
+	bool running = false;
+	CLA_GetSequenceExecutionStatus(running, DataPointsWritten);
+	uint8_t* buffer = nullptr;
+	unsigned long buffer_length = 0;
+	unsigned long EndTimeOfCycle = 0;
+	CLA_WaitTillEndOfSequenceThenGetInputData(buffer, buffer_length, EndTimeOfCycle, 10);
+}
+
 void DemoFPGASequencerCyclicSequencing() {
 	if (!InitializeSystem()) {
 		return;
@@ -836,7 +907,9 @@ void DemoFPGASequencerCyclicSequencing() {
 	//to speed up TCP/IP transmission of data from PC to sequencer, transmit only changes of sequence, if possible.
 	CLA_TransmitOnlyDifferenceBetweenCommandSequenceIfPossible(true);
 
-	for (unsigned long CycleNr = 0; CycleNr < 100; CycleNr++) {
+	cout << "Press any key to stop cyclic sequencing." << endl;
+	unsigned long CycleNr = 0;
+	while (!ConsoleKeyPressed()) {
 		Time starttime = Clock::now();
 		cout << "Iteration " << CycleNr << ": ";
 		//We create sequence from scratch to update trigger settings and cycle number dependent sequence entries.
@@ -859,12 +932,16 @@ void DemoFPGASequencerCyclicSequencing() {
 
 		//Duration duration = Clock::now() - starttime;
 		//cout << "Duration: " << milliSeconds(duration) << " ms  Buffer length : " << buffer_length << endl;
+		CycleNr++;
 	}
 	//Switch periodic trigger off by setting its period to 0ms.
 	CLA_SetPeriodicTrigger_ms(0, 0);
+	CLA_Cleanup();
 }
 
 void DemoSmartSequencer() {
+	//Demonstration of the command interpreter available on the ZYNQ Sequencer.
+	//We implement a simple and slow VCO.
 
 	cout << "Bare function API, using bool error return value" << endl;
 
@@ -881,7 +958,7 @@ void DemoSmartSequencer() {
 	unsigned int AnalogOutBoardStartAddress = 20;
 	unsigned int DigitalOutAddress = 10;
 
-	CLA_AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.1.90", 7, true, 0, 100000000, 3, false, true, true, true);
+	CLA_AddDeviceSequencer(0, "OpticsFoundrySequencerV1", "192.168.0.112", 57978, true, 0, 100000000, 3, false, true, true, true);
 	CLA_AddDeviceAnalogOut16bit(0, AnalogOutBoardStartAddress, 4, true, -10, 10);
 	CLA_AddDeviceDigitalOut(0, DigitalOutAddress, 16);
 	CLA_AddDeviceAD9854(0, AD98450Address, 2, 300000000, 1, 1);
@@ -1183,6 +1260,9 @@ void DemoReadConfigEEPROM() {
 	if (!InitializeSystem()) {
 		return;
 	}
+	
+	/*
+	//Demo: read one specific rack slot
 	constexpr uint8_t SequencerNr = 0;
 	constexpr uint8_t RackNr = 0;
 	constexpr uint8_t SlotNr = 0;
@@ -1194,29 +1274,26 @@ void DemoReadConfigEEPROM() {
 	std::string read_data(buffer, length);
 	cout << "Read from EEPROM: " << read_data << endl;
 	cout << endl;
-	CLA_ReadConfiguration("ConfigFromEEPROMs");
-
-
-	/* char* buffer = nullptr;
-	size_t length = 256;
-	bool I2C_success;
-	CLA_ReadConfigEEPROM(SequencerNr, RackNr, SlotNr, (uint8_t*&)buffer, length, I2C_success);
-	if (buffer != nullptr) {
-		std::string read_data(buffer, length);
-		cout << "Read from EEPROM: " << read_data << endl;
-		cout << endl;
-	}
-	CLA_ReadConfiguration("ConfigFromEEPROMs");
 	*/
+
+	//Read all slots
+	//CLA_ReadConfiguration("c:\\data\\ConfigFromEEPROMs");
+
+	//Demo: create configuration file from EEPROMS
+	CLA_GetAutoConfigJSON("c:\\data\\ConfigFromEEPROMs");
 }
 
 int main() {
+	//DemoFPGASequencerSoundBuzzer();
 	//DemoFPGASequencerSingleRun();
 	DemoFPGASequencerCyclicSequencing();
-	//DemoSmartSequencer();
-	//DemoDDSVCO();
 	//DemoWriteConfigEEPROM();
 	//DemoReadConfigEEPROM();
+	//DemoSmartSequencer();
+	
+	//Unfinished demos:
+	//DemoDDSVCO();
+	CLA_Cleanup();
 	return 0;
 }
 
@@ -1225,4 +1302,3 @@ int main() {
 #endif	
 
 #endif
-

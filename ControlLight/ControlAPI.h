@@ -766,6 +766,21 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @return 
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerSwitchDebugLED)(const unsigned int& Sequencer, unsigned int OnOff);
 
+		/// @brief Sets the sequencer digital output pattern.
+		/// @param Sequencer the sequencer to use.
+		/// @param dig_out_pattern the 8-bit digital output pattern.
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SetSequencerDigitalOut)(const unsigned int& Sequencer, uint8_t dig_out_pattern);
+
+		/// @brief Sets the sequencer PL-to-PS command byte.
+		/// @param Sequencer the sequencer to use.
+		/// @param PL_to_PS_command the 8-bit PL-to-PS command.
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SetSequencer_PL_to_PS_command)(const unsigned int& Sequencer, uint8_t PL_to_PS_command);
+
+		/// @brief Switches the sequencer buzzer on or off.
+		/// @param Sequencer the sequencer to use.
+		/// @param OnOff true to switch on the buzzer, false to switch it off.
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SwitchSequencerBuzzer)(const unsigned int& Sequencer, bool OnOff);
+
 		/**  @brief Switches the sequencer to ignore TCP/IP commands.
 		 * This is useful to prevent the sequencer from being interrupted by TCP/IP commands while executing a timing critical task, such as transferring input data from the FPGA BRAM to the DDR.
 		 * This can be useful if lots of data is acquired at a high rate. Lot's of meaning: more than the size of the BRAM input buffer.

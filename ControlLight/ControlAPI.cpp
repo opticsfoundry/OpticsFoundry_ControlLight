@@ -399,7 +399,10 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 					delete SequencerList[i];
 					SequencerList[i] = nullptr;
 				}
+				ShortSequencerList[i] = nullptr;
 			}
+			MasterSequencer = nullptr;
+			NrSequencers = 0;
 			API_UNLOCK;
 			CATCH_MFC_EX_E
 		}
@@ -664,6 +667,39 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			}
 			sequencer->SequencerSwitchDebugLED(OnOff);
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerSwitchDebugLED: error");
+		}
+
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SetSequencerDigitalOut)(const unsigned int& Sequencer, uint8_t dig_out_pattern) {
+			API_LOCK_GUARD;
+			CDeviceSequencer* sequencer = GetSequencer(Sequencer);
+			//SequencerList is initialized to zero at program start, so no need to check if it is initialized
+			if (!sequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "CLA_SetSequencerDigitalOut: Invalid sequencer");
+			}
+			sequencer->SetSequencerDigitalOut(dig_out_pattern);
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SetSequencerDigitalOut: error");
+		}
+
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SetSequencer_PL_to_PS_command)(const unsigned int& Sequencer, uint8_t PL_to_PS_command) {
+			API_LOCK_GUARD;
+			CDeviceSequencer* sequencer = GetSequencer(Sequencer);
+			//SequencerList is initialized to zero at program start, so no need to check if it is initialized
+			if (!sequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "CLA_SetSequencer_PL_to_PS_command: Invalid sequencer");
+			}
+			sequencer->SetSequencer_PL_to_PS_command(PL_to_PS_command);
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SetSequencer_PL_to_PS_command: error");
+		}
+
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SwitchSequencerBuzzer)(const unsigned int& Sequencer, bool OnOff) {
+			API_LOCK_GUARD;
+			CDeviceSequencer* sequencer = GetSequencer(Sequencer);
+			//SequencerList is initialized to zero at program start, so no need to check if it is initialized
+			if (!sequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "CLA_SwitchSequencerBuzzer: Invalid sequencer");
+			}
+			sequencer->SwitchSequencerBuzzer(OnOff);
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SwitchSequencerBuzzer: error");
 		}
 
 		 

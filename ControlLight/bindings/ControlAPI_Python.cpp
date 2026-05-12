@@ -217,6 +217,18 @@ PYBIND11_MODULE(control_light_api, m) {
         .def("sequencer_switch_debug_led", &ControlLight_API::SequencerSwitchDebugLED,
             py::arg("sequencer"), py::arg("on_off"))
 
+        // Sets sequencer digital outputs
+        .def("set_sequencer_digital_out", &ControlLight_API::SetSequencerDigitalOut,
+            py::arg("sequencer"), py::arg("dig_out_pattern"))
+
+        // Sets sequencer PL-to-PS command
+        .def("set_sequencer_pl_to_ps_command", &ControlLight_API::SetSequencer_PL_to_PS_command,
+            py::arg("sequencer"), py::arg("pl_to_ps_command"))
+
+        // Switches sequencer buzzer
+        .def("switch_sequencer_buzzer", &ControlLight_API::SwitchSequencerBuzzer,
+            py::arg("sequencer"), py::arg("on_off"))
+
         // Ignores TCP/IP commands
         .def("sequencer_ignore_tcpip", &ControlLight_API::SequencerIgnoreTCPIP,
             py::arg("sequencer"), py::arg("on_off"))

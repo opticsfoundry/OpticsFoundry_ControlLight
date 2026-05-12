@@ -68,7 +68,7 @@ void ConfigCreator::RegisterSequencer(int Id, const std::string& Type, const std
 }
 
 void ConfigCreator::RegisterAnalogOutBoard16bit(int Sequencer, int StartAddress, int NumberChannels,
-	bool Signed, int MinVoltage, int MaxVoltage, const optional<string>& Model,
+	bool Signed, double MinVoltage, double MaxVoltage, const optional<string>& Model,
 	const optional<string>& SN, const optional<int>& RackNr, const optional<int>& SlotNr) {
 	json entry = {
 		{"Sequencer", Sequencer},
@@ -107,7 +107,7 @@ void ConfigCreator::RegisterSerialPortBoard(int Sequencer, int Address, int Rack
 }
 
 void ConfigCreator::RegisterDDSAD9854Board(int Version, int Sequencer, int Address,
-	int ExternalClockFrequencyinMHz, int PLLReferenceMultiplier, int FrequencyMultiplier,
+	double ExternalClockFrequencyinMHz, int PLLReferenceMultiplier, double FrequencyMultiplier,
 	const optional<string>& Model, const optional<string>& SN,
 	const optional<int>& RackNr, const optional<int>& SlotNr) {
 	json entry = {
@@ -122,8 +122,8 @@ void ConfigCreator::RegisterDDSAD9854Board(int Version, int Sequencer, int Addre
 	config_["DDSAD9854Boards"].push_back(entry);
 }
 
-void ConfigCreator::RegisterDDSAD9858Board(int Sequencer, int Address, int ClockFrequencyinMHz,
-	int FrequencyMultiplier, const optional<string>& Model, const optional<string>& SN,
+void ConfigCreator::RegisterDDSAD9858Board(int Sequencer, int Address, double ClockFrequencyinMHz,
+	double FrequencyMultiplier, const optional<string>& Model, const optional<string>& SN,
 	const optional<int>& RackNr, const optional<int>& SlotNr) {
 	json entry = {
 		{"Sequencer", Sequencer},
@@ -135,8 +135,8 @@ void ConfigCreator::RegisterDDSAD9858Board(int Sequencer, int Address, int Clock
 	config_["DDSAD9858Boards"].push_back(entry);
 }
 
-void ConfigCreator::RegisterDDSAD9959Board(int Sequencer, int Address, int ClockFrequencyinMHz,
-	int FrequencyMultiplier, bool AD9958, const optional<string>& Model, const optional<string>& SN,
+void ConfigCreator::RegisterDDSAD9959Board(int Sequencer, int Address, double ClockFrequencyinMHz,
+	double FrequencyMultiplier, bool AD9958, const optional<string>& Model, const optional<string>& SN,
 	const optional<int>& RackNr, const optional<int>& SlotNr) {
 	json entry = {
 		{"Sequencer", Sequencer},
@@ -150,17 +150,21 @@ void ConfigCreator::RegisterDDSAD9959Board(int Sequencer, int Address, int Clock
 }
 
 void ConfigCreator::RegisterAnalogInBoard12bit(int Sequencer, int Address, int NumberChannels,
-	int MinVoltage, int MaxVoltage, const optional<string>& Model,
+	double MinVoltage, double MaxVoltage, const optional<string>& Model,
 	const optional<string>& SN, const optional<int>& RackNr, const optional<int>& SlotNr) {
 	json entry = {
 		{"Sequencer", Sequencer},
-		{"Address", Address},
+		{"ChipSelect", Address},
 		{"NumberChannels", NumberChannels},
 		{"MinVoltage", MinVoltage},
 		{"MaxVoltage", MaxVoltage}
 	};
 	AddOptionalHardwareFields(entry, Model, SN, RackNr, SlotNr);
 	config_["AnalogInBoards12bit"].push_back(entry);
+}
+
+void ConfigCreator::RegisterRackEntry(const json& entry) {
+	config_["Rack"].push_back(entry);
 }
 
 bool ConfigCreator::Save() const {
@@ -206,7 +210,7 @@ bool ConfigCreator::Save() const {
 		check_and_add(entry["Sequencer"], entry["Address"], 1, "DDSAD9959Board");
 	}
 	for (const auto& entry : config_["AnalogInBoards12bit"]) {
-		check_and_add(entry["Sequencer"], entry["Address"], 1, "AnalogInBoard12bit");
+		check_and_add(entry["Sequencer"], entry["ChipSelect"], 1, "AnalogInBoard12bit");
 	}
 
 	if (!errors.empty()) {

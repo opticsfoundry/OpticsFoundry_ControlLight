@@ -74,6 +74,7 @@ CEthernetControllerFirefly::CEthernetControllerFirefly(CDeviceSequencer* _MySequ
 	previous_receive_data_ptr = nullptr;
 	receive_data_length = 0;
 	previous_input_buffer_ptr = nullptr;
+	previous_command_buffer_ptr = nullptr;
 
 	MyMultiIO = 0;
 
@@ -82,14 +83,30 @@ CEthernetControllerFirefly::CEthernetControllerFirefly(CDeviceSequencer* _MySequ
 
 CEthernetControllerFirefly::~CEthernetControllerFirefly()
 {
-	if (DebugBufferFile) delete DebugBufferFile;
+	if (DebugBufferFile) {
+		DebugBufferFile->close();
+		delete DebugBufferFile;
+		DebugBufferFile = nullptr;
+	}
 	if (Connected) CloseConnection();
 	//if (FPGABuffer) delete FPGABuffer;
 	//if (FPGAAbsoluteTime) delete FPGAAbsoluteTime;
-	if (SequencerCommandList) delete SequencerCommandList;
-	if (previous_command_buffer_ptr) delete previous_command_buffer_ptr;
-	if (previous_receive_data_ptr) delete[] previous_receive_data_ptr;
-	if (previous_input_buffer_ptr) delete[] previous_input_buffer_ptr;
+	if (SequencerCommandList) {
+		delete[] SequencerCommandList;
+		SequencerCommandList = nullptr;
+	}
+	if (previous_command_buffer_ptr) {
+		delete[] previous_command_buffer_ptr;
+		previous_command_buffer_ptr = nullptr;
+	}
+	if (previous_receive_data_ptr) {
+		delete[] previous_receive_data_ptr;
+		previous_receive_data_ptr = nullptr;
+	}
+	if (previous_input_buffer_ptr) {
+		delete[] previous_input_buffer_ptr;
+		previous_input_buffer_ptr = nullptr;
+	}
 }
 
 bool CEthernetControllerFirefly::ConnectSocket(const std::string& host, unsigned port, unsigned int aFPGAClockToBusClockRatio, double aFPGAClockFrequencyInHz, bool aFPGAUseExternalClock, bool aFPGAUseStrobeGenerator, bool aExternalTrigger) {
@@ -542,8 +559,8 @@ void CEthernetControllerFirefly::AddCommandSetCoreOption_LED(bool a_core_option_
 	AddCommandSetCoreOptions();
 }
 
-void CEthernetControllerFirefly::AddCommandSetCoreOption_SPI_CS(uint8_t a_core_option_SPI_CS) {
-	core_option_SPI_CS = a_core_option_SPI_CS;
+void CEthernetControllerFirefly::AddCommandSwitchBuzzer(bool OnOff) {
+	if (OnOff) core_option_dig_out |= 128; else core_option_dig_out &= ~128;
 	AddCommandSetCoreOptions();
 }
 
@@ -554,6 +571,11 @@ void CEthernetControllerFirefly::AddCommandSetCoreOption_dig_out(uint8_t a_core_
 
 void CEthernetControllerFirefly::AddCommandSetCoreOption_PL_to_PS(uint8_t a_core_option_PL_to_PS) {
 	core_option_PL_to_PS = a_core_option_PL_to_PS;
+	AddCommandSetCoreOptions();
+}
+
+void CEthernetControllerFirefly::AddCommandSetCoreOption_SPI_CS(uint8_t a_core_option_SPI_CS) {
+	core_option_SPI_CS = a_core_option_SPI_CS;
 	AddCommandSetCoreOptions();
 }
 
@@ -1366,7 +1388,6 @@ void CEthernetControllerFirefly::WaitForPeriodicTrigger(bool aWaitForPeriodicTri
 void CEthernetControllerFirefly::TransmitOnlyDifferenceBetweenCommandSequenceIfPossible(bool aDoTransmitOnlyDifferenceBetweenCommandSequenceIfPossible) {
 	DoTransmitOnlyDifferenceBetweenCommandSequenceIfPossible = aDoTransmitOnlyDifferenceBetweenCommandSequenceIfPossible;
 	if (!DoTransmitOnlyDifferenceBetweenCommandSequenceIfPossible) {
-		if (previous_command_buffer) delete previous_command_buffer;
 		previous_command_buffer = NULL;
 		previous_command_buffer_length = 0;
 	}
@@ -1431,6 +1452,7 @@ bool CEthernetControllerFirefly::TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_a
 }
 
 bool CEthernetControllerFirefly::AttemptTransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t &receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool &I2C_success, bool fail_silently) {
+	I2C_success = false;
 	if (!/*Optimized*/Command("transmit_I2C")) return false;
 	if (!WriteInteger(I2C_port)) return false;
 	if (!WriteInteger(I2C_address >> 1)) return false;
@@ -1447,6 +1469,7 @@ bool CEthernetControllerFirefly::AttemptTransmitI2CPort(uint8_t I2C_port, uint8_
 		if (!fail_silently) AddErrorMessage("CEthernetControllerFirefly::AttemptTransmitI2CPort : I2C transmission failed\nIs I2C device connected?\n\nFor more debug info, put FPGA sequencer into debug mode using CLA_SwitchDebugMode(true,\"Filename\")\n(or comment out CLA_SwitchDebugMode(false,\"Filename\"), if that blocks I2C debugging),\nconnect USB cable to it's UART USB output, and look at data send back on COM terminal.\nSwitch debug mode off to work at highest possible speed.");
 		return true;
 	}
+	I2C_success = true;
 	unsigned long long InputBufferContentsLength;
 	if (!ReadInt64(InputBufferContentsLength)) return false;
 	if (InputBufferContentsLength > 0) {
@@ -1670,7 +1693,7 @@ double CEthernetControllerFirefly::MeasureEthernetBandwidth(uint32_t DataSize, d
 		SendData((uint8_t*)buffer, DataSize);
 		CheckReady(10);
 		Time EndTickCount = Clock::now();
-		delete buffer;
+		delete[] buffer;
 		double Bandwidth = 0.000001*DataSize * 8 / (milliSeconds(EndTickCount - StartTickCount) / 1000.0); //in Mbit/s
 		if (Bandwidth < MinimumExpected) {
 			AddErrorMessage(std::format("CEthernetControllerFirefly::MeasureEthernetBandwidth : Ethernet Bandwidth = {:.1f} MBit/s is lower than expected. Check ethernet connection.", Bandwidth));

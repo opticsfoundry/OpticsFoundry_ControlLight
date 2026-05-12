@@ -21,7 +21,7 @@ public:
 		const std::optional<int>& SlotNr = std::nullopt);
 
 	void RegisterAnalogOutBoard16bit(int Sequencer = 0, int StartAddress = 24, int NumberChannels = 4,
-		bool Signed = true, int MinVoltage = -10, int MaxVoltage = 10,
+		bool Signed = true, double MinVoltage = -10, double MaxVoltage = 10,
 		const std::optional<std::string>& Model = std::nullopt,
 		const std::optional<std::string>& SN = std::nullopt,
 		const std::optional<int>& RackNr = std::nullopt,
@@ -38,30 +38,32 @@ public:
 		const std::optional<std::string>& SN = std::nullopt);
 
 	void RegisterDDSAD9854Board(int Version = 2, int Sequencer = 0, int Address = 132,
-		int ExternalClockFrequencyinMHz = 300, int PLLReferenceMultiplier = 1,
-		int FrequencyMultiplier = 1, const std::optional<std::string>& Model = std::nullopt,
+		double ExternalClockFrequencyinMHz = 300, int PLLReferenceMultiplier = 1,
+		double FrequencyMultiplier = 1, const std::optional<std::string>& Model = std::nullopt,
 		const std::optional<std::string>& SN = std::nullopt,
 		const std::optional<int>& RackNr = std::nullopt,
 		const std::optional<int>& SlotNr = std::nullopt);
 
-	void RegisterDDSAD9858Board(int Sequencer = 0, int Address = 50, int ClockFrequencyinMHz = 1200,
-		int FrequencyMultiplier = 1, const std::optional<std::string>& Model = std::nullopt,
+	void RegisterDDSAD9858Board(int Sequencer = 0, int Address = 50, double ClockFrequencyinMHz = 1200,
+		double FrequencyMultiplier = 1, const std::optional<std::string>& Model = std::nullopt,
 		const std::optional<std::string>& SN = std::nullopt,
 		const std::optional<int>& RackNr = std::nullopt,
 		const std::optional<int>& SlotNr = std::nullopt);
 
-	void RegisterDDSAD9959Board(int Sequencer = 0, int Address = 21, int ClockFrequencyinMHz = 300,
-		int FrequencyMultiplier = 1, bool AD9958 = false, const std::optional<std::string>& Model = std::nullopt,
+	void RegisterDDSAD9959Board(int Sequencer = 0, int Address = 21, double ClockFrequencyinMHz = 300,
+		double FrequencyMultiplier = 1, bool AD9958 = false, const std::optional<std::string>& Model = std::nullopt,
 		const std::optional<std::string>& SN = std::nullopt,
 		const std::optional<int>& RackNr = std::nullopt,
 		const std::optional<int>& SlotNr = std::nullopt);
 
 	void RegisterAnalogInBoard12bit(int Sequencer = 0, int Address = 80, int NumberChannels = 4,
-		int MinVoltage = -10, int MaxVoltage = 10,
+		double MinVoltage = -10, double MaxVoltage = 10,
 		const std::optional<std::string>& Model = std::nullopt,
 		const std::optional<std::string>& SN = std::nullopt,
 		const std::optional<int>& RackNr = std::nullopt,
 		const std::optional<int>& SlotNr = std::nullopt);
+
+	void RegisterRackEntry(const json& entry);
 
 	bool Save() const;
 

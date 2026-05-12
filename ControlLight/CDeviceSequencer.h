@@ -99,7 +99,9 @@ public:
 	void ResetCycleNumber();
 
 	bool TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently);
-
+	void SetSequencerDigitalOut(uint8_t dig_out_pattern);
+	void SetSequencer_PL_to_PS_command(uint8_t PL_to_PS_command);
+	void SwitchSequencerBuzzer(bool OnOff);
 	void StartAssemblingCPUCommandSequence();
 	void AddCPUCommand(const char* command);
 	void ExecuteCPUCommandSequence(unsigned long ethernet_check_period_in_ms);

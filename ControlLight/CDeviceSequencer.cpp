@@ -97,7 +97,7 @@ CDeviceSequencer::~CDeviceSequencer() {
 	for (unsigned int i = 0; i < MaxParallelBusDevices - 1; i++)
 		if (ParallelBusDeviceList[i]) {
 			//some devices use more than one address. Only delete them once.
-			if (ParallelBusDeviceList[i] != ReservedBusAddress) {
+			if (ParallelBusDeviceList[i] != ReservedBusAddress && ParallelBusDeviceList[i] != MyDeviceRack.get()) {
 				delete ParallelBusDeviceList[i];
 				ParallelBusDeviceList[i] = nullptr;
 			}
@@ -389,11 +389,21 @@ void CDeviceSequencer::ResetCycleNumber() {
 }
 
 bool CDeviceSequencer::TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently) {
-	if (master) {
-		return MyEthernetMultiIOControllerFirefly->TransmitI2CPort(I2C_port, I2C_address, send_length, send_data, receive_length, receive_data, I2C_clock_frequency_in_Hz, I2C_success, fail_silently);
-	}
-	return false;
+	return MyEthernetMultiIOControllerFirefly->TransmitI2CPort(I2C_port, I2C_address, send_length, send_data, receive_length, receive_data, I2C_clock_frequency_in_Hz, I2C_success, fail_silently);
 }
+
+void CDeviceSequencer::SetSequencerDigitalOut(uint8_t dig_out_pattern) {
+	MyEthernetMultiIOControllerFirefly->AddCommandSetCoreOption_dig_out(dig_out_pattern);
+}
+
+void CDeviceSequencer::SetSequencer_PL_to_PS_command(uint8_t PL_to_PS_command) {
+	MyEthernetMultiIOControllerFirefly->AddCommandSetCoreOption_PL_to_PS(PL_to_PS_command);
+}
+
+void CDeviceSequencer::SwitchSequencerBuzzer(bool OnOff) {
+	MyEthernetMultiIOControllerFirefly->AddCommandSwitchBuzzer(OnOff);
+}
+
 
 bool CDeviceSequencer::Wait_ms(double time_in_ms) {
 	Delay_in_ms += time_in_ms;

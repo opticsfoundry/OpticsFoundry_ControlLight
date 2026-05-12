@@ -11,7 +11,9 @@
 #include <cstring>
 #include <cstdio>
 #include <cctype>
+#include <filesystem>
 #include <iomanip>
+#include <sstream>
 #include "AutoConfig.h"
 
 
@@ -88,6 +90,349 @@ namespace {
 		return output_filename + "_config.json";
 	}
 
+	std::string MakeConfigCreatorOutputBase(const std::string& filename) {
+		std::string output_base = filename;
+		if (output_base.size() >= 5 && output_base.substr(output_base.size() - 5) == ".json") {
+			output_base = output_base.substr(0, output_base.size() - 5);
+		}
+		return output_base + "_config_creator";
+	}
+
+	std::string FormatNumber(const double value) {
+		std::ostringstream stream;
+		stream << std::setprecision(15) << value;
+		return stream.str();
+	}
+
+	std::string JsonStringLiteral(const std::string& value) {
+		return json(value).dump();
+	}
+
+	std::string CppOptionalString(const json& entry, const char* key) {
+		if (!entry.contains(key) || entry[key].is_null()) {
+			return "std::nullopt";
+		}
+		return "std::optional<std::string>(" + JsonStringLiteral(entry[key].get<std::string>()) + ")";
+	}
+
+	std::string CppOptionalInt(const json& entry, const char* key) {
+		if (!entry.contains(key) || entry[key].is_null()) {
+			return "std::nullopt";
+		}
+		return "std::optional<int>(" + std::to_string(entry[key].get<int>()) + ")";
+	}
+
+	std::string PythonOptionalString(const json& entry, const char* key) {
+		if (!entry.contains(key) || entry[key].is_null()) {
+			return "None";
+		}
+		return JsonStringLiteral(entry[key].get<std::string>());
+	}
+
+	std::string PythonOptionalInt(const json& entry, const char* key) {
+		if (!entry.contains(key) || entry[key].is_null()) {
+			return "None";
+		}
+		return std::to_string(entry[key].get<int>());
+	}
+
+	std::string PythonBool(const bool value) {
+		return value ? "True" : "False";
+	}
+
+	std::string CppBool(const bool value) {
+		return value ? "true" : "false";
+	}
+
+	bool JsonBoolValue(const json& entry, const char* key, const bool default_value) {
+		if (!entry.contains(key)) {
+			return default_value;
+		}
+		if (entry[key].is_boolean()) {
+			return entry[key].get<bool>();
+		}
+		if (entry[key].is_number_integer()) {
+			return entry[key].get<int>() != 0;
+		}
+		if (entry[key].is_string()) {
+			const std::string value = entry[key].get<std::string>();
+			return value == "1" || value == "true" || value == "True";
+		}
+		return default_value;
+	}
+
+	double FrequencyInMHz(const json& entry, const char* mhz_key, const char* hz_key, const double default_mhz) {
+		if (entry.contains(mhz_key)) {
+			return entry[mhz_key].get<double>();
+		}
+		if (entry.contains(hz_key)) {
+			return entry[hz_key].get<double>() / 1e6;
+		}
+		return default_mhz;
+	}
+
+	int AnalogInAddress(const json& entry) {
+		if (entry.contains("ChipSelect")) {
+			return entry["ChipSelect"].get<int>();
+		}
+		return entry.value("Address", 80);
+	}
+
+	std::filesystem::path ControlLightSourceDirectory() {
+		return std::filesystem::absolute(std::filesystem::path(__FILE__)).parent_path();
+	}
+
+	void WriteAutoConfigCppCreator(const json& auto_config, const std::string& creator_filename, const std::string& config_filename) {
+		std::ofstream file(creator_filename);
+		if (!file.is_open()) {
+			cout << "Failed to open file " << creator_filename << " for writing." << endl;
+			return;
+		}
+
+		const std::string include_path = (ControlLightSourceDirectory() / "ConfigCreator.h").generic_string();
+		file << "#include " << JsonStringLiteral(include_path) << "\n\n";
+		file << "int main() {\n";
+		file << "\tConfigCreator builder(" << JsonStringLiteral(config_filename) << ");\n\n";
+
+		for (const auto& entry : auto_config["Sequencers"]) {
+			file << "\tbuilder.RegisterSequencer(/*Id*/ " << entry.value("Id", 0)
+				<< ", /*Type*/ " << JsonStringLiteral(entry.value("Type", std::string("OpticsFoundrySequencerV1")))
+				<< ", /*IP*/ " << JsonStringLiteral(entry.value("IP", std::string("192.168.0.104")))
+				<< ", /*Port*/ " << entry.value("Port", 7)
+				<< ", /*Master*/ " << CppBool(entry.value("Master", true))
+				<< ", /*StartDelay*/ " << entry.value("StartDelay", 10)
+				<< ", /*ClockFrequencyinMHz*/ " << FormatNumber(entry.value("ClockFrequencyinMHz", 100.0))
+				<< ", /*BusFrequencyinMHz*/ " << FormatNumber(entry.value("BusFrequencyinMHz", 2.0))
+				<< ", /*UseExternalClock*/ " << CppBool(entry.value("UseExternalClock", false))
+				<< ", /*UseStrobeGenerator*/ " << CppBool(entry.value("UseStrobeGenerator", true))
+				<< ", /*UseEdgeTriggeredLatches*/ " << CppBool(entry.value("UseEdgeTriggeredLatches", true))
+				<< ", /*Connect*/ " << CppBool(entry.value("Connect", true))
+				<< ", /*DebugOn*/ " << CppBool(entry.value("DebugOn", false))
+				<< ", /*Model*/ " << CppOptionalString(entry, "Model")
+				<< ", /*SN*/ " << CppOptionalString(entry, "SN")
+				<< ", /*RackNr*/ " << CppOptionalInt(entry, "RackNr")
+				<< ", /*SlotNr*/ " << CppOptionalInt(entry, "SlotNr") << ");\n";
+		}
+
+		for (const auto& entry : auto_config["AnalogOutBoards16bit"]) {
+			file << "\tbuilder.RegisterAnalogOutBoard16bit(/*Sequencer*/ " << entry.value("Sequencer", 0)
+				<< ", /*StartAddress*/ " << entry.value("StartAddress", 24)
+				<< ", /*NumberChannels*/ " << entry.value("NumberChannels", 4)
+				<< ", /*Signed*/ " << CppBool(entry.value("Signed", true))
+				<< ", /*MinVoltage*/ " << FormatNumber(entry.value("MinVoltage", -10.0))
+				<< ", /*MaxVoltage*/ " << FormatNumber(entry.value("MaxVoltage", 10.0))
+				<< ", /*Model*/ " << CppOptionalString(entry, "Model")
+				<< ", /*SN*/ " << CppOptionalString(entry, "SN")
+				<< ", /*RackNr*/ " << CppOptionalInt(entry, "RackNr")
+				<< ", /*SlotNr*/ " << CppOptionalInt(entry, "SlotNr") << ");\n";
+		}
+
+		for (const auto& entry : auto_config["DigitalOutBoards"]) {
+			file << "\tbuilder.RegisterDigitalOutBoard(/*Sequencer*/ " << entry.value("Sequencer", 0)
+				<< ", /*Address*/ " << entry.value("Address", 1)
+				<< ", /*NumberChannels*/ " << entry.value("NumberChannels", 16)
+				<< ", /*Model*/ " << CppOptionalString(entry, "Model")
+				<< ", /*SN*/ " << CppOptionalString(entry, "SN")
+				<< ", /*RackNr*/ " << CppOptionalInt(entry, "RackNr")
+				<< ", /*SlotNr*/ " << CppOptionalInt(entry, "SlotNr") << ");\n";
+		}
+
+		for (const auto& entry : auto_config["SerialPortBoards"]) {
+			file << "\tbuilder.RegisterSerialPortBoard(/*Sequencer*/ " << entry.value("Sequencer", 0)
+				<< ", /*Address*/ " << entry.value("Address", 1)
+				<< ", /*RackNr*/ " << entry.value("RackNr", 0)
+				<< ", /*SlotNr*/ " << entry.value("SlotNr", 0)
+				<< ", /*Model*/ " << CppOptionalString(entry, "Model")
+				<< ", /*SN*/ " << CppOptionalString(entry, "SN") << ");\n";
+		}
+
+		for (const auto& entry : auto_config["DDSAD9854Boards"]) {
+			file << "\tbuilder.RegisterDDSAD9854Board(/*Version*/ " << entry.value("Version", 2)
+				<< ", /*Sequencer*/ " << entry.value("Sequencer", 0)
+				<< ", /*Address*/ " << entry.value("Address", 132)
+				<< ", /*ExternalClockFrequencyinMHz*/ " << FormatNumber(FrequencyInMHz(entry, "ExternalClockFrequencyinMHz", "ExternalClockFrequency", 300.0))
+				<< ", /*PLLReferenceMultiplier*/ " << entry.value("PLLReferenceMultiplier", 1)
+				<< ", /*FrequencyMultiplier*/ " << FormatNumber(entry.value("FrequencyMultiplier", 1.0))
+				<< ", /*Model*/ " << CppOptionalString(entry, "Model")
+				<< ", /*SN*/ " << CppOptionalString(entry, "SN")
+				<< ", /*RackNr*/ " << CppOptionalInt(entry, "RackNr")
+				<< ", /*SlotNr*/ " << CppOptionalInt(entry, "SlotNr") << ");\n";
+		}
+
+		for (const auto& entry : auto_config["DDSAD9858Boards"]) {
+			file << "\tbuilder.RegisterDDSAD9858Board(/*Sequencer*/ " << entry.value("Sequencer", 0)
+				<< ", /*Address*/ " << entry.value("Address", 50)
+				<< ", /*ClockFrequencyinMHz*/ " << FormatNumber(FrequencyInMHz(entry, "ClockFrequencyinMHz", "ClockFrequency", 1200.0))
+				<< ", /*FrequencyMultiplier*/ " << FormatNumber(entry.value("FrequencyMultiplier", 1.0))
+				<< ", /*Model*/ " << CppOptionalString(entry, "Model")
+				<< ", /*SN*/ " << CppOptionalString(entry, "SN")
+				<< ", /*RackNr*/ " << CppOptionalInt(entry, "RackNr")
+				<< ", /*SlotNr*/ " << CppOptionalInt(entry, "SlotNr") << ");\n";
+		}
+
+		for (const auto& entry : auto_config["DDSAD9959Boards"]) {
+			file << "\tbuilder.RegisterDDSAD9959Board(/*Sequencer*/ " << entry.value("Sequencer", 0)
+				<< ", /*Address*/ " << entry.value("Address", 21)
+				<< ", /*ClockFrequencyinMHz*/ " << FormatNumber(FrequencyInMHz(entry, "ClockFrequencyinMHz", "ClockFrequency", 300.0))
+				<< ", /*FrequencyMultiplier*/ " << FormatNumber(entry.value("FrequencyMultiplier", 1.0))
+				<< ", /*AD9958*/ " << CppBool(JsonBoolValue(entry, "AD9958", false))
+				<< ", /*Model*/ " << CppOptionalString(entry, "Model")
+				<< ", /*SN*/ " << CppOptionalString(entry, "SN")
+				<< ", /*RackNr*/ " << CppOptionalInt(entry, "RackNr")
+				<< ", /*SlotNr*/ " << CppOptionalInt(entry, "SlotNr") << ");\n";
+		}
+
+		for (const auto& entry : auto_config["AnalogInBoards12bit"]) {
+			file << "\tbuilder.RegisterAnalogInBoard12bit(/*Sequencer*/ " << entry.value("Sequencer", 0)
+				<< ", /*Address*/ " << AnalogInAddress(entry)
+				<< ", /*NumberChannels*/ " << entry.value("NumberChannels", 4)
+				<< ", /*MinVoltage*/ " << FormatNumber(entry.value("MinVoltage", -10.0))
+				<< ", /*MaxVoltage*/ " << FormatNumber(entry.value("MaxVoltage", 10.0))
+				<< ", /*Model*/ " << CppOptionalString(entry, "Model")
+				<< ", /*SN*/ " << CppOptionalString(entry, "SN")
+				<< ", /*RackNr*/ " << CppOptionalInt(entry, "RackNr")
+				<< ", /*SlotNr*/ " << CppOptionalInt(entry, "SlotNr") << ");\n";
+		}
+
+		for (const auto& entry : auto_config["Rack"]) {
+			file << "\tbuilder.RegisterRackEntry(json::parse(" << JsonStringLiteral(entry.dump()) << "));\n";
+		}
+
+		file << "\n\treturn builder.Save() ? 0 : 1;\n";
+		file << "}\n";
+		cout << "Auto configuration C++ creator saved to " << creator_filename << endl;
+	}
+
+	void WriteAutoConfigPythonCreator(const json& auto_config, const std::string& creator_filename, const std::string& config_filename) {
+		std::ofstream file(creator_filename);
+		if (!file.is_open()) {
+			cout << "Failed to open file " << creator_filename << " for writing." << endl;
+			return;
+		}
+
+		const std::string module_path = (ControlLightSourceDirectory() / "ConfigFileCreators").generic_string();
+		file << "import json\n";
+		file << "import sys\n\n";
+		file << "sys.path.insert(0, " << JsonStringLiteral(module_path) << ")\n";
+		file << "from ConfigCreator import ConfigBuilder\n\n\n";
+		file << "if __name__ == \"__main__\":\n";
+		file << "    builder = ConfigBuilder(" << JsonStringLiteral(config_filename) << ")\n\n";
+
+		for (const auto& entry : auto_config["Sequencers"]) {
+			file << "    builder.RegisterSequencer(Id=" << entry.value("Id", 0)
+				<< ", Type=" << JsonStringLiteral(entry.value("Type", std::string("OpticsFoundrySequencerV1")))
+				<< ", IP=" << JsonStringLiteral(entry.value("IP", std::string("192.168.0.104")))
+				<< ", Port=" << entry.value("Port", 7)
+				<< ", Master=" << PythonBool(entry.value("Master", true))
+				<< ", StartDelay=" << entry.value("StartDelay", 10)
+				<< ", ClockFrequencyinMHz=" << FormatNumber(entry.value("ClockFrequencyinMHz", 100.0))
+				<< ", BusFrequencyinMHz=" << FormatNumber(entry.value("BusFrequencyinMHz", 2.0))
+				<< ", UseExternalClock=" << PythonBool(entry.value("UseExternalClock", false))
+				<< ", UseStrobeGenerator=" << PythonBool(entry.value("UseStrobeGenerator", true))
+				<< ", UseEdgeTriggeredLatches=" << PythonBool(entry.value("UseEdgeTriggeredLatches", true))
+				<< ", Connect=" << PythonBool(entry.value("Connect", true))
+				<< ", DebugOn=" << PythonBool(entry.value("DebugOn", false))
+				<< ", Model=" << PythonOptionalString(entry, "Model")
+				<< ", SN=" << PythonOptionalString(entry, "SN")
+				<< ", RackNr=" << PythonOptionalInt(entry, "RackNr")
+				<< ", SlotNr=" << PythonOptionalInt(entry, "SlotNr") << ")\n";
+		}
+
+		for (const auto& entry : auto_config["AnalogOutBoards16bit"]) {
+			file << "    builder.RegisterAnalogOutBoard16bit(Sequencer=" << entry.value("Sequencer", 0)
+				<< ", StartAddress=" << entry.value("StartAddress", 24)
+				<< ", NumberChannels=" << entry.value("NumberChannels", 4)
+				<< ", Signed=" << PythonBool(entry.value("Signed", true))
+				<< ", MinVoltage=" << FormatNumber(entry.value("MinVoltage", -10.0))
+				<< ", MaxVoltage=" << FormatNumber(entry.value("MaxVoltage", 10.0))
+				<< ", Model=" << PythonOptionalString(entry, "Model")
+				<< ", SN=" << PythonOptionalString(entry, "SN")
+				<< ", RackNr=" << PythonOptionalInt(entry, "RackNr")
+				<< ", SlotNr=" << PythonOptionalInt(entry, "SlotNr") << ")\n";
+		}
+
+		for (const auto& entry : auto_config["DigitalOutBoards"]) {
+			file << "    builder.RegisterDigitalOutBoard(Sequencer=" << entry.value("Sequencer", 0)
+				<< ", Address=" << entry.value("Address", 1)
+				<< ", NumberChannels=" << entry.value("NumberChannels", 16)
+				<< ", Model=" << PythonOptionalString(entry, "Model")
+				<< ", SN=" << PythonOptionalString(entry, "SN")
+				<< ", RackNr=" << PythonOptionalInt(entry, "RackNr")
+				<< ", SlotNr=" << PythonOptionalInt(entry, "SlotNr") << ")\n";
+		}
+
+		for (const auto& entry : auto_config["SerialPortBoards"]) {
+			file << "    builder.RegisterSerialPortBoard(Sequencer=" << entry.value("Sequencer", 0)
+				<< ", Address=" << entry.value("Address", 1)
+				<< ", RackNr=" << entry.value("RackNr", 0)
+				<< ", SlotNr=" << entry.value("SlotNr", 0)
+				<< ", Model=" << PythonOptionalString(entry, "Model")
+				<< ", SN=" << PythonOptionalString(entry, "SN") << ")\n";
+		}
+
+		for (const auto& entry : auto_config["DDSAD9854Boards"]) {
+			file << "    builder.RegisterDDSAD9854Board(Version=" << entry.value("Version", 2)
+				<< ", Sequencer=" << entry.value("Sequencer", 0)
+				<< ", Address=" << entry.value("Address", 132)
+				<< ", ExternalClockFrequencyinMHz=" << FormatNumber(FrequencyInMHz(entry, "ExternalClockFrequencyinMHz", "ExternalClockFrequency", 300.0))
+				<< ", PLLReferenceMultiplier=" << entry.value("PLLReferenceMultiplier", 1)
+				<< ", FrequencyMultiplier=" << FormatNumber(entry.value("FrequencyMultiplier", 1.0))
+				<< ", Model=" << PythonOptionalString(entry, "Model")
+				<< ", SN=" << PythonOptionalString(entry, "SN")
+				<< ", RackNr=" << PythonOptionalInt(entry, "RackNr")
+				<< ", SlotNr=" << PythonOptionalInt(entry, "SlotNr") << ")\n";
+		}
+
+		for (const auto& entry : auto_config["DDSAD9858Boards"]) {
+			file << "    builder.RegisterDDSAD9858Board(Sequencer=" << entry.value("Sequencer", 0)
+				<< ", Address=" << entry.value("Address", 50)
+				<< ", ClockFrequencyinMHz=" << FormatNumber(FrequencyInMHz(entry, "ClockFrequencyinMHz", "ClockFrequency", 1200.0))
+				<< ", FrequencyMultiplier=" << FormatNumber(entry.value("FrequencyMultiplier", 1.0))
+				<< ", Model=" << PythonOptionalString(entry, "Model")
+				<< ", SN=" << PythonOptionalString(entry, "SN")
+				<< ", RackNr=" << PythonOptionalInt(entry, "RackNr")
+				<< ", SlotNr=" << PythonOptionalInt(entry, "SlotNr") << ")\n";
+		}
+
+		for (const auto& entry : auto_config["DDSAD9959Boards"]) {
+			file << "    builder.RegisterDDSAD9959Board(Sequencer=" << entry.value("Sequencer", 0)
+				<< ", Address=" << entry.value("Address", 21)
+				<< ", ClockFrequencyinMHz=" << FormatNumber(FrequencyInMHz(entry, "ClockFrequencyinMHz", "ClockFrequency", 300.0))
+				<< ", FrequencyMultiplier=" << FormatNumber(entry.value("FrequencyMultiplier", 1.0))
+				<< ", AD9958=" << PythonBool(JsonBoolValue(entry, "AD9958", false))
+				<< ", Model=" << PythonOptionalString(entry, "Model")
+				<< ", SN=" << PythonOptionalString(entry, "SN")
+				<< ", RackNr=" << PythonOptionalInt(entry, "RackNr")
+				<< ", SlotNr=" << PythonOptionalInt(entry, "SlotNr") << ")\n";
+		}
+
+		for (const auto& entry : auto_config["AnalogInBoards12bit"]) {
+			file << "    builder.RegisterAnalogInBoard12bit(Sequencer=" << entry.value("Sequencer", 0)
+				<< ", Address=" << AnalogInAddress(entry)
+				<< ", NumberChannels=" << entry.value("NumberChannels", 4)
+				<< ", MinVoltage=" << FormatNumber(entry.value("MinVoltage", -10.0))
+				<< ", MaxVoltage=" << FormatNumber(entry.value("MaxVoltage", 10.0))
+				<< ", Model=" << PythonOptionalString(entry, "Model")
+				<< ", SN=" << PythonOptionalString(entry, "SN")
+				<< ", RackNr=" << PythonOptionalInt(entry, "RackNr")
+				<< ", SlotNr=" << PythonOptionalInt(entry, "SlotNr") << ")\n";
+		}
+
+		for (const auto& entry : auto_config["Rack"]) {
+			file << "    builder.RegisterRackEntry(json.loads(" << JsonStringLiteral(entry.dump()) << "))\n";
+		}
+
+		file << "\n    builder.Save()\n";
+		cout << "Auto configuration Python creator saved to " << creator_filename << endl;
+	}
+
+	void WriteAutoConfigCreators(const json& auto_config, const std::string& filename) {
+		const std::string output_base = MakeConfigCreatorOutputBase(filename);
+		const std::string config_filename = MakeConfigOutputFilename(filename);
+		WriteAutoConfigCppCreator(auto_config, output_base + ".cpp", config_filename);
+		WriteAutoConfigPythonCreator(auto_config, output_base + ".py", config_filename);
+	}
+
 	void ReadEEPROMBytes(const uint8_t start_address, uint8_t* data, const uint32_t length, bool &I2C_success) {
 		if (length == 0) {
 			return;
@@ -110,19 +455,7 @@ void ResetRackI2CMultiplexers(const uint8_t SequencerID) {
 	//This function resets the I2C multiplexers of the specified rack, by writing 0 to the corresponding configuration register of the sequencer.
 	//This is needed before writing to the EEPROM, to make sure that the I2C communication is working and that we are writing to the correct device.
 	CLA_StartAssemblingSequence();
-
-	//The following code should be used, once it's tested and works
 	CLA_ResetI2CMultiplexer(SequencerID);
-
-	//This is placeholder code, which works
-	//uint8_t data = 1;
-	//CLA_SetValue(SequencerID, /*Address*/ 0xFE, /*SubAddress*/ 0, /*Data*/ &data, /*DataLength_in_bit*/ 1, /*StartBit*/ 7);
-	//CLA_Wait_ms(0.01);
-	//data = 0;
-	//CLA_SetValue(SequencerID, /*Address*/ 0xFE, /*SubAddress*/ 0, /*Data*/ &data, /*DataLength_in_bit*/ 1, /*StartBit*/ 7);
-	//CLA_Wait_ms(0.01);
-	//end placeholder code
-
 	CLA_ExecuteSequence();
 	uint8_t *buffer = nullptr;
 	unsigned long buffer_length = 0;
@@ -207,9 +540,9 @@ bool WriteConfigEEPROM(const uint8_t SequencerID, const uint8_t RackNr, const ui
 
 
 	//Now read the data back to verify that it was written correctly
-	uint8_t* read_back;
-	uint32_t read_back_size;
-	bool I2C_success;
+	uint8_t* read_back = nullptr;
+	uint32_t read_back_size = 0;
+	bool I2C_success = false;
 	ReadEEPROMBytes(/*start_address*/ 0, read_back, read_back_size, I2C_success);
 
 	if (length == 0 || memcmp(data, read_back, length) == 0) {
@@ -259,28 +592,7 @@ void ReadConfigEEPROM(const uint8_t SequencerID, const uint8_t RackNr, const uin
 	const void* endofstring = memchr(data, 0, read_back.size());
 	length = endofstring ? static_cast<const char*>(endofstring) - data + 1 : 0;
 
-	cout << "Rack " << static_cast<unsigned int>(RackNr)
-		<< ", slot " << static_cast<unsigned int>(SlotNr)
-		<< ", EEPROM read length: " << length << " byte(s): ";
-	if (length > 0) cout << read_back.data();//PrintEEPROMData("EEPROM data read back", read_back.data(), read_back.size());
-	//cout << endl;
-
-	/*
 	
-	//Read the complete EEPROM contents starting from memory address 0.
-	ReadEEPROMBytes( 0, (uint8_t*)data, length, I2C_success);
-
-	if (data != nullptr) {
-		const void* endofstring = memchr((char*&)data, 0, length);
-		length = endofstring ? static_cast<const char*>(endofstring) - (char*&)data + 1 : 0;
-
-		cout << "Rack " << static_cast<unsigned int>(RackNr)
-			<< ", slot " << static_cast<unsigned int>(SlotNr)
-			<< ", EEPROM read length: " << length << " byte(s): ";
-		if (length > 0) cout << (char*)data;//PrintEEPROMData("EEPROM data read back", read_back.data(), read_back.size());
-	}
-	//cout << endl;
-	*/
 }
 
 
@@ -327,15 +639,15 @@ void ReadConfigAddress(const uint8_t SequencerID, const uint8_t RackNr, const ui
 	SelectRackI2CSlot(SequencerID, RackNr, SlotNr);
 	
 	// Read the address from the I2C 8-bit IO chip PCF8574AP, which has all 3 address lines on ground. See datasheet in folder datasheet.
-	uint8_t* data= nullptr;
-	CLA_TransmitI2CPort(/*I2C_port*/ 0, ConfigAddressIOExpanderAddress + Read, /*send_length*/ 0, nullptr, /*receive_length*/ 1, data, I2CClockFrequencyInHz, I2C_success, /* fail_silently */ true);
-	if (data != nullptr) address = data[0];
+	vector<uint8_t> read_back(1);
+	CLA_TransmitI2CPort(/*I2C_port*/ 0, ConfigAddressIOExpanderAddress + Read, /*send_length*/ 0, nullptr, /*receive_length*/ read_back.size(), read_back.data(), I2CClockFrequencyInHz, I2C_success, /* fail_silently */ true);
+	address = read_back[0];
 	
 	// Display the address on cout.
 	//cout << "Config address read succeeded for rack " << static_cast<unsigned int>(RackNr)
 	//	<< ", slot " << static_cast<unsigned int>(SlotNr)
 	//	<< ": 0x" << hex << static_cast<unsigned int>(address) << dec << "." << endl;
-	cout << " Address: 0x" << hex << static_cast<unsigned int>(address) << dec << "." << endl;
+	//cout << " Address: 0x" << hex << static_cast<unsigned int>(address) << dec << "." << endl;
 }
 
 json ReadConfiguration(const std::string& filename) {
@@ -345,54 +657,33 @@ json ReadConfiguration(const std::string& filename) {
 	//go over every rack slot and the backplane memory, constructs json file containing whole configuration, including addresses stored in EEPROMS, sequencer, rack and slot number of each board or rack beackplane.
 	//store in file if filename is not empty.
 	for (uint8_t SequencerNr = 0 ; SequencerNr < CLA_GetNumberOfSequencers(); ++SequencerNr) {
-		for (uint8_t RackNr = 0; RackNr <= MaxSupportedRackNr; ++RackNr) {
-			for (uint8_t SlotNr = 0; SlotNr < NrSlots; ++SlotNr) {
-
+		uint8_t RackNr = 0;
+		bool LastRackEncountered = false;
+		while ((RackNr <= MaxSupportedRackNr) & (!LastRackEncountered)) {
+			uint8_t SlotNr = NrSlots - 1;
+			bool FinalSlotEncounterd = false;
+			while (!FinalSlotEncounterd) {
 
 				char buffer[EEPROMSizeInBytes] = {};
 				size_t length = sizeof(buffer);
-				bool I2C_success_EEPROM;
+				bool I2C_success_EEPROM = false;
 				ReadConfigEEPROM(SequencerNr, RackNr, SlotNr, buffer, length, I2C_success_EEPROM);
-				uint8_t address = 0;
-				bool I2C_success_Address;
-				ReadConfigAddress(SequencerNr, RackNr, SlotNr, address, I2C_success_Address);
-
-				size_t json_length = 0;
-				while (json_length < length && buffer[json_length] != '\0') {
-					++json_length;
+				if (SlotNr == (NrSlots - 1)) {
+					LastRackEncountered = (!I2C_success_EEPROM) || (length == 1);
 				}
+				if (length > 1) {
 
-				std::string json_str(buffer, json_length);
-				if (!json_str.empty()) {
-					try {
-						json slot_config = json::parse(json_str);
-						slot_config["Address"] = address;
-						if (SlotNr == NrSlots - 1) {
-							config["Sequencer" + std::to_string(SequencerNr)]["Rack" + std::to_string(RackNr)] = slot_config;
-						}
-						else {
-							config["Sequencer" + std::to_string(SequencerNr)]["Rack" + std::to_string(RackNr)]["Slot" + std::to_string(SlotNr)] = slot_config;
-						}
-					}
-					catch (const json::parse_error& e) {
-						cout << "Failed to parse JSON from EEPROM of sequencer " << static_cast<unsigned int>(SequencerNr)
-							<< ", rack " << static_cast<unsigned int>(RackNr)
-							<< ", slot " << static_cast<unsigned int>(SlotNr)
-							<< ": " << e.what() << endl;
-					}
-				}
+					cout << "Rack " << static_cast<unsigned int>(RackNr)
+						<< ", slot " << static_cast<unsigned int>(SlotNr)
+						<< ", EEPROM read length: " << length << " byte(s): ";
+					cout << buffer;//PrintEEPROMData("EEPROM data read back", read_back.data(), read_back.size());
 
 
-				/*
-
-				char* buffer = nullptr;
-				size_t length = EEPROMSizeInBytes;
-				bool I2C_success_EEPROM;				
-				ReadConfigEEPROM(SequencerNr, RackNr, SlotNr, (uint8_t*&)buffer, length, I2C_success_EEPROM);
-				uint8_t address = 0;
-				bool I2C_success_Address;
-				ReadConfigAddress(SequencerNr, RackNr, SlotNr, address, I2C_success_Address);
-				if (buffer != nullptr) {
+					uint8_t address = 0;
+					bool I2C_success_Address = false;
+					ReadConfigAddress(SequencerNr, RackNr, SlotNr, address, I2C_success_Address);
+					if (I2C_success_Address) cout << " Address: 0x" << hex << static_cast<unsigned int>(address) << dec << "." << endl;
+					else cout << " No address." << endl;
 					size_t json_length = 0;
 					while (json_length < length && buffer[json_length] != '\0') {
 						++json_length;
@@ -402,7 +693,9 @@ json ReadConfiguration(const std::string& filename) {
 					if (!json_str.empty()) {
 						try {
 							json slot_config = json::parse(json_str);
-							slot_config["Address"] = address;
+							if (I2C_success_Address) {
+								slot_config["Address"] = address;
+							}
 							if (SlotNr == NrSlots - 1) {
 								config["Sequencer" + std::to_string(SequencerNr)]["Rack" + std::to_string(RackNr)] = slot_config;
 							}
@@ -418,8 +711,11 @@ json ReadConfiguration(const std::string& filename) {
 						}
 					}
 				}
-				*/
+				if (SlotNr == (NrSlots - 1)) SlotNr = 0;
+				else if (SlotNr < (NrSlots-2)) SlotNr++;
+				else FinalSlotEncounterd = true;
 			}
+			RackNr++;
 		}
 	}
 
@@ -600,6 +896,7 @@ json GetAutoConfigJSON(const std::string& filename) {
 			file << auto_config.dump(4);
 			file.close();
 			cout << "Auto configuration saved to " << output_filename << endl;
+			WriteAutoConfigCreators(auto_config, filename);
 		}
 		else {
 			cout << "Failed to open file " << output_filename << " for writing." << endl;

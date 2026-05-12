@@ -66,10 +66,6 @@ private:
 	void StartSPIAnalogInAcquisition_MCP3208(unsigned char analog_in_type, unsigned char SPI_CS, unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms);
 	void StartSPIAnalogInAcquisition_ADS1256(unsigned char analog_in_type, unsigned char SPI_CS, unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms);
 	void AddCommandAnalogInOut(uint8_t adc_register_address, uint8_t adc_write_enable, uint16_t adc_programming_out, uint8_t dont_execute_now, uint8_t only_read_write, uint32_t wait_time);
-	void AddCommandSetCoreOption_LED(bool a_core_option_LED);
-	void AddCommandSetCoreOption_SPI_CS(uint8_t a_core_option_SPI_CS);
-	void AddCommandSetCoreOption_dig_out(uint8_t a_core_option_dig_out);
-	void AddCommandSetCoreOption_PL_to_PS(uint8_t a_core_option_PL_to_PS);
 	void AddCommandSetCoreOptions();
 	void AddCommandWait(unsigned long Wait_in_FPGA_clock_cycles);
 	void AddCommandSetPLToPSCommand(unsigned int PLToPSCommand);
@@ -77,6 +73,11 @@ private:
 	bool AttemptNetworkCommand(tBoolFunction fCommand);
 public:
 	void AddCommandStop();
+	void AddCommandSetCoreOption_LED(bool a_core_option_LED);
+	void AddCommandSwitchBuzzer(bool OnOff);
+	void AddCommandSetCoreOption_SPI_CS(uint8_t a_core_option_SPI_CS);
+	void AddCommandSetCoreOption_dig_out(uint8_t a_core_option_dig_out);
+	void AddCommandSetCoreOption_PL_to_PS(uint8_t a_core_option_PL_to_PS);
 public:	
 	CEthernetControllerFirefly(CDeviceSequencer* _MySequencer);
 	virtual ~CEthernetControllerFirefly();
