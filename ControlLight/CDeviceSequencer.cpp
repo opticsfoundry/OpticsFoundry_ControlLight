@@ -508,7 +508,7 @@ void CDeviceSequencer::SequencerResetI2CMultiplexer() {
 }
 
 bool CDeviceSequencer::SetValue_Sequencer(const unsigned int& Address, const unsigned int& SubAddress, const uint8_t* Data, const unsigned long& DataLength_in_bit, const uint8_t& StartBit) {
-	if (Address > MaxParallelBusDevices) return false;
+	if (Address >= MaxParallelBusDevices) return false;
 	if (GetParallelBusDevice(Address)) { //make sure ParallelBusDeviceList[Address] is neither nullptr not 1
 		bool success = ParallelBusDeviceList[Address]->SetValue(SubAddress, Data, DataLength_in_bit, StartBit);
 		if (success) AdvanceTime();
@@ -528,7 +528,7 @@ bool CDeviceSequencer::SetRegister_Sequencer(const unsigned int& Address, const 
 }
 
 bool CDeviceSequencer::SetValueSerialDevice_Sequencer(const unsigned int& Address, const unsigned int& SubAddress, const uint8_t* Data, const unsigned long& DataLength_in_bit, const uint8_t& StartBit) {
-	if (Address > MaxSerialBusDevices) return false;
+	if (Address >= MaxSerialBusDevices) return false;
 	if (GetSerialBusDevice(Address)) { //make sure SerialBusDeviceList[Address] is neither nullptr not 1
 		bool success = SerialBusDeviceList[Address]->SetValue(SubAddress, Data, DataLength_in_bit, StartBit);
 		if (success) AdvanceTime();
@@ -538,7 +538,7 @@ bool CDeviceSequencer::SetValueSerialDevice_Sequencer(const unsigned int& Addres
 }
 
 bool CDeviceSequencer::SetRegisterSerialDevice_Sequencer(const unsigned int& Address, const unsigned int& SubAddress, const uint8_t* Data, const unsigned long& DataLength_in_bit, const uint8_t& StartBit) {
-	if (Address > MaxSerialBusDevices) return false;
+	if (Address >= MaxSerialBusDevices) return false;
 	if (GetSerialBusDevice(Address)) { //make sure SerialBusDeviceList[Address] is neither nullptr not 1
 		bool success = SerialBusDeviceList[Address]->SetRegister(SubAddress, Data, DataLength_in_bit, StartBit);
 		if (success) AdvanceTime();

@@ -276,8 +276,8 @@ void CAD9852::UpdateFrequencyValues() {
 	//AddErrorMessage(buf);
 	//DeltaFrequencyWord=(281474976710656/2);
 
-	FrequencyTuningWord1 = (int64_t)(SortedStartFrequency * FrequencyScale);
-	FrequencyTuningWord2 = (int64_t)(SortedStopFrequency * FrequencyScale);
+	FrequencyTuningWord1 = (int64_t)(SortedStartFrequency * FrequencyScale + 0.5);
+	FrequencyTuningWord2 = (int64_t)(SortedStopFrequency * FrequencyScale + 0.5);
 
 
 	if ((LastStartFrequency != SortedStartFrequency) || (LastStopFrequency != SortedStopFrequency) || (LastModulationFrequency != SortedModulationFrequency) || (ForceUpdate)) {

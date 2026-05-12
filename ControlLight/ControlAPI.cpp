@@ -249,6 +249,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 					LastErrors += LastError[e];
 					LastErrors += "\n";
 				}
+				LastErrors += "And possibly more errors.\n";
 			}
 			return LastErrors;
 		}

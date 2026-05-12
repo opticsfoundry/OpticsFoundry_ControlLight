@@ -380,7 +380,7 @@ uint32_t CAD9959::calcFTW(float frequency)
 {
     uint32_t setPoint = 0;
 
-    setPoint = (uint32_t)(frequency / (ClockFrequency_in_Hz / TUNEWORD_BITS));
+    setPoint = (uint32_t)(frequency / (ClockFrequency_in_Hz / TUNEWORD_BITS) + 0.5);
 
     return setPoint;
 }

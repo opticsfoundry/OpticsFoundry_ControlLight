@@ -367,7 +367,7 @@ double CAD9858::SetFrequency0(double Frequency, bool GetValue) {
 			std::string buf = std::format("CAD9858::SetFrequency0 : frequency out of range (BaseAddress={:x}) fwanted={} MHz fmax={} MHz",BaseAddress,Frequency,MaxFrequency);
 			AddErrorMessage(buf);
 		}		
-		FrequencyTuningWord0=(int64_t)(Frequency*FrequencyScale);
+		FrequencyTuningWord0=(int64_t)(Frequency*FrequencyScale + 0.5);
 		SetValue(6,FrequencyTuningWord0,false);
 		return Frequency;
 	}
@@ -385,7 +385,7 @@ double CAD9858::SetFrequency1(double Frequency, bool GetValue) {
 			std::string buf = std::format("CAD9858::SetFrequency1 : frequency out of range (BaseAddress={:x}) fwanted={} MHz fmax={} MHz",BaseAddress,Frequency,MaxFrequency);
 			AddErrorMessage(buf);
 		}		
-		FrequencyTuningWord1=(int64_t)(Frequency*FrequencyScale);
+		FrequencyTuningWord1=(int64_t)(Frequency*FrequencyScale + 0.5);
 		SetValue(8,FrequencyTuningWord1,false);
 		return Frequency;
 	}
@@ -403,7 +403,7 @@ double CAD9858::SetFrequency2(double Frequency, bool GetValue) {
 			std::string buf = std::format("CAD9858::SetFrequency2 : frequency out of range (BaseAddress={:x}) fwanted={} MHz fmax={} MHz",BaseAddress,Frequency,MaxFrequency);
 			AddErrorMessage(buf);
 		}		
-		FrequencyTuningWord2=(int64_t)(Frequency*FrequencyScale);
+		FrequencyTuningWord2=(int64_t)(Frequency*FrequencyScale + 0.5);
 		SetValue(10,FrequencyTuningWord2,false);
 		return Frequency;
 	}
@@ -422,7 +422,7 @@ double CAD9858::SetFrequency3(double Frequency, bool GetValue) {
 			std::string buf = std::format("CAD9858::SetFrequency3 : frequency out of range (BaseAddress={:x}) fwanted={} MHz fmax={} MHz",BaseAddress,Frequency,MaxFrequency);
 			AddErrorMessage(buf);
 		}		
-		FrequencyTuningWord3=(int64_t)(Frequency*FrequencyScale);
+		FrequencyTuningWord3=(int64_t)(Frequency*FrequencyScale + 0.5);
 		SetValue(12,FrequencyTuningWord3,false);
 		return Frequency;
 	}

@@ -140,7 +140,7 @@ PYBIND11_MODULE(control_light_api, m) {
         .def("set_frequency_tuning_word", &ControlLight_API::SetFrequencyTuningWord, py::arg("sequencer"), py::arg("address"), py::arg("ftw"))
 
         // AD9959
-        .def("reset", &ControlLight_API::SetFrequencyOfChannel, py::arg("sequencer"), py::arg("address"))
+        .def("reset", &ControlLight_API::Reset, py::arg("sequencer"), py::arg("address"))
         .def("set_frequency_of_channel", &ControlLight_API::SetFrequencyOfChannel, py::arg("sequencer"), py::arg("address"), py::arg("channel"), py::arg("frequency"))
         .def("set_frequency_tuning_word_of_channel", &ControlLight_API::SetFrequencyTuningWordOfChannel, py::arg("sequencer"), py::arg("address"), py::arg("channel"), py::arg("ftw"))
         .def("set_phase_of_channel", &ControlLight_API::SetPhaseOfChannel, py::arg("sequencer"), py::arg("address"), py::arg("channel"), py::arg("phase"))

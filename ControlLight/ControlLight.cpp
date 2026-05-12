@@ -1226,11 +1226,3 @@ int main() {
 
 #endif
 
-//ToDo:
-// Linux and Windows compatible version
-// Test sequence cycling
-// Pull additional convenience commands for digital out and DDS devices from CDevice.h into the API
-// Finish SetRegister and SetValue functions for DDS
-//(optional, as we do take care of TimeDebt now): wait for startDelay tick counts to synchronize several sequencers
-// Add interlaced ramping & LabScript & HEROS interface
-// Add calibration functions, time reordering, last value access, intermittent storage of output values, 
