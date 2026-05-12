@@ -424,8 +424,12 @@ void CAD9959::Dev_Select(void)
 }
 
 void CAD9959::SPI_Transmit_Byte(uint8_t byte) {
+    if (BytesToTransmit >= SPIBufferLength) {
+        AddErrorMessage("CAD9959::SPI_Transmit_Byte : SPIBuffer full, dropping byte");
+        return;
+    }
     SPIBuffer[BytesToTransmit] = byte;
-    if (BytesToTransmit < (SPIBufferLength - 1)) BytesToTransmit++; else ControlMessageBox("CAD9959::SPI_Transmit_Byte : too many bytes");
+    BytesToTransmit++;
 }
 
 void CAD9959::Dev_Deselect(bool read, uint8_t number_of_bits_in)

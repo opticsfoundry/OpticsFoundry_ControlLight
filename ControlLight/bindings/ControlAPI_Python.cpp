@@ -10,8 +10,6 @@ using namespace pybind11::literals;
 
 namespace py = pybind11;
 
-uint8_t* buffer = nullptr;
-
 PYBIND11_MODULE(control_light_api, m) {
     py::register_exception<CLA_Exception>(m, "CLA_Exception");
     py::class_<ControlLight_API>(m, "ControlLightAPI")
@@ -165,20 +163,23 @@ PYBIND11_MODULE(control_light_api, m) {
         // Waits for sequence end and returns data buffer, buffer length, end time
         .def("wait_till_end_of_sequence_then_get_input_data",
             [](ControlLight_API& self, double timeout_in_s) {
+                uint8_t* internal_ptr = nullptr;
                 unsigned long buffer_length = 0;
                 unsigned long end_time = 0;
 
-                self.WaitTillEndOfSequenceThenGetInputData(buffer, buffer_length, end_time, timeout_in_s);
+                self.WaitTillEndOfSequenceThenGetInputData(internal_ptr, buffer_length, end_time, timeout_in_s);
 
                 // Copy the buffer to Python bytes object
-                py::bytes data(reinterpret_cast<char*>(buffer), buffer_length);
+                py::bytes data = (internal_ptr && buffer_length)
+                    ? py::bytes(reinterpret_cast<const char*>(internal_ptr), buffer_length)
+                    : py::bytes();
 
                 //if you want a tuple back
 				//return py::make_tuple(data, buffer_length, end_time);  
 
                 //if you want a dictionary back
 				return py::dict( 
-                    "data"_a = py::bytes(reinterpret_cast<char*>(buffer), buffer_length),
+                    "data"_a = data,
                     "length"_a = buffer_length,
                     "end_time_of_cycle"_a = end_time
                 );

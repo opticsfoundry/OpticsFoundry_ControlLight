@@ -62,32 +62,35 @@ bool CNetworkClient::ConnectSocket(const std::string& host, unsigned int port, c
 }
 
 bool CNetworkClient::SendCommand(const CString& command) {
-	if (Network) {
-		if (mode == 1) {
-			CString msg = _T("*") + command + _T("#");
-			Network->SendMsg(msg);
-		} 
-		else if (mode == 2) {
-#ifdef STD_STRING
-			unsigned int StrLength = command.size();
-#else
-			unsigned int StrLength = command.GetLength();
-#endif
-			if (StrLength > 255) return false;
-			uint8_t length = StrLength;
-			Network->SendData(&length, 1);			
-#ifdef STD_STRING
-			Network->SendData((uint8_t*)(command.c_str()), length);
-#else
-			Network->SendData((uint8_t*)(LPCTSTR)command, length);
-#endif
-		}
-		else {  //mode == 3
-			CString msg = command + _T("\n");
-			Network->SendMsg(msg);
-		}
+	if (!Network) {
+		AddErrorMessage("CNetworkClient::SendCommand: not connected (command dropped: " + CStringToStdString(command) + ")");
+		return false;
 	}
-	return true;
+	bool ok = true;
+	if (mode == 1) {
+		CString msg = _T("*") + command + _T("#");
+		Network->SendMsg(msg);
+	}
+	else if (mode == 2) {
+#ifdef STD_STRING
+		unsigned int StrLength = command.size();
+#else
+		unsigned int StrLength = command.GetLength();
+#endif
+		if (StrLength > 255) return false;
+		uint8_t length = StrLength;
+		ok = Network->SendData(&length, 1);
+#ifdef STD_STRING
+		ok = Network->SendData((uint8_t*)(command.c_str()), length) && ok;
+#else
+		ok = Network->SendData((uint8_t*)(LPCTSTR)command, length) && ok;
+#endif
+	}
+	else {  //mode == 3
+		CString msg = command + _T("\n");
+		Network->SendMsg(msg);
+	}
+	return ok;
 }
 
 bool CNetworkClient::WriteDouble(double d) {
@@ -101,14 +104,15 @@ bool CNetworkClient::WriteDouble(double d) {
 }
 
 bool CNetworkClient::SendData(uint8_t* Data, unsigned long Size, bool SendReady) {
-	if (Network) {
-		Network->FlushOutputBuffer();
-		if (SendReady) {
-			if (!Ready()) return false;
-		}
-		return Network->SendData(Data, Size);
+	if (!Network) {
+		AddErrorMessage("CNetworkClient::SendData: not connected (dropping " + std::to_string(Size) + " bytes)");
+		return false;
 	}
-	else return true;
+	Network->FlushOutputBuffer();
+	if (SendReady) {
+		if (!Ready()) return false;
+	}
+	return Network->SendData(Data, Size);
 }
 
 bool CNetworkClient::WriteInteger(long i) {
@@ -260,6 +264,7 @@ constexpr unsigned int MaxReconnectAttempts = 100;
 bool CNetworkClient::Command(CString CommandString, bool DontWaitForReady) {
 	unsigned int attempts = 0;
 	while ((attempts < MaxReconnectAttempts) && (!AttemptCommand(CommandString, DontWaitForReady))) {
+		if (!Network) break;
 		Network->ResetConnection();
 		this_thread::sleep_for(100ms);
 		attempts++;
@@ -270,7 +275,7 @@ bool CNetworkClient::Command(CString CommandString, bool DontWaitForReady) {
 
 bool CNetworkClient::AttemptCommand(CString command, bool DontWaitForReady) {
 	if (Network) Network->Flush();
-	SendCommand(command);
+	if (!SendCommand(command)) return false;
 	if ((FastWrite) || (DontWaitForReady)) return true;
 	if ((!Ready()) && (Network)) {
 		//AddErrorMessage("CNetworkClient not Ready!\n(Command: "+command+")");

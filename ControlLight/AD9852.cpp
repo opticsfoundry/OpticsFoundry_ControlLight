@@ -4,6 +4,7 @@
 
 #include "AD9852.h"
 #include "CDeviceSequencer.h"
+#include <cmath>
 #include <string>
 #include <format>
 
@@ -137,7 +138,7 @@ bool CAD9852::WriteToBus()
 	AktSubAddressWritten++;
 	if (AktSubAddressWritten >= AD9852ValueLength[AktValueNrWritten]) {
 		//we produce a "update registers" signal during the same 
-		//bus cycle as the last "Load data into IO buffer" signal and don´t need an additional
+		//bus cycle as the last "Load data into IO buffer" signal and don't need an additional
 		//bus cycle just for that
 		if ((AktValueNrWritten != 15) && (AktValueNrWritten != 16)) MultiIOAddress += 1;
 		AktValueNrWritten = 99;
@@ -746,7 +747,7 @@ double CAD9852::CalculateModulationFrequencyData(int64_t* DeltaFrequencyWord, un
 			*ClockUpdateSteps = 20;
 		}
 	}
-	*DeltaFrequencyWord = (int64_t)((LastStopFrequency - LastStartFrequency) * (FrequencyScale / (*ClockUpdateSteps)));
+	*DeltaFrequencyWord = (int64_t)std::llround((LastStopFrequency - LastStartFrequency) * (FrequencyScale / (*ClockUpdateSteps)));
 	if (*DeltaFrequencyWord < -(281474976710656 / 2)) {
 		//std::string buf = std::format("CAD9852::SetModulationFrequency : frequency out of range (BaseAddress={:x} Bus={:x}) fwanted={} MHz",BaseAddress,Bus>>BusBitShift,RequestedModulationFrequency);
 		//AddErrorMessage(buf);
@@ -1180,4 +1181,3 @@ unsigned char CAD9852::SetFrequencyWritePrecision(unsigned char Precision, bool 
 		return Precision;
 	}
 }
-

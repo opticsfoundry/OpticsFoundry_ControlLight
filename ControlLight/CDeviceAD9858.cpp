@@ -35,7 +35,7 @@ CDeviceAD9858::CDeviceAD9858(
 		MySequencer->ParallelBusDeviceList[MyAddress] = this;
 		// The AD9854 uses 4 addresses, so we need to reserve the next 3 addresses
 		for (unsigned int i = 1; i < 4; i++) {
-			MySequencer->ParallelBusDeviceList[MyAddress + i] = reinterpret_cast<CDeviceSequencer*>(1);
+			MySequencer->ParallelBusDeviceList[MyAddress + i] = ReservedBusAddress;
 		}
 		MyAD9858 = new CAD9858(MyAddress, externalClockFrequency, frequencyMultiplier, MySequencer);
 	}
@@ -117,7 +117,6 @@ bool CDeviceAD9858::SetRegister(const unsigned int& SubAddress, const uint8_t* D
 
 	return true;
 }
-
 
 
 

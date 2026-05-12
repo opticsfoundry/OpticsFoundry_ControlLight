@@ -45,7 +45,7 @@ CDeviceSequencer::CDeviceSequencer(
 	bool _connect) {
 	MySequencer = this;
 	// Initialize the device
-	MyEthernetMultiIOControllerFirefly = new CEthernetControllerFirefly(this);
+	MyEthernetMultiIOControllerFirefly = std::make_unique<CEthernetControllerFirefly>(this);
 	for (unsigned int i = 0; i < MaxParallelBusDevices; i++)
 		ParallelBusDeviceList[i] = nullptr;
 	for (unsigned int i = 0; i < MaxSerialBusDevices; i++)
@@ -89,7 +89,7 @@ CDeviceSequencer::CDeviceSequencer(
 #endif
 	MyEthernetMultiIOControllerFirefly->MeasureEthernetBandwidth(1024 * 128, 20);
 
-	MyDeviceRack = new CDeviceRack(this);
+	MyDeviceRack = std::make_unique<CDeviceRack>(this);
 }
 
 CDeviceSequencer::~CDeviceSequencer() {
@@ -97,26 +97,22 @@ CDeviceSequencer::~CDeviceSequencer() {
 	for (unsigned int i = 0; i < MaxParallelBusDevices - 1; i++)
 		if (ParallelBusDeviceList[i]) {
 			//some devices use more than one address. Only delete them once.
-			if (ParallelBusDeviceList[i] != reinterpret_cast<CDeviceSequencer*>(1)) {
+			if (ParallelBusDeviceList[i] != ReservedBusAddress) {
 				delete ParallelBusDeviceList[i];
 				ParallelBusDeviceList[i] = nullptr;
 			}
 		}
 	for (unsigned int i = 0; i < MaxSerialBusDevices; i++) {
 		if (SerialBusDeviceList[i]) {
-			if (SerialBusDeviceList[i] != reinterpret_cast<CDeviceSequencer*>(1)) {
+			if (SerialBusDeviceList[i] != ReservedBusAddress) {
 				delete SerialBusDeviceList[i];
 				SerialBusDeviceList[i] = nullptr;
 			}
 		}
 	}
 	for (int n = 0; n < MaxBuffer; n++) {
-		if (Buffer[n]) delete Buffer[n];
+		if (Buffer[n]) delete[] Buffer[n];
 		Buffer[n] = nullptr;
-	}
-	if (MyEthernetMultiIOControllerFirefly) {
-		delete MyEthernetMultiIOControllerFirefly;
-		MyEthernetMultiIOControllerFirefly = nullptr;
 	}
 }
 
@@ -154,7 +150,7 @@ void CDeviceSequencer::SetFPGAClockToBusClockRatio(const unsigned int _FPGAClock
 void CDeviceSequencer::Initialize(unsigned long _PCBufferSize_in_u64) {
 	PCBufferSize_in_u64 = _PCBufferSize_in_u64;
 	for (int n = 0; n < MaxBuffer; n++) {
-		if (Buffer[n]) delete Buffer[n];
+		if (Buffer[n]) delete[] Buffer[n];
 		Buffer[n] = new uint32_t[2 * PCBufferSize_in_u64];
 		for (uint32_t i = 0; i < 2 * PCBufferSize_in_u64; i++) {
 			Buffer[n][i] = 0;

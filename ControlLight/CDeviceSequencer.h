@@ -1,9 +1,13 @@
 #pragma once
 
+#include <memory>
+
 #include "CDevice.h"
 
 class CEthernetControllerFirefly;
 class CDeviceRack;
+
+inline CDevice* const ReservedBusAddress = reinterpret_cast<CDevice*>(1);
 
 class CDeviceSequencer : public CDevice
 {
@@ -22,7 +26,7 @@ public:
 	bool useExternalClock;
 	bool useStrobeGenerator;
 	bool connect;
-	CEthernetControllerFirefly* MyEthernetMultiIOControllerFirefly;
+	std::unique_ptr<CEthernetControllerFirefly> MyEthernetMultiIOControllerFirefly;
 	double BusFrequency_in_Hz;
 private:
 	unsigned long PCBufferSize_in_u64;
@@ -38,7 +42,7 @@ private:
 	bool LastCommandWasSpecialCommand;
 	bool DoUseEdgeTriggeredLatches;
 	uint32_t LastBusData;
-	CDeviceRack* MyDeviceRack;
+	std::unique_ptr<CDeviceRack> MyDeviceRack;
 public:
 	static const unsigned int MaxParallelBusDevices = 8 * 256 + 1;
 	static const unsigned int MaxSerialBusDevices = 8;
@@ -144,12 +148,12 @@ public:
 	//the following functions are used by CControlAPI to find the desired device. Used for convenience functions.
 	CDevice* GetParallelBusDevice(const unsigned int& Address) { 
 		if (Address >= MaxParallelBusDevices) return nullptr; 
-		if (ParallelBusDeviceList[Address] == reinterpret_cast<CDeviceSequencer*>(1)) return nullptr; 
+		if (ParallelBusDeviceList[Address] == ReservedBusAddress) return nullptr; 
 		return ParallelBusDeviceList[Address]; 
 	}
 	CDevice* GetSerialBusDevice(const unsigned int& Address) { 
 		if (Address >= MaxSerialBusDevices) return nullptr; 
-		if (SerialBusDeviceList[Address] == reinterpret_cast<CDeviceSequencer*>(1)) return nullptr; 
+		if (SerialBusDeviceList[Address] == ReservedBusAddress) return nullptr; 
 		return SerialBusDeviceList[Address]; 
 	}
 private:

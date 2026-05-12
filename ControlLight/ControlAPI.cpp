@@ -232,8 +232,15 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 #endif
 
 
+		unsigned long ErrorsDroppedSinceLastRead = 0;
+		std::string LastErrorsCache;
+
 		std::string PeekLastErrors() {
 			std::string LastErrors = "";
+			if (ErrorsDroppedSinceLastRead > 0) {
+				LastErrors += "[" + std::to_string(ErrorsDroppedSinceLastRead) +
+					" earlier error(s) dropped]\n";
+			}
 			if (!ErrorListWrapAround) {
 				for (int e = 0; e < LastErrorIndex; e++) {
 					LastErrors += LastError[e];
@@ -249,7 +256,6 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 					LastErrors += LastError[e];
 					LastErrors += "\n";
 				}
-				LastErrors += "And possibly more errors.\n";
 			}
 			return LastErrors;
 		}
@@ -262,6 +268,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 		bool NewErrorOccured = false;
 
 		ERROR_CODE_TYPE AddErrorMessage(const std::string& error_message, bool dothrow) {
+			if (ErrorListWrapAround) ErrorsDroppedSinceLastRead++;
 			LastError[LastErrorIndex] = error_message;
 			LastErrorIndex++;
 			if (LastErrorIndex >= MaxLastError) {
@@ -272,15 +279,9 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			NewErrorOccured = true;
 			if (DisplayErrors && dothrow) {
 				ControlMessageBox(all_error_messages);
-				NewErrorOccured = false;
-				ErrorListWrapAround = false;
-				LastErrorIndex = 0;
 			}
 #ifdef THROW_EXCEPTIONS
 			if (dothrow) {
-				NewErrorOccured = false;
-				ErrorListWrapAround = false;
-				LastErrorIndex = 0;
 				throw CLA_Exception(all_error_messages);
 			}
 #else 
@@ -295,11 +296,13 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 		ControlLight_API::ControlLight_API(bool InitializeAfx , bool InitializeAfxSocket ) {
 			Created = false;
 			try {  //happens in class constructor
-				Create(/*InitializeAfx*/ true, /*InitializeAfxSocket*/ true);
-				Created = true;
+				Created = Create(InitializeAfx, InitializeAfxSocket);
+			}
+			catch (const std::exception& e) {
+				AddErrorMessage(std::string("ControlLight_API ctor: ") + e.what(), false);
 			}
 			catch (...) {
-
+				AddErrorMessage("ControlLight_API ctor: unknown exception", false);
 			}
 		}
 
@@ -321,10 +324,11 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 
 		API_EXPORT const char* CLA_FNDEF(GetLastError)() {
 			NewErrorOccured = false;
-			std::string LastErrors = PeekLastErrors();
+			LastErrorsCache = PeekLastErrors();
 			ErrorListWrapAround = false;
 			LastErrorIndex = 0;
-			return LastErrors.c_str();
+			ErrorsDroppedSinceLastRead = 0;
+			return LastErrorsCache.c_str();
 		}
 
 

@@ -165,6 +165,15 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		//API_EXPORT HControlLightAPI CLA_GetInstance();
 
 		//Call these functions in roughly this order
+		/**
+		* @brief Threading model.
+		*
+		* The ControlLight API is intended to be used from one client thread at a time.
+		* Concurrent calls into the same API instance are unsupported, including calls made
+		* while another thread is waiting for sequence completion or communicating with the
+		* FPGA. Client code must serialize API access externally. The API may report an
+		* error or behave unpredictably if it is entered concurrently.
+		*/
 
 		/** @brief Initializes the ControlAPI.
 		 * If you use a bare function C API, then this function must be called before using any other functions in the API.

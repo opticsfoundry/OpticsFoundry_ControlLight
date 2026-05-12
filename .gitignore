@@ -110,6 +110,12 @@ CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
 Makefile
+out/
+**/out/build/
+**/.cmake/
+.ninja_deps
+.ninja_log
+build.ninja
 
 # Backup files
 *.bak
@@ -125,13 +131,29 @@ Makefile
 *.exe
 *.pdb
 *.idb
+*.pyd
+*.exp
+*.ilk
 
 # Generated data
 *.tlog
 *.lastbuildstate
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
 
 # Output directories
 ControlLight/out/
 /ControlLight/out/build/x64-debug/.ninja_deps
 /ControlLight/out/build/x64-debug/.ninja_log
 /ControlLight/out/build/x64-debug/ControlLight.ilk
+
+# Qt generated build directories
+.qtc_clangd/
+**/.qtc_clangd/
+**/.qmake.stash
+**/build/
