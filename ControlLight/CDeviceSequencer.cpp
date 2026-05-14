@@ -23,7 +23,7 @@ static char THIS_FILE[] = __FILE__;
 #define new DEBUG_NEW
 #endif
 
-#define DebugSequencer
+//#define DebugSequencer
 
 #ifdef DebugSequencer
 std::string DebugFilePath = "D:\\Florian\\OpticsFoundry\\OpticsFoundryControl\\Debug\\";
@@ -203,7 +203,7 @@ void CDeviceSequencer::StartAssemblingNextSequence() {
 
 //Why does declaring it inline not work for this function? It would be useful to do so, as it's called very often from just one place.
 void CDeviceSequencer::AddCommandToSequence(const uint32_t& high_word, const uint32_t& low_word) {
-	if (!LastCommandWasSpecialCommand) {
+	if ((!LastCommandWasSpecialCommand) || (Delay_in_ms > 0)) {
 		//this is a special command. We need to first send out LastBusData and then wait as needed before executing it.
 		AddBusCommandToSequence(LastBusData);
 	}
@@ -284,9 +284,26 @@ void CDeviceSequencer::GetBufferLength(uint32_t& FilledBufferLength, uint32_t& M
 	MaxBufferLength = PCBufferSize_in_u64;
 }
 
-void CDeviceSequencer::SendSequence() {
+static std::string AppendSequencerNumberToFilename(const std::string& FileName, unsigned int SequencerNumber) {
+	if (FileName.empty()) return "";
+
+	const size_t lastSeparator = FileName.find_last_of("/\\");
+	const size_t extensionPosition = FileName.find_last_of('.');
+	const bool hasExtension = extensionPosition != std::string::npos
+		&& (lastSeparator == std::string::npos || extensionPosition > lastSeparator);
+	const std::string suffix = "_" + std::to_string(SequencerNumber);
+
+	if (hasExtension) {
+		return FileName.substr(0, extensionPosition) + suffix + FileName.substr(extensionPosition);
+	}
+	return FileName + suffix + ".txt";
+}
+
+void CDeviceSequencer::SendSequence(const std::string& FileName) {
 	AddBusCommandToSequence(0); //just in case there is still something in LastBusData.
-	MyEthernetMultiIOControllerFirefly->SendSequenceToFPGA(Buffer[currentBuffer]);
+	MyEthernetMultiIOControllerFirefly->SendSequenceToFPGA(
+		Buffer[currentBuffer],
+		AppendSequencerNumberToFilename(FileName, id));
 	currentBuffer++;
 	if (currentBuffer >= MaxBuffer) {
 		currentBuffer = 0;
@@ -476,8 +493,8 @@ void CDeviceSequencer::SequencerJumpBackward(unsigned int jump_length, bool unco
 	MyEthernetMultiIOControllerFirefly->AddCommandJumpBackward(jump_length, unconditional_jump, condition_0, condition_1, condition_PS, loop_count_greater_zero);
 }
 
-void CDeviceSequencer::SequencerJumpForward(unsigned int jump_length, bool unconditional_jump, bool condition_0, bool condition_1, bool condition_PS) {
-	MyEthernetMultiIOControllerFirefly->AddCommandJumpForward(jump_length, unconditional_jump, condition_0, condition_1, condition_PS);
+void CDeviceSequencer::SequencerJumpForward(unsigned int jump_length, bool unconditional_jump, bool condition_0, bool condition_1, bool condition_PS, bool condition_dig_in, uint8_t dig_in_bit_nr) {
+	MyEthernetMultiIOControllerFirefly->AddCommandJumpForward(jump_length, unconditional_jump, condition_0, condition_1, condition_PS, condition_dig_in, dig_in_bit_nr);
 }
 
 void CDeviceSequencer::SequencerTransmitI2C(uint8_t I2C_port, uint8_t I2C_length_out, uint8_t I2C_length_in, uint8_t *data_out) {

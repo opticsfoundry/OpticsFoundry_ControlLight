@@ -226,12 +226,12 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(Initialize)();
 		//Some optional commands
 
-		/**  @brief Switches Debug mode on.
-		 * In Debug mode, the sequence of each FPGA sequencer is written to a human readable ASCII file before being sent to the FPGA.
-		 * In addition, the FPGA sequencers display more information on their USB-UART port, being slowed down a bit by that.
+		/**  @brief Switches FPGA debug mode on.
+		 * In debug mode, the FPGA sequencers display more information on their USB-UART port, being slowed down a bit by that.
+		 * To write a human-readable sequence file, pass a filename to SendSequence instead.
 		*/
 		/// @param OnOff true to switch on debug mode, false to switch it off.
-		/// @param FileName the name of the file to write the debug information to without filename extension.
+		/// @param FileName retained for compatibility and ignored.
 		API_EXPORT void CLA_FN(SwitchDebugMode)(bool OnOff, const char* FileName);
 
 
@@ -626,16 +626,16 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 
 		// once the sequence is assembled, we can send it to the FPGA without executing it  
 		/// @brief Send the sequence that was previously assembled to FPGA SoM, but do not execute it.
-		/// @param  
+		/// @param FileName optional base filename for writing a human-readable sequence debug file. Pass an empty string to disable file writing.
 		/// @return 
-		API_EXPORT void CLA_FN(SendSequence)();
+		API_EXPORT void CLA_FN(SendSequence)(const char* FileName = "");
 
 		
 		// once the sequence is assembled, then execute it 
 		/// @brief Send the sequence that was previously assembled to FPGA and execute it.
-		/// @param  
+		/// @param FileName optional base filename for writing a human-readable sequence debug file. Pass an empty string to disable file writing.
 		/// @return 
-		API_EXPORT void CLA_FN(ExecuteSequence)();
+		API_EXPORT void CLA_FN(ExecuteSequence)(const char* FileName = "");
 
 		// once the sequence is assembled, then execute it 
 		/// @brief Execute the sequence that was sent to the FPGA.
@@ -827,7 +827,9 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @param condition_0 true if condition 0 is met, false otherwise.
 		/// @param condition_1 true if condition 1 is met, false otherwise.
 		/// @param condition_PS true if the PS condition is met, false otherwise.
-		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerJumpForward)(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false);
+		/// @param condition_dig_in true if the digital input condition is enabled, false otherwise.
+		/// @param dig_in_bit_nr the digital input bit number to test.
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerJumpForward)(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool condition_dig_in = false, uint8_t dig_in_bit_nr = 0);
 
 		/// @brief Writes an I2C command to the sequencer.
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerTransmitI2C)(const unsigned int& Sequencer, uint8_t I2C_port, uint8_t I2C_length_out, uint8_t I2C_length_in, uint8_t* data_out);

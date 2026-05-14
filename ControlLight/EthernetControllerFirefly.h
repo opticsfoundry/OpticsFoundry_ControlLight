@@ -39,7 +39,6 @@ public:
 	//uint32_t FPGABufferUsed;
 	//COutput* myOutput;
 	double LastPeriodicTriggerPeriod_in_ms;
-	bool DebugModeOn;
 private:
 	bool core_option_LED; 
 	uint8_t core_option_SPI_CS;
@@ -58,7 +57,6 @@ private:
 
 	uint8_t* previous_input_buffer_ptr;
 
-	std::string DebugFilename;
 private:
 	void StartSPIAnalogInAcquisition(unsigned char analog_in_type, unsigned char SPI_CS, unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms);	
 	void StartXADCAnalogInAcquisition(unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms);
@@ -81,7 +79,7 @@ public:
 public:	
 	CEthernetControllerFirefly(CDeviceSequencer* _MySequencer);
 	virtual ~CEthernetControllerFirefly();
-	bool SendSequenceToFPGA(uint32_t* buffer);
+	bool SendSequenceToFPGA(uint32_t* buffer, const std::string& DebugFileName = "");
 	void AddSequencerCommandToSequenceList(uint32_t high_buffer, uint32_t low_buffer);
 	void StartAnalogInAcquisition(unsigned char analog_in_type, unsigned char SPI_CS, unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms);
 	bool AddSequencePreamble();
@@ -98,7 +96,7 @@ public:
 	void SetStrobeOptions( uint8_t strobe_choice, uint8_t strobe_low_length, uint8_t strobe_high_length);
 	void SetTriggerOptions( bool ExternalTrigger0, bool ExternalTrigger1);
 	void AddExternalTrigger( bool ExternalTrigger0, bool ExternalTrigger1, bool FPGASoftwareTrigger );
-	void WriteBufferToFile(uint32_t* buffer, unsigned long length);
+	void WriteBufferToFile(uint32_t* buffer, unsigned long length, const std::string& FileName);
 	bool ConnectSocket(const std::string& host, unsigned int port, unsigned int aFPGAClockToBusClockRatio, double aFPGAClockFrequencyInHz, bool aFPGAUseExternalClock, bool aFPGAUseStrobeGenerator, bool ExternalTrigger);
 	double GetFPGAClockFrequency_in_Hz();
 	bool WaitTillFinished();
@@ -136,7 +134,7 @@ public:
 	void AddCommandWriteInputBuffer(unsigned long input_buf_mem_data, bool write_next_address = 1, unsigned long input_buf_mem_address = 0);
 	void AddCommandSetLoopCount(unsigned int loop_count);
 	void AddCommandJumpBackward(unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool loop_count_greater_zero = false);
-	void AddCommandJumpForward(unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false);
+	void AddCommandJumpForward(unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool condition_dig_in = false, uint8_t dig_in_bit_nr = 0);
 	
 	void TransmitOnlyDifferenceBetweenCommandSequenceIfPossible(bool OnOff);
 	double MeasureEthernetBandwidth(uint32_t DataSize = 1024 * 1024, double MinimumExpected = -1);

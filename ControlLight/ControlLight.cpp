@@ -872,11 +872,14 @@ void DemoFPGASequencerSoundBuzzer() {
 		return;
 	}
 	CLA_StartAssemblingSequence();
-	CLA_SwitchSequencerBuzzer(/*SequencerNr*/ 0, true);
-	CLA_SetDigitalOutput(/*SequencerNr*/ 0, /*Addr*/ 2, /* BitNr */ 0, true);
-	CLA_Wait_ms(100);
-	CLA_SwitchSequencerBuzzer(/*SequencerNr*/ 0, false);
-	CLA_ExecuteSequence();
+	//for (int n = 0; n < 10; n++) {
+		CLA_SwitchSequencerBuzzer(/*SequencerNr*/ 0, true);
+		CLA_Wait_ms(100);
+ 		CLA_SwitchSequencerBuzzer(/*SequencerNr*/ 0, false);
+		//CLA_Wait_ms(1);
+	//}
+	//CLA_ExecuteSequence("c:\\data\\DebugDemoFPGASequencerSoundBuzzerSequence3.txt"); //Use this version to create debug file
+	CLA_ExecuteSequence(); //use this version to run without creating debug file
 	unsigned long long DataPointsWritten = 0;
 	bool running = false;
 	CLA_GetSequenceExecutionStatus(running, DataPointsWritten);
@@ -914,7 +917,8 @@ void DemoFPGASequencerCyclicSequencing() {
 		cout << "Iteration " << CycleNr << ": ";
 		//We create sequence from scratch to update trigger settings and cycle number dependent sequence entries.
 		DemoSequence(CycleNr);
-		CLA_ExecuteSequence();
+		//CLA_ExecuteSequence("c:\\data\\DebugDemoFPGASequencerCyclicSequence.txt"); //Use this version to create debug file
+		CLA_ExecuteSequence(); //use this version to run without creating debug file
 		bool running = false;
 		unsigned long long DataPointsWritten = 0;
 		CLA_GetSequenceExecutionStatus(running, DataPointsWritten);
@@ -1284,9 +1288,9 @@ void DemoReadConfigEEPROM() {
 }
 
 int main() {
-	//DemoFPGASequencerSoundBuzzer();
+	DemoFPGASequencerSoundBuzzer();
 	//DemoFPGASequencerSingleRun();
-	DemoFPGASequencerCyclicSequencing();
+	//DemoFPGASequencerCyclicSequencing();
 	//DemoWriteConfigEEPROM();
 	//DemoReadConfigEEPROM();
 	//DemoSmartSequencer();

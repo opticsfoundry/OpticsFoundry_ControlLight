@@ -21,7 +21,7 @@ PYBIND11_MODULE(control_light_api, m) {
         .def("load_from_json_file", &ControlLight_API::LoadFromJSONFile)
         .def("auto_configure", &ControlLight_API::AutoConfigure, py::arg("filename") = "")
         .def("initialize", &ControlLight_API::Initialize)
-        .def("switch_debug_mode", &ControlLight_API::SwitchDebugMode, py::arg("on_off"), py::arg("filename"))
+        .def("switch_debug_mode", &ControlLight_API::SwitchDebugMode, py::arg("on_off"), py::arg("filename") = "")
         .def("TransmitOnlyDifferenceBetweenCommandSequenceIfPossible", &ControlLight_API::TransmitOnlyDifferenceBetweenCommandSequenceIfPossible, py::arg("on_off"))
         .def("is_ready", &ControlLight_API::IsReady)
         .def("start_assembling_sequence", &ControlLight_API::StartAssemblingSequence)
@@ -146,9 +146,9 @@ PYBIND11_MODULE(control_light_api, m) {
         .def("set_io_update_enabled", &ControlLight_API::SetIOUpdateEnabled, py::arg("sequencer"), py::arg("address"), py::arg("IOUpdateEnabled"))
 
         // Send the assembled sequence to FPGA, but do not execute it
-		.def("send_sequence", & ControlLight_API::SendSequence)
+		.def("send_sequence", &ControlLight_API::SendSequence, py::arg("filename") = "")
         // Send sequence to FPGA and executes it 
-        .def("execute_sequence", &ControlLight_API::ExecuteSequence)
+        .def("execute_sequence", &ControlLight_API::ExecuteSequence, py::arg("filename") = "")
 
         .def("repeat_sequence", &ControlLight_API::RepeatSequence)
 
@@ -259,12 +259,13 @@ PYBIND11_MODULE(control_light_api, m) {
 			py::arg("condition_1") = false, py::arg("condition_PS") = false,
 			py::arg("loop_count_greater_zero") = false)
 
-        //API_EXPORT ERROR_CODE_TYPE CLA_FN(AddCommandJumpForward)(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false);
+        //API_EXPORT ERROR_CODE_TYPE CLA_FN(AddCommandJumpForward)(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool condition_dig_in = false, uint8_t dig_in_bit_nr = 0);
 		// Jumps forward in the sequence
 		.def("sequencer_jump_forward", &ControlLight_API::SequencerJumpForward,
 			py::arg("sequencer"), py::arg("jump_length"),
 			py::arg("unconditional_jump") = true, py::arg("condition_0") = false,
-			py::arg("condition_1") = false, py::arg("condition_PS") = false)
+			py::arg("condition_1") = false, py::arg("condition_PS") = false,
+			py::arg("condition_dig_in") = false, py::arg("dig_in_bit_nr") = 0)
 		.def("sequencer_transmit_i2c", [](ControlLight_API& self, unsigned int sequencer, uint8_t i2c_port, uint8_t i2c_length_out, uint8_t i2c_length_in, py::bytes data_out) {
 				std::string payload = static_cast<std::string>(data_out);
 				self.SequencerTransmitI2C(sequencer, i2c_port, i2c_length_out, i2c_length_in, reinterpret_cast<uint8_t*>(payload.data()));

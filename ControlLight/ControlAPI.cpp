@@ -470,7 +470,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 				return;
 			}
 			for (int i = 0; i < NrSequencers; i++) {
-				ShortSequencerList[i]->SwitchDebugMode(OnOff, FileName);
+				ShortSequencerList[i]->SwitchDebugMode(OnOff, FileName ? FileName : "");
 			}
 			API_UNLOCK;
 		}
@@ -512,7 +512,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			CATCH_MFC_EX_E
 		}
 
-		API_EXPORT void CLA_FNDEF(SendSequence)() {
+		API_EXPORT void CLA_FNDEF(SendSequence)(const char* FileName) {
 			CATCH_MFC_EX_S
 				API_LOCK_GUARD;
 			if (!initialized) {
@@ -520,7 +520,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 				return;
 			}
 			for (int i = 0; i < NrSequencers; i++) {
-				ShortSequencerList[i]->SendSequence();
+				ShortSequencerList[i]->SendSequence(FileName ? FileName : "");
 			}
 			API_UNLOCK;
 			CATCH_MFC_EX_E
@@ -538,7 +538,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			CATCH_MFC_EX_E
 		}
 
-		API_EXPORT void CLA_FNDEF(ExecuteSequence)() {
+		API_EXPORT void CLA_FNDEF(ExecuteSequence)(const char* FileName) {
 			CATCH_MFC_EX_S
 				API_LOCK_GUARD;
 			if (!initialized) {
@@ -546,7 +546,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 				return;
 			}
 			for (int i = 0; i < NrSequencers; i++) {
-				ShortSequencerList[i]->SendSequence();
+				ShortSequencerList[i]->SendSequence(FileName ? FileName : "");
 			}
 			MasterSequencer->SendStartSequenceCommand();
 			API_UNLOCK;
@@ -772,15 +772,15 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerJumpBackward: error");
 		}
 
-		//API_EXPORT ERROR_CODE_TYPE CLA_FN(AddCommandJumpForward)(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false);
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerJumpForward)(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump, bool condition_0, bool condition_1, bool condition_PS) {
+		//API_EXPORT ERROR_CODE_TYPE CLA_FN(AddCommandJumpForward)(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool condition_dig_in = false, uint8_t dig_in_bit_nr = 0);
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerJumpForward)(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump, bool condition_0, bool condition_1, bool condition_PS, bool condition_dig_in, uint8_t dig_in_bit_nr) {
 			API_LOCK_GUARD;
 			CDeviceSequencer* sequencer = GetSequencer(Sequencer);
 			//SequencerList is initialized to zero at program start, so no need to check if it is initialized
 			if (!sequencer) {
 				API_UNLOCK_RETURN_ERROR(false, "CLA_SequencerJumpForward: Invalid sequencer");
 			}
-			sequencer->SequencerJumpForward(jump_length, unconditional_jump, condition_0, condition_1, condition_PS);
+			sequencer->SequencerJumpForward(jump_length, unconditional_jump, condition_0, condition_1, condition_PS, condition_dig_in, dig_in_bit_nr);
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerJumpForward: error");
 		}
 

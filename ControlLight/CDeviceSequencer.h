@@ -72,7 +72,7 @@ public:
 	bool IsSequencerConnected();
 	void StartAssemblingSequence();
 	void StartAssemblingNextSequence();
-	void SendSequence();
+	void SendSequence(const std::string& FileName = "");
 	void GetBufferLength(uint32_t& FilledBufferLength, uint32_t& MaxBufferLength);
 	void SendStartSequenceCommand();
 	bool IsSequenceRunning(bool& running, unsigned long long& DataPointsWritten);
@@ -126,7 +126,7 @@ public:
 	void SequencerSetTimeDebtGuard_in_ms(const double& MaxTimeDebt_in_ms) { this->MaxTimeDebt_in_ms = MaxTimeDebt_in_ms; }
 	void SequencerSetLoopCount(unsigned int loop_count);
 	void SequencerJumpBackward(unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool loop_count_greater_zero = false);
-	void SequencerJumpForward(unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false);
+	void SequencerJumpForward(unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool condition_dig_in = false, uint8_t dig_in_bit_nr = 0);
 
 
 
