@@ -694,18 +694,18 @@ void DemoSequence(unsigned long CycleNumber) {
 	CLA_SetIOUpdateEnabled(0, 10, true);
 	CLA_SetPhaseOfChannel(0, 10, 3, 270);
 
-	for (int j = 1; j < 10; j++) {
+	for (int j = 1; j < 100; j=j+10) {
 		CLA_SetVoltage(0, 24, 10.0 * j / 100.0);
 		uint16_t data = 0xffff;
 		CLA_SetValue(0, 1, 0, (uint8_t*)&data, 16);
-		CLA_Wait_ms(0.1);
+		CLA_Wait_ms(0.002);
 		data = 0;
 		CLA_SetValue(0, 1, 0, (uint8_t*)&data, 16);
-		CLA_Wait_ms(0.1);
+		CLA_Wait_ms(0.002);
 		//double Frequency = 1000.0 * j / 100.0;
-		CLA_SetFrequencyOfChannel(0, 10, 1, 4.0 * j/100.0);//in MHz
+		CLA_SetFrequencyOfChannel(0, 10, 1, 10.0 * j/100.0);//in MHz
 		//CLA_SetValue(0, 10, 0, (uint8_t*)&Frequency, 64);
-		CLA_Wait_ms(10);
+		//CLA_Wait_ms(10);
 	}
 	CLA_SetFrequencyOfChannel(0, 10, 1, 0.1);//in MHz
 	CLA_Wait_ms(10);
@@ -1288,9 +1288,9 @@ void DemoReadConfigEEPROM() {
 }
 
 int main() {
-	DemoFPGASequencerSoundBuzzer();
+	//DemoFPGASequencerSoundBuzzer();
 	//DemoFPGASequencerSingleRun();
-	//DemoFPGASequencerCyclicSequencing();
+	DemoFPGASequencerCyclicSequencing();
 	//DemoWriteConfigEEPROM();
 	//DemoReadConfigEEPROM();
 	//DemoSmartSequencer();

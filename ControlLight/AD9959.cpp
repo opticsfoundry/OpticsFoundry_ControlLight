@@ -78,7 +78,7 @@ CAD9959::CAD9959(unsigned short aBus, unsigned long aBaseAddress, double aExtern
     UpdateRegistersModeAutomatic = true;
 
     //SetSPIFrequencyAndMode(/*SPI_frequency_in_Hz*/ 200.0/500.0*InputClockFrequency_in_Hz, /*SPI_mode*/ 0);
-    SetSPIFrequencyAndMode(/*SPI_frequency_in_Hz*/ 4000000, /*SPI_mode*/ 0);
+    SetSPIFrequencyAndMode(/*SPI_frequency_in_Hz*/ 17000000, /*SPI_mode*/ 0);
 }
 
 CAD9959::~CAD9959() {
