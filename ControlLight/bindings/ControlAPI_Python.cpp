@@ -11,10 +11,16 @@ using namespace pybind11::literals;
 namespace py = pybind11;
 
 PYBIND11_MODULE(control_light_api, m) {
+    auto bytes_to_payload = [](py::bytes data) {
+        return static_cast<std::string>(data);
+    };
+
     py::register_exception<CLA_Exception>(m, "CLA_Exception");
     py::class_<ControlLight_API>(m, "ControlLightAPI")
         .def(py::init<bool, bool>(), py::arg("initialize_afx") = true, py::arg("initialize_afx_socket") = true)
         .def("is_created", &ControlLight_API::IsCreated)
+        .def("create", &ControlLight_API::Create, py::arg("initialize_afx") = true, py::arg("initialize_afx_socket") = true)
+        .def("cleanup", &ControlLight_API::Cleanup)
         .def("did_error_occur", &ControlLight_API::DidErrorOccur)
         .def("get_last_error", &ControlLight_API::GetLastError)
         .def("configure", &ControlLight_API::Configure, py::arg("display_errors"))
@@ -22,21 +28,30 @@ PYBIND11_MODULE(control_light_api, m) {
         .def("auto_configure", &ControlLight_API::AutoConfigure, py::arg("filename") = "")
         .def("initialize", &ControlLight_API::Initialize)
         .def("switch_debug_mode", &ControlLight_API::SwitchDebugMode, py::arg("on_off"), py::arg("filename") = "")
+        .def("transmit_only_difference_between_command_sequence_if_possible", &ControlLight_API::TransmitOnlyDifferenceBetweenCommandSequenceIfPossible, py::arg("on_off"))
         .def("TransmitOnlyDifferenceBetweenCommandSequenceIfPossible", &ControlLight_API::TransmitOnlyDifferenceBetweenCommandSequenceIfPossible, py::arg("on_off"))
         .def("is_ready", &ControlLight_API::IsReady)
         .def("start_assembling_sequence", &ControlLight_API::StartAssemblingSequence)
         .def("start_assembling_next_sequence", &ControlLight_API::StartAssemblingNextSequence)
-        .def("set_value", &ControlLight_API::SetValue,
-            py::arg("sequencer"), py::arg("address"), py::arg("subaddress"),
+        .def("set_value", [bytes_to_payload](ControlLight_API& self, unsigned int sequencer, unsigned int address, unsigned int subaddress, py::bytes data, unsigned long data_length_in_bit, uint8_t start_bit) {
+                std::string payload = bytes_to_payload(data);
+                self.SetValue(sequencer, address, subaddress, reinterpret_cast<const uint8_t*>(payload.data()), data_length_in_bit, start_bit);
+            }, py::arg("sequencer"), py::arg("address"), py::arg("subaddress"),
             py::arg("data"), py::arg("data_length_in_bit"), py::arg("start_bit") = 0)
-        .def("set_register", &ControlLight_API::SetRegister,
-            py::arg("sequencer"), py::arg("address"), py::arg("subaddress"),
+        .def("set_register", [bytes_to_payload](ControlLight_API& self, unsigned int sequencer, unsigned int address, unsigned int subaddress, py::bytes data, unsigned long data_length_in_bit, uint8_t start_bit) {
+                std::string payload = bytes_to_payload(data);
+                self.SetRegister(sequencer, address, subaddress, reinterpret_cast<const uint8_t*>(payload.data()), data_length_in_bit, start_bit);
+            }, py::arg("sequencer"), py::arg("address"), py::arg("subaddress"),
             py::arg("data"), py::arg("data_length_in_bit"), py::arg("start_bit") = 0)
-        .def("set_value_serial_device", &ControlLight_API::SetValueSerialDevice,
-            py::arg("sequencer"), py::arg("address"), py::arg("subaddress"),
+        .def("set_value_serial_device", [bytes_to_payload](ControlLight_API& self, unsigned int sequencer, unsigned int address, unsigned int subaddress, py::bytes data, unsigned long data_length_in_bit, uint8_t start_bit) {
+                std::string payload = bytes_to_payload(data);
+                self.SetValueSerialDevice(sequencer, address, subaddress, reinterpret_cast<const uint8_t*>(payload.data()), data_length_in_bit, start_bit);
+            }, py::arg("sequencer"), py::arg("address"), py::arg("subaddress"),
             py::arg("data"), py::arg("data_length_in_bit"), py::arg("start_bit") = 0)
-        .def("set_register_serial_device", &ControlLight_API::SetRegisterSerialDevice,
-            py::arg("sequencer"), py::arg("address"), py::arg("subaddress"),
+        .def("set_register_serial_device", [bytes_to_payload](ControlLight_API& self, unsigned int sequencer, unsigned int address, unsigned int subaddress, py::bytes data, unsigned long data_length_in_bit, uint8_t start_bit) {
+                std::string payload = bytes_to_payload(data);
+                self.SetRegisterSerialDevice(sequencer, address, subaddress, reinterpret_cast<const uint8_t*>(payload.data()), data_length_in_bit, start_bit);
+            }, py::arg("sequencer"), py::arg("address"), py::arg("subaddress"),
             py::arg("data"), py::arg("data_length_in_bit"), py::arg("start_bit") = 0)
 
         // Wait and time
@@ -72,7 +87,25 @@ PYBIND11_MODULE(control_light_api, m) {
         .def("reset_cycle_number", &ControlLight_API::ResetCycleNumber)
         
         //I2C port
-        .def("transmit_i2c_port", &ControlLight_API::TransmitI2CPort, py::arg("i2c_port"), py::arg("i2c_address"), py::arg("send_length"), py::arg("send_data"), py::arg("receive_length"), py::arg("receive_data"), py::arg("i2c_clock_frequency_in_hz"))
+        .def("transmit_i2c_port", [bytes_to_payload](ControlLight_API& self, uint8_t i2c_port, uint8_t i2c_address, py::bytes send_data, uint16_t receive_length, uint32_t i2c_clock_frequency_in_hz, bool fail_silently) {
+                std::string send_payload = bytes_to_payload(send_data);
+                std::string receive_payload(receive_length, '\0');
+                bool i2c_success = false;
+                self.TransmitI2CPort(
+                    i2c_port,
+                    i2c_address,
+                    static_cast<uint16_t>(send_payload.size()),
+                    reinterpret_cast<uint8_t*>(send_payload.data()),
+                    receive_length,
+                    reinterpret_cast<uint8_t*>(receive_payload.data()),
+                    i2c_clock_frequency_in_hz,
+                    i2c_success,
+                    fail_silently);
+                return py::dict(
+                    "data"_a = py::bytes(receive_payload),
+                    "i2c_success"_a = i2c_success
+                );
+            }, py::arg("i2c_port"), py::arg("i2c_address"), py::arg("send_data"), py::arg("receive_length"), py::arg("i2c_clock_frequency_in_hz"), py::arg("fail_silently") = false)
         .def("write_config_eeprom", [](ControlLight_API& self, uint8_t sequencer_id, uint8_t rack_nr, uint8_t slot_nr, py::bytes data) {
                 const std::string payload = static_cast<std::string>(data);
                 self.WriteConfigEEPROM(sequencer_id, rack_nr, slot_nr, payload.data(), payload.size());
@@ -80,19 +113,25 @@ PYBIND11_MODULE(control_light_api, m) {
         .def("read_config_eeprom", [](ControlLight_API& self, uint8_t sequencer_id, uint8_t rack_nr, uint8_t slot_nr) {
                 std::string payload(256, '\0');
                 size_t length = payload.size();
-                self.ReadConfigEEPROM(sequencer_id, rack_nr, slot_nr, payload.data(), length);
+                bool i2c_success = false;
+                self.ReadConfigEEPROM(sequencer_id, rack_nr, slot_nr, payload.data(), length, i2c_success);
                 payload.resize(length);
                 return py::dict(
                     "data"_a = py::bytes(payload),
-                    "length"_a = length
+                    "length"_a = length,
+                    "i2c_success"_a = i2c_success
                 );
             }, py::arg("sequencer_id"), py::arg("rack_nr"), py::arg("slot_nr"))
         .def("write_config_address", &ControlLight_API::WriteConfigAddress,
             py::arg("sequencer_id"), py::arg("rack_nr"), py::arg("slot_nr"), py::arg("address"))
         .def("read_config_address", [](ControlLight_API& self, uint8_t sequencer_id, uint8_t rack_nr, uint8_t slot_nr) {
                 uint8_t address = 0;
-                self.ReadConfigAddress(sequencer_id, rack_nr, slot_nr, address);
-                return address;
+                bool i2c_success = false;
+                self.ReadConfigAddress(sequencer_id, rack_nr, slot_nr, address, i2c_success);
+                return py::dict(
+                    "address"_a = address,
+                    "i2c_success"_a = i2c_success
+                );
             }, py::arg("sequencer_id"), py::arg("rack_nr"), py::arg("slot_nr"))
         .def("read_configuration", [](ControlLight_API& self, const std::string& filename) {
                 py::object json_module = py::module_::import("json");
@@ -207,7 +246,7 @@ PYBIND11_MODULE(control_light_api, m) {
 			// Calc frequency tuning word for AD9854 from ADC input value
         .def("sequencer_calc_AD9854_frequency_tuning_word", &ControlLight_API::SequencerCalcAD9854FrequencyTuningWord,
             py::arg("sequencer"), py::arg("ftw0"),
-            py::arg("bit_shift"))
+            py::arg("bit_shift") = 22)
 
         // Writes system time to input memory
         .def("sequencer_write_system_time_to_input_memory", &ControlLight_API::SequencerWriteSystemTimeToInputMemory,
@@ -266,12 +305,12 @@ PYBIND11_MODULE(control_light_api, m) {
 			py::arg("unconditional_jump") = true, py::arg("condition_0") = false,
 			py::arg("condition_1") = false, py::arg("condition_PS") = false,
 			py::arg("condition_dig_in") = false, py::arg("dig_in_bit_nr") = 0)
-		.def("sequencer_transmit_i2c", [](ControlLight_API& self, unsigned int sequencer, uint8_t i2c_port, uint8_t i2c_length_out, uint8_t i2c_length_in, py::bytes data_out) {
-				std::string payload = static_cast<std::string>(data_out);
+		.def("sequencer_transmit_i2c", [bytes_to_payload](ControlLight_API& self, unsigned int sequencer, uint8_t i2c_port, uint8_t i2c_length_out, uint8_t i2c_length_in, py::bytes data_out) {
+				std::string payload = bytes_to_payload(data_out);
 				self.SequencerTransmitI2C(sequencer, i2c_port, i2c_length_out, i2c_length_in, reinterpret_cast<uint8_t*>(payload.data()));
 			}, py::arg("sequencer"), py::arg("i2c_port"), py::arg("i2c_length_out"), py::arg("i2c_length_in"), py::arg("data_out"))
-		.def("sequencer_transmit_spi", [](ControlLight_API& self, unsigned int sequencer, uint8_t chip_select, uint16_t number_of_bits_out, py::bytes data_out, uint8_t number_of_bits_in, bool start_now) {
-				std::string payload = static_cast<std::string>(data_out);
+		.def("sequencer_transmit_spi", [bytes_to_payload](ControlLight_API& self, unsigned int sequencer, uint8_t chip_select, uint16_t number_of_bits_out, py::bytes data_out, uint8_t number_of_bits_in, bool start_now) {
+				std::string payload = bytes_to_payload(data_out);
 				self.SequencerTransmitSPI(sequencer, chip_select, number_of_bits_out, reinterpret_cast<const uint8_t*>(payload.data()), number_of_bits_in, start_now);
 			}, py::arg("sequencer"), py::arg("chip_select"), py::arg("number_of_bits_out"), py::arg("data_out"), py::arg("number_of_bits_in"), py::arg("start_now"))
 		.def("sequencer_repeated_out_in", &ControlLight_API::SequencerRepeatedOutIn,
@@ -337,7 +376,7 @@ PYBIND11_MODULE(control_light_api, m) {
                 py::arg("sequencer"),
                 py::arg("address"),
                 py::arg("external_clock_frequency"),
-                py::arg("frequency_multiplier"))
+                py::arg("frequency_multiplier")
                 )
 
             // AddDeviceAD9959

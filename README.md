@@ -57,7 +57,7 @@ try:
    start_time = 0
    for i in range(10):
        cla.start_assembling_sequence()
-       cla.sequencer_start_analog_in_acquisition(0,0,100, 0.1)
+       cla.sequencer_start_analog_in_acquisition(0, 0, 0, 0, 100, 0.1)
        for j in range(100):
            cla.set_voltage(0, 24, 10.0 \* j / 100.0)
            cla.wait_ms(0.1)
@@ -149,7 +149,88 @@ You can also modify the API and recreated the DLL, LIB, PYD files as needed for 
 
 Each of the examples do need access to a hardware configuration file. The path and filename is set in the LoadFromJSONFile() function in C or the cla.load_from_json_file() function in Python. In the demos it’s the ControlHardwareConfig.json file. The structure of this file is explained in the "Hardware configuration file" section below.  
 
-If you need/want to update the library, then do the following  
+If you need/want to update the library, then do either A) use cmake from the CLI or B) use Visual Studio and follow the manual steps outlined below. 
+
+
+&nbsp;
+
+### **A) cmake from CLI**
+
+The build mode can be selected from the CMake command line, so the CMakeLists.txt file does not need to be edited for normal rebuilds:
+
+```bat
+cmake -S ControlLight -B ControlLight\out\build\x64-release -DBUILD_MODE=PYD
+cmake --build ControlLight\out\build\x64-release --config Release
+```
+
+Use `-DBUILD_MODE=DLL` for the C/Qt/Visual Studio DLL and `-DBUILD_MODE=EXE` for the direct executable test mode.
+
+To also copy the generated artifacts into the example project folders, add:
+
+```bat
+-DCONTROL_LIGHT_STAGE_EXAMPLES=ON
+```
+
+The Qt Creator output folders depend on the installed Qt version and kit name. To copy the DLL there as well, also add `-DCONTROL_LIGHT_STAGE_QT_EXAMPLES=ON` and adjust the `CONTROL_LIGHT_QT_*_DIR` CMake cache paths if your Qt Creator build folder names differ.
+
+### Rebuilding for Python
+
+Configure and build the Python module:
+
+```bat
+cmake -S ControlLight -B ControlLight\out\build\x64-release -DBUILD_MODE=PYD -DCONTROL_LIGHT_STAGE_EXAMPLES=ON
+cmake --build ControlLight\out\build\x64-release --config Release
+```
+
+With `CONTROL_LIGHT_STAGE_EXAMPLES=ON`, CMake copies the generated `control_light_api*.pyd` and `ControlLight.dll` into _ControlLight_DLL_Test_Python\\lib_. It also copies them into _ControlLight_DLL_Test_Python_for_pip\\control_light_api_ and renames the pyd file to _\__init_\_.pyd_ for the pip package.
+
+Installing the control_light_api systemwide using pip:  
+After rebuilding with staging enabled, open a console, change to the _ControlLight_DLL_Test_Python_for_pip_ folder, and run  
+_pip install ._    
+Uninstalling a pip installed control_light_api: run  
+_pip uninstall control_light_api_  
+
+### Rebuilding for Visual Studio
+
+Configure and build the DLL:
+
+```bat
+cmake -S ControlLight -B ControlLight\out\build\x64-release -DBUILD_MODE=DLL -DCONTROL_LIGHT_STAGE_EXAMPLES=ON
+cmake --build ControlLight\out\build\x64-release --config Release
+```
+
+The Debug configuration uses the same command structure with an x64-debug build folder and `--config Debug`. The release version is significantly faster, but does not provide Visual Studio debug information.
+
+With `CONTROL_LIGHT_STAGE_EXAMPLES=ON`, CMake copies _ControlLight.dll_ to _ControlLight_DLL_Test_VS_console\\bin_ and _ControlLight.lib_ to _ControlLight_DLL_Test_VS_console\\lib_. The in-repository Visual Studio test project includes _ControlLight\\ControlAPI.h_ directly, so no header copy is needed for that example.
+
+### Rebuilding for Qt Creator (MinGW C++)  
+   
+Recreate the DLL in x64 release or debug mode as described above. Qt Creator build output paths include the Qt version and kit name, so check the `CONTROL_LIGHT_QT_*_DIR` CMake cache paths before enabling Qt staging:
+
+```bat
+cmake -S ControlLight -B ControlLight\out\build\x64-release -DBUILD_MODE=DLL -DCONTROL_LIGHT_STAGE_EXAMPLES=ON -DCONTROL_LIGHT_STAGE_QT_EXAMPLES=ON
+cmake --build ControlLight\out\build\x64-release --config Release
+```
+
+When Qt staging is enabled, CMake copies _ControlLight.dll_ into the configured Qt console and GUI release/debug build folders.
+
+
+
+&nbsp;
+
+
+### **B) Rebuild using Visual Studio and manual file copy**
+
+Manually building the API (an older way of creating it) is still possible and kept for the moment as fallback. However, `BUILD_MODE` is now a CMake cache variable. If Visual Studio has already configured the project once, changing the default `BUILD_MODE` line in CMakeLists.txt may not be enough, because the old value can remain stored in the build folder's CMake cache.
+
+If Visual Studio keeps building the previous mode, use one of these methods:
+
+1. In Visual Studio, open **Project -> Delete Cache and Reconfigure** for the CMake project, then let Visual Studio configure again.
+2. Or close Visual Studio and delete the relevant build folder, for example _ControlLight\\out\\build\\x64-release_ or _ControlLight\\out\\build\\x64-debug_. Reopen the project and let Visual Studio configure again.
+3. Or delete only the _CMakeCache.txt_ file inside the relevant build folder, then reconfigure.
+
+After clearing the cache, Visual Studio will read the current default `BUILD_MODE` from CMakeLists.txt again. As an alternative, set `BUILD_MODE` directly in Visual Studio's CMake cache/settings UI to `EXE`, `DLL`, or `PYD`.
+
 
 ### Rebuilding for Python
 

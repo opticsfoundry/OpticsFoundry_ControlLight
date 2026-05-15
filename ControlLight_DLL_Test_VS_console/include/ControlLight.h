@@ -536,7 +536,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 
 
 
-		//the following functions are used to add devices to the sequencer. I placed them here to aAPI_EXPORT void clutter above. They have to be called before Initialize)().	
+		//the following functions are used to add devices to the sequencer. I placed them here to avoid clutter above. They have to be called before Initialize)().	
 		/// @brief Add a device sequencer to the list.
 		/// @param id the id of the device sequencer to add (this is the number that all other commands are using when sending data to a device on this sequencer).
 		/// @param type the type of the device sequencer to add.

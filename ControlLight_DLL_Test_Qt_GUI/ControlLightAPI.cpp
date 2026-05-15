@@ -128,7 +128,7 @@ void CControlLightAPI::Set_CLA_CallsToNull() {
     CLA_SetFrequencyTuningWordOfChannel = nullptr;
     CLA_SetPhaseOfChannel = nullptr;
     CLA_SetPowerOfChannel = nullptr;
-    CLA_SetOUpdateEnabled = nullptr;
+    CLA_SetIOUpdateEnabled = nullptr;
 
 }
 
@@ -237,7 +237,7 @@ bool CControlLightAPI::LoadDLL() {
     TRY_RESOLVE(CLA_SetFrequencyTuningWordOfChannel);
     TRY_RESOLVE(CLA_SetPhaseOfChannel);
     TRY_RESOLVE(CLA_SetPowerOfChannel);
-    TRY_RESOLVE(CLA_SetOUpdateEnabled);
+    TRY_RESOLVE(CLA_SetIOUpdateEnabled);
 
     //TRY_RESOLVE(CLA_GetInstance);
 
@@ -427,7 +427,7 @@ API_EXPORT ERROR_CODE_TYPE CLA_SetAD9959Power(const unsigned int& Sequencer, con
     CLA_SetFrequencyTuningWordOfChannel = (SetFrequencyTuningWordOfChannelFunc)CLA_Lib->resolve("CLA_SetFrequencyTuningWordOfChannel");
     CLA_SetPhaseOfChannel = (SetPhaseOfChannelFunc)CLA_Lib->resolve("CLA_SetPhaseOfChannel");
     CLA_SetPowerOfChannel = (SetPowerOfChannelFunc)CLA_Lib->resolve("CLA_SetPowerOfChannel");
-    CLA_SetOUpdateEnabled = (SetOUpdateEnabledFunc)CLA_Lib->resolve("CLA_SetOUpdateEnabled");
+    CLA_SetIOUpdateEnabled = (SetIOUpdateEnabledFunc)CLA_Lib->resolve("CLA_SetIOUpdateEnabled");
 
     
     //now check if all functions were loaded correctly
@@ -487,7 +487,7 @@ API_EXPORT ERROR_CODE_TYPE CLA_SetAD9959Power(const unsigned int& Sequencer, con
         !CLA_SetFrequencyTuningWordOfChannel ||
         !CLA_SetPhaseOfChannel ||
         !CLA_SetPowerOfChannel ||
-        !CLA_SetOUpdateEnabledl
+        !CLA_SetIOUpdateEnabled
       
         ) {
         qDebug() << "Failed to resolve one or more ControlAPI symbols.";
@@ -821,9 +821,9 @@ bool CControlLightAPI::SetAttenuation(const unsigned int& Sequencer, const unsig
         return false;
 }
 
-bool CControlLightAPI::SetSetIOUpdateEnabled(const unsigned int& Sequencer, const unsigned int& Address, bool EnabkeIOUpdate) {
+bool CControlLightAPI::SetIOUpdateEnabled(const unsigned int& Sequencer, const unsigned int& Address, bool EnableIOUpdate) {
     if (CLA_SetIOUpdateEnabled)
-        return CLA_SetIOUpdateEnabled(Sequencer, Address, EnabkeIOUpdate);
+        return CLA_SetIOUpdateEnabled(Sequencer, Address, EnableIOUpdate);
     else
         return false;
 }
@@ -919,21 +919,12 @@ bool CControlLightAPI::SetPowerOfChannel(const unsigned int& Sequencer, const un
         return false;
 }
 
-bool CControlLightAPI::SetPEnableIOUpdate(const unsigned int& Sequencer, const unsigned int& Address, bool EnableIOUpdate) {
-    if (CLA_SetPEnableIOUpdate)
-        return CLA_SetPEnableIOUpdate(Sequencer, Address, EnableIOUpdate);
-    else
-        return false;
-}
-
-
-
 //end of convenience functions
 
 
-void CControlLightAPI::ExecuteSequence() {
+void CControlLightAPI::ExecuteSequence(const char* Filename) {
     if (CLA_ExecuteSequence)
-        CLA_ExecuteSequence();
+        CLA_ExecuteSequence(Filename);
 }
 
 bool CControlLightAPI::GetSequenceExecutionStatus(bool& running, unsigned long long& DataPointsWritten) {
@@ -955,9 +946,9 @@ void CControlLightAPI::SetTimeDebtGuard_in_ms(const double& MaxTimeDebt_in_ms) {
         CLA_SetTimeDebtGuard_in_ms(MaxTimeDebt_in_ms);
 }
 
-bool CControlLightAPI::SequencerStartAnalogInAcquisition(const unsigned int& Sequencer, const uint8_t& ChannelNumber, const uint32_t& NumberOfDataPoints, const double& DelayBetweenDataPoints_in_ms) {
+bool CControlLightAPI::SequencerStartAnalogInAcquisition(const unsigned int& Sequencer, const uint8_t& analog_in_type, const uint8_t& SPI_CS, const uint8_t& ChannelNumber, const uint32_t& NumberOfDataPoints, const double& DelayBetweenDataPoints_in_ms) {
     if (CLA_SequencerStartAnalogInAcquisition)
-        return CLA_SequencerStartAnalogInAcquisition(Sequencer, ChannelNumber, NumberOfDataPoints, DelayBetweenDataPoints_in_ms);
+        return CLA_SequencerStartAnalogInAcquisition(Sequencer, analog_in_type, SPI_CS, ChannelNumber, NumberOfDataPoints, DelayBetweenDataPoints_in_ms);
     else
         return false;
 }

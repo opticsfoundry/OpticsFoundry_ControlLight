@@ -5,7 +5,7 @@
 
 
 
-#include "ControlLight.h"
+#include "ControlAPI.h"
 #include <iostream>
 
 
@@ -102,7 +102,7 @@ int main() {
 		*/
 
 		//this is the same command using a convenience function
-		CLA_SequencerStartAnalogInAcquisition(0, 0, 1000, 0.02);
+		CLA_SequencerStartAnalogInAcquisition(0, 0, 0, 0, 1000, 0.02);
 		
 		for (int j = 1; j < 100; j++) {
 			CLA_SetVoltage(0, 24, 10.0*j/100.0);

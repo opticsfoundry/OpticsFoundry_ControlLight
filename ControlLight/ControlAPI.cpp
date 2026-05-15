@@ -296,7 +296,13 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 		ControlLight_API::ControlLight_API(bool InitializeAfx , bool InitializeAfxSocket ) {
 			Created = false;
 			try {  //happens in class constructor
+#ifdef THROW_EXCEPTIONS
+				Create(InitializeAfx, InitializeAfxSocket);
+				Created = true;
+#else
 				Created = Create(InitializeAfx, InitializeAfxSocket);
+#endif
+				SetAutoConfigAPI(this);
 			}
 			catch (const std::exception& e) {
 				AddErrorMessage(std::string("ControlLight_API ctor: ") + e.what(), false);
@@ -308,6 +314,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 
 		ControlLight_API::~ControlLight_API() {
 			Cleanup();
+			SetAutoConfigAPI(nullptr);
 		}
 
 		bool ControlLight_API::IsCreated() { 
@@ -1172,10 +1179,10 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_LOCK_GUARD;
 			CDevice* device = GetParallelBusDevice(Sequencer, Address);
 			if (!device) {
-				API_UNLOCK_RETURN_ERROR(false, "CLA_SetOUpdateEnabled: output not found");
+				API_UNLOCK_RETURN_ERROR(false, "CLA_SetIOUpdateEnabled: output not found");
 			}
 			device->SetIOUpdateEnabled(EnableIOUpdate);
-			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SetOUpdateEnabled: error");
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SetIOUpdateEnabled: error");
 		}
 
 		//End of convenience functions

@@ -14,9 +14,28 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(BUILD_MODE "EXE" CACHE STRING "Choose build mode: EXE, DLL or PYD")
 set_property(CACHE BUILD_MODE PROPERTY STRINGS EXE DLL PYD)
 
+# Default build mode is EXE. Override with -DBUILD_MODE=DLL or -DBUILD_MODE=PYD when building the DLL or Python module.
+option(CONTROL_LIGHT_STAGE_EXAMPLES "Copy built artifacts into the in-repository example folders after building DLL or PYD modes" OFF)
+option(CONTROL_LIGHT_STAGE_QT_EXAMPLES "When staging examples, also copy ControlLight.dll into the configured Qt Creator build folders" OFF)
+set(CONTROL_LIGHT_QT_CONSOLE_RELEASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../ControlLight_DLL_Test_Qt_console/build/Desktop_Qt_6_7_2_MinGW_64_bit-Release/release" CACHE PATH "Qt console release build output folder")
+set(CONTROL_LIGHT_QT_CONSOLE_DEBUG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../ControlLight_DLL_Test_Qt_console/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/debug" CACHE PATH "Qt console debug build output folder")
+set(CONTROL_LIGHT_QT_GUI_RELEASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../ControlLight_DLL_Test_Qt_GUI/build/Desktop_Qt_6_7_2_MinGW_64_bit-Release/release" CACHE PATH "Qt GUI release build output folder")
+set(CONTROL_LIGHT_QT_GUI_DEBUG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../ControlLight_DLL_Test_Qt_GUI/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/debug" CACHE PATH "Qt GUI debug build output folder")
 
-# Set the build mode here manually: EXE, DLL, or PYD
-set(BUILD_MODE "EXE" CACHE STRING "Choose build mode" FORCE)  # <-- change this line to switch build modes  EXE, DLL, DLL_TEST or PYD, use Build -> Clean All if there is a problem with building the project
+function(control_light_stage_file build_target source_file destination_dir)
+    add_custom_command(TARGET ${build_target} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${destination_dir}"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${source_file}" "${destination_dir}"
+        VERBATIM)
+endfunction()
+
+function(control_light_stage_file_as build_target source_file destination_file)
+    get_filename_component(destination_dir "${destination_file}" DIRECTORY)
+    add_custom_command(TARGET ${build_target} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${destination_dir}"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${source_file}" "${destination_file}"
+        VERBATIM)
+endfunction()
 
 
 # Use dynamic (DLL) runtime libraries, needed for _AFXDLL
@@ -97,6 +116,24 @@ elseif(BUILD_MODE STREQUAL "DLL")
     #target_compile_definitions(ControlLight PRIVATE NAMESPACE_CLA) #only for C++ API, if you want to keep DLL functions in namespace CLA
     #if you use Namespace CLA, you need to put CLA:: in front of all DLL function names; you can then remove the CLA_ prefix from all functions
 
+    if(CONTROL_LIGHT_STAGE_EXAMPLES)
+        set(VS_CONSOLE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../ControlLight_DLL_Test_VS_console")
+        control_light_stage_file(ControlLight "$<TARGET_FILE:ControlLight>" "${VS_CONSOLE_DIR}/bin")
+        control_light_stage_file(ControlLight "$<TARGET_LINKER_FILE:ControlLight>" "${VS_CONSOLE_DIR}/lib")
+
+        if(CONTROL_LIGHT_STAGE_QT_EXAMPLES)
+            add_custom_command(TARGET ControlLight POST_BUILD
+                COMMAND ${CMAKE_COMMAND}
+                    "-Dconfig=$<CONFIG>"
+                    "-Dsrc=$<TARGET_FILE:ControlLight>"
+                    "-Dconsole_release_dir=${CONTROL_LIGHT_QT_CONSOLE_RELEASE_DIR}"
+                    "-Dconsole_debug_dir=${CONTROL_LIGHT_QT_CONSOLE_DEBUG_DIR}"
+                    "-Dgui_release_dir=${CONTROL_LIGHT_QT_GUI_RELEASE_DIR}"
+                    "-Dgui_debug_dir=${CONTROL_LIGHT_QT_GUI_DEBUG_DIR}"
+                    -P "${CMAKE_CURRENT_LIST_DIR}/cmake/stage_qt_dll.cmake"
+                VERBATIM)
+        endif()
+    endif()
 
     #optional: move results to target folder
     #install(TARGETS ControlLight DESTINATION lib)
@@ -108,15 +145,10 @@ elseif(BUILD_MODE STREQUAL "PYD")
     file(GLOB SOURCES "*.cpp" "*.h")
 
     # Add pybind11 from local source
-    add_subdirectory(external/pybind11)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/pybind11 ${CMAKE_CURRENT_BINARY_DIR}/pybind11_build)
 
     # Add include path for json.hpp
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-    file(GLOB_RECURSE CORE_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/**/*.h
-    )
 
     # Add ControlLight core library
     add_library(ControlLight SHARED ${SOURCES})
@@ -128,14 +160,19 @@ elseif(BUILD_MODE STREQUAL "PYD")
     target_compile_definitions(ControlLight PRIVATE PYTHON_API THROW_EXCEPTIONS API_CLASS _AFXDLL)
     target_include_directories(ControlLight PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-    # Add pybind11 (already downloaded manually)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/pybind11 ${CMAKE_CURRENT_BINARY_DIR}/pybind11_build)
-
     # Add Python module
     pybind11_add_module(control_light_api bindings/ControlAPI_Python.cpp)
     target_link_libraries(control_light_api PRIVATE ControlLight)
     target_compile_definitions(control_light_api PRIVATE PYTHON_API THROW_EXCEPTIONS API_CLASS _AFXDLL)
 
+    if(CONTROL_LIGHT_STAGE_EXAMPLES)
+        set(PYTHON_EXAMPLE_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../ControlLight_DLL_Test_Python/lib")
+        set(PIP_PACKAGE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../ControlLight_DLL_Test_Python_for_pip/control_light_api")
+        control_light_stage_file(control_light_api "$<TARGET_FILE:control_light_api>" "${PYTHON_EXAMPLE_LIB_DIR}")
+        control_light_stage_file(control_light_api "$<TARGET_FILE:ControlLight>" "${PYTHON_EXAMPLE_LIB_DIR}")
+        control_light_stage_file(control_light_api "$<TARGET_FILE:ControlLight>" "${PIP_PACKAGE_DIR}")
+        control_light_stage_file_as(control_light_api "$<TARGET_FILE:control_light_api>" "${PIP_PACKAGE_DIR}/__init__.pyd")
+    endif()
 
 else()
     message(FATAL_ERROR "Invalid BUILD_MODE: must be EXE, DLL, or PYD")

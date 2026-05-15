@@ -70,7 +70,7 @@ try:
     cla.switch_debug_mode(False, "DebugSequence")
     start_time = 0
     cla.start_assembling_sequence()
-    cla.sequencer_start_analog_in_acquisition(0, AnalogInChannel, 1, 0.1)
+    cla.sequencer_start_analog_in_acquisition(0, 0, 0, AnalogInChannel, 1, 0.1)
     cla.set_start_frequency(0,AD98450Address, 1000000.0)
     cla.set_power(0, AD98450Address, 100.0)
     cla.set_voltage(0, AnalogOutBoardStartAddress, 0.0)
@@ -79,7 +79,7 @@ try:
     cla.start_assembling_next_sequence()
     CycleStartBufferPosition = cla.get_next_buffer_position_of_master_sequencer()
     cla.set_digital_output(0, DigitalOutAddress, 0, True)
-    cla.sequencer_start_analog_in_acquisition(0, AnalogInChannel, 1, 0.1)
+    cla.sequencer_start_analog_in_acquisition(0, 0, 0, AnalogInChannel, 1, 0.1)
     SetVoltageBufferPosition = cla.get_next_buffer_position_of_master_sequencer()
     cla.set_voltage(0, AnalogOutBoardStartAddress, 10.0)
     SetFrequencyBufferPosition = cla.get_next_buffer_position_of_master_sequencer()

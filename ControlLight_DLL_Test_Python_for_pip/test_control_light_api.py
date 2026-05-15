@@ -28,7 +28,13 @@ try:
     start_time = 0
     for i in range(10):
         cla.start_assembling_sequence()
-        cla.sequencer_start_analog_in_acquisition(0,0,100, 0.1)
+        cla.sequencer_start_analog_in_acquisition(
+            0,
+            0,  # AQuRA MCP3208 analog in board
+            0,  # SPI chip-select
+            0,
+            100,
+            0.1)
         for j in range(100):
             cla.set_voltage(0, 24, 10.0 * j / 100.0)
             cla.wait_ms(0.1)

@@ -18,7 +18,7 @@ target_compile_definitions(ControlLightTest PRIVATE C_API)
 
 
 # Include and link the DLL interface
-target_include_directories(ControlLightTest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(ControlLightTest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../ControlLight)
 target_link_directories(ControlLightTest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 target_link_libraries(ControlLightTest PRIVATE ControlLight)
 

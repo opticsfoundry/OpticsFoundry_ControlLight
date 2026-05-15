@@ -3,6 +3,7 @@
 
 
 #include <QLibrary>
+#include <cstdint>
 
 typedef void* HControlLightAPI;
 
@@ -121,15 +122,15 @@ typedef bool (*SetRegisterFunc)(const unsigned int&, const unsigned int&, const 
 typedef bool (*SetValueSerialDeviceFunc)(const unsigned int&, const unsigned int&, const unsigned int&, const uint8_t*, const unsigned long&, const uint8_t&);
 typedef bool (*SetRegisterSerialDeviceFunc)(const unsigned int&, const unsigned int&, const unsigned int&, const uint8_t*, const unsigned long&, const uint8_t&);
 typedef bool (*Wait_msFunc)(double);
-typedef bool (*GetTime_msFunc)(double);
-typedef bool (*GetTimeOfSequencer_msFunc)(const unsigned int&, double);
-typedef bool (*GetTimeDebtOfSequencer_msFunc)(const unsigned int&, double);
+typedef bool (*GetTime_msFunc)(double&);
+typedef bool (*GetTimeOfSequencer_msFunc)(const unsigned int&, double&);
+typedef bool (*GetTimeDebtOfSequencer_msFunc)(const unsigned int&, double&);
 typedef bool (*SetVoltageFunc)(const unsigned int&, const unsigned int&, double);
-typedef void (*ExecuteSequenceFunc)();
+typedef void (*ExecuteSequenceFunc)(const char*);
 typedef bool (*GetSequenceExecutionStatusFunc)(bool&, unsigned long long&);
 typedef bool (*WaitTillEndOfSequenceThenGetInputDataFunc)(uint8_t*&, unsigned long&, unsigned long&, double);
 typedef void (*SetTimeDebtGuardFunc)(const double&);
-typedef bool (*SequencerStartAnalogInAcquisitionFunc)(const unsigned int&, const uint8_t&, const uint32_t&, const double&);
+typedef bool (*SequencerStartAnalogInAcquisitionFunc)(const unsigned int&, const uint8_t&, const uint8_t&, const uint8_t&, const uint32_t&, const double&);
 typedef bool (*SequencerWriteInputMemoryFunc)(const unsigned int&, unsigned long, bool, unsigned long);
 typedef bool (*SequencerWriteSystemTimeToInputMemoryFunc)(const unsigned int&);
 typedef bool (*SequencerSwitchDebugLEDFunc)(const unsigned int&, unsigned int);
@@ -167,6 +168,7 @@ typedef bool (*SetFrequencyOfChannelFunc)(const unsigned int&, const unsigned in
 typedef bool (*SetFrequencyTuningWordOfChannelFunc)(const unsigned int&, const unsigned int&, uint8_t, uint64_t);
 typedef bool (*SetPhaseOfChannelFunc)(const unsigned int&, const unsigned int&, uint8_t, double);
 typedef bool (*SetPowerOfChannelFunc)(const unsigned int&, const unsigned int&, uint8_t, double);
+typedef bool (*SetIOUpdateEnabledFunc)(const unsigned int&, const unsigned int&, bool);
 
 #endif
 
@@ -299,7 +301,6 @@ typedef bool (*SetAD9959PowerFunc)(const unsigned int&, const unsigned int&, uin
     SetFrequencyTuningWordOfChannelFunc CLA_SetFrequencyTuningWordOfChannel;
     SetPhaseOfChannelFunc CLA_SetPhaseOfChannel;
     SetPowerOfChannelFunc CLA_SetPowerOfChannel;
-    SetOUpdateEnabledFunc CLA_SetOUpdateEnabled;
 
 
     HControlLightAPI CLA_Handle;
@@ -398,20 +399,20 @@ typedef bool (*SetAD9959PowerFunc)(const unsigned int&, const unsigned int&, uin
         //set the power of the AD9959
         bool SetPowerOfChannel(const unsigned int& Sequencer, const unsigned int& Address, uint8_t channel, double Power);
         //set auto IOUpdate for the AD9959
-        bool SetPEnableIOUpdate(const unsigned int& Sequencer, const unsigned int& Address, bool EnableIOUpdate);
+        bool SetIOUpdateEnabled(const unsigned int& Sequencer, const unsigned int& Address, bool EnableIOUpdate);
 
     
 
 
     
         // once the sequence is assembled, then execute it
-        void ExecuteSequence();
+        void ExecuteSequence(const char* Filename = "");
         //check how far the sequence has been executed
         bool GetSequenceExecutionStatus(bool& running, unsigned long long& DataPointsWritten);
         //Wait till the sequence is finished, and get the data from the input devices
         bool WaitTillEndOfSequenceThenGetInputData(uint8_t*& buffer, unsigned long& buffer_length, unsigned  long& EndTimeOfCycle, double timeout_in_s);
         void SetTimeDebtGuard_in_ms(const double& MaxTimeDebt_in_ms);
-        bool SequencerStartAnalogInAcquisition(const unsigned int& Sequencer, const uint8_t& ChannelNumber, const uint32_t& NumberOfDataPoints, const double& DelayBetweenDataPoints_in_ms);
+        bool SequencerStartAnalogInAcquisition(const unsigned int& Sequencer, const uint8_t& analog_in_type, const uint8_t& SPI_CS, const uint8_t& ChannelNumber, const uint32_t& NumberOfDataPoints, const double& DelayBetweenDataPoints_in_ms);
         bool SequencerWriteInputMemory(const unsigned int& Sequencer, unsigned long input_buf_mem_data, bool write_next_address = 1, unsigned long input_buf_mem_address = 0);
         bool SequencerWriteSystemTimeToInputMemory(const unsigned int& Sequencer);
         bool SequencerSwitchDebugLED(const unsigned int& Sequencer, unsigned int OnOff);
