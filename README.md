@@ -21,7 +21,7 @@ OpticsFoudry's control system can be accessed through three types of software:
     This API's DLL has been tested with Visual Studio C++ and Qt Creator (with MinGW, see repository [OpticsFoundry_Control_Qt](https://github.com/opticsfoundry/OpticsFoundry_Control_Qt)). The API can also be accessed through TCP/IP, and we provide a Python and a Qt Creator example for that.  
     
 3. **Control.exe**  
-    This is a fully featured experiment control system, based on ControlAPI, see [OpticsFoundry_Control_AQuRA](https://github.com/opticsfoundry/OpticsFoundry_Control_AQuRA). Control.exe can be configured through code and/or through configuration files (the latter in the same manner as ControlAPI, on which Control.exe is based). A somewhat outdated introduction and manual is available on [www.strontiumBEC.com](http://www.strontiumBEC.com) -> Control.
+    This is a fully featured experiment control system, based on ControlAPI, see [OpticsFoundry_Control_AQuRA](https://github.com/opticsfoundry/OpticsFoundry_Control_AQuRA). Control.exe can be configured through code and/or through configuration files (the latter in the same manner as ControlAPI, on which Control.exe is based).
 
 
 
@@ -306,21 +306,15 @@ The sequencer is also such a device, but with a somewhat special status, as it c
 When the hardware configuration json file is read, the sequencers and their attached devices are defined, each as an instance of its class.
 The sequencers contain a list of all possible addresses, containing pointers to these instances. The pointers are nullptr if nothing is connected.  
 
+Commands are assembled into a sequence, which is sent to the FPGA sequencer over TCP/IP and then executed. Acquired data (e.g. from ADCs) is returned to the PC over TCP/IP after the sequence ends.
 
-When a command is sent to a device, attached to a sequencer with a certain id on a certain address, the software looks up the pointer to the instance of CDevice (or derived class) that exists under that sequencer id and address. 
+During sequence assembly, when a command is sent to a device that is attached to a sequencer with a certain id on a certain address, the software looks up the pointer to the instance of CDevice (or derived class) that exists under that sequencer id and address. 
 
-If nullptr is obtained an error is registered.
-
-If not a nullptr is obtained, the command is sent to the device. 
-If the device is of the correct type, it will be able to handle the command. 
-However, if the user confused an address, and sends a, let's say, SetVoltage command to a DDS, there is a problem. 
-The CDeviceDDS class doesn't contain a SetVoltage command. Therefore the base classes SetVoltage command is called, i.e. CDevice::SetVoltage. 
-All CDevice command functions are abstract, they just register an error. 
-This means we use the C++ virtual function programing style to check if the commands sent by the user are ok.
+If nullptr is obtained an error is registered. If a valid pointer is obtained, the command is sent to the device. If the device is of the correct type, it will be able to handle the command. However, if the user confused an address, and sends a, let's say, SetVoltage command to a DDS, there is a problem. The CDeviceDDS class doesn't contain a SetVoltage command. Therefore the base classes SetVoltage command is called, i.e. CDevice::SetVoltage. All CDevice command functions are abstract, they just register an error. This means we use the C++ virtual function programing style to check if the commands sent by the user are ok.
 
 What does "registering an error" do?  
 If the user has called _cla.configure(True)_ an error message will be shown.  
 If Python is used or a C++ DLL compiled with _#define THROW_EXCEPTIONS_, then a _CLA_Exception_ will be thrown.  
 If none of the above, the error message will be added to a list of error messages and a flag will be set showing that an error occurred. 
-The user of the API can use _DidErrorOccur()_ to querry if one occurred. If one occurred GetLastError will return all the ten last error messages as one string.
+The user of the API can use _DidErrorOccur()_ to querry if one occurred. If one or more occurred, GetLastError will return up to the ten last error messages as one string.
 
