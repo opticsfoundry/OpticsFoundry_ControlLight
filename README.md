@@ -318,3 +318,8 @@ If Python is used or a C++ DLL compiled with _#define THROW_EXCEPTIONS_, then a 
 If none of the above, the error message will be added to a list of error messages and a flag will be set showing that an error occurred. 
 The user of the API can use _DidErrorOccur()_ to querry if one occurred. If one or more occurred, GetLastError will return up to the ten last error messages as one string.
 
+&nbsp;
+
+## Sequencer firmware
+
+The sequencer firmware compatible with this software is [OF_Sequencer_Zturn](https://github.com/opticsfoundry/OF_Sequencer_Zturn) and uses the Z-turn board V2.
