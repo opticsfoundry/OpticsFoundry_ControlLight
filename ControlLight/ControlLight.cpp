@@ -621,14 +621,14 @@ void DemoSequence(unsigned long CycleNumber) {
 	//}
 	
 	//Test reliability of select rack slot
-	//for (int j = 1; j < 100; j++) {
-	//	CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, 5);
-	//	CLA_Wait_ms(100);
-	//	uint8_t r = 16*(rand()/RAND_MAX);
-	//	if (r == 5) r = 4;
-	//	CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, r);
-	//	CLA_Wait_ms(100);
-	//}
+	for (int j = 1; j < 5; j++) {
+		CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, 5);
+		CLA_Wait_ms(50);
+		uint8_t r = 16*(rand()/RAND_MAX);
+		if (r == 5) r = 4;
+		CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, r);
+		CLA_Wait_ms(50);
+	}
 	
 	CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, 5);
 
@@ -649,27 +649,26 @@ void DemoSequence(unsigned long CycleNumber) {
 
 	//Test analog in with convenience function
 	//@param analog_in_type Analog in board type. 0: AQuRA MCP3208 analog in board; 1: MCP3208 12-bit ADC on SerialPortBoard; 2: ADS1256  24-bit ADC 
-	//for (uint16_t n = 0; n < 1000; n++) {
-	//	CLA_SequencerStartAnalogInAcquisition(/*Sequencer_Nr*/ 0, /*AnalogInType*/ 2, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 1, /*SamplingPeriod_in_ms*/ 1);
-	//	CLA_Wait_ms(1);
-	//	CLA_SetVoltage(0, 24, 10.0 * 1 / 100.0);
-	//	CLA_Wait_ms(1);
-	//}
-	CLA_SequencerStartAnalogInAcquisition(/*Sequencer_Nr*/ 0, /*AnalogInType*/ 2, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 100, /*SamplingPeriod_in_ms*/ 1);
-	CLA_Wait_ms(100);
+	//CLA_SequencerStartAnalogInAcquisition(/*Sequencer_Nr*/ 0, /*AnalogInType*/ 2, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 100, /*SamplingPeriod_in_ms*/ 1);
+	//CLA_Wait_ms(100);
 	
 	//Test repeated digital in
 	/// @param RepeatedOutInCommand the command to execute for each data point. 0: stop; 1: repeated SPI transfer; 2: repeated digital in; 3: digital in event tagger 
 	/// for 3: if dig in changes, safes dig in on input memory bit 0:7, bit 8: counter overflow, bit 9: 4-entry fifo overflow, bit 10:31: clock cycle counter; runs till stopped by setting RepeatedOutInCommand to 0 with new SequencerRepeatedOutIn command.
-	//CLA_SequencerRepeatedOutIn(/*SequencerNr*/ 0, /*NumberOfDataPoints*/ 10000, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 2);
-	//CLA_Wait_ms(1000);
+	//CLA_SequencerRepeatedOutIn(/*SequencerNr*/ 0, /*NumberOfDataPoints*/ 200, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 2);
+	//CLA_Wait_ms(200);
 
 	//Test event time tagger
 	/// @param RepeatedOutInCommand the command to execute for each data point. 0: stop; 1: repeated SPI transfer; 2: repeated digital in; 3: digital in event tagger 
 	/// for 3: if dig in changes, safes dig in on input memory bit 0:7, bit 8: counter overflow, bit 9: 4-entry fifo overflow, bit 10:31: clock cycle counter; runs till stopped by setting RepeatedOutInCommand to 0 with new SequencerRepeatedOutIn command.
-	//CLA_SequencerRepeatedOutIn(/*SequencerNr*/ 0, /*NumberOfDataPoints*/ 10000, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 3);
-	//CLA_Wait_ms(1000);
-	//CLA_SequencerRepeatedOutIn(/*SequencerNr*/ 0, /*NumberOfDataPoints*/ 1, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 0);
+	//Output data format (32-bit words):
+	//bit 0 to 7: 8-bit input port patterm
+	//bit 8: 1 means timer overflow; this enables one to calculate the timestamp beyond the 22 bit length of the timer counter
+	//bit 9: 1 means 8-entry fifo overflow, i.e. events have been lost because BRAM wasn't fast enough to store them
+	//bit 10 to 31: timer, counting 1 up every 10ns, overflowing every 2^22 * 10ns = 41.94304 ms
+	CLA_SequencerRepeatedOutIn(/*SequencerNr*/ 0, /*NumberOfDataPoints*/ 1000, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 3);
+	CLA_Wait_ms(10);
+	CLA_SequencerRepeatedOutIn(/*SequencerNr*/ 0, /*NumberOfDataPoints*/ 1, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 0);
 
 	//Test AD9959 DDS
 	CLA_Reset(0, 10);

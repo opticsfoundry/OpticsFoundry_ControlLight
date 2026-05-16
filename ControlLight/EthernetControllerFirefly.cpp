@@ -778,16 +778,11 @@ void CEthernetControllerFirefly::AddCommandRepeatedOutIn(const uint16_t number_o
 	uint8_t command = CMD_INPUT_REPEATED_OUT_IN;
 	unsigned __int32 INPUT_REPEAT_repeats = number_of_datapoints;
 	unsigned __int32 INPUT_REPEAT_wait = floor(delay_between_datapoints_in_ms * FPGAClockFrequencyInHz / 1000);
-	//for safety, only allow one type of repeated command at once.
-	if (RepeatedOutInCommand & 0x01) RepeatedOutInCommand=1;
-	else if (RepeatedOutInCommand & 0x02) RepeatedOutInCommand = 2;
-	else if (RepeatedOutInCommand & 0x04) RepeatedOutInCommand = 4;
-	else RepeatedOutInCommand = 0;
 	unsigned __int32 INPUT_REPEAT_command = RepeatedOutInCommand;  //0: stop, 1: SPI input, 2: digital input, 3: dig_event_time_tagger, 4: analog in
 	unsigned __int32 INPUT_REPEAT_trigger_secondary_interrupt_when_finished = 1;//this is needed if input BRAM buffer should be copied to DDR when half buffer full 
 
-	uint32_t low_buffer = (INPUT_REPEAT_repeats << 8) | (((SPI_restart_wait_on_ready_low) ? 1 : 0) << 7) | command;
-	uint32_t high_buffer = INPUT_REPEAT_wait | (INPUT_REPEAT_trigger_secondary_interrupt_when_finished << (56 - 32)) | (INPUT_REPEAT_command << (57 - 32));
+	uint32_t low_buffer = ((INPUT_REPEAT_repeats & 0xFFFFF) << 8) | (((SPI_restart_wait_on_ready_low) ? 1 : 0) << 7) | command;
+	uint32_t high_buffer = (INPUT_REPEAT_wait & 0xFFFFFF)  | (INPUT_REPEAT_trigger_secondary_interrupt_when_finished << (56 - 32)) | ((INPUT_REPEAT_command & 0x7) << (57 - 32));
 	AddSequencerCommandToSequenceList( high_buffer, low_buffer);
 }
 
