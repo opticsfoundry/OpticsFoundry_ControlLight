@@ -460,8 +460,8 @@ namespace {
 		}
 
 		uint8_t address = start_address;
-		AUTO_CONFIG_API_CALL(TransmitI2CPort, /*I2C_port*/ 0, EEPROMAddress + Write, /*send_length*/ 1, &address, /*receive_length*/ 0, data, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
-		if (I2C_success) AUTO_CONFIG_API_CALL(TransmitI2CPort, /*I2C_port*/ 0, EEPROMAddress + Read, /*send_length*/ 0, nullptr, /*receive_length*/ static_cast<uint16_t>(length), data, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
+		AUTO_CONFIG_API_CALL(TransmitI2CPort, /*I2C_port*/ 0, /*I2C_destination*/ 0, EEPROMAddress + Write, /*send_length*/ 1, &address, /*receive_length*/ 0, data, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
+		if (I2C_success) AUTO_CONFIG_API_CALL(TransmitI2CPort, /*I2C_port*/ 0, /*I2C_destination*/ 0, EEPROMAddress + Read, /*send_length*/ 0, nullptr, /*receive_length*/ static_cast<uint16_t>(length), data, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
 	}
 }
 
@@ -504,21 +504,21 @@ bool SelectRackI2CSlot(const uint8_t SequencerID, const uint8_t RackNr, const ui
 	uint8_t mux_select = static_cast<uint8_t>(1u << I2CChainPortNr);
 	for (uint8_t I2CMultRackAddr=0; I2CMultRackAddr < RackNr; I2CMultRackAddr++) {
 		//Set the I2C multiplexer (TCA9548A, see folder datasheet) to the correct port to access the chain rack; repeat till we reach the correct rack
-		AUTO_CONFIG_API_CALL(TransmitI2CPort, /*I2C_port*/ 0, 0xE0 + (I2CMultRackAddr << 1) + Write, /*send_length*/ 1, &mux_select, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
+		AUTO_CONFIG_API_CALL(TransmitI2CPort, /*I2C_port*/ 0, /*I2C_destination*/ 0, 0xE0 + (I2CMultRackAddr << 1) + Write, /*send_length*/ 1, &mux_select, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
 		I2C_overall_success &= I2C_success;
 	}
 	uint8_t mux_address = RackNr;
 	//If the desired slot is 
 	if (I2CMux[SlotNr] == 1) {
 		mux_select = static_cast<uint8_t>(1u << I2CMux1PortNrOnMux0);
-		AUTO_CONFIG_API_CALL(TransmitI2CPort, /*I2C_port*/ 0, 0xE0 + (RackNr << 1) + Write, /*send_length*/ 1, &mux_select, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
+		AUTO_CONFIG_API_CALL(TransmitI2CPort, /*I2C_port*/ 0, /*I2C_destination*/ 0, 0xE0 + (RackNr << 1) + Write, /*send_length*/ 1, &mux_select, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
 		I2C_overall_success &= I2C_success;
 		mux_address = 1+2+4;
 	}
 
 	//Set the I2C multiplexer (TCA9548A, see folder datasheet) to the correct port for the slot, or the backplane memory (for SlotNr == 12).
 	mux_select = static_cast<uint8_t>(1u << I2CPortNr[SlotNr]);
-	AUTO_CONFIG_API_CALL(TransmitI2CPort, /*I2C_port*/ 0, 0xE0 + (mux_address << 1) + Write, /*send_length*/ 1, &mux_select, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
+	AUTO_CONFIG_API_CALL(TransmitI2CPort, /*I2C_port*/ 0, /*I2C_destination*/ 0, 0xE0 + (mux_address << 1) + Write, /*send_length*/ 1, &mux_select, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
 	I2C_overall_success &= I2C_success;
 	return I2C_overall_success;
 }
@@ -554,7 +554,7 @@ bool WriteConfigEEPROM(const uint8_t SequencerID, const uint8_t RackNr, const ui
 
 		bool I2C_success;
 
-		AUTO_CONFIG_API_CALL(TransmitI2CPort, /*I2C_port*/ 0, EEPROMAddress + Write, /*send_length*/ static_cast<uint16_t>(write_length + 1), write_buffer, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
+		AUTO_CONFIG_API_CALL(TransmitI2CPort, /*I2C_port*/ 0, /*I2C_destination*/ 0, EEPROMAddress + Write, /*send_length*/ static_cast<uint16_t>(write_length + 1), write_buffer, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
 		this_thread::sleep_for(chrono::milliseconds(1));
 		address += write_length;
 	}
@@ -629,11 +629,11 @@ void WriteConfigAddress(const uint8_t SequencerID, const uint8_t RackNr, const u
 	// Now write the address to the I2C 8-bit IO chip PCF8574AP, which has all 3 address lines on ground. See datasheet in folder datasheet.
 	uint8_t write_value = address;
 	bool I2C_success;
-	AUTO_CONFIG_API_CALL(TransmitI2CPort, /*I2C_port*/ 0, ConfigAddressIOExpanderAddress + Write, /*send_length*/ 1, &write_value, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
+	AUTO_CONFIG_API_CALL(TransmitI2CPort, /*I2C_port*/ 0, /*I2C_destination*/ 0, ConfigAddressIOExpanderAddress + Write, /*send_length*/ 1, &write_value, /*receive_length*/ 0, nullptr, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
 
 	// Now verify by reading the address back. Display an error message if no success.
 	uint8_t read_back = 0;
-	AUTO_CONFIG_API_CALL(TransmitI2CPort, /*I2C_port*/ 0, ConfigAddressIOExpanderAddress + Read, /*send_length*/ 0, nullptr, /*receive_length*/ 1, &read_back, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
+	AUTO_CONFIG_API_CALL(TransmitI2CPort, /*I2C_port*/ 0, /*I2C_destination*/ 0, ConfigAddressIOExpanderAddress + Read, /*send_length*/ 0, nullptr, /*receive_length*/ 1, &read_back, I2CClockFrequencyInHz, I2C_success, /*fail_silently*/ true);
 
 	if (read_back == address) {
 		cout << "Config address write verification succeeded for rack " << static_cast<unsigned int>(RackNr)
@@ -661,7 +661,7 @@ void ReadConfigAddress(const uint8_t SequencerID, const uint8_t RackNr, const ui
 	
 	// Read the address from the I2C 8-bit IO chip PCF8574AP, which has all 3 address lines on ground. See datasheet in folder datasheet.
 	vector<uint8_t> read_back(1);
-	AUTO_CONFIG_API_CALL(TransmitI2CPort, /*I2C_port*/ 0, ConfigAddressIOExpanderAddress + Read, /*send_length*/ 0, nullptr, /*receive_length*/ static_cast<uint16_t>(read_back.size()), read_back.data(), I2CClockFrequencyInHz, I2C_success, /* fail_silently */ true);
+	AUTO_CONFIG_API_CALL(TransmitI2CPort, /*I2C_port*/ 0, /*I2C_destination*/ 0, ConfigAddressIOExpanderAddress + Read, /*send_length*/ 0, nullptr, /*receive_length*/ static_cast<uint16_t>(read_back.size()), read_back.data(), I2CClockFrequencyInHz, I2C_success, /* fail_silently */ true);
 	address = read_back[0];
 	
 	// Display the address on cout.

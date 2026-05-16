@@ -3,6 +3,7 @@
 
 
 #include <QLibrary>
+#include <cstddef>
 #include <cstdint>
 
 typedef void* HControlLightAPI;
@@ -125,6 +126,8 @@ typedef bool (*Wait_msFunc)(double);
 typedef bool (*GetTime_msFunc)(double&);
 typedef bool (*GetTimeOfSequencer_msFunc)(const unsigned int&, double&);
 typedef bool (*GetTimeDebtOfSequencer_msFunc)(const unsigned int&, double&);
+typedef bool (*TransmitI2CPortFunc)(uint8_t, uint8_t, uint8_t, uint16_t, uint8_t*, uint16_t, uint8_t*, uint32_t, bool&, bool);
+typedef bool (*SetPSOptionsFunc)(uint8_t);
 typedef bool (*SetVoltageFunc)(const unsigned int&, const unsigned int&, double);
 typedef void (*ExecuteSequenceFunc)(const char*);
 typedef bool (*GetSequenceExecutionStatusFunc)(bool&, unsigned long long&);
@@ -169,6 +172,49 @@ typedef bool (*SetFrequencyTuningWordOfChannelFunc)(const unsigned int&, const u
 typedef bool (*SetPhaseOfChannelFunc)(const unsigned int&, const unsigned int&, uint8_t, double);
 typedef bool (*SetPowerOfChannelFunc)(const unsigned int&, const unsigned int&, uint8_t, double);
 typedef bool (*SetIOUpdateEnabledFunc)(const unsigned int&, const unsigned int&, bool);
+typedef bool (*AutoConfigureFunc)(const char* filename);
+typedef void (*TransmitOnlyDifferenceBetweenCommandSequenceIfPossibleFunc)(bool OnOff);
+typedef void (*StartAssemblingNextSequenceFunc)();
+typedef unsigned int (*GetNumberOfSequencersFunc)();
+typedef bool (*GetNextBufferPositionOfMasterSequencerFunc)(unsigned long& next_buffer_position);
+typedef bool (*SetPeriodicTrigger_msFunc)(double PeriodicTriggerPeriod_in_ms, double PeriodicTriggerAllowedWaitTime_in_ms);
+typedef bool (*GetNextCycleNumberFunc)(long& NextCycleNumber);
+typedef bool (*ResetCycleNumberFunc)();
+typedef bool (*WriteConfigEEPROMFunc)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, const char* data, size_t length);
+typedef bool (*ReadConfigEEPROMFunc)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, char* data, size_t& length, bool &I2C_success);
+typedef bool (*WriteConfigAddressFunc)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, uint8_t address);
+typedef bool (*ReadConfigAddressFunc)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, uint8_t& address, bool& I2C_success);
+typedef const char* (*ReadConfigurationFunc)(const char* filename);
+typedef const char* (*GetAutoConfigJSONFunc)(const char* filename);
+typedef bool (*StartAssemblingCPUCommandSequenceFunc)();
+typedef bool (*AddCPUCommandFunc)(const char* command);
+typedef bool (*ExecuteCPUCommandSequenceFunc)(unsigned long ethernet_check_period_in_ms);
+typedef bool (*StopCPUCommandSequenceFunc)();
+typedef bool (*InterruptCPUCommandSequenceFunc)();
+typedef bool (*GetCPUCommandErrorMessagesFunc)();
+typedef bool (*PrintCPUCommandErrorMessagesFunc)();
+typedef bool (*PrintCPUCommandSequenceFunc)();
+typedef bool (*ResetFunc)(const unsigned int& Sequencer, const unsigned int& Address);
+typedef void (*SendSequenceFunc)(const char* FileName);
+typedef void (*RepeatSequenceFunc)();
+typedef bool (*SequencerCalcAD9854FrequencyTuningWordFunc)(const unsigned int& Sequencer, uint64_t ftw0, uint8_t bit_shift);
+typedef bool (*SetSequencerDigitalOutFunc)(const unsigned int& Sequencer, uint8_t dig_out_pattern);
+typedef bool (*SetSequencer_PL_to_PS_commandFunc)(const unsigned int& Sequencer, uint8_t PL_to_PS_command);
+typedef bool (*SwitchSequencerBuzzerFunc)(const unsigned int& Sequencer, bool OnOff);
+typedef bool (*UseEdgeTriggeredLatchesFunc)(const unsigned int& Sequencer, bool UseEdgeTriggeredLatches);
+typedef bool (*SequencerSetTimeDebtGuard_in_msFunc)(const unsigned int& Sequencer, const double& MaxTimeDebt_in_ms);
+typedef bool (*SequencerSetLoopCountFunc)(const unsigned int& Sequencer, unsigned int loop_count);
+typedef bool (*SequencerJumpBackwardFunc)(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump, bool condition_0, bool condition_1, bool condition_PS, bool condition_dig_in, uint8_t dig_in_bit_nr, bool loop_count_greater_zero);
+typedef bool (*SequencerJumpForwardFunc)(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump, bool condition_0, bool condition_1, bool condition_PS, bool condition_dig_in, uint8_t dig_in_bit_nr);
+typedef bool (*SequencerTransmitI2CFunc)(const unsigned int& Sequencer, uint8_t I2C_port, uint8_t I2C_length_out, uint8_t I2C_length_in, uint8_t* data_out);
+typedef bool (*SequencerTransmitSPIFunc)(const unsigned int& Sequencer, uint8_t chip_select, uint16_t number_of_bits_out, const uint8_t* data_out, uint8_t number_of_bits_in, bool start_now);
+typedef bool (*SequencerRepeatedOutInFunc)(const unsigned int& Sequencer, uint16_t number_of_datapoints, double delay_between_datapoints_in_ms, uint8_t RepeatedOutInCommand);
+typedef bool (*SequencerSetSPITimingFunc)(const unsigned int& Sequencer, uint16_t SPI_delay_CS_low_start_wait, uint16_t SPI_delay_write, uint16_t SPI_delay_pause_before_read, uint16_t SPI_delay_read, uint16_t SPI_delay_CS_low_end_wait);
+typedef bool (*SequencerSetSPIModeFunc)(const unsigned int& Sequencer, uint8_t SPI_mode);
+typedef bool (*SequencerSetI2CParametersFunc)(const unsigned int& Sequencer, uint8_t I2C_0_Destination, uint8_t I2C_delay_start_stop, uint8_t I2C_delay_data_setup, uint8_t I2C_delay_clock_high, uint8_t I2C_delay_clock_low, uint8_t I2C_delay_pause_before_read);
+typedef bool (*SelectRackSlotFunc)(const unsigned int& Sequencer, uint8_t rack_nr, uint8_t slot_nr);
+typedef bool (*ResetI2CMultiplexerFunc)(const unsigned int& Sequencer);
+typedef bool (*AddDeviceAD9959Func)(unsigned int sequencer, unsigned int address, double externalClockFrequency, unsigned int frequencyMultiplier, bool AD9958);
 
 #endif
 
@@ -264,6 +310,8 @@ typedef bool (*SetAD9959PowerFunc)(const unsigned int&, const unsigned int&, uin
     GetTime_msFunc CLA_GetTime_ms;
     GetTimeOfSequencer_msFunc CLA_GetTimeOfSequencer_ms;
     GetTimeDebtOfSequencer_msFunc CLA_GetTimeDebtOfSequencer_ms;
+    TransmitI2CPortFunc CLA_TransmitI2CPort;
+    SetPSOptionsFunc CLA_SetPSOptions;
     SetVoltageFunc CLA_SetVoltage;
     ExecuteSequenceFunc CLA_ExecuteSequence;
     GetSequenceExecutionStatusFunc CLA_GetSequenceExecutionStatus;
@@ -301,6 +349,49 @@ typedef bool (*SetAD9959PowerFunc)(const unsigned int&, const unsigned int&, uin
     SetFrequencyTuningWordOfChannelFunc CLA_SetFrequencyTuningWordOfChannel;
     SetPhaseOfChannelFunc CLA_SetPhaseOfChannel;
     SetPowerOfChannelFunc CLA_SetPowerOfChannel;
+    AutoConfigureFunc CLA_AutoConfigure;
+    TransmitOnlyDifferenceBetweenCommandSequenceIfPossibleFunc CLA_TransmitOnlyDifferenceBetweenCommandSequenceIfPossible;
+    StartAssemblingNextSequenceFunc CLA_StartAssemblingNextSequence;
+    GetNumberOfSequencersFunc CLA_GetNumberOfSequencers;
+    GetNextBufferPositionOfMasterSequencerFunc CLA_GetNextBufferPositionOfMasterSequencer;
+    SetPeriodicTrigger_msFunc CLA_SetPeriodicTrigger_ms;
+    GetNextCycleNumberFunc CLA_GetNextCycleNumber;
+    ResetCycleNumberFunc CLA_ResetCycleNumber;
+    WriteConfigEEPROMFunc CLA_WriteConfigEEPROM;
+    ReadConfigEEPROMFunc CLA_ReadConfigEEPROM;
+    WriteConfigAddressFunc CLA_WriteConfigAddress;
+    ReadConfigAddressFunc CLA_ReadConfigAddress;
+    ReadConfigurationFunc CLA_ReadConfiguration;
+    GetAutoConfigJSONFunc CLA_GetAutoConfigJSON;
+    StartAssemblingCPUCommandSequenceFunc CLA_StartAssemblingCPUCommandSequence;
+    AddCPUCommandFunc CLA_AddCPUCommand;
+    ExecuteCPUCommandSequenceFunc CLA_ExecuteCPUCommandSequence;
+    StopCPUCommandSequenceFunc CLA_StopCPUCommandSequence;
+    InterruptCPUCommandSequenceFunc CLA_InterruptCPUCommandSequence;
+    GetCPUCommandErrorMessagesFunc CLA_GetCPUCommandErrorMessages;
+    PrintCPUCommandErrorMessagesFunc CLA_PrintCPUCommandErrorMessages;
+    PrintCPUCommandSequenceFunc CLA_PrintCPUCommandSequence;
+    ResetFunc CLA_Reset;
+    SendSequenceFunc CLA_SendSequence;
+    RepeatSequenceFunc CLA_RepeatSequence;
+    SequencerCalcAD9854FrequencyTuningWordFunc CLA_SequencerCalcAD9854FrequencyTuningWord;
+    SetSequencerDigitalOutFunc CLA_SetSequencerDigitalOut;
+    SetSequencer_PL_to_PS_commandFunc CLA_SetSequencer_PL_to_PS_command;
+    SwitchSequencerBuzzerFunc CLA_SwitchSequencerBuzzer;
+    UseEdgeTriggeredLatchesFunc CLA_UseEdgeTriggeredLatches;
+    SequencerSetTimeDebtGuard_in_msFunc CLA_SequencerSetTimeDebtGuard_in_ms;
+    SequencerSetLoopCountFunc CLA_SequencerSetLoopCount;
+    SequencerJumpBackwardFunc CLA_SequencerJumpBackward;
+    SequencerJumpForwardFunc CLA_SequencerJumpForward;
+    SequencerTransmitI2CFunc CLA_SequencerTransmitI2C;
+    SequencerTransmitSPIFunc CLA_SequencerTransmitSPI;
+    SequencerRepeatedOutInFunc CLA_SequencerRepeatedOutIn;
+    SequencerSetSPITimingFunc CLA_SequencerSetSPITiming;
+    SequencerSetSPIModeFunc CLA_SequencerSetSPIMode;
+    SequencerSetI2CParametersFunc CLA_SequencerSetI2CParameters;
+    SelectRackSlotFunc CLA_SelectRackSlot;
+    ResetI2CMultiplexerFunc CLA_ResetI2CMultiplexer;
+    AddDeviceAD9959Func CLA_AddDeviceAD9959;
 
 
     HControlLightAPI CLA_Handle;
@@ -353,6 +444,51 @@ typedef bool (*SetAD9959PowerFunc)(const unsigned int&, const unsigned int&, uin
         bool GetTime_ms(double &time_in_ms);
         bool GetTimeOfSequencer_ms(const unsigned int& Sequencer,double &time_in_ms);
         bool GetTimeDebtOfSequencer_ms(const unsigned int& Sequencer,double &time_in_ms);
+        bool TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_destination, uint8_t I2C_address, uint16_t send_length, uint8_t* send_data, uint16_t receive_length, uint8_t* receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently);
+        bool SetPSOptions(uint8_t options);
+        bool AutoConfigure(const char* filename = "");
+        void TransmitOnlyDifferenceBetweenCommandSequenceIfPossible(bool OnOff);
+        void StartAssemblingNextSequence();
+        unsigned int GetNumberOfSequencers();
+        bool GetNextBufferPositionOfMasterSequencer(unsigned long& next_buffer_position);
+        bool SetPeriodicTrigger_ms(double PeriodicTriggerPeriod_in_ms, double PeriodicTriggerAllowedWaitTime_in_ms);
+        bool GetNextCycleNumber(long& NextCycleNumber);
+        bool ResetCycleNumber();
+        bool WriteConfigEEPROM(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, const char* data, size_t length);
+        bool ReadConfigEEPROM(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, char* data, size_t& length, bool &I2C_success);
+        bool WriteConfigAddress(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, uint8_t address);
+        bool ReadConfigAddress(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, uint8_t& address, bool& I2C_success);
+        const char* ReadConfiguration(const char* filename = "");
+        const char* GetAutoConfigJSON(const char* filename = "");
+        bool StartAssemblingCPUCommandSequence();
+        bool AddCPUCommand(const char* command);
+        bool ExecuteCPUCommandSequence(unsigned long ethernet_check_period_in_ms);
+        bool StopCPUCommandSequence();
+        bool InterruptCPUCommandSequence();
+        bool GetCPUCommandErrorMessages();
+        bool PrintCPUCommandErrorMessages();
+        bool PrintCPUCommandSequence();
+        bool Reset(const unsigned int& Sequencer, const unsigned int& Address);
+        void SendSequence(const char* FileName = "");
+        void RepeatSequence();
+        bool SequencerCalcAD9854FrequencyTuningWord(const unsigned int& Sequencer, uint64_t ftw0, uint8_t bit_shift = 22);
+        bool SetSequencerDigitalOut(const unsigned int& Sequencer, uint8_t dig_out_pattern);
+        bool SetSequencer_PL_to_PS_command(const unsigned int& Sequencer, uint8_t PL_to_PS_command);
+        bool SwitchSequencerBuzzer(const unsigned int& Sequencer, bool OnOff);
+        bool UseEdgeTriggeredLatches(const unsigned int& Sequencer, bool UseEdgeTriggeredLatches);
+        bool SequencerSetTimeDebtGuard_in_ms(const unsigned int& Sequencer, const double& MaxTimeDebt_in_ms);
+        bool SequencerSetLoopCount(const unsigned int& Sequencer, unsigned int loop_count);
+        bool SequencerJumpBackward(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool condition_dig_in = false, uint8_t dig_in_bit_nr = 0, bool loop_count_greater_zero = false);
+        bool SequencerJumpForward(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool condition_dig_in = false, uint8_t dig_in_bit_nr = 0);
+        bool SequencerTransmitI2C(const unsigned int& Sequencer, uint8_t I2C_port, uint8_t I2C_length_out, uint8_t I2C_length_in, uint8_t* data_out);
+        bool SequencerTransmitSPI(const unsigned int& Sequencer, uint8_t chip_select, uint16_t number_of_bits_out, const uint8_t* data_out, uint8_t number_of_bits_in, bool start_now);
+        bool SequencerRepeatedOutIn(const unsigned int& Sequencer, uint16_t number_of_datapoints, double delay_between_datapoints_in_ms, uint8_t RepeatedOutInCommand);
+        bool SequencerSetSPITiming(const unsigned int& Sequencer, uint16_t SPI_delay_CS_low_start_wait, uint16_t SPI_delay_write, uint16_t SPI_delay_pause_before_read, uint16_t SPI_delay_read, uint16_t SPI_delay_CS_low_end_wait);
+        bool SequencerSetSPIMode(const unsigned int& Sequencer, uint8_t SPI_mode);
+        bool SequencerSetI2CParameters(const unsigned int& Sequencer, uint8_t I2C_0_Destination, uint8_t I2C_delay_start_stop, uint8_t I2C_delay_data_setup, uint8_t I2C_delay_clock_high, uint8_t I2C_delay_clock_low, uint8_t I2C_delay_pause_before_read);
+        bool SelectRackSlot(const unsigned int& Sequencer, uint8_t rack_nr, uint8_t slot_nr);
+        bool ResetI2CMultiplexer(const unsigned int& Sequencer);
+        bool AddDeviceAD9959(unsigned int sequencer, unsigned int address, double externalClockFrequency, unsigned int frequencyMultiplier, bool AD9958);
     
         //the following are convenience functions, which allow us to define nice names to the few most important functions
         //You can add as many convenience functions as you like. Make sure to copy them also into the list of convenience functions in CDevice, CDevice.h, to assure they can always be called in any device.

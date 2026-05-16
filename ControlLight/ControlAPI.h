@@ -357,6 +357,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 
 		/// @brief Read data from an I2C port.
 		/// @param I2C_port the I2C port to read from.
+		/// @param I2C_destination If I2C_port == 0, 0 means port connected to rack configuration I2C channel, 1 means port connected to z-turn I2C.
 		/// @param I2C_address the I2C address to read from.
 		/// @param send_length the length of the data to send in bytes.
 		/// @param send_data the data to send.
@@ -366,7 +367,12 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @param I2C_success output flag set by the sequencer to indicate whether the I2C transaction was acknowledged and completed.
 		/// @param fail_silently true to suppress API error reporting for an I2C failure while still updating I2C_success.
 		/// @return See return convention above.
-		API_EXPORT ERROR_CODE_TYPE CLA_FN(TransmitI2CPort)(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(TransmitI2CPort)(uint8_t I2C_port, uint8_t I2C_destination, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently);
+
+		/// @brief Set PS option flags on the master sequencer controller.
+		/// @param options option bitmask passed through to the controller firmware.
+		/// @return See return convention above.
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SetPSOptions)(uint8_t options);
 
 		/// @brief Write configuration data to the EEPROM of a rack slot.
 		/// @param SequencerID the sequencer to use.
@@ -825,8 +831,10 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @param condition_0 true if condition 0 is met, false otherwise.
 		/// @param condition_1 true if condition 1 is met, false otherwise.
 		/// @param condition_PS true if the PS condition is met, false otherwise.
+		/// @param condition_dig_in true if the digital input condition is enabled, false otherwise.
+		/// @param dig_in_bit_nr the digital input bit number to test.
 		/// @param loop_count_greater_zero true if the loop count is greater than zero, false otherwise.
-		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerJumpBackward)(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool loop_count_greater_zero = false);
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerJumpBackward)(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool condition_dig_in = false, uint8_t dig_in_bit_nr = 0, bool loop_count_greater_zero = false);
 		
 		/// @brief Jumps forward in the sequence.
 		/// @param Sequencer the sequencer to use.

@@ -859,7 +859,8 @@ void DemoFPGASequencerSingleRun() {
 
 		//Test SerialPortBoardI2Cboard with signals from PS; make sure that slot is selected.
 		//uint8_t address = 0xAB;
- 		//CLA_TransmitI2CPort(/*I2C_port*/ 1, 0xFE, /*send_length*/ 1, &address, /*receive_length*/ 0, nullptr, /*I2CClockFrequencyInHz*/100000);
+		//bool I2C_success = false;
+		//CLA_TransmitI2CPort(/*I2C_port*/ 1, /*I2C_destination*/ 0, 0xFE, /*send_length*/ 1, &address, /*receive_length*/ 0, nullptr, /*I2CClockFrequencyInHz*/100000, I2C_success, /*fail_silently*/ false);
 
 		//Duration duration = Clock::now() - starttime;
 		//cout << "Duration: " << milliSeconds(duration) << " ms  Buffer length : " << buffer_length << endl;
@@ -876,10 +877,9 @@ void DemoFPGASequencerSoundBuzzer() {
 		CLA_SwitchSequencerBuzzer(/*SequencerNr*/ 0, true);
 		CLA_Wait_ms(100);
  		CLA_SwitchSequencerBuzzer(/*SequencerNr*/ 0, false);
-		//CLA_Wait_ms(1);
 	//}
-	//CLA_ExecuteSequence("c:\\data\\DebugDemoFPGASequencerSoundBuzzerSequence3.txt"); //Use this version to create debug file
-	CLA_ExecuteSequence(); //use this version to run without creating debug file
+	CLA_ExecuteSequence("c:\\data\\DebugDemoFPGASequencerSoundBuzzerSequence3.txt"); //Use this version to create debug file
+	//CLA_ExecuteSequence(); //use this version to run without creating debug file
 	unsigned long long DataPointsWritten = 0;
 	bool running = false;
 	CLA_GetSequenceExecutionStatus(running, DataPointsWritten);
@@ -931,7 +931,7 @@ void DemoFPGASequencerCyclicSequencing() {
 		//wait a random timespan to test resynchronization
 		double r = (1.0*rand()) / RAND_MAX;
 		//cout << "Waiting " << 1000 * r << " ms to simulate large fluctuation in software command to start next sequence;";
-		this_thread::sleep_for(r*150ms);
+		this_thread::sleep_for(r*100ms);
 		//cout << " done" <<endl;
 
 		//Duration duration = Clock::now() - starttime;

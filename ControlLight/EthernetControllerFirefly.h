@@ -112,7 +112,8 @@ public:
 	void WaitForPeriodicTrigger(bool aWaitForPeriodicTriggerAtBeginningOfSequence);
 	bool SetExternalClock(bool ExternalClock0, bool ExternalClock1);
 	
-	bool TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently);
+	bool TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_destination, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently);
+	bool SetPSOptions(uint8_t options);
 
 	void DebugBuffer(const std::string& filename);
 	void AddSequencerCommandToBuffer(uint32_t* buffer, uint32_t n, uint32_t high_buffer, uint32_t low_buffer);
@@ -133,7 +134,7 @@ public:
 	void AddCommandSetI2CParameters(uint8_t I2C_0_Destination, uint8_t I2C_delay_start_stop = 60, uint8_t I2C_delay_data_setup = 40, uint8_t I2C_delay_clock_high = 60, uint8_t I2C_delay_clock_low = 150, uint8_t I2C_delay_pause_before_read = 0);
 	void AddCommandWriteInputBuffer(unsigned long input_buf_mem_data, bool write_next_address = 1, unsigned long input_buf_mem_address = 0);
 	void AddCommandSetLoopCount(unsigned int loop_count);
-	void AddCommandJumpBackward(unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool loop_count_greater_zero = false);
+	void AddCommandJumpBackward(unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool condition_dig_in = false, uint8_t dig_in_bit_nr = 0, bool loop_count_greater_zero = false);
 	void AddCommandJumpForward(unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool condition_dig_in = false, uint8_t dig_in_bit_nr = 0);
 	
 	void TransmitOnlyDifferenceBetweenCommandSequenceIfPossible(bool OnOff);
@@ -162,5 +163,6 @@ private:
 	bool AttemptGetFrequency(double& Frequency);
 	bool AttemptGetPeriodicTriggerError(bool& Error);
 	bool AttemptWaitTillEndOfSequenceThenGetInputData(uint8_t*& buffer, unsigned long& buffer_length, unsigned long& EndTimeOfCycle, double timeout_in_s);
-	bool AttemptTransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t* send_data, uint16_t &receive_length, uint8_t* receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently);
+	bool AttemptTransmitI2CPort(uint8_t I2C_port, uint8_t I2C_destination, uint8_t I2C_address, uint16_t send_length, uint8_t* send_data, uint16_t &receive_length, uint8_t* receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently);
+	bool AttemptSetPSOptions(uint8_t options);
 };

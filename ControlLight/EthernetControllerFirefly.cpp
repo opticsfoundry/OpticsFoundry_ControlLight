@@ -370,13 +370,16 @@ void CEthernetControllerFirefly::AddCommandJumpForward(unsigned int jump_length,
 			((dig_in_bit_nr & 0x7) << 5) |
 			(condition_dig_in ? (1 << 8) : 0) |
 			command);
-	unsigned __int32 high_buffer = jump_length & 0x3FFF;
+	unsigned __int32 high_buffer = jump_length & 0xFF;
 	AddSequencerCommandToSequenceList(high_buffer, low_buffer);
 }
 
 /*
 CMD_CONDITIONAL_JUMP_BACKWARD: begin  //here we assume that the program assembling the sequence has made sure that the jump is within the current BRAM half
-							if ((   (selected_core_dig_in && dig_in_jump_enabled) ||   (condition_0 && (command_buffer[9:9] == 1)) || (condition_1 && (command_buffer[10:10] == 1)) || (condition_PS && (command_buffer[11:11] == 1)) ||
+							if ((   (selected_core_dig_in && dig_in_jump_enabled) ||
+							(condition_0_sync && (command_buffer[9:9] == 1)) ||
+							(condition_1_sync && (command_buffer[10:10] == 1)) ||
+							(condition_PS_sync && (command_buffer[11:11] == 1)) ||
 								 (command_buffer[12:12] == 1) || ((command_buffer[13:13] == 1) && (loop_count > 0))))
 								address <= address - jump_offset;
 							else address <= address + 1;
@@ -385,10 +388,19 @@ CMD_CONDITIONAL_JUMP_BACKWARD: begin  //here we assume that the program assembli
 						end
 */
 
-void CEthernetControllerFirefly::AddCommandJumpBackward(unsigned int jump_length, bool unconditional_jump, bool condition_0, bool condition_1, bool condition_PS, bool loop_count_greater_zero) {
+void CEthernetControllerFirefly::AddCommandJumpBackward(unsigned int jump_length, bool unconditional_jump, bool condition_0, bool condition_1, bool condition_PS, bool condition_dig_in, uint8_t dig_in_bit_nr, bool loop_count_greater_zero) {
 	unsigned char command = CMD_CONDITIONAL_JUMP_BACKWARD;
-	uint32_t low_buffer = ((jump_length & 0xFF) << 8) | (condition_0 ? 0x100 : 0) | (condition_1 ? 0x200 : 0) | (condition_PS ? 0x400 : 0) | (unconditional_jump ? 0x800 : 0) | (loop_count_greater_zero ? 0x1000 : 0) | command;
-	uint32_t high_buffer = 0;
+	unsigned __int32 low_buffer =
+		((condition_0 ? (1 << 9) : 0) |
+			(condition_1 ? (1 << 10) : 0) |
+			(condition_PS ? (1 << 11) : 0) |
+			(unconditional_jump ? (1 << 12) : 0) |
+			(loop_count_greater_zero ? (1 << 13) : 0) |
+			((dig_in_bit_nr & 0x7) << 5) |
+			(condition_dig_in ? (1 << 8) : 0) |
+			command);
+
+	unsigned __int32 high_buffer = jump_length & 0xFF;
 	AddSequencerCommandToSequenceList(high_buffer, low_buffer);
 }
 
@@ -1601,10 +1613,10 @@ bool CEthernetControllerFirefly::AttemptSendSequence(uint32_t DataSize, uint32_t
 
 
 
-bool CEthernetControllerFirefly::TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently) {
+bool CEthernetControllerFirefly::TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_destination, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently) {
 	if (!Connected) return false;
 	unsigned int attempts = 0;
-	while ((attempts < MaxReconnectAttempts) && (!AttemptTransmitI2CPort(I2C_port, I2C_address, send_length, send_data, receive_length, receive_data, I2C_clock_frequency_in_Hz, I2C_success, fail_silently))) {
+	while ((attempts < MaxReconnectAttempts) && (!AttemptTransmitI2CPort(I2C_port, I2C_destination, I2C_address, send_length, send_data, receive_length, receive_data, I2C_clock_frequency_in_Hz, I2C_success, fail_silently))) {
 		Network->ResetConnection();
 		this_thread::sleep_for(100ms);
 		attempts++;
@@ -1612,10 +1624,11 @@ bool CEthernetControllerFirefly::TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_a
 	return (attempts < MaxReconnectAttempts);
 }
 
-bool CEthernetControllerFirefly::AttemptTransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t &receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool &I2C_success, bool fail_silently) {
+bool CEthernetControllerFirefly::AttemptTransmitI2CPort(uint8_t I2C_port, uint8_t I2C_destination, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t &receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool &I2C_success, bool fail_silently) {
 	I2C_success = false;
 	if (!/*Optimized*/Command("transmit_I2C")) return false;
 	if (!WriteInteger(I2C_port)) return false;
+	if (!WriteInteger(I2C_destination)) return false;
 	if (!WriteInteger(I2C_address >> 1)) return false;
 	if (!WriteInteger(I2C_clock_frequency_in_Hz)) return false;
 	if (!WriteInteger(send_length)) return false;
@@ -1680,6 +1693,24 @@ bool CEthernetControllerFirefly::AttemptTransmitI2CPort(uint8_t I2C_port, uint8_
 		return true;
 		
 	}
+	return true;
+}
+
+
+bool CEthernetControllerFirefly::SetPSOptions(uint8_t options) {
+	if (!Connected) return false;
+	unsigned int attempts = 0;
+	while ((attempts < MaxReconnectAttempts) && (!AttemptSetPSOptions(options))) {
+		Network->ResetConnection();
+		this_thread::sleep_for(100ms);
+		attempts++;
+	}
+	return (attempts < MaxReconnectAttempts);
+}
+
+bool CEthernetControllerFirefly::AttemptSetPSOptions(uint8_t options) {
+	if (!/*Optimized*/Command("set_PS_options")) return false;
+	if (!WriteInteger(options)) return false;
 	return true;
 }
 

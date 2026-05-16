@@ -767,15 +767,15 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerSetLoopCount: error");
 		}
 		 
-		//API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerJumpBackward)(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool loop_count_greater_zero = false);
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerJumpBackward)(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump, bool condition_0, bool condition_1, bool condition_PS, bool loop_count_greater_zero) {
+		//API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerJumpBackward)(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool condition_dig_in = false, uint8_t dig_in_bit_nr = 0, bool loop_count_greater_zero = false);
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SequencerJumpBackward)(const unsigned int& Sequencer, unsigned int jump_length, bool unconditional_jump, bool condition_0, bool condition_1, bool condition_PS, bool condition_dig_in, uint8_t dig_in_bit_nr, bool loop_count_greater_zero) {
 			API_LOCK_GUARD;
 			CDeviceSequencer* sequencer = GetSequencer(Sequencer);
 			//SequencerList is initialized to zero at program start, so no need to check if it is initialized
 			if (!sequencer) {
 				API_UNLOCK_RETURN_ERROR(false, "CLA_SequencerJumpBackward: Invalid sequencer");
 			}
-			sequencer->SequencerJumpBackward(jump_length, unconditional_jump, condition_0, condition_1, condition_PS, loop_count_greater_zero);
+			sequencer->SequencerJumpBackward(jump_length, unconditional_jump, condition_0, condition_1, condition_PS, condition_dig_in, dig_in_bit_nr, loop_count_greater_zero);
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "CLA_SequencerJumpBackward: error");
 		}
 
@@ -1279,13 +1279,22 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "ResetCycleNumber: error");
 		}
 
-		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(TransmitI2CPort)(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently) {
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(TransmitI2CPort)(uint8_t I2C_port, uint8_t I2C_destination, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently) {
 			API_LOCK_GUARD;
 			if (!MasterSequencer) {
 				API_UNLOCK_RETURN_ERROR(false, "TransmitI2CPort: no master sequencer not found");
 			}
-			MasterSequencer->TransmitI2CPort(I2C_port, I2C_address, send_length, send_data, receive_length, receive_data, I2C_clock_frequency_in_Hz, I2C_success, fail_silently);
+			MasterSequencer->TransmitI2CPort(I2C_port, I2C_destination, I2C_address, send_length, send_data, receive_length, receive_data, I2C_clock_frequency_in_Hz, I2C_success, fail_silently);
 			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "TransmitI2CPort: error");
+		}
+
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(SetPSOptions)(uint8_t options) {
+			API_LOCK_GUARD;
+			if (!MasterSequencer) {
+				API_UNLOCK_RETURN_ERROR(false, "SetPSOptions: no master sequencer not found");
+			}
+			MasterSequencer->SetPSOptions(options);
+			API_UNLOCK_RETURN_ERROR(!NewErrorOccured, "SetPSOptions: error");
 		}
 
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(WriteConfigEEPROM)(uint8_t SequencerID, uint8_t RackNr, uint8_t SlotNr, const char* data, size_t length) {

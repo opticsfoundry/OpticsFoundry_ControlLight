@@ -405,8 +405,12 @@ void CDeviceSequencer::ResetCycleNumber() {
 	}
 }
 
-bool CDeviceSequencer::TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently) {
-	return MyEthernetMultiIOControllerFirefly->TransmitI2CPort(I2C_port, I2C_address, send_length, send_data, receive_length, receive_data, I2C_clock_frequency_in_Hz, I2C_success, fail_silently);
+bool CDeviceSequencer::TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_destination, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently) {
+	return MyEthernetMultiIOControllerFirefly->TransmitI2CPort(I2C_port, I2C_destination, I2C_address, send_length, send_data, receive_length, receive_data, I2C_clock_frequency_in_Hz, I2C_success, fail_silently);
+}
+
+bool CDeviceSequencer::SetPSOptions(uint8_t options) {
+	return MyEthernetMultiIOControllerFirefly->SetPSOptions(options);
 }
 
 void CDeviceSequencer::SetSequencerDigitalOut(uint8_t dig_out_pattern) {
@@ -489,8 +493,8 @@ void CDeviceSequencer::SequencerSetLoopCount(unsigned int loop_count) {
 	MyEthernetMultiIOControllerFirefly->AddCommandSetLoopCount(loop_count);
 }
 
-void CDeviceSequencer::SequencerJumpBackward(unsigned int jump_length, bool unconditional_jump, bool condition_0, bool condition_1, bool condition_PS, bool loop_count_greater_zero) {
-	MyEthernetMultiIOControllerFirefly->AddCommandJumpBackward(jump_length, unconditional_jump, condition_0, condition_1, condition_PS, loop_count_greater_zero);
+void CDeviceSequencer::SequencerJumpBackward(unsigned int jump_length, bool unconditional_jump, bool condition_0, bool condition_1, bool condition_PS, bool condition_dig_in, uint8_t dig_in_bit_nr, bool loop_count_greater_zero) {
+	MyEthernetMultiIOControllerFirefly->AddCommandJumpBackward(jump_length, unconditional_jump, condition_0, condition_1, condition_PS, condition_dig_in, dig_in_bit_nr, loop_count_greater_zero);
 }
 
 void CDeviceSequencer::SequencerJumpForward(unsigned int jump_length, bool unconditional_jump, bool condition_0, bool condition_1, bool condition_PS, bool condition_dig_in, uint8_t dig_in_bit_nr) {

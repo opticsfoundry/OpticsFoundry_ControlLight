@@ -98,7 +98,8 @@ public:
 	void GetNextCycleNumber(long &NextCycleNumber);
 	void ResetCycleNumber();
 
-	bool TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently);
+	bool TransmitI2CPort(uint8_t I2C_port, uint8_t I2C_destination, uint8_t I2C_address, uint16_t send_length, uint8_t *send_data, uint16_t receive_length, uint8_t *receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently);
+	bool SetPSOptions(uint8_t options);
 	void SetSequencerDigitalOut(uint8_t dig_out_pattern);
 	void SetSequencer_PL_to_PS_command(uint8_t PL_to_PS_command);
 	void SwitchSequencerBuzzer(bool OnOff);
@@ -125,7 +126,7 @@ public:
 	void SequencerAddMarker(unsigned char marker);
 	void SequencerSetTimeDebtGuard_in_ms(const double& MaxTimeDebt_in_ms) { this->MaxTimeDebt_in_ms = MaxTimeDebt_in_ms; }
 	void SequencerSetLoopCount(unsigned int loop_count);
-	void SequencerJumpBackward(unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool loop_count_greater_zero = false);
+	void SequencerJumpBackward(unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool condition_dig_in = false, uint8_t dig_in_bit_nr = 0, bool loop_count_greater_zero = false);
 	void SequencerJumpForward(unsigned int jump_length, bool unconditional_jump = true, bool condition_0 = false, bool condition_1 = false, bool condition_PS = false, bool condition_dig_in = false, uint8_t dig_in_bit_nr = 0);
 
 
