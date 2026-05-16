@@ -144,6 +144,7 @@ void CDeviceSequencer::SetFPGAClockToBusClockRatio(const unsigned int _FPGAClock
 	if (UpdateStrobeDuration) {
 		uint8_t StrobeDuration = ((FPGAClockToBusClockRatio + 1) / 3) - 1;
 		MyEthernetMultiIOControllerFirefly->SetStrobeOptions(/* StrobeChoice: Use FPGA strobe generator */ 1, StrobeDuration, StrobeDuration);
+		Wait_ms(0.0001);//we need to wait for the strobe change to have effect
 	}
 }
 
