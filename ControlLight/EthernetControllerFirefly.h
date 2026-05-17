@@ -99,7 +99,7 @@ public:
 	void WriteBufferToFile(uint32_t* buffer, unsigned long length, const std::string& FileName);
 	bool ConnectSocket(const std::string& host, unsigned int port, unsigned int aFPGAClockToBusClockRatio, double aFPGAClockFrequencyInHz, bool aFPGAUseExternalClock, bool aFPGAUseStrobeGenerator, bool ExternalTrigger);
 	double GetFPGAClockFrequency_in_Hz();
-	bool WaitTillFinished();
+	bool WaitTillFinished(double timeout_in_s = 0);//timeout_in_s <0.001 means no timeout
 	bool Start();
 	bool Stop();
 	bool CloseConnection();
@@ -162,6 +162,7 @@ private:
 	bool AttemptSetFrequency(double Frequency);
 	bool AttemptGetFrequency(double& Frequency);
 	bool AttemptGetPeriodicTriggerError(bool& Error);
+	bool AttemptWaitTillFinished(double timeout_in_s);
 	bool AttemptWaitTillEndOfSequenceThenGetInputData(uint8_t*& buffer, unsigned long& buffer_length, unsigned long& EndTimeOfCycle, double timeout_in_s);
 	bool AttemptTransmitI2CPort(uint8_t I2C_port, uint8_t I2C_destination, uint8_t I2C_address, uint16_t send_length, uint8_t* send_data, uint16_t &receive_length, uint8_t* receive_data, uint32_t I2C_clock_frequency_in_Hz, bool& I2C_success, bool fail_silently);
 	bool AttemptSetPSOptions(uint8_t options);

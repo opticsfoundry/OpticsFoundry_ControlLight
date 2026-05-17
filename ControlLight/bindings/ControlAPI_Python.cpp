@@ -201,6 +201,7 @@ PYBIND11_MODULE(control_light_api, m) {
         .def("execute_sequence", &ControlLight_API::ExecuteSequence, py::arg("filename") = "")
 
         .def("repeat_sequence", &ControlLight_API::RepeatSequence)
+        .def("wait_till_finished", &ControlLight_API::WaitTillFinished, py::arg("timeout_in_s") = 0)
 
         // Checks sequence execution status: returns (running, data_points_written)
         .def("get_sequence_execution_status", [](ControlLight_API& self) {

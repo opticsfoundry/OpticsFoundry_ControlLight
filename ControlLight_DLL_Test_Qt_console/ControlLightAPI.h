@@ -197,6 +197,7 @@ typedef bool (*PrintCPUCommandSequenceFunc)();
 typedef bool (*ResetFunc)(const unsigned int& Sequencer, const unsigned int& Address);
 typedef void (*SendSequenceFunc)(const char* FileName);
 typedef void (*RepeatSequenceFunc)();
+typedef bool (*WaitTillFinishedFunc)(double timeout_in_s);
 typedef bool (*SequencerCalcAD9854FrequencyTuningWordFunc)(const unsigned int& Sequencer, uint64_t ftw0, uint8_t bit_shift);
 typedef bool (*SetSequencerDigitalOutFunc)(const unsigned int& Sequencer, uint8_t dig_out_pattern);
 typedef bool (*SetSequencer_PL_to_PS_commandFunc)(const unsigned int& Sequencer, uint8_t PL_to_PS_command);
@@ -374,6 +375,7 @@ typedef bool (*SetAD9959PowerFunc)(const unsigned int&, const unsigned int&, uin
     ResetFunc CLA_Reset;
     SendSequenceFunc CLA_SendSequence;
     RepeatSequenceFunc CLA_RepeatSequence;
+    WaitTillFinishedFunc CLA_WaitTillFinished;
     SequencerCalcAD9854FrequencyTuningWordFunc CLA_SequencerCalcAD9854FrequencyTuningWord;
     SetSequencerDigitalOutFunc CLA_SetSequencerDigitalOut;
     SetSequencer_PL_to_PS_commandFunc CLA_SetSequencer_PL_to_PS_command;
@@ -471,6 +473,7 @@ typedef bool (*SetAD9959PowerFunc)(const unsigned int&, const unsigned int&, uin
         bool Reset(const unsigned int& Sequencer, const unsigned int& Address);
         void SendSequence(const char* FileName = "");
         void RepeatSequence();
+        bool WaitTillFinished(double timeout_in_s = 0);
         bool SequencerCalcAD9854FrequencyTuningWord(const unsigned int& Sequencer, uint64_t ftw0, uint8_t bit_shift = 22);
         bool SetSequencerDigitalOut(const unsigned int& Sequencer, uint8_t dig_out_pattern);
         bool SetSequencer_PL_to_PS_command(const unsigned int& Sequencer, uint8_t PL_to_PS_command);

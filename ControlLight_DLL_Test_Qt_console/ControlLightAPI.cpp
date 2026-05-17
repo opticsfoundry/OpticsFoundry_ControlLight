@@ -156,6 +156,7 @@ void CControlLightAPI::Set_CLA_CallsToNull() {
     CLA_Reset = nullptr;
     CLA_SendSequence = nullptr;
     CLA_RepeatSequence = nullptr;
+    CLA_WaitTillFinished = nullptr;
     CLA_SequencerCalcAD9854FrequencyTuningWord = nullptr;
     CLA_SetSequencerDigitalOut = nullptr;
     CLA_SetSequencer_PL_to_PS_command = nullptr;
@@ -310,6 +311,7 @@ bool CControlLightAPI::LoadDLL() {
     TRY_RESOLVE(CLA_Reset);
     TRY_RESOLVE(CLA_SendSequence);
     TRY_RESOLVE(CLA_RepeatSequence);
+    TRY_RESOLVE(CLA_WaitTillFinished);
     TRY_RESOLVE(CLA_SequencerCalcAD9854FrequencyTuningWord);
     TRY_RESOLVE(CLA_SetSequencerDigitalOut);
     TRY_RESOLVE(CLA_SetSequencer_PL_to_PS_command);
@@ -545,6 +547,7 @@ API_EXPORT ERROR_CODE_TYPE CLA_SetAD9959Power(const unsigned int& Sequencer, con
     CLA_Reset = (ResetFunc)CLA_Lib->resolve("CLA_Reset");
     CLA_SendSequence = (SendSequenceFunc)CLA_Lib->resolve("CLA_SendSequence");
     CLA_RepeatSequence = (RepeatSequenceFunc)CLA_Lib->resolve("CLA_RepeatSequence");
+    CLA_WaitTillFinished = (WaitTillFinishedFunc)CLA_Lib->resolve("CLA_WaitTillFinished");
     CLA_SequencerCalcAD9854FrequencyTuningWord = (SequencerCalcAD9854FrequencyTuningWordFunc)CLA_Lib->resolve("CLA_SequencerCalcAD9854FrequencyTuningWord");
     CLA_SetSequencerDigitalOut = (SetSequencerDigitalOutFunc)CLA_Lib->resolve("CLA_SetSequencerDigitalOut");
     CLA_SetSequencer_PL_to_PS_command = (SetSequencer_PL_to_PS_commandFunc)CLA_Lib->resolve("CLA_SetSequencer_PL_to_PS_command");
@@ -649,6 +652,7 @@ API_EXPORT ERROR_CODE_TYPE CLA_SetAD9959Power(const unsigned int& Sequencer, con
         !CLA_Reset ||
         !CLA_SendSequence ||
         !CLA_RepeatSequence ||
+        !CLA_WaitTillFinished ||
         !CLA_SequencerCalcAD9854FrequencyTuningWord ||
         !CLA_SetSequencerDigitalOut ||
         !CLA_SetSequencer_PL_to_PS_command ||
@@ -1278,6 +1282,13 @@ void CControlLightAPI::SendSequence(const char* FileName) {
 void CControlLightAPI::RepeatSequence() {
     if (CLA_RepeatSequence)
         CLA_RepeatSequence();
+}
+
+bool CControlLightAPI::WaitTillFinished(double timeout_in_s) {
+    if (CLA_WaitTillFinished)
+        return CLA_WaitTillFinished(timeout_in_s);
+    else
+        return false;
 }
 
 bool CControlLightAPI::SequencerCalcAD9854FrequencyTuningWord(const unsigned int& Sequencer, uint64_t ftw0, uint8_t bit_shift) {

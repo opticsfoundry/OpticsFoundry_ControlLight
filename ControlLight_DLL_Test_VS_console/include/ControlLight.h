@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 
@@ -654,6 +654,12 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @brief Execute the sequence that was sent to the FPGA.
 		/// @return See return convention above.
 		API_EXPORT void CLA_FN(RepeatSequence)();
+
+		//Wait till the sequence is finished
+		/// @brief Waits until the sequence is finished.
+		/// @param timeout_in_s timeout in seconds. Values below 0.001 disable the sequence timeout.
+		/// @return See return convention above.
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(WaitTillFinished)(double timeout_in_s = 0);
 
 
 		//check how far the sequence has been executed

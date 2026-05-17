@@ -1,4 +1,4 @@
-// OvenControl.cpp: implementation of the CEthernetControllerFirefly class.
+﻿// OvenControl.cpp: implementation of the CEthernetControllerFirefly class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -120,7 +120,7 @@ bool CEthernetControllerFirefly::ConnectSocket(const std::string& host, unsigned
 
 double CEthernetControllerFirefly::GetFPGAClockFrequency_in_Hz() {
 	//return BusFrequency;
-	return FPGAClockFrequencyInHz;  
+	return FPGAClockFrequencyInHz;
 }
 
 void CEthernetControllerFirefly::AddSequencerCommandToBuffer(uint32_t* buffer, uint32_t n, uint32_t high_buffer, uint32_t low_buffer) {
@@ -219,7 +219,7 @@ constexpr uint8_t NrExtendedCommands = 4;
 const std::string ExtendedCommandNames[NrExtendedCommands] = { "EXTENDED_CMD_STOP", "EXTENDED_CMD_LOAD_SPI_TIMING", "EXTENDED_CMD_SET_SPI_MODE", "EXTENDED_CMD_SET_I2C_PARAMETERS" };
 
 
-void CEthernetControllerFirefly::StartAnalogInAcquisition(unsigned char analog_in_type, unsigned char SPI_CS, unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms) {	
+void CEthernetControllerFirefly::StartAnalogInAcquisition(unsigned char analog_in_type, unsigned char SPI_CS, unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms) {
 	//if (channel_nr < 2) {
 	//	StartXADCAnalogInAcquisition(channel_nr, number_of_datapoints, delay_between_datapoints_in_ms);
 //	} else {
@@ -249,9 +249,9 @@ void CEthernetControllerFirefly::StartXADCAnalogInAcquisition(unsigned int chann
 	CMD_ANALOG_IN_OUT: begin
                             adc_register_address <= command[14:8];  //to read standard analog in, this should be 3, see Xilinx user guide UG480
                             adc_write_enable <= command[15:15];
-                            adc_programming_out <= command[31:16];   
+                            adc_programming_out <= command[31:16];
                             wait_time[29:0] <= command[63:34];
-                            wait_time[47:30] <= 0;                         
+                            wait_time[47:30] <= 0;
                             INPUT_REPEAT_state <= INPUT_REPEAT_IDLE;
                             if (command[32:32] == 0) begin  //if command[40:40] is high, the actual reading will be started trhough CMD_REPEAT
                                 if (command[33:33] == 0) ANA_IN_state <= ANA_IN_START; //conversion and register read
@@ -286,7 +286,7 @@ void CEthernetControllerFirefly::StartXADCAnalogInAcquisition(unsigned int chann
 					if (INPUT_REPEAT_command[0] == 1) SPI_state <= SPI_START;
 					if (INPUT_REPEAT_command[1] == 1) DIG_IN_state <= DIG_IN_START;
 					if (INPUT_REPEAT_command[2] == 1) ANA_IN_state <= ANA_IN_START;
-	
+
 	*/
 	command = CMD_INPUT_REPEATED_OUT_IN;
 	uint32_t INPUT_REPEAT_repeats = number_of_datapoints;
@@ -557,8 +557,8 @@ void AddCommandAnalogInOut(u8 adc_register_address, u8 adc_write_enable, u16 adc
 
 //Vitis command converted to Visual Studio command:
 void CEthernetControllerFirefly::AddCommandAnalogInOut(uint8_t adc_register_address, uint8_t adc_write_enable, uint16_t adc_programming_out, uint8_t dont_execute_now, uint8_t only_read_write, uint32_t wait_time) {
-	
-	
+
+
 
 
 
@@ -566,9 +566,9 @@ void CEthernetControllerFirefly::AddCommandAnalogInOut(uint8_t adc_register_addr
 		CMD_ANALOG_IN_OUT: begin
                             adc_register_address <= command[14:8];  //to read standard analog in, this should be 3, see Xilinx user guide UG480
                             adc_write_enable <= command[15:15];
-                            adc_programming_out <= command[31:16];   
+                            adc_programming_out <= command[31:16];
                             wait_time[29:0] <= command[63:34];
-                            wait_time[47:30] <= 0;                         
+                            wait_time[47:30] <= 0;
                             INPUT_REPEAT_state <= INPUT_REPEAT_IDLE;
                             if (command[32:32] == 0) begin  //if command[40:40] is high, the actual reading will be started trhough CMD_REPEAT
                                 if (command[33:33] == 0) ANA_IN_state <= ANA_IN_START; //conversion and register read
@@ -674,7 +674,7 @@ void CEthernetControllerFirefly::AddCommandStop() {
 void CEthernetControllerFirefly::AddCommandTransmitI2C(uint8_t I2C_port, uint8_t I2C_length_out, uint8_t I2C_length_in, uint8_t *data_out) {
 
 	//total data length can be up to 128-(2*5) = 118 bits (because we need 2x 5 bits for the two load commands).
-	uint8_t command = CMD_LOAD_REG_LOW;		
+	uint8_t command = CMD_LOAD_REG_LOW;
 	uint64_t data_low = static_cast<uint64_t>(data_out[0]);
 	uint64_t data_high = static_cast<uint64_t>(data_out[1]);
 	uint32_t low_buffer = ((data_low & 0x07FFFFFF) << 5)  | command; //lowest 27 bit
@@ -691,7 +691,7 @@ void CEthernetControllerFirefly::AddCommandTransmitI2C(uint8_t I2C_port, uint8_t
 							 I2C_out_length <= command_buffer[14:8];
                             I2C_in_length <= command_buffer[20:15];
                             I2C_SELECT_NEXT <= command_buffer[21:20];
-                            I2C_data <= register;  //Use CMD_LOAD_REG_LOW and CMD_LOAD_REG_HIGH before CMD_I2C_OUT to copy 117-bit I2C data to register                
+                            I2C_data <= register;  //Use CMD_LOAD_REG_LOW and CMD_LOAD_REG_HIGH before CMD_I2C_OUT to copy 117-bit I2C data to register
                             I2C_state <= I2C_START;
                             address <= address + 1;
                             wait_time <= 1;
@@ -699,7 +699,7 @@ void CEthernetControllerFirefly::AddCommandTransmitI2C(uint8_t I2C_port, uint8_t
 	*/
 	command = CMD_I2C_OUT;
 	low_buffer = ((I2C_port & 0x03) << 20) | ((I2C_length_in & 0x3F) << 15) | ((I2C_length_out & 0x7F) << 8) | (0x1F & command);
-	high_buffer = 0; 
+	high_buffer = 0;
 	AddSequencerCommandToSequenceList( high_buffer, low_buffer);
 }
 
@@ -740,7 +740,7 @@ void CEthernetControllerFirefly::AddCommandTransmitSPI(const uint8_t chip_select
 	}
 
 	//total data length can be up to 128-(2*5) = 118 bits (because we need 2x 5 bits for the two load commands).
-	uint8_t command = CMD_LOAD_REG_LOW;		
+	uint8_t command = CMD_LOAD_REG_LOW;
 
 	uint32_t low_buffer = ((data_low & 0x07FFFFFF) << 5)  | command; //lowest 27 bit
 	uint32_t high_buffer = (data_low >> 27) & 0xFFFFFFFF; //bit 28 to 59 (5 bits missing)
@@ -757,10 +757,10 @@ void CEthernetControllerFirefly::AddCommandTransmitSPI(const uint8_t chip_select
                             SPI_IN_length <= command[21:16];
                             SPI_SEL_next <= command[33:32];
                             SPI_chip_select_next <= command[37:34];
-                            SPI_data <= register;  //Use CMD_LOAD_REG_LOW and CMD_LOAD_REG_HIGH before CMD_SPI_OUT_IN to copy 117-bit I2C data to register                                          
+                            SPI_data <= register;  //Use CMD_LOAD_REG_LOW and CMD_LOAD_REG_HIGH before CMD_SPI_OUT_IN to copy 117-bit I2C data to register
                             INPUT_REPEAT_state <= INPUT_REPEAT_IDLE;
-                            if (command[40:40] == 0) SPI_state <= SPI_START;                                                         
-                        end  
+                            if (command[40:40] == 0) SPI_state <= SPI_START;
+                        end
 	*/
 
 	command = CMD_SPI_OUT_IN;
@@ -779,7 +779,7 @@ void CEthernetControllerFirefly::AddCommandRepeatedOutIn(const uint16_t number_o
 	unsigned __int32 INPUT_REPEAT_repeats = number_of_datapoints;
 	unsigned __int32 INPUT_REPEAT_wait = floor(delay_between_datapoints_in_ms * FPGAClockFrequencyInHz / 1000);
 	unsigned __int32 INPUT_REPEAT_command = RepeatedOutInCommand;  //0: stop, 1: SPI input, 2: digital input, 3: dig_event_time_tagger, 4: analog in
-	unsigned __int32 INPUT_REPEAT_trigger_secondary_interrupt_when_finished = 1;//this is needed if input BRAM buffer should be copied to DDR when half buffer full 
+	unsigned __int32 INPUT_REPEAT_trigger_secondary_interrupt_when_finished = 1;//this is needed if input BRAM buffer should be copied to DDR when half buffer full
 
 	uint32_t low_buffer = ((INPUT_REPEAT_repeats & 0xFFFFF) << 8) | (((SPI_restart_wait_on_ready_low) ? 1 : 0) << 7) | command;
 	uint32_t high_buffer = (INPUT_REPEAT_wait & 0xFFFFFF)  | (INPUT_REPEAT_trigger_secondary_interrupt_when_finished << (56 - 32)) | ((INPUT_REPEAT_command & 0x7) << (57 - 32));
@@ -789,13 +789,13 @@ void CEthernetControllerFirefly::AddCommandRepeatedOutIn(const uint16_t number_o
 
 void CEthernetControllerFirefly::StartSPIAnalogInAcquisition(unsigned char analog_in_type, unsigned char SPI_CS, unsigned int channel_nr, unsigned int number_of_datapoints, double delay_between_datapoints_in_ms) {
 	//ToDo: As soon as Control is based on ControlLight, we should move the code here into CDeviceSequencer::StartSPIAnalogInAcquisition
-	//and replace the AddSequencerCommandToSequenceList commands with 
+	//and replace the AddSequencerCommandToSequenceList commands with
 	//AddCommandSetSPITiming
 	//AddCommandTransmitSPI
 	//AddCommandRepeatedOutIn
 	//commands
 
-	// * @param analog_in_type Analog in board type. 0: AQuRA MCP3208 analog in board; 1: MCP3208 12-bit ADC on SerialPortBoard; 2: ADS1256  24-bit ADC 
+	// * @param analog_in_type Analog in board type. 0: AQuRA MCP3208 analog in board; 1: MCP3208 12-bit ADC on SerialPortBoard; 2: ADS1256  24-bit ADC
 
 	if ((analog_in_type==0) || (analog_in_type==1)) StartSPIAnalogInAcquisition_MCP3208(analog_in_type, SPI_CS, channel_nr, number_of_datapoints, delay_between_datapoints_in_ms);
 	else if (analog_in_type==2) StartSPIAnalogInAcquisition_ADS1256(analog_in_type, SPI_CS, channel_nr, number_of_datapoints, delay_between_datapoints_in_ms);
@@ -805,8 +805,8 @@ void CEthernetControllerFirefly::StartSPIAnalogInAcquisition_MCP3208(unsigned ch
 
 	//This code is written in an outdated fashion. Look at StartSPIAnalogInAcquisition_ADS1256 to find a more modern way to write it.
 
-	//@param analog_in_type Analog in board type. 0: AQuRA MCP3208 analog in board; 1: MCP3208 12-bit ADC on SerialPortBoard; 2: ADS1256  24-bit ADC 
-	
+	//@param analog_in_type Analog in board type. 0: AQuRA MCP3208 analog in board; 1: MCP3208 12-bit ADC on SerialPortBoard; 2: ADS1256  24-bit ADC
+
 	//only for debugging
 	//AddCommandSetCoreOption_LED(true);
 	//AddCommandWriteInputBuffer(/*write_next_address*/ false, /* input_buf_mem_address */ 0, /*input_buf_mem_data*/0xDEADBEEF, /* wait_time_in_FPGA_cycles*/ 5);
@@ -824,7 +824,7 @@ void CEthernetControllerFirefly::StartSPIAnalogInAcquisition_MCP3208(unsigned ch
                         end
     CMD_LOAD_REG_HIGH:begin
                             register[117:59] <= command[63:5];
-                        end 
+                        end
 	*/
 
 	if (channel_nr > 7) channel_nr = 7;
@@ -839,12 +839,12 @@ void CEthernetControllerFirefly::StartSPIAnalogInAcquisition_MCP3208(unsigned ch
 	//Data is written MSB first
 	unsigned __int32 SPI_DATA = (1<<5) + (SPI_SINGLE_ENDED_INPUT << 4) + (channel_nr << 1);
 
-	
+
 	unsigned char command = CMD_LOAD_REG_LOW;
 	unsigned __int32 low_buffer = (SPI_DATA << 5) | command;
 	unsigned __int32 high_buffer = 0;
 	AddSequencerCommandToSequenceList( high_buffer, low_buffer);
-	
+
 	command = CMD_LOAD_REG_HIGH;
 	low_buffer = command;
 	high_buffer = 0;
@@ -857,16 +857,16 @@ void CEthernetControllerFirefly::StartSPIAnalogInAcquisition_MCP3208(unsigned ch
                             SPI_IN_length <= command[20:16];
                             SPI_SEL_next <= command[33:32];
                             SPI_chip_select_next <= command[37:34];
-                            SPI_data <= register;  //Use CMD_LOAD_REG_LOW and CMD_LOAD_REG_HIGH before CMD_SPI_OUT_IN to copy 117-bit I2C data to register                                          
+                            SPI_data <= register;  //Use CMD_LOAD_REG_LOW and CMD_LOAD_REG_HIGH before CMD_SPI_OUT_IN to copy 117-bit I2C data to register
                             INPUT_REPEAT_state <= INPUT_REPEAT_IDLE;
-                            if (command[40:40] == 0) SPI_state <= SPI_START;                                                         
-                        end  
+                            if (command[40:40] == 0) SPI_state <= SPI_START;
+                        end
 	*/
 
 	command = CMD_SPI_OUT_IN;
 	unsigned __int32 SPI_out_length = 6;
 	unsigned __int32 SPI_in_length = 13;
-	//unsigned __int32 SPI_CS = 1;  
+	//unsigned __int32 SPI_CS = 1;
 	unsigned __int32 wait_time = 0;
 	constexpr unsigned char SPI_port = 1;
 	unsigned char SPI_SEL_next = (SPI_port == 0) ? 0x01 : 0x02; //2 SPI ports, port 0 is controlled by bit zero here, port 1 is bit one here; 1 means active under PL control; if inactive they are under PS control
@@ -902,7 +902,7 @@ void CEthernetControllerFirefly::StartSPIAnalogInAcquisition_MCP3208(unsigned ch
 	unsigned __int32 INPUT_REPEAT_repeats = number_of_datapoints;
 	unsigned __int32 INPUT_REPEAT_wait = floor(delay_between_datapoints_in_ms * FPGAClockFrequencyInHz / 1000);
 	unsigned __int32 INPUT_REPEAT_command = 1;  //SPI input
-	unsigned __int32 INPUT_REPEAT_trigger_secondary_interrupt_when_finished = 1;//this is needed if input BRAM buffer should be copied to DDR when half buffer full 
+	unsigned __int32 INPUT_REPEAT_trigger_secondary_interrupt_when_finished = 1;//this is needed if input BRAM buffer should be copied to DDR when half buffer full
 
 	low_buffer = (INPUT_REPEAT_repeats << 8) | command;
 	high_buffer = INPUT_REPEAT_wait | (INPUT_REPEAT_trigger_secondary_interrupt_when_finished << (56 - 32)) | (INPUT_REPEAT_command << (57 - 32));
@@ -918,9 +918,9 @@ void CEthernetControllerFirefly::StartSPIAnalogInAcquisition_MCP3208(unsigned ch
 	}
 
 	//debugging of BRAM operation only
-	//for (unsigned long n=0;n<0xFF;n++) 
+	//for (unsigned long n=0;n<0xFF;n++)
 	//	AddCommandWriteInputBuffer(/*write_next_address*/ false, /* input_buf_mem_address */ n*2, /*input_buf_mem_data*/0xDEAD0000+n, /* wait_time_in_FPGA_cycles*/ 5);
-	
+
 }
 
 void CEthernetControllerFirefly::AddDelay_in_ns(uint32_t delay_in_nanoseconds) {
@@ -956,14 +956,14 @@ void CEthernetControllerFirefly::StartSPIAnalogInAcquisition_ADS1256(unsigned ch
 	#define ADS1256_CMD_SYNC 0xFC
 	#define ADS1256_CMD_STANDBY 0xFD
 	#define ADS1256_CMD_RESET 0xFE
-	
+
 	//only for debugging
 	//AddCommandSetCoreOption_LED(true);
 	//AddCommandWriteInputBuffer(/*write_next_address*/ false, /* input_buf_mem_address */ 0, /*input_buf_mem_data*/0xDEADBEEF, /* wait_time_in_FPGA_cycles*/ 5);
 	//AddCommandWriteInputBuffer(/*write_next_address*/ false, /* input_buf_mem_address */ 1, /*input_buf_mem_data*/0x1234ABCD, /* wait_time_in_FPGA_cycles*/ 5);
 	if (number_of_datapoints == 0) return;
-	uint16_t SPI_clock_period_10ns = floor(100 * 1.0/ (clockspeedMhz / 4)); //in 10ns; this is the period of the SPI clock, which is used for timing in the FPGA; ToDo: adjust to your board's clock speed 
-	uint16_t Wait_before_read_10ns = 700;              //  t6 delay (4*tCLKIN 50*0.13 = 6.5 us)  
+	uint16_t SPI_clock_period_10ns = floor(100 * 1.0/ (clockspeedMhz / 4)); //in 10ns; this is the period of the SPI clock, which is used for timing in the FPGA; ToDo: adjust to your board's clock speed
+	uint16_t Wait_before_read_10ns = 700;              //  t6 delay (4*tCLKIN 50*0.13 = 6.5 us)
 	AddCommandSetSPITiming(/* SPI_delay_CS_low_start_wait*/ SPI_clock_period_10ns, /* SPI_delay_write*/ SPI_clock_period_10ns, /* SPI_delay_pause_before_read*/ Wait_before_read_10ns, /* SPI_delay_read*/ SPI_clock_period_10ns, /* SPI_delay_CS_low_end_wait*/ SPI_clock_period_10ns);
 	AddCommandSetSPIMode(/* SPI_mode */ 1);
 
@@ -974,12 +974,12 @@ void CEthernetControllerFirefly::StartSPIAnalogInAcquisition_ADS1256(unsigned ch
 
 	uint8_t data_out_channel_select[3] = { MUX_CHANNEL, 0, ADS1256_CMD_WREG | ADS1256_RADD_MUX }; // {LSByte, ..., MSByte}; opcode WREG (Write registers) starting from reg RADD_MUX; MSB written first
 	AddCommandTransmitSPI(SPI_CS, /* number_of_bits_out*/ 24, data_out_channel_select, /* number_of_bits_in*/ 0, /* start_now*/ true);
-	
+
 	AddDelay_in_ns(26 * 20 * SPI_clock_period_10ns); //AddDelay_in_ns(10 * 1000);//AddDelay_in_ns(41 * 1000);// +26 * 20 * SPI_clock_period_10ns);
-	
+
 	uint8_t data_out_sync = ADS1256_CMD_SYNC;
 	AddCommandTransmitSPI(SPI_CS, /* number_of_bits_out*/ 8, &data_out_sync, /* number_of_bits_in*/ 0, /* start_now*/ true);
-	
+
 	AddDelay_in_ns(10 * 20 * SPI_clock_period_10ns);//AddDelay_in_ns(41 * 1000);// +10 * 20 * SPI_clock_period_10ns);
 
 	uint8_t data_out_wakeup = ADS1256_CMD_WAKEUP;
@@ -988,7 +988,7 @@ void CEthernetControllerFirefly::StartSPIAnalogInAcquisition_ADS1256(unsigned ch
 	AddDelay_in_ns(206 * 1000);// +10 * 20 * SPI_clock_period_10ns);
 
 	uint8_t data_out_rdata = ADS1256_CMD_RDATA;
-	
+
 	AddCommandTransmitSPI(SPI_CS, /* number_of_bits_out*/ 8, &data_out_rdata, /* number_of_bits_in*/ 24, /* start_now*/ number_of_datapoints == 1, /* wait_for_SPI_ready_active */ false, /*wait_for_SPI_ready_edge_to_active*/ false);
 	if (number_of_datapoints>1)	AddCommandRepeatedOutIn(/* number_of_datapoints*/ number_of_datapoints, /* delay_between_datapoints_in_ms*/ delay_between_datapoints_in_ms, /* RepeatedOutInCommand*/ 1, /*SPI_restart_wait_on_ready_low*/ false); //1 means repeated SPI input
 }
@@ -1024,7 +1024,7 @@ void CEthernetControllerFirefly::AddProgramLine( uint8_t command, uint32_t data,
 	const uint32_t bus_data_mask = 0x0FFFFFFF;
 	const uint8_t command_mask = 0x1F;  //5 bit
 	//uint8_t command = 1; //CMD_STEP
-	
+
 	uint32_t low_buffer = ((delay & delay_mask_low) << 5) + (command_mask & command);
 	uint32_t high_buffer = ((bus_data_mask & data) << 4) | ((delay >> 27) & delay_mask_high);
 	AddSequencerCommandToSequenceList(high_buffer, low_buffer);
@@ -1044,7 +1044,7 @@ void CEthernetControllerFirefly::AddProgramLine( uint8_t command, uint32_t data,
 //
 //	uint32_t low_buffer = ((delay & delay_mask_low) << 5) + (command_mask & command);
 //	uint32_t high_buffer = ((bus_data_mask & data) << 4) | ((delay >> 27) & delay_mask_high);
-//	
+//
 //	if (DebugBufferFile) {
 //		(*DebugBufferFile) << std::format("step data = {:08X} {:08X}", high_buffer, low_buffer) << endl;
 //	}
@@ -1059,11 +1059,11 @@ void CEthernetControllerFirefly::SetStrobeOptions(uint8_t strobe_choice, uint8_t
 	uint32_t low_buffer = ((strobe_high_length & 0xFF) << 24) | ((strobe_low_length & 0xFF) << 16) | ((strobe_choice & 0x07) << 8) | (command_mask & CMD_LOAD_COMMAND_BUFFER);
 	uint32_t high_buffer = 0;
 	AddSequencerCommand(high_buffer, low_buffer);
-	
+
 	low_buffer = ((strobe_high_length & 0xFF) << 24) | ((strobe_low_length & 0xFF) << 16) | ((strobe_choice & 0x07) << 8) | (command_mask & command);
 	high_buffer = 0;
 	AddSequencerCommand(high_buffer, low_buffer);
-	
+
 }
 
 void CEthernetControllerFirefly::AddExternalTrigger( bool ExternalTrigger0, bool ExternalTrigger1, bool FPGASoftwareTrigger) {
@@ -1084,13 +1084,13 @@ void CEthernetControllerFirefly::AddExternalTrigger( bool ExternalTrigger0, bool
 		low_buffer = ((trigger0 | trigger1 | softtrigger) << 8) | (command_mask & command);
 		high_buffer = 0;
 		AddSequencerCommand(high_buffer, low_buffer);
-		
+
 	}
 	else {
 		AddCommandStep( 0, 1);
 		AddCommandStep( 0, 1);
 	}
-	
+
 }
 
 void CEthernetControllerFirefly::SetTriggerOptions( bool ExternalTrigger0, bool ExternalTrigger1) {
@@ -1099,7 +1099,7 @@ void CEthernetControllerFirefly::SetTriggerOptions( bool ExternalTrigger0, bool 
 	if (SetPeriodicTriggerAtBeginningOfNextSequence && (PeriodicTriggerPeriod_in_ms > 0)) {
 		SetPeriodicTriggerAtBeginningOfNextSequence = false;
 		//CMD_SET_PERIODIC_TRIGGER_PERIOD: begin
-		//	periodic_trigger_period <= command[55:8]; // >>8 =  [47:0] = 48 bit;  55:32 = 23:0 = 24 bit 
+		//	periodic_trigger_period <= command[55:8]; // >>8 =  [47:0] = 48 bit;  55:32 = 23:0 = 24 bit
 		//end
 		uint64_t PeriodicTriggerPeriod = floor(PeriodicTriggerPeriod_in_ms * FPGAClockFrequencyInHz / 1000);
 		const uint8_t command_mask = 0x1F;  //5 bit
@@ -1110,9 +1110,9 @@ void CEthernetControllerFirefly::SetTriggerOptions( bool ExternalTrigger0, bool 
 		low_buffer = ((PeriodicTriggerPeriod & 0xFFFFFF) << 8) | (command_mask & command);  //low 24 bit << 8
 		high_buffer = (PeriodicTriggerPeriod >> 24) & 0xFFFFFF; // high 24 bit
 		AddSequencerCommand(high_buffer, low_buffer);
-		
-		//CMD_SET_PERIODIC_TRIGGER_ALLOWED_WAIT_TIME: begin 
-		//	periodic_trigger_allowed_wait_cycles <= command[55:8]; // >>8 =  [47:0] = 48 bit;  55:32 = 23:0 = 24 bit 
+
+		//CMD_SET_PERIODIC_TRIGGER_ALLOWED_WAIT_TIME: begin
+		//	periodic_trigger_allowed_wait_cycles <= command[55:8]; // >>8 =  [47:0] = 48 bit;  55:32 = 23:0 = 24 bit
 		//end
 		uint64_t PeriodicTriggerAllowedWaitCycles = floor(PeriodicTriggerAllowedWait_in_ms * FPGAClockFrequencyInHz / 1000);
 		command = CMD_SET_PERIODIC_TRIGGER_ALLOWED_WAIT_TIME;
@@ -1140,7 +1140,7 @@ void CEthernetControllerFirefly::SetTriggerOptions( bool ExternalTrigger0, bool 
 			high_buffer = 0;
 			AddSequencerCommand(high_buffer, low_buffer);
 
-			//switch LED off again to indicate to user that we have detected the periodic trigger and are continuing with the sequence	
+			//switch LED off again to indicate to user that we have detected the periodic trigger and are continuing with the sequence
 			core_option_LED = false;
 			command = CMD_LOAD_COMMAND_BUFFER;
 			low_buffer = command;
@@ -1151,14 +1151,14 @@ void CEthernetControllerFirefly::SetTriggerOptions( bool ExternalTrigger0, bool 
 			high_buffer = ((core_option_PL_to_PS & 0xFF) << 24) | ((core_option_dig_out & 0xFF) << 8) | ((core_option_SPI_CS & 0x0F) << 1) | (core_option_LED & 0x01);
 			AddSequencerCommand(high_buffer, low_buffer);
 		}
-		else {			
+		else {
 			AddCommandStep( 0, 1);
 			AddCommandStep( 0, 1);
 			AddCommandStep( 0, 1);
 			AddExternalTrigger(ExternalTrigger0, ExternalTrigger1, false);
 		}
 	}
-	else if (WaitForPeriodicTriggerAtBeginningOfSequence && (LastPeriodicTriggerPeriod_in_ms > 0)) {	
+	else if (WaitForPeriodicTriggerAtBeginningOfSequence && (LastPeriodicTriggerPeriod_in_ms > 0)) {
 		//switch LED on to indicate to user that we are waiting for the periodic trigger
 		core_option_LED = true;
 		uint8_t command = CMD_LOAD_COMMAND_BUFFER;
@@ -1168,8 +1168,8 @@ void CEthernetControllerFirefly::SetTriggerOptions( bool ExternalTrigger0, bool 
 		command = CMD_SET_OPTIONS;
 		low_buffer = command;
 		high_buffer = ((core_option_PL_to_PS & 0xFF) << 24) | ((core_option_dig_out & 0xFF) << 8) | ((core_option_SPI_CS & 0x0F) << 1) | (core_option_LED & 0x01);
-		AddSequencerCommand(high_buffer, low_buffer);			
-			
+		AddSequencerCommand(high_buffer, low_buffer);
+
 		AddCommandStep( 0, 1);
 		//buffer[(n + 2) * 2 + 0] = CMD_WAIT_FOR_PERIODIC_TRIGGER;
 		//buffer[(n + 2) * 2 + 1] = 0;
@@ -1177,7 +1177,7 @@ void CEthernetControllerFirefly::SetTriggerOptions( bool ExternalTrigger0, bool 
 		high_buffer = 0;
 		AddSequencerCommand(high_buffer, low_buffer);
 
-		//switch LED off again to indicate to user that we have detected the periodic trigger and are continuing with the sequence	
+		//switch LED off again to indicate to user that we have detected the periodic trigger and are continuing with the sequence
 		core_option_LED = false;
 		command = CMD_LOAD_COMMAND_BUFFER;
 		low_buffer = command;
@@ -1196,7 +1196,7 @@ void CEthernetControllerFirefly::SetTriggerOptions( bool ExternalTrigger0, bool 
 		AddCommandStep( 0, 1);
 		AddCommandStep( 0, 1);
 		AddCommandStep( 0, 1);
-		AddExternalTrigger(ExternalTrigger0, ExternalTrigger1, false);	
+		AddExternalTrigger(ExternalTrigger0, ExternalTrigger1, false);
 	}
 }
 
@@ -1573,9 +1573,9 @@ bool CEthernetControllerFirefly::ModifySequence(unsigned long differences, uint3
 }
 
 bool CEthernetControllerFirefly::OptimizedCommand(CString CommandString) {
-	if (MinimizeEthernetCommunicationDirectionChanges) 
+	if (MinimizeEthernetCommunicationDirectionChanges)
 		return Command(CommandString + "0", /*DontWaitForReady*/ true);
-	else 
+	else
 		return Command(CommandString);
 }
 
@@ -1642,13 +1642,13 @@ bool CEthernetControllerFirefly::AttemptTransmitI2CPort(uint8_t I2C_port, uint8_
 	unsigned long long InputBufferContentsLength;
 	if (!ReadInt64(InputBufferContentsLength)) return false;
 	if (InputBufferContentsLength > 0) {
-		
+
 
 		/*
 		//pedestrian version
 		if (InputBufferContentsLength > receive_length) {
 			AddErrorMessage("CEthernetControllerFirefly::AttemptTransmitI2CPort : input data too large");
-			return true;		
+			return true;
 		}
 		receive_length = InputBufferContentsLength;
 		if (receive_data) delete[] receive_data;
@@ -1666,8 +1666,8 @@ bool CEthernetControllerFirefly::AttemptTransmitI2CPort(uint8_t I2C_port, uint8_
 			return false;
 		}
 		*/
-		
-		
+
+
 		if (!Network) return false;
 
 		if (InputBufferContentsLength > (numeric_limits<unsigned long>::max)()) return true;
@@ -1686,7 +1686,7 @@ bool CEthernetControllerFirefly::AttemptTransmitI2CPort(uint8_t I2C_port, uint8_
 			memcpy(receive_data, overflow_buffer.data(), receive_capacity);
 		}
 		return true;
-		
+
 	}
 	return true;
 }
@@ -1781,14 +1781,14 @@ bool CEthernetControllerFirefly::SendSequenceToFPGA(uint32_t* buffer, const std:
 
 	for (uint32_t n=0;n< 10;n++) {
 		AddProgramLine(CMD_STOP, 0, 0);
-		//AddProgramLine(buffer, n, CMD_STEP, 0, DelayMultiplier); 
+		//AddProgramLine(buffer, n, CMD_STEP, 0, DelayMultiplier);
 	}
 	//AddProgramLine(buffer, Count + PreambleProgramLines + PostProgramLines - 2, CMD_STOP, 0, 0);
 	//AddProgramLine(buffer, Count + AdditionalSteps + PreambleProgramLines + PostProgramLines - 1, CMD_STOP, 0, 0);
 
-	uint32_t FilledBufferLength; 
+	uint32_t FilledBufferLength;
 	uint32_t MaxBufferLength;
-	
+
 	MySequencer->GetBufferLength(FilledBufferLength, MaxBufferLength);
 
 
@@ -1821,13 +1821,13 @@ bool CEthernetControllerFirefly::SendSequenceToFPGA(uint32_t* buffer, const std:
 					}
 					else {
 						possible = false;
-						//delete previous_command_buffer; //don't delete previous_command_buffer, as it is just a copy of buffer. 
+						//delete previous_command_buffer; //don't delete previous_command_buffer, as it is just a copy of buffer.
 						previous_command_buffer = NULL;
 						previous_command_buffer_length = 0;
 						break;
 					}
 				}
-			}			
+			}
 			if (possible) {
 				//delete buffer;
 				//arrange data as two consecutive tables
@@ -1838,7 +1838,7 @@ bool CEthernetControllerFirefly::SendSequenceToFPGA(uint32_t* buffer, const std:
 					difference_index_table[differences + 2 * n + 1] = difference_command_table[2 * n + 1];
 				}*/
 				if (differences > 0) {
-					ModifySequence(differences, difference_index_table, difference_command_table);					
+					ModifySequence(differences, difference_index_table, difference_command_table);
 				}
 				//Command("print_sequence");//only for debug
 				previous_command_buffer = buffer;
@@ -1853,7 +1853,7 @@ bool CEthernetControllerFirefly::SendSequenceToFPGA(uint32_t* buffer, const std:
 	if (ok) {
 		std::string buf = std::format("send data, {} bytes sent", DataSize);
 		////Timestamp.Mark(buf);
-		//if (previous_command_buffer) delete previous_command_buffer; //don't delete previous_command_buffer, as it is just a copy of buffer. 
+		//if (previous_command_buffer) delete previous_command_buffer; //don't delete previous_command_buffer, as it is just a copy of buffer.
 		previous_command_buffer = buffer;
 		previous_command_buffer_length = DataSize;
 		ClearSequencerCommandList();
@@ -1869,7 +1869,7 @@ double CEthernetControllerFirefly::MeasureEthernetBandwidth(uint32_t DataSize, d
 	SwitchDebugMode(false, "");
 	bool ok = Command("send_sequence");
 	if (ok) {
-		
+
 		WriteInteger(DataSize);
 		uint32_t* buffer = new uint32_t[DataSize];
 		for (uint32_t n = 0; n < DataSize; n++) {
@@ -1914,7 +1914,7 @@ bool CEthernetControllerFirefly::AttemptGetAktWaveformPoint(unsigned long long& 
 	if (!ReadInt64(AktWaveformEntry)) return false; //100MHz clock cycles
 	if (!ReadBool(running)) return false;
 	DataPointsWritten = AktWaveformEntry / FPGAClockToBusClockRatio;// (FPGAClockFrequencyInHz / BusFrequency); //conversion to 2MHz clock cycles
-	return true;	
+	return true;
 }
 
 bool CEthernetControllerFirefly::AttemptNetworkCommand(tBoolFunction fCommand) {
@@ -1948,7 +1948,7 @@ bool CEthernetControllerFirefly::AttemptGetNextCycleNumber(long& NextCycleNumber
 bool CEthernetControllerFirefly::SwitchDebugMode(bool OnOff, const std::string& aFilename) {
 	(void)aFilename;
 	if (OnOff) return AttemptNetworkCommand([this]() {return Command("switch_debug_mode_on"); });
-	else return AttemptNetworkCommand([this]() {return Command("switch_debug_mode_off"); }); 
+	else return AttemptNetworkCommand([this]() {return Command("switch_debug_mode_off"); });
 }
 
 bool CEthernetControllerFirefly::ResetCycleNumber() {
@@ -1963,10 +1963,6 @@ bool CEthernetControllerFirefly::CloseConnection() {
 bool CEthernetControllerFirefly::Reset() {
 	//this commands resets the whole FPGA core. It should only be used if an error occured
 	return AttemptNetworkCommand([this]() {return Command("reset"); });
-}
-
-bool CEthernetControllerFirefly::WaitTillFinished() {
-	return AttemptNetworkCommand([this]() {return Command("wait_till_finished"); });
 }
 
 bool CEthernetControllerFirefly::Start() {
@@ -2083,7 +2079,7 @@ bool CEthernetControllerFirefly::SetExternalClock(bool aExternalClock0, bool aEx
 		} else {
 			return AttemptNetworkCommand([this]() {return Command("select_internal_clock"); });
 		}
-	} 
+	}
 	return true;
 }
 
@@ -2131,6 +2127,31 @@ bool CEthernetControllerFirefly::CheckReady(double timeout_in_seconds) {
 	return AttemptNetworkCommand([this]() {return Command("check_ready"); }); //Do not use OptimizedCommand here. The whole point is to get a "Ready" back.
 }
 
+
+bool CEthernetControllerFirefly::WaitTillFinished(double timeout_in_s) {
+	if (!Connected) return false;
+	unsigned int attempts = 0;
+	while ((attempts < MaxReconnectAttempts) && (!AttemptWaitTillFinished(timeout_in_s))) {
+		Network->ResetConnection();
+		this_thread::sleep_for(100ms);
+		attempts++;
+	}
+	return (attempts < MaxReconnectAttempts);
+}
+
+
+
+bool CEthernetControllerFirefly::AttemptWaitTillFinished(double timeout_in_s) {
+	if (!Command("wait_till_finished")) return false;
+	WriteDouble(timeout_in_s);//sequence timeout, <0.001 means no timeout
+	int Success;
+	if (!ReadInt(Success, timeout_in_s + 5)) return false;
+	if (Success == 0) AddErrorMessage("CEthernetControllerFirefly::AttemptWaitTillFinished : timeout : sequence execution took too long.");
+	return true;
+}
+
+
+
 bool CEthernetControllerFirefly::WaitTillEndOfSequenceThenGetInputData(uint8_t*& buffer, unsigned long& buffer_length, unsigned  long& EndTimeOfCycle, double timeout_in_s) {
 	if (!Connected) return false;
 	unsigned int attempts = 0;
@@ -2154,14 +2175,25 @@ bool CEthernetControllerFirefly::AttemptWaitTillEndOfSequenceThenGetInputData(ui
 	//return true;
 	//progress bar with communication
 	if (!Command("wait_till_end_of_sequence_then_get_input_data")) return false;
-	
+
+	WriteDouble(timeout_in_s);//sequence timeout, <0.001 means no timeout
+	WriteDouble(timeout_in_s);//read input data timeout, <0.001 means no timeout
+
+	int Success;
+	if (!ReadInt(Success, timeout_in_s + 5)) return false;
+	if (Success == 0) AddErrorMessage("CEthernetControllerFirefly::AttemptWaitTillEndOfSequenceThenGetInputData : timeout : sequence execution took too long.");
+
 	int PeriodicTriggerError;
-	if (!ReadInt(PeriodicTriggerError, timeout_in_s)) return false;
+	if (!ReadInt(PeriodicTriggerError, 1)) return false;
 #ifdef WIN32
 	EndTimeOfCycle = GetTickCount();
 #else
 	/// @todo portable equivalent of GetTickCount() ??
 #endif
+
+	if (!ReadInt(Success, timeout_in_s + 5)) return false;
+	if (Success == 0) AddErrorMessage("CEthernetControllerFirefly::AttemptWaitTillEndOfSequenceThenGetInputData : timeout : reading input data took too long.");
+
 	//int InputBufferContentOriginSequence;
 	//ReadInt(InputBufferContentOriginSequence);
 	//int InputBufferContentsLength;
@@ -2178,7 +2210,7 @@ bool CEthernetControllerFirefly::AttemptWaitTillEndOfSequenceThenGetInputData(ui
 
 		buffer = new uint8_t[InputBufferContentsLength];
 		previous_input_buffer_ptr = buffer;
-		buffer_length = InputBufferContentsLength;	
+		buffer_length = InputBufferContentsLength;
 		if (Network) return Network->ReceiveData(buffer, buffer_length, /*timeout_in_ms = */ 5000);
 		else {
 			delete[] buffer;

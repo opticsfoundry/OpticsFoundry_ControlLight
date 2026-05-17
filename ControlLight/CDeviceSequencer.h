@@ -76,6 +76,7 @@ public:
 	void GetBufferLength(uint32_t& FilledBufferLength, uint32_t& MaxBufferLength);
 	void SendStartSequenceCommand();
 	bool IsSequenceRunning(bool& running, unsigned long long& DataPointsWritten);
+	bool WaitTillFinished(double timeout_in_s = 0);
 	bool WaitTillEndOfSequenceThenGetInputData(uint8_t*& buffer, unsigned long& buffer_length, unsigned long& EndTimeOfCycle, double timeout_in_s);
 	void AddCommandToSequence(const uint32_t& high_word, const uint32_t& low_word);
 	void AddBusCommandAndWait(uint32_t data, uint32_t delay);

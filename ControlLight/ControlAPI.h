@@ -655,6 +655,12 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @return See return convention above.
 		API_EXPORT void CLA_FN(RepeatSequence)();
 
+		//Wait till the sequence is finished
+		/// @brief Waits until the sequence is finished.
+		/// @param timeout_in_s timeout in seconds. If timeout_in_s > 0.001 and the sequence is not finished within this time, the function returns false or throws an exception (depending on mode selected mode when compiling API).
+		/// @return See return convention above.
+		API_EXPORT ERROR_CODE_TYPE CLA_FN(WaitTillFinished)(double timeout_in_s = 0);
+
 	
 		//check how far the sequence has been executed
 		/// @brief Get the current status of the sequence execution.
@@ -667,7 +673,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @param buffer pointer to the input data buffer. Don't delete this buffer, it is managed by the API.
 		/// @param buffer_length length of the input data buffer in bytes.
 		/// @param EndTimeOfCycle returns the end time of the cycle in ms.
-		/// @param timeout_in_s timeout in seconds. If the sequence is not finished within this time, the function returns false or throws an exception (depending on mode selected mode when compiling API).
+		/// @param timeout_in_s timeout in seconds. If timeout_in_s > 0.001 and the sequence is not finished within this time, the function returns false or throws an exception (depending on mode selected mode when compiling API).
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(WaitTillEndOfSequenceThenGetInputData)(uint8_t*& buffer, unsigned long& buffer_length, unsigned  long& EndTimeOfCycle, double timeout_in_s);
 		
 		/// @brief Sets a guard time. If sequencer commands make the time advance more than the guard time beyond what's allowed by Wait_ms, an error will be recorded (check with DidErrorOccur() if that happened) or thrown.

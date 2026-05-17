@@ -560,6 +560,19 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			CATCH_MFC_EX_E
 		}
 
+		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(WaitTillFinished)(double timeout_in_s) {
+			CATCH_MFC_EX_S
+			API_LOCK_GUARD;
+			if (MasterSequencer) {
+				bool ret = MasterSequencer->WaitTillFinished(timeout_in_s);
+				API_UNLOCK_RETURN_ERROR(ret, "CLA_WaitTillFinished error: Master sequencer error.");
+			}
+			else {
+				API_UNLOCK_RETURN_ERROR(false, "CLA_WaitTillFinished error: No master sequencer defined.");
+			}
+			CATCH_MFC_EX_E
+		}
+
 		
 		API_EXPORT ERROR_CODE_TYPE CLA_FNDEF(GetSequenceExecutionStatus)(bool& running, unsigned long long& DataPointsWritten) {
 			CATCH_MFC_EX_S

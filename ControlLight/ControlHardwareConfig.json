@@ -6,7 +6,7 @@
     {
       "Id": 0,
       "Type": "OpticsFoundrySequencerV1",
-      "IP": "10.10.28.118",
+      "IP": "192.168.0.112",
       "Port": 57978,
       "Master": true,
       "StartDelay": 10,
@@ -92,13 +92,13 @@
     {
       "Sequencer": 0,
       "Address": 3,
-      "ClockFrequencyinMHz": 80,
+      "ClockFrequencyinMHz": 25,
       "FrequencyMultiplier": 1
     },
     {
       "Sequencer": 0,
       "Address": 4,
-      "ClockFrequencyinMHz": 80,
+      "ClockFrequencyinMHz": 25,
       "FrequencyMultiplier": 1
     }
   ],
