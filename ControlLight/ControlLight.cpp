@@ -591,46 +591,61 @@ bool InitializeSystem() {
 
 
 void DemoSequence(unsigned long CycleNumber) {
-	CLA_StartAssemblingSequence();
-	CLA_SequencerWriteSystemTimeToInputMemory(/*SequencerNr*/ 0);
-	CLA_SequencerWriteInputMemory(/*SequencerNr*/ 0, CycleNumber);
-	CLA_SequencerWriteInputMemory(/*SequencerNr*/ 0, 6);  //a narker, just to see we can write to the input memory
-	CLA_SequencerWriteInputMemory(/*SequencerNr*/ 0, 7);  //a narker, just to see we can write to the input memory
 
-	CLA_SequencerSwitchDebugLED(/*SequencerNr*/ 0, 1);
-	CLA_SequencerAddMarker(/*SequencerNr*/ 0, 1);//for debug: displays marker (here "1") on ZYNQ USB port output (use Termite or similar to see it)
-	CLA_SetDigitalOutput(/*SequencerNr*/ 0, /*Addr*/ 2, /* BitNr */ 0, true);
-	CLA_Wait_ms(40);
-	for (int n = 0; n < 5; n++) {
-		CLA_SetDigitalOutput(/*SequencerNr*/ 0, /*Addr*/ 2, /* BitNr */ 0, false);
-		//CLA_SetSequencerDigitalOut(/*SequencerNr*/ 0, 0);
-		//CLA_SwitchSequencerBuzzer(/*SequencerNr*/ 0, false);
-		CLA_SequencerSwitchDebugLED(/*SequencerNr*/ 0, 0);
-		CLA_Wait_ms(10);
-		CLA_SetDigitalOutput(/*SequencerNr*/ 0, /*Addr*/ 2, /* BitNr */ 0, true);
-		//CLA_SetSequencerDigitalOut(/*SequencerNr*/ 0, 128);
-		//CLA_SwitchSequencerBuzzer(/*SequencerNr*/ 0, true);
-		CLA_SequencerSwitchDebugLED(/*SequencerNr*/ 0, 1);
-		CLA_Wait_ms(10);
+	constexpr uint8_t SequencerNr = 0;
+	constexpr uint8_t DigOut_0_addr = 1;
+	constexpr uint8_t DigOut_1_addr = 2;
+	constexpr uint8_t AD9959_0_addr = 3;
+	constexpr uint8_t AD9959_1_addr = 4;
+	constexpr uint8_t AnaOut_0_addr = 5;
+
+	constexpr uint8_t DigOutAddr = DigOut_0_addr;
+	constexpr uint8_t AnaOutAddr = AnaOut_0_addr;
+	constexpr uint8_t AD9959Addr = AD9959_0_addr;
+
+
+	CLA_StartAssemblingSequence();
+	CLA_SequencerWriteSystemTimeToInputMemory(SequencerNr);
+	CLA_SequencerWriteInputMemory(SequencerNr, CycleNumber);
+	CLA_SequencerWriteInputMemory(SequencerNr, 6);  //a narker, just to see we can write to the input memory
+	CLA_SequencerWriteInputMemory(SequencerNr, 7);  //a narker, just to see we can write to the input memory
+
+	CLA_SequencerSwitchDebugLED(SequencerNr, 1);
+	CLA_SequencerAddMarker(SequencerNr, 1);//for debug: displays marker (here "1") on ZYNQ USB port output (use Termite or similar to see it)
+	//CLA_SetDigitalOutput(SequencerNr, /*Addr*/ DigOutAddr, /* BitNr */ 0, true);
+	CLA_Wait_ms(1);
+	for (int BitNr = 0; BitNr < 16; BitNr++) {
+		for (int n = 0; n < BitNr + 1; n++) {
+			CLA_SetDigitalOutput(SequencerNr, /*Addr*/ DigOutAddr, BitNr, true);
+			//CLA_SetSequencerDigitalOut(SequencerNr, 0);
+			//CLA_SwitchSequencerBuzzer(SequencerNr, false);
+			CLA_SequencerSwitchDebugLED(SequencerNr, 0);
+			CLA_Wait_ms(0.01);
+			CLA_SetDigitalOutput(SequencerNr, /*Addr*/ DigOutAddr, BitNr, false);
+			//CLA_SetSequencerDigitalOut(SequencerNr, 128);
+			//CLA_SwitchSequencerBuzzer(SequencerNr, true);
+			CLA_SequencerSwitchDebugLED(SequencerNr, 1);
+			CLA_Wait_ms(0.01);
+		}
 	}
-	CLA_SetSequencerDigitalOut(/*SequencerNr*/ 0, 0);
+	CLA_SetSequencerDigitalOut(SequencerNr, 0);
 	//Test input board:
 	//for (uint8_t n = 0; n<12; n++) {
-	//	CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, n);
+	//	CLA_SelectRackSlot(SequencerNr, /*RackNr*/ 0, n);
 	//	CLA_Wait_ms(100);
 	//}
 	
 	//Test reliability of select rack slot
 	for (int j = 1; j < 5; j++) {
-		CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, 5);
+		CLA_SelectRackSlot(SequencerNr, /*RackNr*/ 0, 5);
 		CLA_Wait_ms(50);
 		uint8_t r = 16*(rand()/RAND_MAX);
 		if (r == 5) r = 4;
-		CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, r);
+		CLA_SelectRackSlot(SequencerNr, /*RackNr*/ 0, r);
 		CLA_Wait_ms(50);
 	}
 	
-	CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, 5);
+	CLA_SelectRackSlot(SequencerNr, /*RackNr*/ 0, 5);
 
 	//Test analogIn, pedestrian way
 	//start data acquisition. This is an example for a command for which we didn't yet provide a convenience function in the DLL. 
@@ -649,13 +664,13 @@ void DemoSequence(unsigned long CycleNumber) {
 
 	//Test analog in with convenience function
 	//@param analog_in_type Analog in board type. 0: AQuRA MCP3208 analog in board; 1: MCP3208 12-bit ADC on SerialPortBoard; 2: ADS1256  24-bit ADC 
-	CLA_SequencerStartAnalogInAcquisition(/*Sequencer_Nr*/ 0, /*AnalogInType*/ 2, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 100, /*SamplingPeriod_in_ms*/ 1);
+	CLA_SequencerStartAnalogInAcquisition(SequencerNr, /*AnalogInType*/ 2, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 100, /*SamplingPeriod_in_ms*/ 1);
 	CLA_Wait_ms(100);
 	
 	//Test repeated digital in
 	/// @param RepeatedOutInCommand the command to execute for each data point. 0: stop; 1: repeated SPI transfer; 2: repeated digital in; 3: digital in event tagger 
 	/// for 3: if dig in changes, safes dig in on input memory bit 0:7, bit 8: counter overflow, bit 9: 4-entry fifo overflow, bit 10:31: clock cycle counter; runs till stopped by setting RepeatedOutInCommand to 0 with new SequencerRepeatedOutIn command.
-	//CLA_SequencerRepeatedOutIn(/*SequencerNr*/ 0, /*NumberOfDataPoints*/ 200, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 2);
+	//CLA_SequencerRepeatedOutIn(SequencerNr, /*NumberOfDataPoints*/ 200, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 2);
 	//CLA_Wait_ms(200);
 
 	//Test event time tagger
@@ -666,54 +681,54 @@ void DemoSequence(unsigned long CycleNumber) {
 	//bit 8: 1 means timer overflow; this enables one to calculate the timestamp beyond the 22 bit length of the timer counter
 	//bit 9: 1 means 8-entry fifo overflow, i.e. events have been lost because BRAM wasn't fast enough to store them
 	//bit 10 to 31: timer, counting 1 up every 10ns, overflowing every 2^22 * 10ns = 41.94304 ms
-	//CLA_SequencerRepeatedOutIn(/*SequencerNr*/ 0, /*NumberOfDataPoints*/ 1000, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 3);
+	//CLA_SequencerRepeatedOutIn(SequencerNr, /*NumberOfDataPoints*/ 1000, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 3);
 	//CLA_Wait_ms(10);
-	//CLA_SequencerRepeatedOutIn(/*SequencerNr*/ 0, /*NumberOfDataPoints*/ 1, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 0);
+	//CLA_SequencerRepeatedOutIn(SequencerNr, /*NumberOfDataPoints*/ 1, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 0);
 
 	//Test AD9959 DDS
-	CLA_Reset(0, 10);
+	CLA_Reset(SequencerNr, AD9959Addr);
 	//Usually, an IOUpdate pulse is sent out automatically after each SPI command
 	//However, to program phases, we first need to send out all commands programming all channels and then finish with one IO update pulse that updates everything
-	CLA_SetIOUpdateEnabled(0, 10, false);
-	CLA_SetFrequencyOfChannel(0, 10, 0, 0.1);//in MHz
-	CLA_SetPowerOfChannel(0, 10, 0, 100); // in %
-	CLA_SetPhaseOfChannel(0, 10, 0, 0);
+	CLA_SetIOUpdateEnabled(SequencerNr, AD9959Addr, false);
+	CLA_SetFrequencyOfChannel(SequencerNr, AD9959Addr, 0, 0.1);//in MHz
+	CLA_SetPowerOfChannel(SequencerNr, AD9959Addr, 0, 100); // in %
+	CLA_SetPhaseOfChannel(SequencerNr, AD9959Addr, 0, 0);
 
-	CLA_SetFrequencyOfChannel(0, 10, 1, 0.1);//in MHz
-	CLA_SetPowerOfChannel(0, 10, 1, 100); // in %
-	CLA_SetPhaseOfChannel(0, 10, 1, 90);
+	CLA_SetFrequencyOfChannel(SequencerNr, AD9959Addr, 1, 0.1);//in MHz
+	CLA_SetPowerOfChannel(SequencerNr, AD9959Addr, 1, 100); // in %
+	CLA_SetPhaseOfChannel(SequencerNr, AD9959Addr, 1, 90);
 	
-	CLA_SetFrequencyOfChannel(0, 10, 2, 0.1);//in MHz
-	CLA_SetPowerOfChannel(0, 10, 2, 100); // in %
-	CLA_SetPhaseOfChannel(0, 10, 2, 180);
+	CLA_SetFrequencyOfChannel(SequencerNr, AD9959Addr, 2, 0.1);//in MHz
+	CLA_SetPowerOfChannel(SequencerNr, AD9959Addr, 2, 100); // in %
+	CLA_SetPhaseOfChannel(SequencerNr, AD9959Addr, 2, 180);
 	
-	CLA_SetFrequencyOfChannel(0, 10, 3, 0.1);//in MHz
-	CLA_SetPowerOfChannel(0, 10, 3, 100); // in %
+	CLA_SetFrequencyOfChannel(SequencerNr, AD9959Addr, 3, 0.1);//in MHz
+	CLA_SetPowerOfChannel(SequencerNr, AD9959Addr, 3, 100); // in %
 	//We reanable automatic IO Update. The next SPI command will be written and then an IO Update will be sent that activates all newly programmed parameter values
-	CLA_SetIOUpdateEnabled(0, 10, true);
-	CLA_SetPhaseOfChannel(0, 10, 3, 270);
+	CLA_SetIOUpdateEnabled(SequencerNr, AD9959Addr, true);
+	CLA_SetPhaseOfChannel(SequencerNr, AD9959Addr, 3, 270);
 
 	for (int j = 1; j < 100; j=j+10) {
-		CLA_SetVoltage(0, 24, 10.0 * j / 100.0);
+		CLA_SetVoltage(SequencerNr, AnaOutAddr, 10.0 * j / 100.0);
 		uint16_t data = 0xffff;
-		CLA_SetValue(0, 1, 0, (uint8_t*)&data, 16);
+		CLA_SetValue(SequencerNr, DigOutAddr, 0, (uint8_t*)&data, 16);
 		CLA_Wait_ms(0.002);
 		data = 0;
-		CLA_SetValue(0, 1, 0, (uint8_t*)&data, 16);
+		CLA_SetValue(SequencerNr, DigOutAddr, 0, (uint8_t*)&data, 16);
 		CLA_Wait_ms(0.002);
 		//double Frequency = 1000.0 * j / 100.0;
-		CLA_SetFrequencyOfChannel(0, 10, 1, 10.0 * j/100.0);//in MHz
-		//CLA_SetValue(0, 10, 0, (uint8_t*)&Frequency, 64);
+		CLA_SetFrequencyOfChannel(SequencerNr, AD9959Addr, 1, 10.0 * j/100.0);//in MHz
+		//CLA_SetValue(SequencerNr, AD9959Addr, 0, (uint8_t*)&Frequency, 64);
 		//CLA_Wait_ms(10);
 	}
-	CLA_SetFrequencyOfChannel(0, 10, 1, 0.1);//in MHz
+	CLA_SetFrequencyOfChannel(SequencerNr, AD9959Addr, 1, 0.1);//in MHz
 	CLA_Wait_ms(10);
-	RampVoltage(/*Sequencer*/ 0, /*Address*/ 24, /*StartVoltage*/ -10, /* TargetVoltage*/ 10, /*Duration_in_ms*/ 100, /*StepSize_in_ms*/ 0.1);
-	CLA_SequencerSwitchDebugLED(/*SequencerNr*/ 0, 0);
-	CLA_SetDigitalOutput(/*SequencerNr*/ 0, /*Addr*/ 2, /* BitNr */ 0, false);
+	RampVoltage(SequencerNr, /*Address*/ AnaOutAddr, /*StartVoltage*/ -10, /* TargetVoltage*/ 10, /*Duration_in_ms*/ 100, /*StepSize_in_ms*/ 0.1);
+	CLA_SequencerSwitchDebugLED(SequencerNr, 0);
+	CLA_SetDigitalOutput(SequencerNr, /*Addr*/ DigOutAddr, /* BitNr */ 0, false);
 	CLA_Wait_ms(10);
-	CLA_SequencerWriteSystemTimeToInputMemory(/*SequencerNr*/ 0);
-	//CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, 0);
+	CLA_SequencerWriteSystemTimeToInputMemory(SequencerNr);
+	//CLA_SelectRackSlot(SequencerNr, /*RackNr*/ 0, 0);
 }
 
 
@@ -1206,13 +1221,14 @@ void DemoWriteConfigEEPROM() {
 	}
 
 	constexpr size_t MaxEEPROMPayloadBytes = 256;
-	const string model_name = "Backplane";
-	const string version = "0.16";
-	const string type = "1";
 	
-	//const string model_name = "DDSAD9959";
-	//const string version = "V0.09";
-	//const string type = "";
+	//const string model_name = "Backplane";
+	//const string version = "0.16";
+	//const string type = "1";
+	
+	const string model_name = "DDSAD9959";
+	const string version = "V0.09";
+	const string type = "";
 
 	//const string model_name = "Sequencer";
 	//const string version = "0.04";
@@ -1222,11 +1238,15 @@ void DemoWriteConfigEEPROM() {
 	//const string version = "0.03";
 	//const string type = "";
 
+	//const string model_name = "DigitalOut";
+	//const string version = "0.07";
+	//const string type = "";
+
 	constexpr unsigned int SNSuffix = 0;
 
 	constexpr uint8_t SequencerNr = 0;
 	constexpr uint8_t RackNr = 0;
-	constexpr uint8_t SlotNr = 12;
+	constexpr uint8_t SlotNr = 2; //Slots: 0...11, Backplane: 12
 
 	if (SNSuffix > 99) {
 		cout << "EEPROM write skipped: serial number suffix " << SNSuffix

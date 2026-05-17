@@ -6,7 +6,7 @@
     {
       "Id": 0,
       "Type": "OpticsFoundrySequencerV1",
-      "IP": "192.168.0.112",
+      "IP": "10.10.28.118",
       "Port": 57978,
       "Master": true,
       "StartDelay": 10,
@@ -18,11 +18,10 @@
       "Connect": true
     }
   ],
-  "Rack": [],
   "AnalogOutBoards16bit": [
     {
       "Sequencer": 0,
-      "StartAddress": 24,
+      "StartAddress": 5,
       "NumberChannels": 4,
       "Signed": true,
       "MinVoltage": -10,
@@ -35,58 +34,17 @@
       "Signed": true,
       "MinVoltage": -10,
       "MaxVoltage": 10
-    },
-    {
-      "Sequencer": 0,
-      "StartAddress": 32,
-      "NumberChannels": 4,
-      "Signed": true,
-      "MinVoltage": -10,
-      "MaxVoltage": 10
-    },
-    {
-      "Sequencer": 0,
-      "StartAddress": 36,
-      "NumberChannels": 4,
-      "Signed": true,
-      "MinVoltage": -10,
-      "MaxVoltage": 10
     }
   ],
   "DigitalOutBoards": [
     {
       "Sequencer": 0,
+      "Address": 1,
+      "NumberChannels": 16
+    },
+    {
+      "Sequencer": 0,
       "Address": 2,
-      "NumberChannels": 16
-    },
-    {
-      "Sequencer": 0,
-      "Address": 21,
-      "NumberChannels": 16
-    },
-    {
-      "Sequencer": 0,
-      "Address": 3,
-      "NumberChannels": 16
-    },
-    {
-      "Sequencer": 0,
-      "Address": 4,
-      "NumberChannels": 16
-    },
-    {
-      "Sequencer": 0,
-      "Address": 5,
-      "NumberChannels": 16
-    },
-    {
-      "Sequencer": 0,
-      "Address": 6,
-      "NumberChannels": 16
-    },
-    {
-      "Sequencer": 0,
-      "Address": 7,
       "NumberChannels": 16
     }
   ],
@@ -114,78 +72,6 @@
       "ExternalClockFrequencyinMHz": 10,
       "PLLReferenceMultiplier": 20,
       "FrequencyMultiplier": 1
-    },
-    {
-      "Version": 2,
-      "Sequencer": 0,
-      "Address": 136,
-      "ExternalClockFrequencyinMHz": 300,
-      "PLLReferenceMultiplier": 1,
-      "FrequencyMultiplier": 1
-    },
-    {
-      "Version": 2,
-      "Sequencer": 0,
-      "Address": 140,
-      "ExternalClockFrequencyinMHz": 300,
-      "PLLReferenceMultiplier": 1,
-      "FrequencyMultiplier": 1
-    },
-    {
-      "Version": 2,
-      "Sequencer": 0,
-      "Address": 144,
-      "ExternalClockFrequencyinMHz": 300,
-      "PLLReferenceMultiplier": 1,
-      "FrequencyMultiplier": 1
-    },
-    {
-      "Version": 2,
-      "Sequencer": 0,
-      "Address": 148,
-      "ExternalClockFrequencyinMHz": 300,
-      "PLLReferenceMultiplier": 1,
-      "FrequencyMultiplier": 1
-    },
-    {
-      "Version": 2,
-      "Sequencer": 0,
-      "Address": 152,
-      "ExternalClockFrequencyinMHz": 300,
-      "PLLReferenceMultiplier": 1,
-      "FrequencyMultiplier": 1
-    },
-    {
-      "Version": 2,
-      "Sequencer": 0,
-      "Address": 156,
-      "ExternalClockFrequencyinMHz": 300,
-      "PLLReferenceMultiplier": 1,
-      "FrequencyMultiplier": 1
-    },
-    {
-      "Version": 2,
-      "Sequencer": 0,
-      "Address": 160,
-      "ExternalClockFrequencyinMHz": 300,
-      "PLLReferenceMultiplier": 1,
-      "FrequencyMultiplier": 1
-    },
-    {
-      "Version": 2,
-      "Sequencer": 0,
-      "Address": 164,
-      "ExternalClockFrequencyinMHz": 300,
-      "PLLReferenceMultiplier": 1,
-      "FrequencyMultiplier": 1
-    },
-    {
-      "Version": 2,
-      "Sequencer": 0,
-      "Address": 168,
-      "ExternalClockFrequencyinMHz": 300,
-      "PLLReferenceMultiplier": 1,
-      "FrequencyMultiplier": 1
     }
   ],
   "DDSAD9858Boards": [
@@ -200,61 +86,19 @@
       "Address": 56,
       "ClockFrequencyinMHz": 1200,
       "FrequencyMultiplier": 1
-    },
-    {
-      "Sequencer": 0,
-      "Address": 60,
-      "ClockFrequencyinMHz": 1200,
-      "FrequencyMultiplier": 1
-    },
-    {
-      "Sequencer": 0,
-      "Address": 64,
-      "ClockFrequencyinMHz": 1200,
-      "FrequencyMultiplier": 1
-    },
-    {
-      "Sequencer": 0,
-      "Address": 68,
-      "ClockFrequencyinMHz": 1200,
-      "FrequencyMultiplier": 1
-    },
-    {
-      "Sequencer": 0,
-      "Address": 72,
-      "ClockFrequencyinMHz": 1200,
-      "FrequencyMultiplier": 1
-    },
-    {
-      "Sequencer": 0,
-      "Address": 76,
-      "ClockFrequencyinMHz": 1200,
-      "FrequencyMultiplier": 1
-    },
-    {
-      "Sequencer": 0,
-      "Address": 80,
-      "ClockFrequencyinMHz": 1200,
-      "FrequencyMultiplier": 1
-    },
-    {
-      "Sequencer": 0,
-      "Address": 84,
-      "ClockFrequencyinMHz": 1200,
-      "FrequencyMultiplier": 1
     }
   ],
   "DDSAD9959Boards": [
     {
       "Sequencer": 0,
-      "Address": 1,
-      "ClockFrequencyinMHz": 300,
+      "Address": 3,
+      "ClockFrequencyinMHz": 80,
       "FrequencyMultiplier": 1
     },
     {
       "Sequencer": 0,
-      "Address": 10,
-      "ClockFrequencyinMHz": 25,
+      "Address": 4,
+      "ClockFrequencyinMHz": 80,
       "FrequencyMultiplier": 1
     }
   ],

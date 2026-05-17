@@ -539,6 +539,11 @@ bool WriteConfigEEPROM(const uint8_t SequencerID, const uint8_t RackNr, const ui
 		return false;
 	}
 
+	if (length == 0 ) {
+		cout << "EEPROM write failed: nothing to write as length is zero." << endl;
+		return false;
+	}
+
 
 	if (!SelectRackI2CSlot(SequencerID, RackNr, SlotNr)) return false;
 	
@@ -561,12 +566,11 @@ bool WriteConfigEEPROM(const uint8_t SequencerID, const uint8_t RackNr, const ui
 
 
 	//Now read the data back to verify that it was written correctly
-	uint8_t* read_back = nullptr;
-	uint32_t read_back_size = 0;
+	vector<uint8_t> read_back(length);
 	bool I2C_success = false;
-	ReadEEPROMBytes(/*start_address*/ 0, read_back, read_back_size, I2C_success);
+	ReadEEPROMBytes(/*start_address*/ 0, read_back.data(), read_back.size(), I2C_success);
 
-	if (length == 0 || memcmp(data, read_back, length) == 0) {
+	if (I2C_success && read_back.size() == length && memcmp(data, read_back.data(), read_back.size()) == 0) {
 		cout << "Wrote: " << string(data, length) << endl;
 		cout << "EEPROM write verification succeeded for rack " << static_cast<unsigned int>(RackNr)
 			<< ", slot " << static_cast<unsigned int>(SlotNr)
@@ -577,7 +581,7 @@ bool WriteConfigEEPROM(const uint8_t SequencerID, const uint8_t RackNr, const ui
 			<< ", slot " << static_cast<unsigned int>(SlotNr)
 			<< "." << endl;
 		PrintEEPROMData("EEPROM data expected", reinterpret_cast<const uint8_t*>(data), length);
-		PrintEEPROMData("EEPROM data read back", read_back, read_back_size);
+		PrintEEPROMData("EEPROM data read back", read_back.data(), read_back.size());
 	}
 
 	return true;
