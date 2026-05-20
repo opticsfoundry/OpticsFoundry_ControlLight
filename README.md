@@ -25,7 +25,7 @@ OpticsFoudry's control system can be accessed through three types of software:
 
 &nbsp;
 
-## OptiscFoundry Control Electronics
+## OptiscFoundry control electronics
 
 You can order the OpticsFoundry control electronics from [OpticsFoundry](https://www.opticsfoundry.com/).
 
