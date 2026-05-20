@@ -601,7 +601,7 @@ void DemoSequence(unsigned long CycleNumber) {
 
 	constexpr uint8_t DigOutAddr = DigOut_0_addr;
 	constexpr uint8_t AnaOutAddr = AnaOut_0_addr;
-	constexpr uint8_t AD9959Addr = AD9959_1_addr;
+	constexpr uint8_t AD9959Addr = AD9959_0_addr;
 
 
 	CLA_StartAssemblingSequence();

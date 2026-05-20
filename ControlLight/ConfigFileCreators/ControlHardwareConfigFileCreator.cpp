@@ -4,7 +4,7 @@ int main() {
 	ConfigCreator builder;
 	builder.RegisterSequencer(/*Id*/ 0, /*Type*/ "OpticsFoundrySequencerV1", /*IP*/ "192.168.1.112",
 		/*Port*/ 57978, /*Master*/ true, /*StartDelay*/ 10, /*ClockFrequencyinMHz*/ 100,
-		/*BusFrequencyinMHz*/ 2, /*UseExternalClock*/ false, /*UseStrobeGenerator*/ true,
+		/*FPGAClockToBusClockRatio*/ 14, /*UseExternalClock*/ false, /*UseStrobeGenerator*/ true,
 		/*UseEdgeTriggeredLatches*/ true,
 		/*Connect*/ true, /*DebugOn*/ false); // 0.104 #90.108
 	builder.Save();
@@ -44,7 +44,7 @@ int main() {
 	}
 
 	for (const int address : {1, 10}) {
-		builder.RegisterDDSAD9959Board(/*Sequencer*/ 0, /*Address*/ address);
+		builder.RegisterDDSAD9959Board(/*Sequencer*/ 0, /*Address*/ address, /*ClockFrequencyinMHz*/ 500);
 	}
 
 	builder.Save();

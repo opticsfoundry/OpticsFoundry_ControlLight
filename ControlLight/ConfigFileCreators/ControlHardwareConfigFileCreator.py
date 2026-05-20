@@ -2,8 +2,8 @@ from ConfigCreator import ConfigBuilder
 
 
 if __name__ == "__main__":
-    builder = ConfigBuilder()
-    builder.RegisterSequencer(IP="192.168.0.112", Port=57978, ClockFrequencyinMHz=100, BusFrequencyinMHz=2, DebugOn=False)  # 0.104 #90.108
+    builder = ConfigBuilder(filename="ControlHardwareConfig.json")
+    builder.RegisterSequencer(IP="192.168.0.112", Port=57978, ClockFrequencyinMHz=100, FPGAClockToBusClockRatio=14, DebugOn=False)  # 0.104 #90.108
     builder.RegisterSerialPortBoard(Sequencer=0, Address=251, RackNr=0, SlotNr=1)
     analog_out_configs = [
         (24, True, -10, 10),  # each of these lines configures 4 analog outputs in consecutive order of addresses
@@ -14,7 +14,7 @@ if __name__ == "__main__":
     for addr, signed, minv, maxv in analog_out_configs:
         builder.RegisterAnalogOutBoard16bit(StartAddress=addr, Signed=signed, MinVoltage=minv, MaxVoltage=maxv)
 
-    for addr in [2, 21, 3, 4, 5, 6, 7]:
+    for addr in [1, 2]:
         builder.RegisterDigitalOutBoard(Address=addr)
 
     AD9854Board0ExternalClockFrequencyinMHz = 10
@@ -25,10 +25,10 @@ if __name__ == "__main__":
     for addr in range(136, 172, 4):
         builder.RegisterDDSAD9854Board(Address=addr)
 
-    for addr in [52, 56, 60, 64, 68, 72, 76, 80, 84]:  # range(52, 84, 4):
+    for addr in [52, 56]:  # range(52, 84, 4):
         builder.RegisterDDSAD9858Board(Address=addr)
 
-    for addr in [1, 10]:
-        builder.RegisterDDSAD9959Board(Address=addr)
+    for addr in [3, 4]:
+        builder.RegisterDDSAD9959Board(Address=addr, ClockFrequencyinMHz=500)
 
     builder.Save()
