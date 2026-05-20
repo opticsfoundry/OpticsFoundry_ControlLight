@@ -23,12 +23,17 @@ OpticsFoudry's control system can be accessed through three types of software:
 3. **Control.exe**  
     This is a fully featured experiment control system, based on ControlAPI, see [OpticsFoundry_Control](https://github.com/opticsfoundry/OpticsFoundry_Control). Control.exe can be configured through code and/or through configuration files (the latter in the same manner as ControlAPI, on which Control.exe is based).
 
+&nbsp;
 
+## OptiscFoundry Control Electronics
+
+You can order the OpticsFoundry control electronics from [OpticsFoundry](https://www.opticsfoundry.com/).
+
+ ![OpticsFoundry control electronics](OpticsFoundry_Control_Electronics.jpeg)
 
 &nbsp;
 
 ## ControlLightAPI interface
-
 
 The best starting point is to study one of the simple example program and I recommend starting with ControlLight\ControlLight.cpp. In main() of that file, select one of the demo programs after the other, run them, step through them and read the explanatory comments in the code. To run them, you will need to adjust the IP address of your FPGA Sequencer, which is easiest done by typing it into ControlHardwareConfig.json under the entry "IP".
 
@@ -325,3 +330,4 @@ The user of the API can use _DidErrorOccur()_ to querry if one occurred. If one 
 ## Sequencer firmware
 
 The sequencer firmware compatible with this software is [OF_Sequencer_Zturn](https://github.com/opticsfoundry/OF_Sequencer_Zturn) and uses the Z-turn board V2. Follow the instructions in that repository to update your firmware.
+
