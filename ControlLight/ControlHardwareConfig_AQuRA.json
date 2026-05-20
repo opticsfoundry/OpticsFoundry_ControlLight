@@ -7,7 +7,7 @@
     {
       "Id": 0,
       "Type": "OpticsFoundrySequencerV1",
-      "IP": "192.168.1.10",
+      "IP": "192.168.1.118",
       "Port": 57978,
       "Master": true,
       "StartDelay": 10,
