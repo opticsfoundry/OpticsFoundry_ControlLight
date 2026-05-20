@@ -23,10 +23,10 @@ if __name__ == "__main__":
     builder.RegisterDDSAD9854Board(Address=132, ExternalClockFrequencyinMHz=AD9854Board0ExternalClockFrequencyinMHz, PLLReferenceMultiplier=AD9854Board0PLLReferenceMultiplier)
 
     for addr in range(136, 172, 4):
-        builder.RegisterDDSAD9854Board(Address=addr)
+        builder.RegisterDDSAD9854Board(Address=addr, ExternalClockFrequencyinMHz=300)
 
     for addr in [52, 56]:  # range(52, 84, 4):
-        builder.RegisterDDSAD9858Board(Address=addr)
+        builder.RegisterDDSAD9858Board(Address=addr, ClockFrequencyinMHz=1200)
 
     for addr in [3, 4]:
         builder.RegisterDDSAD9959Board(Address=addr, ClockFrequencyinMHz=500)
