@@ -35,7 +35,7 @@ You can order the OpticsFoundry control electronics from [OpticsFoundry](https:/
 
 ## ControlLightAPI interface
 
-The best starting point is to study one of the simple example program and I recommend starting with ControlLight\ControlLight.cpp. In main() of that file, select one of the demo programs after the other, run them, step through them and read the explanatory comments in the code. To run them, you will need to adjust the IP address of your FPGA Sequencer, which is easiest done by typing it into ControlHardwareConfig.json under the entry "IP".
+The best starting point is to study one of the simple example program and I recommend starting with ControlLight\ControlLight.cpp. In main() of that file, select one of the demo programs after the other, run them, step through them and read the explanatory comments in the code. To run them, you will need to adjust the IP address of your FPGA Sequencer, which is easiest done by typing it into ControlHardwareConfig.json under the entry "IP", or more cleanly by editing the IP in ConfigFileCreators\ControlHardwareConfigFileCreator.py. Make sure to correctly specify the clock frequency of each DDS in that config file. Execute ControlHardwareConfigFileCreator.py to recreate the .json config file.
 
 For convenience, here another example, the easy to read Python test code (ControlLight_DLL_Test_Python\ControlLight_Test.py):
 
