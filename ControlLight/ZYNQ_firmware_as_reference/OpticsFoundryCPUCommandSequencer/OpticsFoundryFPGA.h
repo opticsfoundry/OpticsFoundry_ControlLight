@@ -27,7 +27,7 @@ extern void PrintUnsignedLongLong(unsigned long long value);
 // FPGA sequence control functions
 
 extern void OpticsFoundryFPGA_ExecuteFPGASequenceFrom(unsigned long long buffer_pos);
-extern void OpticsFoundryFPGA_WaitTillSequenceFinished(unsigned long long timeout);
+extern void OpticsFoundryFPGA_WaitTillSequenceFinished(unsigned long long timeout_in_sec);
 extern unsigned long OpticsFoundryFPGA_GetInputBufferValue(unsigned long buffer_pos);
 extern unsigned long long OpticsFoundryFPGA_GetFPGABuffer(unsigned long long buffer_pos);
 extern void OpticsFoundryFPGA_SetFPGABuffer(unsigned long long buffer_pos, unsigned long long value);

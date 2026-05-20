@@ -2,7 +2,73 @@
 <section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__ethernet_controller_firefly_8cpp" xml:lang="en-US">
 <title>EthernetControllerFirefly.cpp File Reference</title>
 <indexterm><primary>EthernetControllerFirefly.cpp</primary></indexterm>
-<programlisting linenumbering="unnumbered">#include &lt;afxwin.h&gt;<?linebreak?>#include &quot;EthernetControllerFirefly.h&quot;<?linebreak?>#include &quot;std.h&quot;<?linebreak?>#include &quot;ControlAPI.h&quot;<?linebreak?>#include &quot;CDeviceSequencer.h&quot;<?linebreak?></programlisting><simplesect>
+<programlisting linenumbering="unnumbered">#include &quot;EthernetControllerFirefly.h&quot;<?linebreak?>#include &quot;std.h&quot;<?linebreak?>#include &quot;ControlAPI.h&quot;<?linebreak?>#include &quot;CDeviceSequencer.h&quot;<?linebreak?>#include &lt;thread&gt;<?linebreak?>#include &lt;iostream&gt;<?linebreak?>#include &lt;cmath&gt;<?linebreak?>#include &lt;cstring&gt;<?linebreak?>#include &lt;algorithm&gt;<?linebreak?>#include &lt;limits&gt;<?linebreak?>#include &lt;vector&gt;<?linebreak?></programlisting><simplesect>
+    <title>Macros    </title>
+        <itemizedlist>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1aa5de9931f0705cba8191d6a47a718450">clockspeedMhz</link>&#160;&#160;&#160;7.68</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1abc776fc85a4ba8f20e51b792ea2e0323">ADS1256_RADD_STATUS</link>&#160;&#160;&#160;0x00</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1a43a32b82e840ddc469d87048d50602a5">ADS1256_RADD_MUX</link>&#160;&#160;&#160;0x01</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1a091c5c86ddfbf5e883de2020f6370850">ADS1256_RADD_ADCON</link>&#160;&#160;&#160;0x02</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1ae0b2327ca383b62dc634b092e07180bc">ADS1256_RADD_DRATE</link>&#160;&#160;&#160;0x03</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1a2ac9daf2c4af4a6900457f2ff479b39a">ADS1256_RADD_IO</link>&#160;&#160;&#160;0x04</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1a8c5444e8de8aa74e49d8a3f6ae07ebef">ADS1256_RADD_OFC0</link>&#160;&#160;&#160;0x05</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1a1c93e3ac2ff3369baa55629e23165f00">ADS1256_RADD_OFC1</link>&#160;&#160;&#160;0x06</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1ab5d41015a59b645e6a803593f74943ef">ADS1256_RADD_OFC2</link>&#160;&#160;&#160;0x07</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1a2f09cfe49c74b51755d5f9a5ba28d392">ADS1256_RADD_FSC0</link>&#160;&#160;&#160;0x08</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1aec4a2314f5d80b71afc321ee7d5e227b">ADS1256_RADD_FSC1</link>&#160;&#160;&#160;0x09</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1a48d2c5d0bdaf1951ef322fc52360d4e1">ADS1256_RADD_FSC2</link>&#160;&#160;&#160;0x0A</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1ada9b413dee820aa06d40e78fd4cd0032">ADS1256_CMD_WAKEUP</link>&#160;&#160;&#160;0x00</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1a2623ae38a03549e161cbcf8c1d606ed8">ADS1256_CMD_RDATA</link>&#160;&#160;&#160;0x01</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1a8c55c14b35e77ac7a4ce89451dfa2d15">ADS1256_CMD_RDATAC</link>&#160;&#160;&#160;0x03</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1ae1939b9c2d0cfe747d57a3b1e6b9be14">ADS1256_CMD_SDATAC</link>&#160;&#160;&#160;0x0f</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1a19eebfe90ce20122732493d1d8d174ae">ADS1256_CMD_RREG</link>&#160;&#160;&#160;0x10</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1af9b014a44a28bd646c099b14608ce4c4">ADS1256_CMD_WREG</link>&#160;&#160;&#160;0x50</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1ab625bddb8ab847667453db7e5274eefa">ADS1256_CMD_SELFCAL</link>&#160;&#160;&#160;0xF0</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1a52f8d9688fe6a2aedfbb35aabc9aa691">ADS1256_CMD_SELFOCAL</link>&#160;&#160;&#160;0xF1</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1a64059afd4767afc43f54eab2d1e3749c">ADS1256_CMD_SELFGCAL</link>&#160;&#160;&#160;0xF2</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1ad77e7c57e13c515e95f0bee5d233574c">ADS1256_CMD_SYSOCAL</link>&#160;&#160;&#160;0xF3</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1ae7f1f19b2ba7daf01efaa5d42787ca80">ADS1256_CMD_SYSGCAL</link>&#160;&#160;&#160;0xF4</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1aa11671860a7f0335bbaa7249273e11e0">ADS1256_CMD_SYNC</link>&#160;&#160;&#160;0xFC</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1a1fa3451b329bd626a054cc26242cdfcb">ADS1256_CMD_STANDBY</link>&#160;&#160;&#160;0xFD</para>
+</listitem>
+            <listitem><para>#define <link linkend="__ethernet_controller_firefly_8cpp_1aae90bee3130d55d0b7b9ee2cbf95a55b">ADS1256_CMD_RESET</link>&#160;&#160;&#160;0xFE</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>uint8_t <link linkend="__ethernet_controller_firefly_8cpp_1ad99f0b817f1a72892ea6ea46f0eeb5be">reverse_byte</link> (uint8_t b)</para>
+</listitem>
+            <listitem><para>void <link linkend="__ethernet_controller_firefly_8cpp_1a091b904a90ad3f613de6d1db297f1faa">reverse_bits_array</link> (const uint8_t *data_out, uint8_t *result, uint8_t number_of_bytes)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
     <title>Variables    </title>
         <itemizedlist>
             <listitem><para>constexpr uint32_t <link linkend="__ethernet_controller_firefly_8cpp_1a82a74818c48929b37f9ee15bc09eeaca">MaxReconnectAttempts</link> = 100</para>
@@ -69,13 +135,27 @@
 </listitem>
             <listitem><para>constexpr uint8_t <link linkend="__ethernet_controller_firefly_8cpp_1a88f60210ab4b137fe2cfb57a3c0ee13d">CMD_SAVE_CYCLE_COUNT_SINCE_STARTUP_IN_INPUT_BUF_MEM</link> = 27</para>
 </listitem>
-            <listitem><para>constexpr uint8_t <link linkend="__ethernet_controller_firefly_8cpp_1a20dc0cedb7d908e6557972164a2a4362">NrCommands</link> = 28</para>
+            <listitem><para>constexpr uint8_t <link linkend="__ethernet_controller_firefly_8cpp_1a33027bd8f874f0bc88efaa916cf390d8">CMD_CALC_AD9854_FREQUENCY_TUNING_WORD</link> = 28</para>
 </listitem>
-            <listitem><para>const CString <link linkend="__ethernet_controller_firefly_8cpp_1a872d1136134c86481ed129ce5a5dacd8">CommandNames</link> [<link linkend="__ethernet_controller_firefly_8cpp_1a20dc0cedb7d908e6557972164a2a4362">NrCommands</link>] = { &quot;CMD_STOP&quot;, &quot;CMD_STEP&quot;, &quot;CMD_STEP_AND_ENTER_FAST_MODE&quot;, &quot;CMD_SET_OPTIONS&quot;, &quot;CMD_LOAD_REG_LOW&quot;, &quot;CMD_LOAD_REG_HIGH&quot;, &quot;CMD_LATCH_STATE&quot;, &quot;CMD_RESET_WAIT_CYCLES&quot;, &quot;CMD_LONG_WAIT&quot;, &quot;CMD_SET_STROBE_OPTIONS&quot;, &quot;CMD_SET_INPUT_BUF_MEM&quot;, &quot;CMD_WAIT_FOR_TRIGGER&quot;, &quot;CMD_SET_LOOP_COUNT&quot;, &quot;CMD_CONDITIONAL_JUMP_FORWARD&quot;, &quot;CMD_CONDITIONAL_JUMP_BACKWARD&quot;, &quot;CMD_I2C_OUT&quot;, &quot;CMD_SPI_OUT_IN&quot;, &quot;CMD_INPUT_REPEATED_OUT_IN&quot;, &quot;CMD_SET_PERIODIC_TRIGGER_PERIOD&quot;, &quot;CMD_SET_PERIODIC_TRIGGER_ALLOWED_WAIT_TIME&quot;, &quot;CMD_WAIT_FOR_PERIODIC_TRIGGER&quot;, &quot;CMD_WAIT_FOR_WAIT_CYCLE_NR&quot;, &quot;CMD_DIG_IN&quot;, &quot;CMD_TRIGGER_SECONDARY_PL_PS_INTERRUPT&quot;, &quot;CMD_ANALOG_IN_OUT&quot;, &quot;CMD_PL_TO_PS_COMMAND&quot;, &quot;CMD_LOAD_COMMAND_BUFFER&quot;, &quot;CMD_SAVE_CYCLE_COUNT_SINCE_STARTUP_IN_INPUT_BUF_MEM&quot;}</para>
+            <listitem><para>constexpr uint8_t <link linkend="__ethernet_controller_firefly_8cpp_1a11eb631d7da50d4735c42536e3ce4910">CMD_LOAD_EXTENDED_COMMAND</link> = 29</para>
 </listitem>
-            <listitem><para>constexpr bool <link linkend="__ethernet_controller_firefly_8cpp_1a8cfc5b935e104cb7bf15d162177060cc">CommandUsesBuffer</link> [<link linkend="__ethernet_controller_firefly_8cpp_1a20dc0cedb7d908e6557972164a2a4362">NrCommands</link>] = { false , false , false , true , false , false , false , false , true , true , true , true , true , true , true , true , true , true , true , true , false , true , true , false , true , true , false , false}</para>
+            <listitem><para>constexpr uint8_t <link linkend="__ethernet_controller_firefly_8cpp_1a20dc0cedb7d908e6557972164a2a4362">NrCommands</link> = 30</para>
 </listitem>
-            <listitem><para>constexpr bool <link linkend="__ethernet_controller_firefly_8cpp_1aed3665cd68b4c4f7a09627041917f22b">UseCommandBuffer</link> = true</para>
+            <listitem><para>const std::string <link linkend="__ethernet_controller_firefly_8cpp_1a54077eaaeaacc3574b175eb3d697e588">CommandNames</link> [<link linkend="__ethernet_controller_firefly_8cpp_1a20dc0cedb7d908e6557972164a2a4362">NrCommands</link>] = { &quot;CMD_STOP&quot;, &quot;CMD_STEP&quot;, &quot;CMD_STEP_AND_ENTER_FAST_MODE&quot;, &quot;CMD_SET_OPTIONS&quot;, &quot;CMD_LOAD_REG_LOW&quot;, &quot;CMD_LOAD_REG_HIGH&quot;, &quot;CMD_LATCH_STATE&quot;, &quot;CMD_RESET_WAIT_CYCLES&quot;, &quot;CMD_LONG_WAIT&quot;, &quot;CMD_SET_STROBE_OPTIONS&quot;, &quot;CMD_SET_INPUT_BUF_MEM&quot;, &quot;CMD_WAIT_FOR_TRIGGER&quot;, &quot;CMD_SET_LOOP_COUNT&quot;, &quot;CMD_CONDITIONAL_JUMP_FORWARD&quot;, &quot;CMD_CONDITIONAL_JUMP_BACKWARD&quot;, &quot;CMD_I2C_OUT&quot;, &quot;CMD_SPI_OUT_IN&quot;, &quot;CMD_INPUT_REPEATED_OUT_IN&quot;, &quot;CMD_SET_PERIODIC_TRIGGER_PERIOD&quot;, &quot;CMD_SET_PERIODIC_TRIGGER_ALLOWED_WAIT_TIME&quot;, &quot;CMD_WAIT_FOR_PERIODIC_TRIGGER&quot;, &quot;CMD_WAIT_FOR_WAIT_CYCLE_NR&quot;, &quot;CMD_DIG_IN&quot;, &quot;CMD_TRIGGER_SECONDARY_PL_PS_INTERRUPT&quot;, &quot;CMD_ANALOG_IN_OUT&quot;, &quot;CMD_PL_TO_PS_COMMAND&quot;, &quot;CMD_LOAD_COMMAND_BUFFER&quot;, &quot;CMD_SAVE_CYCLE_COUNT_SINCE_STARTUP_IN_INPUT_BUF_MEM&quot;, &quot;CMD_CALC_AD9854_FREQUENCY_TUNING_WORD&quot;, &quot;CMD_LOAD_EXTENDED_COMMAND&quot; }</para>
+</listitem>
+            <listitem><para>constexpr bool <link linkend="__ethernet_controller_firefly_8cpp_1a8cfc5b935e104cb7bf15d162177060cc">CommandUsesBuffer</link> [<link linkend="__ethernet_controller_firefly_8cpp_1a20dc0cedb7d908e6557972164a2a4362">NrCommands</link>] = { false , false , false , true , false , false , false , false , true , true , true , true , true , true , true , true , true , true , true , true , false , true , true , false , true , true , false , false , true , false }</para>
+</listitem>
+            <listitem><para>constexpr uint8_t <link linkend="__ethernet_controller_firefly_8cpp_1a9201f62e1fd2d788a9b2723a4db0f77f">EXTENDED_CMD_STOP</link> = 0</para>
+</listitem>
+            <listitem><para>constexpr uint8_t <link linkend="__ethernet_controller_firefly_8cpp_1a60fc2ca532d2f89c45fbc748f7faf128">EXTENDED_CMD_LOAD_SPI_TIMING</link> = 1</para>
+</listitem>
+            <listitem><para>constexpr uint8_t <link linkend="__ethernet_controller_firefly_8cpp_1a73f6ced1c3a567dd582a2db85e961f38">EXTENDED_CMD_SET_SPI_MODE</link> = 2</para>
+</listitem>
+            <listitem><para>constexpr uint8_t <link linkend="__ethernet_controller_firefly_8cpp_1a328d2911a4eeae776e503a1775c5e3ea">EXTENDED_CMD_SET_I2C_PARAMETERS</link> = 3</para>
+</listitem>
+            <listitem><para>constexpr uint8_t <link linkend="__ethernet_controller_firefly_8cpp_1a9b6f7a472abbc266681b442585a53260">NrExtendedCommands</link> = 4</para>
+</listitem>
+            <listitem><para>const std::string <link linkend="__ethernet_controller_firefly_8cpp_1ab46d7ae62e9dbd4105627bc6f32a998d">ExtendedCommandNames</link> [<link linkend="__ethernet_controller_firefly_8cpp_1a9b6f7a472abbc266681b442585a53260">NrExtendedCommands</link>] = { &quot;EXTENDED_CMD_STOP&quot;, &quot;EXTENDED_CMD_LOAD_SPI_TIMING&quot;, &quot;EXTENDED_CMD_SET_SPI_MODE&quot;, &quot;EXTENDED_CMD_SET_I2C_PARAMETERS&quot; }</para>
 </listitem>
             <listitem><para>constexpr unsigned int <link linkend="__ethernet_controller_firefly_8cpp_1a54c3b2781cc21848dec3da3010e1aaea">PLToPSCommandTest</link> = 1 &lt;&lt; 8</para>
 </listitem>
@@ -89,6 +169,152 @@
 </listitem>
         </itemizedlist>
 </simplesect>
+<section>
+<title>Macro Definition Documentation</title>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a2623ae38a03549e161cbcf8c1d606ed8"/><section>
+    <title>ADS1256_CMD_RDATA</title>
+<indexterm><primary>ADS1256_CMD_RDATA</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_CMD_RDATA</secondary></indexterm>
+<para><computeroutput>#define ADS1256_CMD_RDATA&#160;&#160;&#160;0x01</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a8c55c14b35e77ac7a4ce89451dfa2d15"/><section>
+    <title>ADS1256_CMD_RDATAC</title>
+<indexterm><primary>ADS1256_CMD_RDATAC</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_CMD_RDATAC</secondary></indexterm>
+<para><computeroutput>#define ADS1256_CMD_RDATAC&#160;&#160;&#160;0x03</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1aae90bee3130d55d0b7b9ee2cbf95a55b"/><section>
+    <title>ADS1256_CMD_RESET</title>
+<indexterm><primary>ADS1256_CMD_RESET</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_CMD_RESET</secondary></indexterm>
+<para><computeroutput>#define ADS1256_CMD_RESET&#160;&#160;&#160;0xFE</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a19eebfe90ce20122732493d1d8d174ae"/><section>
+    <title>ADS1256_CMD_RREG</title>
+<indexterm><primary>ADS1256_CMD_RREG</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_CMD_RREG</secondary></indexterm>
+<para><computeroutput>#define ADS1256_CMD_RREG&#160;&#160;&#160;0x10</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1ae1939b9c2d0cfe747d57a3b1e6b9be14"/><section>
+    <title>ADS1256_CMD_SDATAC</title>
+<indexterm><primary>ADS1256_CMD_SDATAC</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_CMD_SDATAC</secondary></indexterm>
+<para><computeroutput>#define ADS1256_CMD_SDATAC&#160;&#160;&#160;0x0f</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1ab625bddb8ab847667453db7e5274eefa"/><section>
+    <title>ADS1256_CMD_SELFCAL</title>
+<indexterm><primary>ADS1256_CMD_SELFCAL</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_CMD_SELFCAL</secondary></indexterm>
+<para><computeroutput>#define ADS1256_CMD_SELFCAL&#160;&#160;&#160;0xF0</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a64059afd4767afc43f54eab2d1e3749c"/><section>
+    <title>ADS1256_CMD_SELFGCAL</title>
+<indexterm><primary>ADS1256_CMD_SELFGCAL</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_CMD_SELFGCAL</secondary></indexterm>
+<para><computeroutput>#define ADS1256_CMD_SELFGCAL&#160;&#160;&#160;0xF2</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a52f8d9688fe6a2aedfbb35aabc9aa691"/><section>
+    <title>ADS1256_CMD_SELFOCAL</title>
+<indexterm><primary>ADS1256_CMD_SELFOCAL</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_CMD_SELFOCAL</secondary></indexterm>
+<para><computeroutput>#define ADS1256_CMD_SELFOCAL&#160;&#160;&#160;0xF1</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a1fa3451b329bd626a054cc26242cdfcb"/><section>
+    <title>ADS1256_CMD_STANDBY</title>
+<indexterm><primary>ADS1256_CMD_STANDBY</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_CMD_STANDBY</secondary></indexterm>
+<para><computeroutput>#define ADS1256_CMD_STANDBY&#160;&#160;&#160;0xFD</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1aa11671860a7f0335bbaa7249273e11e0"/><section>
+    <title>ADS1256_CMD_SYNC</title>
+<indexterm><primary>ADS1256_CMD_SYNC</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_CMD_SYNC</secondary></indexterm>
+<para><computeroutput>#define ADS1256_CMD_SYNC&#160;&#160;&#160;0xFC</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1ae7f1f19b2ba7daf01efaa5d42787ca80"/><section>
+    <title>ADS1256_CMD_SYSGCAL</title>
+<indexterm><primary>ADS1256_CMD_SYSGCAL</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_CMD_SYSGCAL</secondary></indexterm>
+<para><computeroutput>#define ADS1256_CMD_SYSGCAL&#160;&#160;&#160;0xF4</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1ad77e7c57e13c515e95f0bee5d233574c"/><section>
+    <title>ADS1256_CMD_SYSOCAL</title>
+<indexterm><primary>ADS1256_CMD_SYSOCAL</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_CMD_SYSOCAL</secondary></indexterm>
+<para><computeroutput>#define ADS1256_CMD_SYSOCAL&#160;&#160;&#160;0xF3</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1ada9b413dee820aa06d40e78fd4cd0032"/><section>
+    <title>ADS1256_CMD_WAKEUP</title>
+<indexterm><primary>ADS1256_CMD_WAKEUP</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_CMD_WAKEUP</secondary></indexterm>
+<para><computeroutput>#define ADS1256_CMD_WAKEUP&#160;&#160;&#160;0x00</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1af9b014a44a28bd646c099b14608ce4c4"/><section>
+    <title>ADS1256_CMD_WREG</title>
+<indexterm><primary>ADS1256_CMD_WREG</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_CMD_WREG</secondary></indexterm>
+<para><computeroutput>#define ADS1256_CMD_WREG&#160;&#160;&#160;0x50</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a091c5c86ddfbf5e883de2020f6370850"/><section>
+    <title>ADS1256_RADD_ADCON</title>
+<indexterm><primary>ADS1256_RADD_ADCON</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_RADD_ADCON</secondary></indexterm>
+<para><computeroutput>#define ADS1256_RADD_ADCON&#160;&#160;&#160;0x02</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1ae0b2327ca383b62dc634b092e07180bc"/><section>
+    <title>ADS1256_RADD_DRATE</title>
+<indexterm><primary>ADS1256_RADD_DRATE</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_RADD_DRATE</secondary></indexterm>
+<para><computeroutput>#define ADS1256_RADD_DRATE&#160;&#160;&#160;0x03</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a2f09cfe49c74b51755d5f9a5ba28d392"/><section>
+    <title>ADS1256_RADD_FSC0</title>
+<indexterm><primary>ADS1256_RADD_FSC0</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_RADD_FSC0</secondary></indexterm>
+<para><computeroutput>#define ADS1256_RADD_FSC0&#160;&#160;&#160;0x08</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1aec4a2314f5d80b71afc321ee7d5e227b"/><section>
+    <title>ADS1256_RADD_FSC1</title>
+<indexterm><primary>ADS1256_RADD_FSC1</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_RADD_FSC1</secondary></indexterm>
+<para><computeroutput>#define ADS1256_RADD_FSC1&#160;&#160;&#160;0x09</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a48d2c5d0bdaf1951ef322fc52360d4e1"/><section>
+    <title>ADS1256_RADD_FSC2</title>
+<indexterm><primary>ADS1256_RADD_FSC2</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_RADD_FSC2</secondary></indexterm>
+<para><computeroutput>#define ADS1256_RADD_FSC2&#160;&#160;&#160;0x0A</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a2ac9daf2c4af4a6900457f2ff479b39a"/><section>
+    <title>ADS1256_RADD_IO</title>
+<indexterm><primary>ADS1256_RADD_IO</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_RADD_IO</secondary></indexterm>
+<para><computeroutput>#define ADS1256_RADD_IO&#160;&#160;&#160;0x04</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a43a32b82e840ddc469d87048d50602a5"/><section>
+    <title>ADS1256_RADD_MUX</title>
+<indexterm><primary>ADS1256_RADD_MUX</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_RADD_MUX</secondary></indexterm>
+<para><computeroutput>#define ADS1256_RADD_MUX&#160;&#160;&#160;0x01</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a8c5444e8de8aa74e49d8a3f6ae07ebef"/><section>
+    <title>ADS1256_RADD_OFC0</title>
+<indexterm><primary>ADS1256_RADD_OFC0</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_RADD_OFC0</secondary></indexterm>
+<para><computeroutput>#define ADS1256_RADD_OFC0&#160;&#160;&#160;0x05</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a1c93e3ac2ff3369baa55629e23165f00"/><section>
+    <title>ADS1256_RADD_OFC1</title>
+<indexterm><primary>ADS1256_RADD_OFC1</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_RADD_OFC1</secondary></indexterm>
+<para><computeroutput>#define ADS1256_RADD_OFC1&#160;&#160;&#160;0x06</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1ab5d41015a59b645e6a803593f74943ef"/><section>
+    <title>ADS1256_RADD_OFC2</title>
+<indexterm><primary>ADS1256_RADD_OFC2</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_RADD_OFC2</secondary></indexterm>
+<para><computeroutput>#define ADS1256_RADD_OFC2&#160;&#160;&#160;0x07</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1abc776fc85a4ba8f20e51b792ea2e0323"/><section>
+    <title>ADS1256_RADD_STATUS</title>
+<indexterm><primary>ADS1256_RADD_STATUS</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ADS1256_RADD_STATUS</secondary></indexterm>
+<para><computeroutput>#define ADS1256_RADD_STATUS&#160;&#160;&#160;0x00</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1aa5de9931f0705cba8191d6a47a718450"/><section>
+    <title>clockspeedMhz</title>
+<indexterm><primary>clockspeedMhz</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>clockspeedMhz</secondary></indexterm>
+<para><computeroutput>#define clockspeedMhz&#160;&#160;&#160;7.68</computeroutput></para></section>
+</section>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a091b904a90ad3f613de6d1db297f1faa"/><section>
+    <title>reverse_bits_array()</title>
+<indexterm><primary>reverse_bits_array</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>reverse_bits_array</secondary></indexterm>
+<para><computeroutput>void reverse_bits_array (const uint8_t * data_out, uint8_t * result, uint8_t number_of_bytes)</computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1ad99f0b817f1a72892ea6ea46f0eeb5be"/><section>
+    <title>reverse_byte()</title>
+<indexterm><primary>reverse_byte</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>reverse_byte</secondary></indexterm>
+<para><computeroutput>uint8_t reverse_byte (uint8_t b)</computeroutput></para></section>
+</section>
 <section>
 <title>Variable Documentation</title>
 <anchor xml:id="__ethernet_controller_firefly_8cpp_1a027bdfbbdb746c62d057bd69f0a15b2b"/><section>
@@ -106,6 +332,11 @@
 <indexterm><primary>CMD_ANALOG_IN_OUT</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
 <indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>CMD_ANALOG_IN_OUT</secondary></indexterm>
 <para><computeroutput>uint8_t CMD_ANALOG_IN_OUT = 24<computeroutput>[constexpr]</computeroutput></computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a33027bd8f874f0bc88efaa916cf390d8"/><section>
+    <title>CMD_CALC_AD9854_FREQUENCY_TUNING_WORD</title>
+<indexterm><primary>CMD_CALC_AD9854_FREQUENCY_TUNING_WORD</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>CMD_CALC_AD9854_FREQUENCY_TUNING_WORD</secondary></indexterm>
+<para><computeroutput>uint8_t CMD_CALC_AD9854_FREQUENCY_TUNING_WORD = 28<computeroutput>[constexpr]</computeroutput></computeroutput></para></section>
 <anchor xml:id="__ethernet_controller_firefly_8cpp_1a4d62ec27c745a3814e03afd056255fc8"/><section>
     <title>CMD_CONDITIONAL_JUMP_BACKWARD</title>
 <indexterm><primary>CMD_CONDITIONAL_JUMP_BACKWARD</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
@@ -141,6 +372,11 @@
 <indexterm><primary>CMD_LOAD_COMMAND_BUFFER</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
 <indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>CMD_LOAD_COMMAND_BUFFER</secondary></indexterm>
 <para><computeroutput>uint8_t CMD_LOAD_COMMAND_BUFFER = 26<computeroutput>[constexpr]</computeroutput></computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a11eb631d7da50d4735c42536e3ce4910"/><section>
+    <title>CMD_LOAD_EXTENDED_COMMAND</title>
+<indexterm><primary>CMD_LOAD_EXTENDED_COMMAND</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>CMD_LOAD_EXTENDED_COMMAND</secondary></indexterm>
+<para><computeroutput>uint8_t CMD_LOAD_EXTENDED_COMMAND = 29<computeroutput>[constexpr]</computeroutput></computeroutput></para></section>
 <anchor xml:id="__ethernet_controller_firefly_8cpp_1ab007e75fb442f92a20fcb0f40d64192b"/><section>
     <title>CMD_LOAD_REG_HIGH</title>
 <indexterm><primary>CMD_LOAD_REG_HIGH</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
@@ -241,16 +477,41 @@
 <indexterm><primary>CMD_WAIT_FOR_WAIT_CYCLE_NR</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
 <indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>CMD_WAIT_FOR_WAIT_CYCLE_NR</secondary></indexterm>
 <para><computeroutput>uint8_t CMD_WAIT_FOR_WAIT_CYCLE_NR = 21<computeroutput>[constexpr]</computeroutput></computeroutput></para></section>
-<anchor xml:id="__ethernet_controller_firefly_8cpp_1a872d1136134c86481ed129ce5a5dacd8"/><section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a54077eaaeaacc3574b175eb3d697e588"/><section>
     <title>CommandNames</title>
 <indexterm><primary>CommandNames</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
 <indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>CommandNames</secondary></indexterm>
-<para><computeroutput>const CString CommandNames[<link linkend="__ethernet_controller_firefly_8cpp_1a20dc0cedb7d908e6557972164a2a4362">NrCommands</link>] = { &quot;CMD_STOP&quot;, &quot;CMD_STEP&quot;, &quot;CMD_STEP_AND_ENTER_FAST_MODE&quot;, &quot;CMD_SET_OPTIONS&quot;, &quot;CMD_LOAD_REG_LOW&quot;, &quot;CMD_LOAD_REG_HIGH&quot;, &quot;CMD_LATCH_STATE&quot;, &quot;CMD_RESET_WAIT_CYCLES&quot;, &quot;CMD_LONG_WAIT&quot;, &quot;CMD_SET_STROBE_OPTIONS&quot;, &quot;CMD_SET_INPUT_BUF_MEM&quot;, &quot;CMD_WAIT_FOR_TRIGGER&quot;, &quot;CMD_SET_LOOP_COUNT&quot;, &quot;CMD_CONDITIONAL_JUMP_FORWARD&quot;, &quot;CMD_CONDITIONAL_JUMP_BACKWARD&quot;, &quot;CMD_I2C_OUT&quot;, &quot;CMD_SPI_OUT_IN&quot;, &quot;CMD_INPUT_REPEATED_OUT_IN&quot;, &quot;CMD_SET_PERIODIC_TRIGGER_PERIOD&quot;, &quot;CMD_SET_PERIODIC_TRIGGER_ALLOWED_WAIT_TIME&quot;, &quot;CMD_WAIT_FOR_PERIODIC_TRIGGER&quot;, &quot;CMD_WAIT_FOR_WAIT_CYCLE_NR&quot;, &quot;CMD_DIG_IN&quot;, &quot;CMD_TRIGGER_SECONDARY_PL_PS_INTERRUPT&quot;, &quot;CMD_ANALOG_IN_OUT&quot;, &quot;CMD_PL_TO_PS_COMMAND&quot;, &quot;CMD_LOAD_COMMAND_BUFFER&quot;, &quot;CMD_SAVE_CYCLE_COUNT_SINCE_STARTUP_IN_INPUT_BUF_MEM&quot;}</computeroutput></para></section>
+<para><computeroutput>const std::string CommandNames[<link linkend="__ethernet_controller_firefly_8cpp_1a20dc0cedb7d908e6557972164a2a4362">NrCommands</link>] = { &quot;CMD_STOP&quot;, &quot;CMD_STEP&quot;, &quot;CMD_STEP_AND_ENTER_FAST_MODE&quot;, &quot;CMD_SET_OPTIONS&quot;, &quot;CMD_LOAD_REG_LOW&quot;, &quot;CMD_LOAD_REG_HIGH&quot;, &quot;CMD_LATCH_STATE&quot;, &quot;CMD_RESET_WAIT_CYCLES&quot;, &quot;CMD_LONG_WAIT&quot;, &quot;CMD_SET_STROBE_OPTIONS&quot;, &quot;CMD_SET_INPUT_BUF_MEM&quot;, &quot;CMD_WAIT_FOR_TRIGGER&quot;, &quot;CMD_SET_LOOP_COUNT&quot;, &quot;CMD_CONDITIONAL_JUMP_FORWARD&quot;, &quot;CMD_CONDITIONAL_JUMP_BACKWARD&quot;, &quot;CMD_I2C_OUT&quot;, &quot;CMD_SPI_OUT_IN&quot;, &quot;CMD_INPUT_REPEATED_OUT_IN&quot;, &quot;CMD_SET_PERIODIC_TRIGGER_PERIOD&quot;, &quot;CMD_SET_PERIODIC_TRIGGER_ALLOWED_WAIT_TIME&quot;, &quot;CMD_WAIT_FOR_PERIODIC_TRIGGER&quot;, &quot;CMD_WAIT_FOR_WAIT_CYCLE_NR&quot;, &quot;CMD_DIG_IN&quot;, &quot;CMD_TRIGGER_SECONDARY_PL_PS_INTERRUPT&quot;, &quot;CMD_ANALOG_IN_OUT&quot;, &quot;CMD_PL_TO_PS_COMMAND&quot;, &quot;CMD_LOAD_COMMAND_BUFFER&quot;, &quot;CMD_SAVE_CYCLE_COUNT_SINCE_STARTUP_IN_INPUT_BUF_MEM&quot;, &quot;CMD_CALC_AD9854_FREQUENCY_TUNING_WORD&quot;, &quot;CMD_LOAD_EXTENDED_COMMAND&quot; }</computeroutput></para></section>
 <anchor xml:id="__ethernet_controller_firefly_8cpp_1a8cfc5b935e104cb7bf15d162177060cc"/><section>
     <title>CommandUsesBuffer</title>
 <indexterm><primary>CommandUsesBuffer</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
 <indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>CommandUsesBuffer</secondary></indexterm>
-<para><computeroutput>bool CommandUsesBuffer[<link linkend="__ethernet_controller_firefly_8cpp_1a20dc0cedb7d908e6557972164a2a4362">NrCommands</link>] = { false , false , false , true , false , false , false , false , true , true , true , true , true , true , true , true , true , true , true , true , false , true , true , false , true , true , false , false}<computeroutput>[constexpr]</computeroutput></computeroutput></para></section>
+<para><computeroutput>bool CommandUsesBuffer[<link linkend="__ethernet_controller_firefly_8cpp_1a20dc0cedb7d908e6557972164a2a4362">NrCommands</link>] = { false , false , false , true , false , false , false , false , true , true , true , true , true , true , true , true , true , true , true , true , false , true , true , false , true , true , false , false , true , false }<computeroutput>[constexpr]</computeroutput></computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a60fc2ca532d2f89c45fbc748f7faf128"/><section>
+    <title>EXTENDED_CMD_LOAD_SPI_TIMING</title>
+<indexterm><primary>EXTENDED_CMD_LOAD_SPI_TIMING</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>EXTENDED_CMD_LOAD_SPI_TIMING</secondary></indexterm>
+<para><computeroutput>uint8_t EXTENDED_CMD_LOAD_SPI_TIMING = 1<computeroutput>[constexpr]</computeroutput></computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a328d2911a4eeae776e503a1775c5e3ea"/><section>
+    <title>EXTENDED_CMD_SET_I2C_PARAMETERS</title>
+<indexterm><primary>EXTENDED_CMD_SET_I2C_PARAMETERS</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>EXTENDED_CMD_SET_I2C_PARAMETERS</secondary></indexterm>
+<para><computeroutput>uint8_t EXTENDED_CMD_SET_I2C_PARAMETERS = 3<computeroutput>[constexpr]</computeroutput></computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a73f6ced1c3a567dd582a2db85e961f38"/><section>
+    <title>EXTENDED_CMD_SET_SPI_MODE</title>
+<indexterm><primary>EXTENDED_CMD_SET_SPI_MODE</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>EXTENDED_CMD_SET_SPI_MODE</secondary></indexterm>
+<para><computeroutput>uint8_t EXTENDED_CMD_SET_SPI_MODE = 2<computeroutput>[constexpr]</computeroutput></computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a9201f62e1fd2d788a9b2723a4db0f77f"/><section>
+    <title>EXTENDED_CMD_STOP</title>
+<indexterm><primary>EXTENDED_CMD_STOP</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>EXTENDED_CMD_STOP</secondary></indexterm>
+<para><computeroutput>uint8_t EXTENDED_CMD_STOP = 0<computeroutput>[constexpr]</computeroutput></computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1ab46d7ae62e9dbd4105627bc6f32a998d"/><section>
+    <title>ExtendedCommandNames</title>
+<indexterm><primary>ExtendedCommandNames</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>ExtendedCommandNames</secondary></indexterm>
+<para><computeroutput>const std::string ExtendedCommandNames[<link linkend="__ethernet_controller_firefly_8cpp_1a9b6f7a472abbc266681b442585a53260">NrExtendedCommands</link>] = { &quot;EXTENDED_CMD_STOP&quot;, &quot;EXTENDED_CMD_LOAD_SPI_TIMING&quot;, &quot;EXTENDED_CMD_SET_SPI_MODE&quot;, &quot;EXTENDED_CMD_SET_I2C_PARAMETERS&quot; }</computeroutput></para></section>
 <anchor xml:id="__ethernet_controller_firefly_8cpp_1a57c8759f9f214734142d0552c38101a7"/><section>
     <title>MaxFPGAProgramLength</title>
 <indexterm><primary>MaxFPGAProgramLength</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
@@ -275,7 +536,12 @@
     <title>NrCommands</title>
 <indexterm><primary>NrCommands</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
 <indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>NrCommands</secondary></indexterm>
-<para><computeroutput>uint8_t NrCommands = 28<computeroutput>[constexpr]</computeroutput></computeroutput></para></section>
+<para><computeroutput>uint8_t NrCommands = 30<computeroutput>[constexpr]</computeroutput></computeroutput></para></section>
+<anchor xml:id="__ethernet_controller_firefly_8cpp_1a9b6f7a472abbc266681b442585a53260"/><section>
+    <title>NrExtendedCommands</title>
+<indexterm><primary>NrExtendedCommands</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
+<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>NrExtendedCommands</secondary></indexterm>
+<para><computeroutput>uint8_t NrExtendedCommands = 4<computeroutput>[constexpr]</computeroutput></computeroutput></para></section>
 <anchor xml:id="__ethernet_controller_firefly_8cpp_1ae106412c5a47e24fc4db187a1464e341"/><section>
     <title>PLToPSCommandAcceptTCPIP</title>
 <indexterm><primary>PLToPSCommandAcceptTCPIP</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
@@ -291,10 +557,5 @@
 <indexterm><primary>PLToPSCommandTest</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
 <indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>PLToPSCommandTest</secondary></indexterm>
 <para><computeroutput>unsigned int PLToPSCommandTest = 1 &lt;&lt; 8<computeroutput>[constexpr]</computeroutput></computeroutput></para></section>
-<anchor xml:id="__ethernet_controller_firefly_8cpp_1aed3665cd68b4c4f7a09627041917f22b"/><section>
-    <title>UseCommandBuffer</title>
-<indexterm><primary>UseCommandBuffer</primary><secondary>EthernetControllerFirefly.cpp</secondary></indexterm>
-<indexterm><primary>EthernetControllerFirefly.cpp</primary><secondary>UseCommandBuffer</secondary></indexterm>
-<para><computeroutput>bool UseCommandBuffer = true<computeroutput>[constexpr]</computeroutput></computeroutput></para></section>
 </section>
 </section>

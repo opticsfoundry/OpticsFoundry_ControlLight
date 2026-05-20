@@ -1,16 +1,11 @@
 \doxysection{AD9858.\+cpp File Reference}
 \hypertarget{_a_d9858_8cpp}{}\label{_a_d9858_8cpp}\index{AD9858.cpp@{AD9858.cpp}}
-{\ttfamily \#include "{}std.\+h"{}}\newline
-{\ttfamily \#include "{}control.\+h"{}}\newline
 {\ttfamily \#include "{}AD9858.\+h"{}}\newline
-{\ttfamily \#include "{}Control\+API.\+h"{}}\newline
 {\ttfamily \#include "{}CDevice\+Sequencer.\+h"{}}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include $<$format$>$}\newline
 \doxysubsubsection*{Variables}
 \begin{DoxyCompactItemize}
-\item 
-constexpr uint8\+\_\+t \mbox{\hyperlink{_a_d9858_8cpp_aa592773d77686d8f7f7b1c49a0622515}{Bus\+Bit\+Shift}} = 0
-\item 
-constexpr bool \mbox{\hyperlink{_a_d9858_8cpp_ae608804064166baae021c75b4bd3772b}{Force\+Writing}} = false
 \item 
 unsigned long \mbox{\hyperlink{_a_d9858_8cpp_a85b4d213de6fffcb930aec37cfa773db}{AD9858\+Master\+Reset\+Value\+Contents}} \mbox{[}\mbox{\hyperlink{_a_d9858_8h_a89debb04b626a7627663f9e047ecad53}{AD9858\+Max\+Values}}\mbox{]} =\{0x18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0\}
 \item 
@@ -46,16 +41,4 @@ uint8\+\_\+t AD9858\+Value\+Length\mbox{[}\mbox{\hyperlink{_a_d9858_8h_a89debb04
 \doxysubsubsection{\texorpdfstring{AD9858ValueNotInBusBuffer}{AD9858ValueNotInBusBuffer}}
 {\footnotesize\ttfamily \label{_a_d9858_8cpp_abce01e4b7e8361d9d03e9552ac5e30d0} 
 const unsigned long AD9858\+Value\+Not\+In\+Bus\+Buffer =99999}
-
-\Hypertarget{_a_d9858_8cpp_aa592773d77686d8f7f7b1c49a0622515}\index{AD9858.cpp@{AD9858.cpp}!BusBitShift@{BusBitShift}}
-\index{BusBitShift@{BusBitShift}!AD9858.cpp@{AD9858.cpp}}
-\doxysubsubsection{\texorpdfstring{BusBitShift}{BusBitShift}}
-{\footnotesize\ttfamily \label{_a_d9858_8cpp_aa592773d77686d8f7f7b1c49a0622515} 
-uint8\+\_\+t Bus\+Bit\+Shift = 0\hspace{0.3cm}{\ttfamily [constexpr]}}
-
-\Hypertarget{_a_d9858_8cpp_ae608804064166baae021c75b4bd3772b}\index{AD9858.cpp@{AD9858.cpp}!ForceWriting@{ForceWriting}}
-\index{ForceWriting@{ForceWriting}!AD9858.cpp@{AD9858.cpp}}
-\doxysubsubsection{\texorpdfstring{ForceWriting}{ForceWriting}}
-{\footnotesize\ttfamily \label{_a_d9858_8cpp_ae608804064166baae021c75b4bd3772b} 
-bool Force\+Writing = false\hspace{0.3cm}{\ttfamily [constexpr]}}
 

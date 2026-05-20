@@ -322,6 +322,14 @@ reg SPI_RESTART_INPUT_REPEAT_WAIT_ON_READY_ACTIVE = 0;
 reg INPUT_REPEAT_set_to_delay_zero_flag = 0;
 reg SPI_READY_meta = 0;
 reg SPI_READY_sync = 0;
+(* ASYNC_REG = "TRUE" *) reg condition_0_meta = 0;
+(* ASYNC_REG = "TRUE" *) reg condition_0_sync = 0;
+(* ASYNC_REG = "TRUE" *) reg condition_1_meta = 0;
+(* ASYNC_REG = "TRUE" *) reg condition_1_sync = 0;
+(* ASYNC_REG = "TRUE" *) reg condition_PS_meta = 0;
+(* ASYNC_REG = "TRUE" *) reg condition_PS_sync = 0;
+(* ASYNC_REG = "TRUE" *) reg [7:0] core_dig_in_meta = 0;
+(* ASYNC_REG = "TRUE" *) reg [7:0] core_dig_in_sync = 0;
 reg SPI_CPOL = 0;
 reg SPI_CPHA = 0;
 // CPHA=0: sample on leading phase, change on trailing phase.
@@ -484,12 +492,12 @@ wire [5:0] current_extended_command = extended_command[10:5];
 wire dig_in_jump_enabled;
 wire [2:0] dig_in_jump_index;
 wire selected_core_dig_in;
-wire [13:0] jump_offset;
+wire [7:0] jump_offset;
 
 assign dig_in_jump_enabled = command_buffer[8];
 assign dig_in_jump_index = command_buffer[7:5];
-assign selected_core_dig_in = core_dig_in[dig_in_jump_index];
-assign jump_offset = command_buffer[45:32];
+assign selected_core_dig_in = core_dig_in_sync[dig_in_jump_index];
+assign jump_offset = command_buffer[39:32];
                             
 always @(posedge clock)
 begin
@@ -577,6 +585,30 @@ begin
   end
 end
 
+//synchronize external, asynchronous condition and digital input signals to clock
+always @(posedge clock, posedge reset)
+begin
+  if (reset) begin
+      condition_0_meta <= 0;
+      condition_0_sync <= 0;
+      condition_1_meta <= 0;
+      condition_1_sync <= 0;
+      condition_PS_meta <= 0;
+      condition_PS_sync <= 0;
+      core_dig_in_meta <= 0;
+      core_dig_in_sync <= 0;
+  end else begin
+      condition_0_meta <= condition_0;
+      condition_0_sync <= condition_0_meta;
+      condition_1_meta <= condition_1;
+      condition_1_sync <= condition_1_meta;
+      condition_PS_meta <= condition_PS;
+      condition_PS_sync <= condition_PS_meta;
+      core_dig_in_meta <= core_dig_in;
+      core_dig_in_sync <= core_dig_in_meta;
+  end
+end
+
 always @(posedge clock, posedge reset_secondary_PS_PL_interrupt)
 begin
   if (reset_secondary_PS_PL_interrupt) begin
@@ -600,7 +632,6 @@ end
 
 always @(posedge clock)
 begin
-    
     if (int_clear && (!synchronous_reset)) begin //2024 08 07 strange: was "if (int_clear && (!int_clear_happened)) begin"
         int_clear_happened <= 1;
     end 
@@ -974,13 +1005,13 @@ begin
                             wait_time <= 1;
                         end
                         CMD_CONDITIONAL_JUMP_FORWARD: begin  //here we assume that the program assembling the sequence has made sure that the jump is within the current BRAM half
-                            if ((selected_core_dig_in && dig_in_jump_enabled) || (condition_0 && (command_buffer[9:9] == 1)) || (condition_1 && (command_buffer[10:10] == 1)) || (condition_PS && (command_buffer[11:11] == 1)) || (command_buffer[12:12] == 1)) 
+                            if ((selected_core_dig_in && dig_in_jump_enabled) || (condition_0_sync && (command_buffer[9:9] == 1)) || (condition_1_sync && (command_buffer[10:10] == 1)) || (condition_PS_sync && (command_buffer[11:11] == 1)) || (command_buffer[12:12] == 1)) 
                                 address <= address + jump_offset;
                             else address <= address + 1;
                             wait_time <= 1;
                         end
                         CMD_CONDITIONAL_JUMP_BACKWARD: begin  //here we assume that the program assembling the sequence has made sure that the jump is within the current BRAM half
-                            if ((   (selected_core_dig_in && dig_in_jump_enabled) ||   (condition_0 && (command_buffer[9:9] == 1)) || (condition_1 && (command_buffer[10:10] == 1)) || (condition_PS && (command_buffer[11:11] == 1)) || 
+                            if ((   (selected_core_dig_in && dig_in_jump_enabled) ||   (condition_0_sync && (command_buffer[9:9] == 1)) || (condition_1_sync && (command_buffer[10:10] == 1)) || (condition_PS_sync && (command_buffer[11:11] == 1)) || 
                                  (command_buffer[12:12] == 1) || ((command_buffer[13:13] == 1) && (loop_count > 0)))) 
                                 address <= address - jump_offset;
                             else address <= address + 1;
@@ -1056,7 +1087,7 @@ begin
                         
                         
                         CMD_DIG_IN: begin
-                            input_buf_mem_data[7:0] <= core_dig_in;
+                            input_buf_mem_data[7:0] <= core_dig_in_sync;
                             input_buf_mem_data[31:8] <= command_buffer[31:8];
                             //input_buf_mem_address <= input_buf_mem_address + 1;
                             INPUT_MEM_state <= INPUT_MEM_WRITE;
@@ -1734,7 +1765,7 @@ begin
                      end else begin
                         input_buf_mem_data[15:0] <= ana_in_data;
                         input_buf_mem_data[20:16] <= ana_in_channel;
-                        input_buf_mem_data[28:21] <= core_dig_in;
+                        input_buf_mem_data[28:21] <= core_dig_in_sync;
                         input_buf_mem_data[30:29] <= INPUT_REPEAT_nr[1:0];
                         input_buf_mem_data[31:31] <= 1'b1; 
                         //input_buf_mem_address <= input_buf_mem_address + 1;
@@ -1753,7 +1784,7 @@ begin
                                               
                 end
                 DIG_IN_START: begin
-                    input_buf_mem_data[7:0] <= core_dig_in;
+                    input_buf_mem_data[7:0] <= core_dig_in_sync;
                     input_buf_mem_data[28:8] <= INPUT_REPEAT_nr;
                     input_buf_mem_data[31:29] <= 3'b010; 
                     //input_buf_mem_address <= input_buf_mem_address + 1;
@@ -1787,15 +1818,15 @@ begin
 `ifdef USE_INPUT_EVENT_TAGGER
                 INPUT_REPEAT_DIG_EVENT: begin
                     //this mode is active until user stops it with a new CMD_INPUT_REPEATED_OUT_IN command, e.g. one that sets INPUT_REPEAT_command == IN_REP_CMD_IDLE. 
-                    if ((input_event_tagger_last_input != core_dig_in) || ((input_event_tagger_mark_counter_overflow == 1))) begin
-                        input_event_tagger_last_input <= core_dig_in;
+                    if ((input_event_tagger_last_input != core_dig_in_sync) || ((input_event_tagger_mark_counter_overflow == 1))) begin
+                        input_event_tagger_last_input <= core_dig_in_sync;
                         
 `ifdef USE_INPUT_EVENT_TAGGER_FIFO_8_ENTRIES                        
                         if (input_event_tagger_fifo_count < 8) begin
 `else                         
                         if (input_event_tagger_fifo_count < 4) begin
 `endif                                                
-                            input_event_tagger_fifo[input_event_tagger_fifo_write_ptr] <= {cycle_count_since_startup[21:0], input_event_tagger_mark_counter_overflow, core_dig_in};
+                            input_event_tagger_fifo[input_event_tagger_fifo_write_ptr] <= {cycle_count_since_startup[21:0], input_event_tagger_mark_counter_overflow, core_dig_in_sync};
                             input_event_tagger_fifo_write_ptr <= input_event_tagger_fifo_write_ptr + 1;
                             input_event_tagger_fifo_count <= input_event_tagger_fifo_count + 1;
                             input_event_tagger_mark_counter_overflow <= 0;
@@ -1811,14 +1842,14 @@ begin
                             input_event_tagger_fifo_read_ptr <= input_event_tagger_fifo_read_ptr + 1;
                             INPUT_MEM_state <= INPUT_MEM_WRITE;
     
-                            if (input_event_tagger_last_input != core_dig_in) begin
-                                input_event_tagger_last_input <= core_dig_in;
-                                input_event_tagger_fifo[input_event_tagger_fifo_write_ptr] <= {cycle_count_since_startup[21:0], input_event_tagger_mark_counter_overflow, core_dig_in};
+                            if (input_event_tagger_last_input != core_dig_in_sync) begin
+                                input_event_tagger_last_input <= core_dig_in_sync;
+                                input_event_tagger_fifo[input_event_tagger_fifo_write_ptr] <= {cycle_count_since_startup[21:0], input_event_tagger_mark_counter_overflow, core_dig_in_sync};
                                 input_event_tagger_fifo_write_ptr <= input_event_tagger_fifo_write_ptr + 1;
                                 input_event_tagger_fifo_count <= input_event_tagger_fifo_count;
                                 input_event_tagger_mark_counter_overflow <= 0;
                             end else if (input_event_tagger_mark_counter_overflow == 1) begin
-                                input_event_tagger_fifo[input_event_tagger_fifo_write_ptr] <= {cycle_count_since_startup[21:0], 1'b1, core_dig_in};
+                                input_event_tagger_fifo[input_event_tagger_fifo_write_ptr] <= {cycle_count_since_startup[21:0], 1'b1, core_dig_in_sync};
                                 input_event_tagger_fifo_write_ptr <= input_event_tagger_fifo_write_ptr + 1;
                                 input_event_tagger_fifo_count <= input_event_tagger_fifo_count;
                                 input_event_tagger_mark_counter_overflow <= 0;

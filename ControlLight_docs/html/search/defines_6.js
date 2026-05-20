@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['return_5ferror_0',['RETURN_ERROR',['../_control_a_p_i_8cpp.html#ab60d460931c003c9f26348344486d8d2',1,'ControlAPI.cpp']]]
+  ['get_5fconfig_5fvalue_0',['GET_CONFIG_VALUE',['../_control_a_p_i_8cpp.html#a13a74e3fac4e8356e3aafd590daa8dfe',1,'ControlAPI.cpp']]],
+  ['get_5fvalue_1',['GET_VALUE',['../_control_a_p_i_8cpp.html#a39190b1fe9115d037538d033de326d1b',1,'ControlAPI.cpp']]]
 ];

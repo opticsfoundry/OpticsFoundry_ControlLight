@@ -131,7 +131,7 @@ $(function(){initNavTree('_c_device_digital_out_8h_source.html',''); initResizab
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
 <div class="foldopen" id="foldopen00023" data-start="{" data-end="}">
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="class_c_device_digital_out.html#aaf2439fcb1ffaf981aa0b6b8d8fa390a">   23</a></span>    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="class_c_device_digital_out.html#aaf2439fcb1ffaf981aa0b6b8d8fa390a">SetDigitalOutput</a>(uint8_t BitNr, <span class="keywordtype">bool</span> OnOff) {</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>        uint16_t Data = 1;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>        uint8_t Data = (OnOff) ? 1 : 0;</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        <span class="keywordflow">return</span> <a class="code hl_function" href="class_c_device_digital_out.html#a26de6154f58f7bb9a0c78a7355f27370">SetValue</a>(0, (uint8_t*) &amp;Data, 1, BitNr);</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    }</div>
 </div>
@@ -145,7 +145,7 @@ $(function(){initNavTree('_c_device_digital_out_8h_source.html',''); initResizab
 <div class="ttc" id="aclass_c_device_digital_out_html_aaf2439fcb1ffaf981aa0b6b8d8fa390a"><div class="ttname"><a href="class_c_device_digital_out.html#aaf2439fcb1ffaf981aa0b6b8d8fa390a">CDeviceDigitalOut::SetDigitalOutput</a></div><div class="ttdeci">virtual bool SetDigitalOutput(uint8_t BitNr, bool OnOff)</div><div class="ttdef"><b>Definition</b> CDeviceDigitalOut.h:23</div></div>
 <div class="ttc" id="aclass_c_device_digital_out_html_afeb397d89dd9f687d880cfc8a673b28a"><div class="ttname"><a href="class_c_device_digital_out.html#afeb397d89dd9f687d880cfc8a673b28a">CDeviceDigitalOut::LastValue</a></div><div class="ttdeci">uint16_t LastValue</div><div class="ttdef"><b>Definition</b> CDeviceDigitalOut.h:10</div></div>
 <div class="ttc" id="aclass_c_device_html_ab2a002fb6c828f07e8aebcd7dbf2cd00"><div class="ttname"><a href="class_c_device.html#ab2a002fb6c828f07e8aebcd7dbf2cd00">CDevice::CDevice</a></div><div class="ttdeci">CDevice(CDeviceSequencer *_MySequencer=nullptr, unsigned long _MyAddress=0, const std::string _MyType=&quot;&quot;)</div><div class="ttdef"><b>Definition</b> CDevice.cpp:11</div></div>
-<div class="ttc" id="aclass_c_device_sequencer_html"><div class="ttname"><a href="class_c_device_sequencer.html">CDeviceSequencer</a></div><div class="ttdef"><b>Definition</b> CDeviceSequencer.h:8</div></div>
+<div class="ttc" id="aclass_c_device_sequencer_html"><div class="ttname"><a href="class_c_device_sequencer.html">CDeviceSequencer</a></div><div class="ttdef"><b>Definition</b> CDeviceSequencer.h:13</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

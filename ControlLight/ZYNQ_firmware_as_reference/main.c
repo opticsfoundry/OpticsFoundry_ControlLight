@@ -143,7 +143,7 @@ void RunEventLoop() { //make sure other parts of the program regularly (at least
 	}
 	if (TcpSlowTmrFlag) {
 		tcp_slowtmr();
-		if (DebugModeOn) ShowSignOfLife();
+		//if (DebugModeOn) ShowSignOfLife();
 		TcpSlowTmrFlag = 0;
 	}
 	xemacif_input(echo_netif);

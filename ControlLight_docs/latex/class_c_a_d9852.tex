@@ -21,7 +21,7 @@ double \mbox{\hyperlink{class_c_a_d9852_abb1b3b1d0aa79a6b881bcf46e27d53ab}{Set\+
 \item 
 void \mbox{\hyperlink{class_c_a_d9852_a2b51e6718b37b0ea1dae8139e3f453ec}{Update\+Frequency\+Values}} ()
 \item 
-\+\_\+\+\_\+int64 \mbox{\hyperlink{class_c_a_d9852_aa81a373460a0299b44ae05945bd2f4c7}{Set\+Delta\+Frequency\+Word}} (\+\_\+\+\_\+int64 a\+Delta\+Frequency\+Word, bool Get\+Value=false)
+int64\+\_\+t \mbox{\hyperlink{class_c_a_d9852_af41e9ef3f6b568c7286b048f0a39b067}{Set\+Delta\+Frequency\+Word}} (int64\+\_\+t a\+Delta\+Frequency\+Word, bool Get\+Value=false)
 \item 
 unsigned long \mbox{\hyperlink{class_c_a_d9852_a1040e7bcc8058afd2aab87a6ddbc0073}{Set\+Update\+Clock}} (unsigned long a\+Update\+Clock, bool Get\+Value=false)
 \item 
@@ -128,7 +128,7 @@ bool \mbox{\hyperlink{class_c_a_d9852_a65aaf729809f53e17a4df780554b713e}{FSK\+\_
 \item 
 bool \mbox{\hyperlink{class_c_a_d9852_a01387f0499899727bd7f2977a02b3ca3}{Update\+Registers\+Mode\+Automatic}}
 \item 
-\+\_\+\+\_\+int64 \mbox{\hyperlink{class_c_a_d9852_a3c18792c7ef4dcfe7e2ac91d8890e2ad}{Akt\+Value\+Contents}} \mbox{[}\mbox{\hyperlink{_a_d9852_8h_aee5b08b57ce3017953dd926bd090643f}{AD9852\+Max\+Values}}\mbox{]}
+int64\+\_\+t \mbox{\hyperlink{class_c_a_d9852_afa71ddccb068c741598b0a41c27abad6}{Akt\+Value\+Contents}} \mbox{[}\mbox{\hyperlink{_a_d9852_8h_aee5b08b57ce3017953dd926bd090643f}{AD9852\+Max\+Values}}\mbox{]}
 \item 
 double \mbox{\hyperlink{class_c_a_d9852_a0e71f85ee5618fe5709ad2d1a88e06ae}{Clock\+Speed}}
 \item 
@@ -264,11 +264,11 @@ bool CAD9852\+::\+Set\+Control\+DACPower\+Down (\begin{DoxyParamCaption}\item[{b
 {\footnotesize\ttfamily \label{class_c_a_d9852_a7bf530b604223b8c3ec693746bb5e776} 
 bool CAD9852\+::\+Set\+DACPower\+Down (\begin{DoxyParamCaption}\item[{bool}]{a\+Power\+Down}{, }\item[{bool}]{Get\+Value}{ = {\ttfamily false}}\end{DoxyParamCaption})}
 
-\Hypertarget{class_c_a_d9852_aa81a373460a0299b44ae05945bd2f4c7}\index{CAD9852@{CAD9852}!SetDeltaFrequencyWord@{SetDeltaFrequencyWord}}
+\Hypertarget{class_c_a_d9852_af41e9ef3f6b568c7286b048f0a39b067}\index{CAD9852@{CAD9852}!SetDeltaFrequencyWord@{SetDeltaFrequencyWord}}
 \index{SetDeltaFrequencyWord@{SetDeltaFrequencyWord}!CAD9852@{CAD9852}}
 \doxysubsubsection{\texorpdfstring{SetDeltaFrequencyWord()}{SetDeltaFrequencyWord()}}
-{\footnotesize\ttfamily \label{class_c_a_d9852_aa81a373460a0299b44ae05945bd2f4c7} 
-\+\_\+\+\_\+int64 CAD9852\+::\+Set\+Delta\+Frequency\+Word (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+int64}]{a\+Delta\+Frequency\+Word}{, }\item[{bool}]{Get\+Value}{ = {\ttfamily false}}\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{class_c_a_d9852_af41e9ef3f6b568c7286b048f0a39b067} 
+int64\+\_\+t CAD9852\+::\+Set\+Delta\+Frequency\+Word (\begin{DoxyParamCaption}\item[{int64\+\_\+t}]{a\+Delta\+Frequency\+Word}{, }\item[{bool}]{Get\+Value}{ = {\ttfamily false}}\end{DoxyParamCaption})}
 
 \Hypertarget{class_c_a_d9852_ad4fb46a9d0532317f81d58d8da5e13b3}\index{CAD9852@{CAD9852}!SetDigitalPowerDown@{SetDigitalPowerDown}}
 \index{SetDigitalPowerDown@{SetDigitalPowerDown}!CAD9852@{CAD9852}}
@@ -495,11 +495,11 @@ bool CAD9852\+::\+Write\+To\+Bus (\begin{DoxyParamCaption}{}{}\end{DoxyParamCapt
 
 
 \doxysubsection{Member Data Documentation}
-\Hypertarget{class_c_a_d9852_a3c18792c7ef4dcfe7e2ac91d8890e2ad}\index{CAD9852@{CAD9852}!AktValueContents@{AktValueContents}}
+\Hypertarget{class_c_a_d9852_afa71ddccb068c741598b0a41c27abad6}\index{CAD9852@{CAD9852}!AktValueContents@{AktValueContents}}
 \index{AktValueContents@{AktValueContents}!CAD9852@{CAD9852}}
 \doxysubsubsection{\texorpdfstring{AktValueContents}{AktValueContents}}
-{\footnotesize\ttfamily \label{class_c_a_d9852_a3c18792c7ef4dcfe7e2ac91d8890e2ad} 
-\+\_\+\+\_\+int64 CAD9852\+::\+Akt\+Value\+Contents\mbox{[}\mbox{\hyperlink{_a_d9852_8h_aee5b08b57ce3017953dd926bd090643f}{AD9852\+Max\+Values}}\mbox{]}}
+{\footnotesize\ttfamily \label{class_c_a_d9852_afa71ddccb068c741598b0a41c27abad6} 
+int64\+\_\+t CAD9852\+::\+Akt\+Value\+Contents\mbox{[}\mbox{\hyperlink{_a_d9852_8h_aee5b08b57ce3017953dd926bd090643f}{AD9852\+Max\+Values}}\mbox{]}}
 
 \Hypertarget{class_c_a_d9852_a0227ccb509332255a5cb6dac8ac340f5}\index{CAD9852@{CAD9852}!BaseAddress@{BaseAddress}}
 \index{BaseAddress@{BaseAddress}!CAD9852@{CAD9852}}

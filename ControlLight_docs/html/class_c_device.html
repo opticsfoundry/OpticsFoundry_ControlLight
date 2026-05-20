@@ -118,12 +118,14 @@ Inheritance diagram for CDevice:</div>
  <div class="center">
   <img src="class_c_device.png" usemap="#CDevice_map" alt=""/>
   <map id="CDevice_map" name="CDevice_map">
-<area href="class_c_device_a_d9854.html" alt="CDeviceAD9854" shape="rect" coords="0,56,138,80"/>
-<area href="class_c_device_a_d9858.html" alt="CDeviceAD9858" shape="rect" coords="148,56,286,80"/>
-<area href="class_c_device_analog_in12bit.html" alt="CDeviceAnalogIn12bit" shape="rect" coords="296,56,434,80"/>
-<area href="class_c_device_analog_out.html" alt="CDeviceAnalogOut" shape="rect" coords="444,56,582,80"/>
-<area href="class_c_device_digital_out.html" alt="CDeviceDigitalOut" shape="rect" coords="592,56,730,80"/>
-<area href="class_c_device_sequencer.html" alt="CDeviceSequencer" shape="rect" coords="740,56,878,80"/>
+<area href="class_c_device_a_d9854.html" alt="CDeviceAD9854" shape="rect" coords="132,56,254,80"/>
+<area href="class_c_device_a_d9858.html" alt="CDeviceAD9858" shape="rect" coords="132,112,254,136"/>
+<area href="class_c_device_a_d9959.html" alt="CDeviceAD9959" shape="rect" coords="132,168,254,192"/>
+<area href="class_c_device_analog_in.html" alt="CDeviceAnalogIn" shape="rect" coords="132,224,254,248"/>
+<area href="class_c_device_analog_out.html" alt="CDeviceAnalogOut" shape="rect" coords="132,280,254,304"/>
+<area href="class_c_device_digital_out.html" alt="CDeviceDigitalOut" shape="rect" coords="132,336,254,360"/>
+<area href="class_c_device_rack.html" alt="CDeviceRack" shape="rect" coords="132,392,254,416"/>
+<area href="class_c_device_sequencer.html" alt="CDeviceSequencer" shape="rect" coords="132,448,254,472"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -133,8 +135,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ab2a002fb6c828f07e8aebcd7dbf2cd00"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa3ec8544aad768caa0c45b53c8915e0f" id="r_aa3ec8544aad768caa0c45b53c8915e0f"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa3ec8544aad768caa0c45b53c8915e0f">~CDevice</a> ()=default</td></tr>
 <tr class="separator:aa3ec8544aad768caa0c45b53c8915e0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae264c8d243df334f353bae8efb99c614" id="r_ae264c8d243df334f353bae8efb99c614"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae264c8d243df334f353bae8efb99c614">NotifyError</a> (const std::string &amp;ErrorMessage)</td></tr>
-<tr class="separator:ae264c8d243df334f353bae8efb99c614"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30356c4a419393fe39c946209c966ab1" id="r_a30356c4a419393fe39c946209c966ab1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a30356c4a419393fe39c946209c966ab1">NotifyError</a> (const std::string &amp;ErrorMessage, bool dothrow=true)</td></tr>
+<tr class="separator:a30356c4a419393fe39c946209c966ab1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abad094121bde679b4a68858b1a0e1c32" id="r_abad094121bde679b4a68858b1a0e1c32"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abad094121bde679b4a68858b1a0e1c32">ClearError</a> ()</td></tr>
 <tr class="separator:abad094121bde679b4a68858b1a0e1c32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acaaa125920dec9e7f9f6b3d6a2225058" id="r_acaaa125920dec9e7f9f6b3d6a2225058"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acaaa125920dec9e7f9f6b3d6a2225058">ErrorOccured</a> ()</td></tr>
@@ -143,6 +145,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a8e4c8e7c256a149d08debc49e190b27e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed9d8c451787c53bf398292a57b20a99" id="r_aed9d8c451787c53bf398292a57b20a99"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aed9d8c451787c53bf398292a57b20a99">SetRegister</a> (const unsigned int &amp;SubAddress, const uint8_t *Data, const unsigned long &amp;DataLength_in_bit, const uint8_t &amp;StartBit)</td></tr>
 <tr class="separator:aed9d8c451787c53bf398292a57b20a99"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a8ccd405886c6bb81b886de3aa45c77" id="r_a6a8ccd405886c6bb81b886de3aa45c77"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6a8ccd405886c6bb81b886de3aa45c77">SelectRackSlot</a> (const uint8_t &amp;SlotNr)</td></tr>
+<tr class="separator:a6a8ccd405886c6bb81b886de3aa45c77"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7deca3acfd5322776186b07f597f9ec" id="r_ab7deca3acfd5322776186b07f597f9ec"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab7deca3acfd5322776186b07f597f9ec">ResetI2CMultiplexer</a> ()</td></tr>
+<tr class="separator:ab7deca3acfd5322776186b07f597f9ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a157c99b6b8d061e54ab2920a89711e6f" id="r_a157c99b6b8d061e54ab2920a89711e6f"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a157c99b6b8d061e54ab2920a89711e6f">SetVoltage</a> (double Voltage)</td></tr>
 <tr class="separator:a157c99b6b8d061e54ab2920a89711e6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a671cf9349a711df3da9e655dc2928a84" id="r_a671cf9349a711df3da9e655dc2928a84"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a671cf9349a711df3da9e655dc2928a84">SetDigitalOutput</a> (uint8_t BitNr, bool OnOff)</td></tr>
@@ -175,6 +181,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ae8204d9f4edb81f19af2ceaeee04d65e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f948d164b6177a355b9f47a39d3a758" id="r_a2f948d164b6177a355b9f47a39d3a758"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f948d164b6177a355b9f47a39d3a758">SetFrequencyTuningWord</a> (uint64_t FrequencyTuningWord)</td></tr>
 <tr class="separator:a2f948d164b6177a355b9f47a39d3a758"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd05aa88ded012804e579a19ada672b5" id="r_acd05aa88ded012804e579a19ada672b5"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acd05aa88ded012804e579a19ada672b5">Reset</a> ()</td></tr>
+<tr class="separator:acd05aa88ded012804e579a19ada672b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a537b4320f28a041f7c792cd8ee980489" id="r_a537b4320f28a041f7c792cd8ee980489"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a537b4320f28a041f7c792cd8ee980489">SetFrequency</a> (uint8_t channel, double Frequency)</td></tr>
 <tr class="separator:a537b4320f28a041f7c792cd8ee980489"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a20124b1ebdce4ad278e9441c33a25df6" id="r_a20124b1ebdce4ad278e9441c33a25df6"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a20124b1ebdce4ad278e9441c33a25df6">SetFrequencyTuningWord</a> (uint8_t channel, uint64_t FrequencyTuningWord)</td></tr>
@@ -185,6 +193,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:af08e809e1fe88612656716fef5055256"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5976661247c2d2a64fe6800be5ae0bc" id="r_ad5976661247c2d2a64fe6800be5ae0bc"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad5976661247c2d2a64fe6800be5ae0bc">SetAttenuation</a> (uint8_t channel, double Power)</td></tr>
 <tr class="separator:ad5976661247c2d2a64fe6800be5ae0bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8de0378397c02c4cfe7cfc0cb672cd4" id="r_ae8de0378397c02c4cfe7cfc0cb672cd4"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae8de0378397c02c4cfe7cfc0cb672cd4">SetIOUpdateEnabled</a> (bool _IOUpdateEnabled)</td></tr>
+<tr class="separator:ae8de0378397c02c4cfe7cfc0cb672cd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -290,8 +300,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="ae264c8d243df334f353bae8efb99c614" name="ae264c8d243df334f353bae8efb99c614"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae264c8d243df334f353bae8efb99c614">&#9670;&#160;</a></span>NotifyError()</h2>
+<a id="a30356c4a419393fe39c946209c966ab1" name="a30356c4a419393fe39c946209c966ab1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30356c4a419393fe39c946209c966ab1">&#9670;&#160;</a></span>NotifyError()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -299,10 +309,93 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">void CDevice::NotifyError </td>
           <td>(</td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>ErrorMessage</em></span></td><td>)</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>ErrorMessage</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>dothrow</em></span><span class="paramdefsep"> = </span><span class="paramdefval">true</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="acd05aa88ded012804e579a19ada672b5" name="acd05aa88ded012804e579a19ada672b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acd05aa88ded012804e579a19ada672b5">&#9670;&#160;</a></span>Reset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool CDevice::Reset </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reimplemented in <a class="el" href="class_c_device_a_d9959.html#a0425a4b692fbfa6dbc1473bfd7b483fe">CDeviceAD9959</a>.</p>
+
+</div>
+</div>
+<a id="ab7deca3acfd5322776186b07f597f9ec" name="ab7deca3acfd5322776186b07f597f9ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab7deca3acfd5322776186b07f597f9ec">&#9670;&#160;</a></span>ResetI2CMultiplexer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool CDevice::ResetI2CMultiplexer </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reimplemented in <a class="el" href="class_c_device_rack.html#ab31de98f93177cf21cc933415682a6c6">CDeviceRack</a>.</p>
+
+</div>
+</div>
+<a id="a6a8ccd405886c6bb81b886de3aa45c77" name="a6a8ccd405886c6bb81b886de3aa45c77"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a8ccd405886c6bb81b886de3aa45c77">&#9670;&#160;</a></span>SelectRackSlot()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool CDevice::SelectRackSlot </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t &amp;</td>          <td class="paramname"><span class="paramname"><em>SlotNr</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>
@@ -360,6 +453,8 @@ Public Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Reimplemented in <a class="el" href="class_c_device_a_d9959.html#aadb0eedf5b550a7db87cef00d187da1e">CDeviceAD9959</a>.</p>
 
 </div>
 </div>
@@ -475,6 +570,8 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Reimplemented in <a class="el" href="class_c_device_a_d9959.html#ad2d7d983412962ce224f470a678f76b2">CDeviceAD9959</a>.</p>
+
 </div>
 </div>
 <a id="a2f948d164b6177a355b9f47a39d3a758" name="a2f948d164b6177a355b9f47a39d3a758"></a>
@@ -530,6 +627,8 @@ Public Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Reimplemented in <a class="el" href="class_c_device_a_d9959.html#a3a49aaf7f9b1abbae04bf7cd9a442e2c">CDeviceAD9959</a>.</p>
 
 </div>
 </div>
@@ -587,6 +686,33 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="ae8de0378397c02c4cfe7cfc0cb672cd4" name="ae8de0378397c02c4cfe7cfc0cb672cd4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8de0378397c02c4cfe7cfc0cb672cd4">&#9670;&#160;</a></span>SetIOUpdateEnabled()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool CDevice::SetIOUpdateEnabled </td>
+          <td>(</td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>_IOUpdateEnabled</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reimplemented in <a class="el" href="class_c_device_a_d9959.html#a8214bfd8ae42b829825f76143eefa8ba">CDeviceAD9959</a>.</p>
+
+</div>
+</div>
 <a id="ac9f2d8bc4810171cc290332dcf5aea77" name="ac9f2d8bc4810171cc290332dcf5aea77"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac9f2d8bc4810171cc290332dcf5aea77">&#9670;&#160;</a></span>SetModulationFrequency()</h2>
 
@@ -640,6 +766,8 @@ Public Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Reimplemented in <a class="el" href="class_c_device_a_d9959.html#a024925938d2761b3a53f81dfd6fba4c4">CDeviceAD9959</a>.</p>
 
 </div>
 </div>
@@ -696,6 +824,8 @@ Public Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Reimplemented in <a class="el" href="class_c_device_a_d9959.html#a2517d5781f41ffafba2488f30435c007">CDeviceAD9959</a>.</p>
 
 </div>
 </div>
@@ -761,7 +891,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Reimplemented in <a class="el" href="class_c_device_a_d9854.html#a2e2d32ec666c785ddf8ecf9962b366f2">CDeviceAD9854</a>, and <a class="el" href="class_c_device_a_d9858.html#a09af716b1a931f8672170ea4da064cbd">CDeviceAD9858</a>.</p>
+<p>Reimplemented in <a class="el" href="class_c_device_a_d9854.html#a2e2d32ec666c785ddf8ecf9962b366f2">CDeviceAD9854</a>, <a class="el" href="class_c_device_a_d9858.html#a09af716b1a931f8672170ea4da064cbd">CDeviceAD9858</a>, and <a class="el" href="class_c_device_a_d9959.html#a38c7f5f07196c5ca71ef4aa839328672">CDeviceAD9959</a>.</p>
 
 </div>
 </div>
@@ -937,7 +1067,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Reimplemented in <a class="el" href="class_c_device_a_d9854.html#a6a486d971ed8e87633cbac5291e834fd">CDeviceAD9854</a>, <a class="el" href="class_c_device_a_d9858.html#a2361616defde18e74fdef9f6088bf57e">CDeviceAD9858</a>, <a class="el" href="class_c_device_analog_in12bit.html#afc45da4231e770e88b4964da2315c818">CDeviceAnalogIn12bit</a>, <a class="el" href="class_c_device_analog_out.html#ac54b73743d0fca56fcf4ebdc8e987d99">CDeviceAnalogOut</a>, <a class="el" href="class_c_device_digital_out.html#a26de6154f58f7bb9a0c78a7355f27370">CDeviceDigitalOut</a>, and <a class="el" href="class_c_device_sequencer.html#a0fae9f67b03f5360821e4aee8e0e5f14">CDeviceSequencer</a>.</p>
+<p>Reimplemented in <a class="el" href="class_c_device_a_d9854.html#a6a486d971ed8e87633cbac5291e834fd">CDeviceAD9854</a>, <a class="el" href="class_c_device_a_d9858.html#a2361616defde18e74fdef9f6088bf57e">CDeviceAD9858</a>, <a class="el" href="class_c_device_a_d9959.html#a46d8f4c3a336759c62d7752dc3030859">CDeviceAD9959</a>, <a class="el" href="class_c_device_analog_in.html#a1d85180fcdf32ab2c9411bfd8b838779">CDeviceAnalogIn</a>, <a class="el" href="class_c_device_analog_out.html#ac54b73743d0fca56fcf4ebdc8e987d99">CDeviceAnalogOut</a>, <a class="el" href="class_c_device_digital_out.html#a26de6154f58f7bb9a0c78a7355f27370">CDeviceDigitalOut</a>, <a class="el" href="class_c_device_rack.html#a6043ef13d9f7ae598bb814da2e776178">CDeviceRack</a>, and <a class="el" href="class_c_device_sequencer.html#a0fae9f67b03f5360821e4aee8e0e5f14">CDeviceSequencer</a>.</p>
 
 </div>
 </div>

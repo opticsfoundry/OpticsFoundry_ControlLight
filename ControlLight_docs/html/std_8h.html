@@ -104,24 +104,151 @@ $(function(){initNavTree('std_8h.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
+<a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">std.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;afxwin.h&gt;</code><br />
+<div class="textblock"><code>#include &lt;string&gt;</code><br />
+<code>#include &lt;chrono&gt;</code><br />
 </div>
 <p><a href="std_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a919356581583503a63f588aa15005c52" id="r_a919356581583503a63f588aa15005c52"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a919356581583503a63f588aa15005c52">_T</a></td></tr>
+<tr class="separator:a919356581583503a63f588aa15005c52"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a810bc029424753d56098fe6c8ccbe024" id="r_a810bc029424753d56098fe6c8ccbe024"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a810bc029424753d56098fe6c8ccbe024">STD_STRING</a></td></tr>
+<tr class="separator:a810bc029424753d56098fe6c8ccbe024"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a015c9405b3bc44f30ed23fefced52e99" id="r_a015c9405b3bc44f30ed23fefced52e99"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a015c9405b3bc44f30ed23fefced52e99">CStringToStdString</a>(str)</td></tr>
+<tr class="separator:a015c9405b3bc44f30ed23fefced52e99"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a0ef8d951d1ca5ab3cfaf7ab4c7a6fd80" id="r_a0ef8d951d1ca5ab3cfaf7ab4c7a6fd80"><td class="memItemLeft" align="right" valign="top">typedef std::chrono::high_resolution_clock&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ef8d951d1ca5ab3cfaf7ab4c7a6fd80">Clock</a></td></tr>
+<tr class="separator:a0ef8d951d1ca5ab3cfaf7ab4c7a6fd80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a299201b5ee8a24fadd5b2df449c47ccf" id="r_a299201b5ee8a24fadd5b2df449c47ccf"><td class="memItemLeft" align="right" valign="top">typedef Clock::duration&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a299201b5ee8a24fadd5b2df449c47ccf">Duration</a></td></tr>
+<tr class="separator:a299201b5ee8a24fadd5b2df449c47ccf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a232395c051c7d6ad1c46b894b66fcc4f" id="r_a232395c051c7d6ad1c46b894b66fcc4f"><td class="memItemLeft" align="right" valign="top">typedef std::chrono::time_point&lt; <a class="el" href="#a0ef8d951d1ca5ab3cfaf7ab4c7a6fd80">Clock</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a232395c051c7d6ad1c46b894b66fcc4f">Time</a></td></tr>
+<tr class="separator:a232395c051c7d6ad1c46b894b66fcc4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50e6b493e99e505e0cb7dfa5d8c4b36e" id="r_a50e6b493e99e505e0cb7dfa5d8c4b36e"><td class="memItemLeft" align="right" valign="top">typedef std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a50e6b493e99e505e0cb7dfa5d8c4b36e">CString</a></td></tr>
+<tr class="separator:a50e6b493e99e505e0cb7dfa5d8c4b36e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a9d4e8a9f53a0a08989bbe151c57367cc" id="r_a9d4e8a9f53a0a08989bbe151c57367cc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9d4e8a9f53a0a08989bbe151c57367cc">AddErrorMessageCString</a> (const CString &amp;lpszText)</td></tr>
-<tr class="separator:a9d4e8a9f53a0a08989bbe151c57367cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa752cb67c9e6f0f04da507b710d34e35" id="r_aa752cb67c9e6f0f04da507b710d34e35"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa752cb67c9e6f0f04da507b710d34e35">ControlMessageBox</a> (const CString &amp;lpszText, UINT nType=MB_OK, UINT nIDHelp=0)</td></tr>
-<tr class="separator:aa752cb67c9e6f0f04da507b710d34e35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46b349cc9aee28852a41762122a7a001" id="r_a46b349cc9aee28852a41762122a7a001"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a46b349cc9aee28852a41762122a7a001">milliSeconds</a> (const <a class="el" href="#a299201b5ee8a24fadd5b2df449c47ccf">Duration</a> &amp;d)</td></tr>
+<tr class="separator:a46b349cc9aee28852a41762122a7a001"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae71a8343422fa2968300f2da8cc8cfc" id="r_aae71a8343422fa2968300f2da8cc8cfc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae71a8343422fa2968300f2da8cc8cfc">ControlMessageBox</a> (const std::string &amp;text)</td></tr>
+<tr class="separator:aae71a8343422fa2968300f2da8cc8cfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="a919356581583503a63f588aa15005c52" name="a919356581583503a63f588aa15005c52"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a919356581583503a63f588aa15005c52">&#9670;&#160;</a></span>_T</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define _T</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a015c9405b3bc44f30ed23fefced52e99" name="a015c9405b3bc44f30ed23fefced52e99"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a015c9405b3bc44f30ed23fefced52e99">&#9670;&#160;</a></span>CStringToStdString</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define CStringToStdString</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>str</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">str</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a810bc029424753d56098fe6c8ccbe024" name="a810bc029424753d56098fe6c8ccbe024"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a810bc029424753d56098fe6c8ccbe024">&#9670;&#160;</a></span>STD_STRING</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define STD_STRING</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="a0ef8d951d1ca5ab3cfaf7ab4c7a6fd80" name="a0ef8d951d1ca5ab3cfaf7ab4c7a6fd80"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ef8d951d1ca5ab3cfaf7ab4c7a6fd80">&#9670;&#160;</a></span>Clock</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef std::chrono::high_resolution_clock <a class="el" href="#a0ef8d951d1ca5ab3cfaf7ab4c7a6fd80">Clock</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a50e6b493e99e505e0cb7dfa5d8c4b36e" name="a50e6b493e99e505e0cb7dfa5d8c4b36e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a50e6b493e99e505e0cb7dfa5d8c4b36e">&#9670;&#160;</a></span>CString</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef std::string <a class="el" href="#a50e6b493e99e505e0cb7dfa5d8c4b36e">CString</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a299201b5ee8a24fadd5b2df449c47ccf" name="a299201b5ee8a24fadd5b2df449c47ccf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a299201b5ee8a24fadd5b2df449c47ccf">&#9670;&#160;</a></span>Duration</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef Clock::duration <a class="el" href="#a299201b5ee8a24fadd5b2df449c47ccf">Duration</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a232395c051c7d6ad1c46b894b66fcc4f" name="a232395c051c7d6ad1c46b894b66fcc4f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a232395c051c7d6ad1c46b894b66fcc4f">&#9670;&#160;</a></span>Time</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef std::chrono::time_point&lt;<a class="el" href="#a0ef8d951d1ca5ab3cfaf7ab4c7a6fd80">Clock</a>&gt; <a class="el" href="#a232395c051c7d6ad1c46b894b66fcc4f">Time</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a9d4e8a9f53a0a08989bbe151c57367cc" name="a9d4e8a9f53a0a08989bbe151c57367cc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9d4e8a9f53a0a08989bbe151c57367cc">&#9670;&#160;</a></span>AddErrorMessageCString()</h2>
+<a id="aae71a8343422fa2968300f2da8cc8cfc" name="aae71a8343422fa2968300f2da8cc8cfc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae71a8343422fa2968300f2da8cc8cfc">&#9670;&#160;</a></span>ControlMessageBox()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -130,9 +257,9 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void AddErrorMessageCString </td>
+          <td class="memname">void ControlMessageBox </td>
           <td>(</td>
-          <td class="paramtype">const CString &amp;</td>          <td class="paramname"><span class="paramname"><em>lpszText</em></span></td><td>)</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>text</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -145,36 +272,19 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aa752cb67c9e6f0f04da507b710d34e35" name="aa752cb67c9e6f0f04da507b710d34e35"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa752cb67c9e6f0f04da507b710d34e35">&#9670;&#160;</a></span>ControlMessageBox()</h2>
+<a id="a46b349cc9aee28852a41762122a7a001" name="a46b349cc9aee28852a41762122a7a001"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46b349cc9aee28852a41762122a7a001">&#9670;&#160;</a></span>milliSeconds()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void ControlMessageBox </td>
+          <td class="memname">double milliSeconds </td>
           <td>(</td>
-          <td class="paramtype">const CString &amp;</td>          <td class="paramname"><span class="paramname"><em>lpszText</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">const <a class="el" href="#a299201b5ee8a24fadd5b2df449c47ccf">Duration</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>d</em></span></td><td>)</td>
           <td></td>
-          <td class="paramtype">UINT</td>          <td class="paramname"><span class="paramname"><em>nType</em></span><span class="paramdefsep"> = </span><span class="paramdefval">MB_OK</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">UINT</td>          <td class="paramname"><span class="paramname"><em>nIDHelp</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>&#160;)</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel extern">extern</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>

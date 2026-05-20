@@ -16,10 +16,9 @@ extern u32 Sequence_length_in_64bit_commands;
 
 extern u8 server_last_digital_data_transfer_successful();
 extern bool FireflyControl_start(unsigned long long start_pos, bool reset_input_buffer);
-extern void FireflyControl_wait_till_finished(u32 timeout);
-extern void FireflyControl_wait_till_finished(u32 timeout);
+extern bool FireflyControl_wait_till_finished(double timeout_in_sec);
 extern bool CheckInputMemBufferReadout(bool FinalTransfer);
-extern void WaitForInputBufferTransferEnd(double timeout_in_sec);
+extern bool WaitForInputBufferTransferEnd(double timeout_in_sec);
 extern void ResetInputMemBuffer();
 extern void FireflyFastLoop(struct netif *mynetif);
 extern void FireflyControlLoop();

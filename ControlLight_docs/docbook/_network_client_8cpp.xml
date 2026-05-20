@@ -2,7 +2,7 @@
 <section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__network_client_8cpp" xml:lang="en-US">
 <title>NetworkClient.cpp File Reference</title>
 <indexterm><primary>NetworkClient.cpp</primary></indexterm>
-<programlisting linenumbering="unnumbered">#include &lt;afxwin.h&gt;<?linebreak?>#include &quot;NetworkClient.h&quot;<?linebreak?>#include &quot;std.h&quot;<?linebreak?></programlisting><simplesect>
+<programlisting linenumbering="unnumbered">#include &quot;NetworkClient.h&quot;<?linebreak?>#include &quot;ControlAPI.h&quot;<?linebreak?>#include &quot;std.h&quot;<?linebreak?>#include &lt;thread&gt;<?linebreak?>#include &lt;format&gt;<?linebreak?></programlisting><simplesect>
     <title>Variables    </title>
         <itemizedlist>
             <listitem><para>constexpr unsigned int <link linkend="__network_client_8cpp_1ac341ec2f068f9ed1428573fd291fd45e">MaxReconnectAttempts</link> = 100</para>

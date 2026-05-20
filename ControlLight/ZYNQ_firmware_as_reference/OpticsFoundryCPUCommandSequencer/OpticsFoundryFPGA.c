@@ -18,14 +18,14 @@ void OpticsFoundryFPGA_ExecuteFPGASequenceFrom(unsigned long long buffer_pos) {
 	}
 }
 
-void OpticsFoundryFPGA_WaitTillSequenceFinished(unsigned long long timeout) {
-	FireflyControl_wait_till_finished(timeout);
+void OpticsFoundryFPGA_WaitTillSequenceFinished(unsigned long long timeout_in_sec) {
+	FireflyControl_wait_till_finished(timeout_in_sec);
 	if (DebugModeOn) xil_printf("Checking input buffer\n\r");
 	//only now we reset the DRAM input buffer, then we read it.
 	//this only works if the input length is shorter than the BRAM input buffer.
 	ResetInputMemBuffer();
 	CheckInputMemBufferReadout(/* LastTransfer */ TRUE);
-	WaitForInputBufferTransferEnd(1);
+	WaitForInputBufferTransferEnd(timeout_in_sec);
 }
 
 unsigned long OpticsFoundryFPGA_GetInputBufferValue(unsigned long buffer_pos) {
@@ -187,7 +187,7 @@ char* server_get_command(double timeout) {
 }
 
 void OpticsFoundryFPGA_ExecuteFPGASequenceFrom(unsigned long long buffer_pos) {}
-void OpticsFoundryFPGA_WaitTillSequenceFinished(unsigned long long timeout) {}
+void OpticsFoundryFPGA_WaitTillSequenceFinished(unsigned long long timeout_in_sec) {}
 unsigned long OpticsFoundryFPGA_GetInputBufferValue(unsigned long buffer_pos) { return 0; }
 void OpticsFoundryFPGA_SetAD9858FrequencyAtBufferPosition(unsigned long long buffer_pos, long long value) {}
 void OpticsFoundryFPGA_SetFPGABuffer(unsigned long long buffer_pos, unsigned long long value) {}

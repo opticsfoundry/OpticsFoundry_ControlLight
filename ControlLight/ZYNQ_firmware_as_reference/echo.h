@@ -12,5 +12,6 @@ extern unsigned char *server_get_command(long double timeout_in_seconds);
 
 u32_t server_read_u32();
 u8_t server_read_u8();
+double server_read_double();
 void server_write_u32(u32_t a_u32);
 bool server_wait_till_digital_tranfer_done();

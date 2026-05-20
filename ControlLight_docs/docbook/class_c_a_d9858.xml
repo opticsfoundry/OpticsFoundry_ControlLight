@@ -66,7 +66,7 @@
 </listitem>
             <listitem><para>uint8_t <link linkend="_class_c_a_d9858_1a55f5523942d4fed31db13a182a10b7af">SetWideClosedLoopModeChargePumpCurrent</link> (uint8_t aValue, bool GetValue=false)</para>
 </listitem>
-            <listitem><para>__int64 <link linkend="_class_c_a_d9858_1a28004d2ef237bac8cdf954cb3e7c9a96">SetDeltaFrequencyWord</link> (__int64 aDeltaFrequencyWord, bool GetValue=false)</para>
+            <listitem><para>int64_t <link linkend="_class_c_a_d9858_1a59afdacbcb2448fcdf98223276d5b413">SetDeltaFrequencyWord</link> (int64_t aDeltaFrequencyWord, bool GetValue=false)</para>
 </listitem>
             <listitem><para>unsigned long <link linkend="_class_c_a_d9858_1a824ca4beeb66e6fd97f5915765d1aae0">SetRampRateWord</link> (unsigned long aRampRateWord, bool GetValue=false)</para>
 </listitem>
@@ -80,13 +80,13 @@
 </listitem>
             <listitem><para>double <link linkend="_class_c_a_d9858_1a9c79047a7caf95dc6523380c1d8504e2">SetFrequency3</link> (double Frequency, bool GetValue=false)</para>
 </listitem>
-            <listitem><para>__int64 <link linkend="_class_c_a_d9858_1a8b542d8d51863a395b71553ead11983d">SetFrequencyTuningWord0</link> (const uint64_t &amp;FrequencyTuningWord, bool GetValue=false)</para>
+            <listitem><para>int64_t <link linkend="_class_c_a_d9858_1a75680424193966613b727c6d1d9c9bef">SetFrequencyTuningWord0</link> (const uint64_t &amp;FrequencyTuningWord, bool GetValue=false)</para>
 </listitem>
-            <listitem><para>__int64 <link linkend="_class_c_a_d9858_1a993e6832e456f5f4a8ecfd2c5890485a">SetFrequencyTuningWord1</link> (const uint64_t &amp;FrequencyTuningWord, bool GetValue=false)</para>
+            <listitem><para>int64_t <link linkend="_class_c_a_d9858_1aa2bdca0ecd00b4722857d3cf261a3803">SetFrequencyTuningWord1</link> (const uint64_t &amp;FrequencyTuningWord, bool GetValue=false)</para>
 </listitem>
-            <listitem><para>__int64 <link linkend="_class_c_a_d9858_1ae6ce70b9312cf51b413985e8879ed905">SetFrequencyTuningWord2</link> (const uint64_t &amp;FrequencyTuningWord, bool GetValue=false)</para>
+            <listitem><para>int64_t <link linkend="_class_c_a_d9858_1abdec734960f2e7104d1e5d9ca8083549">SetFrequencyTuningWord2</link> (const uint64_t &amp;FrequencyTuningWord, bool GetValue=false)</para>
 </listitem>
-            <listitem><para>__int64 <link linkend="_class_c_a_d9858_1acede500c7f0ac91c92d65925caa81aed">SetFrequencyTuningWord3</link> (const uint64_t &amp;FrequencyTuningWord, bool GetValue=false)</para>
+            <listitem><para>int64_t <link linkend="_class_c_a_d9858_1aaf3f21d14632592edcc4f5954e565002">SetFrequencyTuningWord3</link> (const uint64_t &amp;FrequencyTuningWord, bool GetValue=false)</para>
 </listitem>
             <listitem><para>unsigned short <link linkend="_class_c_a_d9858_1a276564fa5abd92dfec7ac5b73536893f">SetPhaseOffsetWord0</link> (unsigned short aPhaseOffsetWord, bool GetValue=false)</para>
 </listitem>
@@ -217,11 +217,11 @@
 <indexterm><primary>CAD9858</primary><secondary>SetClearPhaseAccumulator</secondary></indexterm>
 <para><computeroutput>bool CAD9858::SetClearPhaseAccumulator (bool aValue, bool GetValue = <computeroutput>false</computeroutput>
 )</computeroutput></para></section>
-<anchor xml:id="_class_c_a_d9858_1a28004d2ef237bac8cdf954cb3e7c9a96"/><section>
+<anchor xml:id="_class_c_a_d9858_1a59afdacbcb2448fcdf98223276d5b413"/><section>
     <title>SetDeltaFrequencyWord()</title>
 <indexterm><primary>SetDeltaFrequencyWord</primary><secondary>CAD9858</secondary></indexterm>
 <indexterm><primary>CAD9858</primary><secondary>SetDeltaFrequencyWord</secondary></indexterm>
-<para><computeroutput>__int64 CAD9858::SetDeltaFrequencyWord (__int64 aDeltaFrequencyWord, bool GetValue = <computeroutput>false</computeroutput>
+<para><computeroutput>int64_t CAD9858::SetDeltaFrequencyWord (int64_t aDeltaFrequencyWord, bool GetValue = <computeroutput>false</computeroutput>
 )</computeroutput></para></section>
 <anchor xml:id="_class_c_a_d9858_1a6277c21701358b57832185a867e94eee"/><section>
     <title>SetEnableSineOutput()</title>
@@ -277,29 +277,29 @@
 <indexterm><primary>CAD9858</primary><secondary>SetFrequencySweepEnable</secondary></indexterm>
 <para><computeroutput>bool CAD9858::SetFrequencySweepEnable (bool aValue, bool GetValue = <computeroutput>false</computeroutput>
 )</computeroutput></para></section>
-<anchor xml:id="_class_c_a_d9858_1a8b542d8d51863a395b71553ead11983d"/><section>
+<anchor xml:id="_class_c_a_d9858_1a75680424193966613b727c6d1d9c9bef"/><section>
     <title>SetFrequencyTuningWord0()</title>
 <indexterm><primary>SetFrequencyTuningWord0</primary><secondary>CAD9858</secondary></indexterm>
 <indexterm><primary>CAD9858</primary><secondary>SetFrequencyTuningWord0</secondary></indexterm>
-<para><computeroutput>__int64 CAD9858::SetFrequencyTuningWord0 (const uint64_t &amp; FrequencyTuningWord, bool GetValue = <computeroutput>false</computeroutput>
+<para><computeroutput>int64_t CAD9858::SetFrequencyTuningWord0 (const uint64_t &amp; FrequencyTuningWord, bool GetValue = <computeroutput>false</computeroutput>
 )</computeroutput></para></section>
-<anchor xml:id="_class_c_a_d9858_1a993e6832e456f5f4a8ecfd2c5890485a"/><section>
+<anchor xml:id="_class_c_a_d9858_1aa2bdca0ecd00b4722857d3cf261a3803"/><section>
     <title>SetFrequencyTuningWord1()</title>
 <indexterm><primary>SetFrequencyTuningWord1</primary><secondary>CAD9858</secondary></indexterm>
 <indexterm><primary>CAD9858</primary><secondary>SetFrequencyTuningWord1</secondary></indexterm>
-<para><computeroutput>__int64 CAD9858::SetFrequencyTuningWord1 (const uint64_t &amp; FrequencyTuningWord, bool GetValue = <computeroutput>false</computeroutput>
+<para><computeroutput>int64_t CAD9858::SetFrequencyTuningWord1 (const uint64_t &amp; FrequencyTuningWord, bool GetValue = <computeroutput>false</computeroutput>
 )</computeroutput></para></section>
-<anchor xml:id="_class_c_a_d9858_1ae6ce70b9312cf51b413985e8879ed905"/><section>
+<anchor xml:id="_class_c_a_d9858_1abdec734960f2e7104d1e5d9ca8083549"/><section>
     <title>SetFrequencyTuningWord2()</title>
 <indexterm><primary>SetFrequencyTuningWord2</primary><secondary>CAD9858</secondary></indexterm>
 <indexterm><primary>CAD9858</primary><secondary>SetFrequencyTuningWord2</secondary></indexterm>
-<para><computeroutput>__int64 CAD9858::SetFrequencyTuningWord2 (const uint64_t &amp; FrequencyTuningWord, bool GetValue = <computeroutput>false</computeroutput>
+<para><computeroutput>int64_t CAD9858::SetFrequencyTuningWord2 (const uint64_t &amp; FrequencyTuningWord, bool GetValue = <computeroutput>false</computeroutput>
 )</computeroutput></para></section>
-<anchor xml:id="_class_c_a_d9858_1acede500c7f0ac91c92d65925caa81aed"/><section>
+<anchor xml:id="_class_c_a_d9858_1aaf3f21d14632592edcc4f5954e565002"/><section>
     <title>SetFrequencyTuningWord3()</title>
 <indexterm><primary>SetFrequencyTuningWord3</primary><secondary>CAD9858</secondary></indexterm>
 <indexterm><primary>CAD9858</primary><secondary>SetFrequencyTuningWord3</secondary></indexterm>
-<para><computeroutput>__int64 CAD9858::SetFrequencyTuningWord3 (const uint64_t &amp; FrequencyTuningWord, bool GetValue = <computeroutput>false</computeroutput>
+<para><computeroutput>int64_t CAD9858::SetFrequencyTuningWord3 (const uint64_t &amp; FrequencyTuningWord, bool GetValue = <computeroutput>false</computeroutput>
 )</computeroutput></para></section>
 <anchor xml:id="_class_c_a_d9858_1af65c76a5d99e50188c0a1160049b0de9"/><section>
     <title>SetFrequencyWritePrecision()</title>

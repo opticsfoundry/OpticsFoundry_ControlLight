@@ -144,7 +144,7 @@ unsigned char *server_get_command(long double timeout_in_seconds) {
 u32_t server_read_u32() {
 	unsigned char *u32_as_string = server_get_command(/*timeout*/10.0);
 	if (u32_as_string == NULL) {
-		if (DebugModeOn) xil_printf("server_read_u32 : no data size received\r\n");
+		if (DebugModeOn) xil_printf("server_read_u32 : no data received\r\n");
 		return 0;
 	}
 	return atoi((char*)u32_as_string);
@@ -153,10 +153,19 @@ u32_t server_read_u32() {
 u8_t server_read_u8() {
 	unsigned char *u8_as_string = server_get_command(/*timeout*/10.0);
 	if (u8_as_string == NULL) {
-		if (DebugModeOn) xil_printf("server_read_u32 : no data size received\r\n");
+		if (DebugModeOn) xil_printf("server_read_u32 : no data received\r\n");
 		return 0;
 	}
 	return atoi((char*)u8_as_string);
+}
+
+double server_read_double() {
+	unsigned char *double_as_string = server_get_command(/*timeout*/10.0);
+	if (double_as_string == NULL) {
+		if (DebugModeOn) xil_printf("server_read_double : no data received\r\n");
+		return 0;
+	}
+	return atof((char*)double_as_string);
 }
 
 /*unsigned char *server_get_command(int timeout) {
@@ -258,11 +267,11 @@ err_t recv_callback(void *arg, struct tcp_pcb *tpcb,
 		if (plen > (MaxCommandLength - 1 - WritePositionInNextEmptyCommandBuffer)) {
 			if (DebugModeOn) xil_printf("server_recv_callback : command too long for command buffer (received len = %d > %d, nextCmd= %d )\r\n", WritePositionInNextEmptyCommandBuffer + plen, MaxCommandLength - 1, NextEmptyCommandBufferNumber );
 			//if (DebugModeOn) {
-		//		if (plen<100) {
-	//				((u8*)p->payload)[plen-1] = 0; 
-	//				xil_printf("received = %s\r\n",((u8*)p->payload));
-	//			}
-	//		}
+			//	if (plen<100) {
+			//		((u8*)p->payload)[plen-1] = 0; 
+			//		xil_printf("received = %s\r\n",((u8*)p->payload));
+			//	}
+			//}
 			pbuf_free(p);
 			WritePositionInNextEmptyCommandBuffer = 0;
 			return ERR_OK; //we just eat the bad data and hope for better times. If we would send ERR_MEM back, we would just repeatedly be presented with same bad data
@@ -274,22 +283,24 @@ err_t recv_callback(void *arg, struct tcp_pcb *tpcb,
 			//} else
 			if (((u8*)p->payload)[n] == '\n') {
 				CommandStartDetected = 0;
-				if (WritePositionInNextEmptyCommandBuffer > 0) {
-					CommandBuffer[NextEmptyCommandBufferNumber*MaxCommandLength + WritePositionInNextEmptyCommandBuffer] = 0; //terminate string with 0
-					NumberCommandsInBuffer++;
-					if (DebugModeOn) xil_printf("server_recv_callback: received %s\r\n",(char *)(&(CommandBuffer[NextEmptyCommandBufferNumber*MaxCommandLength])));
-					NextEmptyCommandBufferNumber++;
-					if (NextCommandToDo == NextEmptyCommandBufferNumber) {
-						if (DebugModeOn) xil_printf("server_recv_callback : too many untreated commands in command buffer\r\n");
-						pbuf_free(p);
-						//return ERR_OK; //we just eat the bad data and hope for better times. If we would send ERR_MEM back, we would just repeatedly be presented with same bad data
-						return ERR_MEM; //we keep the data in buffer, i.e. we'll get it again, hopefully after some commands have been treated and there is space in buffer
-					}
-					if (NextEmptyCommandBufferNumber >= MaxCommandBuffer){
-						NextEmptyCommandBufferNumber = 0;
-					}
-					WritePositionInNextEmptyCommandBuffer = 0;
+				//if (WritePositionInNextEmptyCommandBuffer > 0) { //the user might send an empty string by purpose
+				if (DebugModeOn) xil_printf("server_recv_callback : ASCII stored, length %d \r\n", WritePositionInNextEmptyCommandBuffer);
+				CommandBuffer[NextEmptyCommandBufferNumber*MaxCommandLength + WritePositionInNextEmptyCommandBuffer] = 0; //terminate string with 0
+				NumberCommandsInBuffer++;
+				if (DebugModeOn) xil_printf("server_recv_callback: received %s\r\n",(char *)(&(CommandBuffer[NextEmptyCommandBufferNumber*MaxCommandLength])));
+				NextEmptyCommandBufferNumber++;
+				if (NextCommandToDo == NextEmptyCommandBufferNumber) {
+					if (DebugModeOn) xil_printf("server_recv_callback : too many untreated commands in command buffer\r\n");
+					pbuf_free(p);
+					//return ERR_OK; //we just eat the bad data and hope for better times. If we would send ERR_MEM back, we would just repeatedly be presented with same bad data
+					return ERR_MEM; //we keep the data in buffer, i.e. we'll get it again, hopefully after some commands have been treated and there is space in buffer
 				}
+				if (NextEmptyCommandBufferNumber >= MaxCommandBuffer){
+					NextEmptyCommandBufferNumber = 0;
+				}
+				WritePositionInNextEmptyCommandBuffer = 0;
+				if (n<(plen-1)) CommandStartDetected = 1;
+				//}
 			} else if (CommandStartDetected) {
 				if (((u8*)p->payload)[n] != '\r') {
 					CommandBuffer[NextEmptyCommandBufferNumber*MaxCommandLength + WritePositionInNextEmptyCommandBuffer] = ((u8*)p->payload)[n];
@@ -342,6 +353,7 @@ err_t server_send_binary(char* buf, u32 length, bool DebugModeOn) { //if *comman
 	}*/
 	//if length > tcp_sndbuf(last_tpcb) we need to split the data into multiple packets
 	if (DebugModeOn) xil_printf("server_send_binary: need to send %u bytes\r\n",length);
+	if (length == 0) return ERR_OK;
 	u32 n = 0;
 	err_t err;
 	while (n < length) {
@@ -381,7 +393,7 @@ void server_set_binary_mode(u8* a_buffer, u32 a_length, u32 a_expected_length) {
 	}
 	ReveiveMode = 1;
 	Digital_data_successfully_received = 0;
-	//server_send_ascii("Ready\n"); This Ready should be needed to avoid receiving binary data in ASCII mode. However, it works without and it doesn't work if I put it. FS 2025 04 02
+	server_send_ascii("Ready\n"); //This Ready should be needed to avoid receiving binary data in ASCII mode. However, it works without and it doesn't work if I put it. FS 2025 04 02
 }
 
 static int echo_connection = 1;

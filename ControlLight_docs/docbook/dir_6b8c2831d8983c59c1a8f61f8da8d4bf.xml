@@ -13,6 +13,14 @@
 </listitem>
             <listitem><para>file <link linkend="__a_d9858_8h">AD9858.h</link></para>
 </listitem>
+            <listitem><para>file <link linkend="__a_d9959_8cpp">AD9959.cpp</link></para>
+</listitem>
+            <listitem><para>file <link linkend="__a_d9959_8h">AD9959.h</link></para>
+</listitem>
+            <listitem><para>file <link linkend="__auto_config_8cpp">AutoConfig.cpp</link></para>
+</listitem>
+            <listitem><para>file <link linkend="__auto_config_8h">AutoConfig.h</link></para>
+</listitem>
             <listitem><para>file <link linkend="__c_device_8cpp">CDevice.cpp</link></para>
 </listitem>
             <listitem><para>file <link linkend="__c_device_8h">CDevice.h</link></para>
@@ -24,6 +32,10 @@
             <listitem><para>file <link linkend="__c_device_a_d9858_8cpp">CDeviceAD9858.cpp</link></para>
 </listitem>
             <listitem><para>file <link linkend="__c_device_a_d9858_8h">CDeviceAD9858.h</link></para>
+</listitem>
+            <listitem><para>file <link linkend="__c_device_a_d9959_8cpp">CDeviceAD9959.cpp</link></para>
+</listitem>
+            <listitem><para>file <link linkend="__c_device_a_d9959_8h">CDeviceAD9959.h</link></para>
 </listitem>
             <listitem><para>file <link linkend="__c_device_analog_in_8cpp">CDeviceAnalogIn.cpp</link></para>
 </listitem>
@@ -37,9 +49,17 @@
 </listitem>
             <listitem><para>file <link linkend="__c_device_digital_out_8h">CDeviceDigitalOut.h</link></para>
 </listitem>
+            <listitem><para>file <link linkend="__c_device_rack_8cpp">CDeviceRack.cpp</link></para>
+</listitem>
+            <listitem><para>file <link linkend="__c_device_rack_8h">CDeviceRack.h</link></para>
+</listitem>
             <listitem><para>file <link linkend="__c_device_sequencer_8cpp">CDeviceSequencer.cpp</link></para>
 </listitem>
             <listitem><para>file <link linkend="__c_device_sequencer_8h">CDeviceSequencer.h</link></para>
+</listitem>
+            <listitem><para>file <link linkend="__config_creator_8cpp">ConfigCreator.cpp</link></para>
+</listitem>
+            <listitem><para>file <link linkend="__config_creator_8h">ConfigCreator.h</link></para>
 </listitem>
             <listitem><para>file <link linkend="__control_a_p_i_8cpp">ControlAPI.cpp</link></para>
 </listitem>
@@ -50,6 +70,14 @@
             <listitem><para>file <link linkend="__ethernet_controller_firefly_8cpp">EthernetControllerFirefly.cpp</link></para>
 </listitem>
             <listitem><para>file <link linkend="__ethernet_controller_firefly_8h">EthernetControllerFirefly.h</link></para>
+</listitem>
+            <listitem><para>file <link linkend="__multi_write_device_8cpp">MultiWriteDevice.cpp</link></para>
+</listitem>
+            <listitem><para>file <link linkend="__multi_write_device_8h">MultiWriteDevice.h</link></para>
+</listitem>
+            <listitem><para>file <link linkend="__multi_write_device_s_p_i_8cpp">MultiWriteDeviceSPI.cpp</link></para>
+</listitem>
+            <listitem><para>file <link linkend="__multi_write_device_s_p_i_8h">MultiWriteDeviceSPI.h</link></para>
 </listitem>
             <listitem><para>file <link linkend="_network_8cpp">network.cpp</link></para>
 </listitem>
@@ -65,4 +93,9 @@
 </listitem>
         </itemizedlist>
 </simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>The Visual Studio 2022 C++ code for the ControlLightAPI, a simple interface to OpticsFoundry&apos;s control system. </para>
+</section>
 </section>

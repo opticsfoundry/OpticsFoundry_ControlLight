@@ -25,6 +25,7 @@
 var NAVTREE =
 [
   [ "ControlLight", "index.html", [
+    [ "Todo List", "todo.html", null ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
@@ -39,9 +40,11 @@ var NAVTREE =
       [ "File List", "files.html", "files_dup" ],
       [ "File Members", "globals.html", [
         [ "All", "globals.html", "globals_dup" ],
-        [ "Functions", "globals_func.html", null ],
+        [ "Functions", "globals_func.html", "globals_func" ],
         [ "Variables", "globals_vars.html", null ],
         [ "Typedefs", "globals_type.html", null ],
+        [ "Enumerations", "globals_enum.html", null ],
+        [ "Enumerator", "globals_eval.html", null ],
         [ "Macros", "globals_defs.html", null ]
       ] ]
     ] ]
@@ -51,8 +54,10 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_a_d9852_8cpp.html",
-"_ethernet_controller_firefly_8cpp.html#ae388c3553de68a8bc8d84cfd6221db98",
-"class_c_device_sequencer.html#a5a451f8a11a1da169fff225b927c392d"
+"_control_a_p_i_8cpp.html#ae2c08197dc05d00f3f24e121019cbe6c",
+"class_c_a_d9852.html#a4e117f8ea48803a197314f07229db824",
+"class_c_device_a_d9959.html#a8214bfd8ae42b829825f76143eefa8ba",
+"functions_m.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

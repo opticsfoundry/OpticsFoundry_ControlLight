@@ -5,7 +5,7 @@
 Go to the documentation of this file.<programlisting linenumbering="unnumbered">1 <emphasis role="preprocessor">#pragma&#32;once</emphasis>
 2 
 3 <emphasis role="preprocessor">#include&#32;&quot;<link linkend="__c_device_8h">CDevice.h</link>&quot;</emphasis>
-4 
+4 <emphasis role="preprocessor">#include&#32;&lt;cmath&gt;</emphasis>
 5 
 6 <emphasis role="keyword">class&#32;</emphasis><link linkend="_class_c_a_d9852">CAD9852</link>;
 7 <emphasis role="keyword">class&#32;</emphasis><link linkend="_class_c_device_a_d9854_1abc010cd2ebc813342f3b2841359ffa05">CDeviceAD9854</link>&#32;:&#32;<emphasis role="keyword">public</emphasis>&#32;<link linkend="_class_c_device_1ab2a002fb6c828f07e8aebcd7dbf2cd00">CDevice</link>

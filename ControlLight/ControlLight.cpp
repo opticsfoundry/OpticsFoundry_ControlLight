@@ -601,7 +601,7 @@ void DemoSequence(unsigned long CycleNumber) {
 
 	constexpr uint8_t DigOutAddr = DigOut_0_addr;
 	constexpr uint8_t AnaOutAddr = AnaOut_0_addr;
-	constexpr uint8_t AD9959Addr = AD9959_0_addr;
+	constexpr uint8_t AD9959Addr = AD9959_1_addr;
 
 
 	CLA_StartAssemblingSequence();
@@ -637,15 +637,15 @@ void DemoSequence(unsigned long CycleNumber) {
 	
 	//Test reliability of select rack slot
 	for (int j = 1; j < 5; j++) {
-		CLA_SelectRackSlot(SequencerNr, /*RackNr*/ 0, 5);
+		CLA_SelectRackSlot(SequencerNr, /*RackNr*/ 0, 9);
 		CLA_Wait_ms(50);
 		uint8_t r = 16*(rand()/RAND_MAX);
-		if (r == 5) r = 4;
+		if (r == 9) r = 4;
 		CLA_SelectRackSlot(SequencerNr, /*RackNr*/ 0, r);
 		CLA_Wait_ms(50);
 	}
 	
-	CLA_SelectRackSlot(SequencerNr, /*RackNr*/ 0, 5);
+	CLA_SelectRackSlot(SequencerNr, /*RackNr*/ 0, 9);
 
 	//Test analogIn, pedestrian way
 	//start data acquisition. This is an example for a command for which we didn't yet provide a convenience function in the DLL. 

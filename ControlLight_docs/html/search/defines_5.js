@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['load_5fconfig_5fvalue_0',['LOAD_CONFIG_VALUE',['../_control_a_p_i_8cpp.html#ae2c08197dc05d00f3f24e121019cbe6c',1,'ControlAPI.cpp']]],
-  ['load_5fvalue_1',['LOAD_VALUE',['../_control_a_p_i_8cpp.html#aed6156c5d13eb583b60f20b2ce02b28e',1,'ControlAPI.cpp']]]
+  ['fr1_0',['FR1',['../_a_d9959_8cpp.html#ac3653b62fc8bcbf459d8eb100c2f0d97',1,'AD9959.cpp']]]
 ];

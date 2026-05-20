@@ -22,7 +22,7 @@
 </listitem>
             <listitem><para>void <link linkend="_class_c_a_d9852_1a2b51e6718b37b0ea1dae8139e3f453ec">UpdateFrequencyValues</link> ()</para>
 </listitem>
-            <listitem><para>__int64 <link linkend="_class_c_a_d9852_1aa81a373460a0299b44ae05945bd2f4c7">SetDeltaFrequencyWord</link> (__int64 aDeltaFrequencyWord, bool GetValue=false)</para>
+            <listitem><para>int64_t <link linkend="_class_c_a_d9852_1af41e9ef3f6b568c7286b048f0a39b067">SetDeltaFrequencyWord</link> (int64_t aDeltaFrequencyWord, bool GetValue=false)</para>
 </listitem>
             <listitem><para>unsigned long <link linkend="_class_c_a_d9852_1a1040e7bcc8058afd2aab87a6ddbc0073">SetUpdateClock</link> (unsigned long aUpdateClock, bool GetValue=false)</para>
 </listitem>
@@ -131,7 +131,7 @@
 </listitem>
             <listitem><para>bool <link linkend="_class_c_a_d9852_1a01387f0499899727bd7f2977a02b3ca3">UpdateRegistersModeAutomatic</link></para>
 </listitem>
-            <listitem><para>__int64 <link linkend="_class_c_a_d9852_1a3c18792c7ef4dcfe7e2ac91d8890e2ad">AktValueContents</link> [<link linkend="__a_d9852_8h_1aee5b08b57ce3017953dd926bd090643f">AD9852MaxValues</link>]</para>
+            <listitem><para>int64_t <link linkend="_class_c_a_d9852_1afa71ddccb068c741598b0a41c27abad6">AktValueContents</link> [<link linkend="__a_d9852_8h_1aee5b08b57ce3017953dd926bd090643f">AD9852MaxValues</link>]</para>
 </listitem>
             <listitem><para>double <link linkend="_class_c_a_d9852_1a0e71f85ee5618fe5709ad2d1a88e06ae">ClockSpeed</link></para>
 </listitem>
@@ -258,11 +258,11 @@
 <indexterm><primary>CAD9852</primary><secondary>SetDACPowerDown</secondary></indexterm>
 <para><computeroutput>bool CAD9852::SetDACPowerDown (bool aPowerDown, bool GetValue = <computeroutput>false</computeroutput>
 )</computeroutput></para></section>
-<anchor xml:id="_class_c_a_d9852_1aa81a373460a0299b44ae05945bd2f4c7"/><section>
+<anchor xml:id="_class_c_a_d9852_1af41e9ef3f6b568c7286b048f0a39b067"/><section>
     <title>SetDeltaFrequencyWord()</title>
 <indexterm><primary>SetDeltaFrequencyWord</primary><secondary>CAD9852</secondary></indexterm>
 <indexterm><primary>CAD9852</primary><secondary>SetDeltaFrequencyWord</secondary></indexterm>
-<para><computeroutput>__int64 CAD9852::SetDeltaFrequencyWord (__int64 aDeltaFrequencyWord, bool GetValue = <computeroutput>false</computeroutput>
+<para><computeroutput>int64_t CAD9852::SetDeltaFrequencyWord (int64_t aDeltaFrequencyWord, bool GetValue = <computeroutput>false</computeroutput>
 )</computeroutput></para></section>
 <anchor xml:id="_class_c_a_d9852_1ad4fb46a9d0532317f81d58d8da5e13b3"/><section>
     <title>SetDigitalPowerDown()</title>
@@ -482,11 +482,11 @@
 </section>
 <section>
 <title>Member Data Documentation</title>
-<anchor xml:id="_class_c_a_d9852_1a3c18792c7ef4dcfe7e2ac91d8890e2ad"/><section>
+<anchor xml:id="_class_c_a_d9852_1afa71ddccb068c741598b0a41c27abad6"/><section>
     <title>AktValueContents</title>
 <indexterm><primary>AktValueContents</primary><secondary>CAD9852</secondary></indexterm>
 <indexterm><primary>CAD9852</primary><secondary>AktValueContents</secondary></indexterm>
-<para><computeroutput>__int64 CAD9852::AktValueContents[<link linkend="__a_d9852_8h_1aee5b08b57ce3017953dd926bd090643f">AD9852MaxValues</link>]</computeroutput></para></section>
+<para><computeroutput>int64_t CAD9852::AktValueContents[<link linkend="__a_d9852_8h_1aee5b08b57ce3017953dd926bd090643f">AD9852MaxValues</link>]</computeroutput></para></section>
 <anchor xml:id="_class_c_a_d9852_1a0227ccb509332255a5cb6dac8ac340f5"/><section>
     <title>BaseAddress</title>
 <indexterm><primary>BaseAddress</primary><secondary>CAD9852</secondary></indexterm>

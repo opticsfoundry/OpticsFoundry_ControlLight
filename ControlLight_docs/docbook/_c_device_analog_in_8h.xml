@@ -5,7 +5,7 @@
 <programlisting linenumbering="unnumbered">#include &quot;CDevice.h&quot;<?linebreak?></programlisting><simplesect>
     <title>Classes    </title>
         <itemizedlist>
-            <listitem><para>class <link linkend="_class_c_device_analog_in12bit">CDeviceAnalogIn12bit</link></para>
+            <listitem><para>class <link linkend="_class_c_device_analog_in">CDeviceAnalogIn</link></para>
 </listitem>
         </itemizedlist>
 </simplesect>

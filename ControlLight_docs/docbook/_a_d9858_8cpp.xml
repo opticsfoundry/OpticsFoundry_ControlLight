@@ -2,13 +2,9 @@
 <section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__a_d9858_8cpp" xml:lang="en-US">
 <title>AD9858.cpp File Reference</title>
 <indexterm><primary>AD9858.cpp</primary></indexterm>
-<programlisting linenumbering="unnumbered">#include &quot;std.h&quot;<?linebreak?>#include &quot;control.h&quot;<?linebreak?>#include &quot;AD9858.h&quot;<?linebreak?>#include &quot;ControlAPI.h&quot;<?linebreak?>#include &quot;CDeviceSequencer.h&quot;<?linebreak?></programlisting><simplesect>
+<programlisting linenumbering="unnumbered">#include &quot;AD9858.h&quot;<?linebreak?>#include &quot;CDeviceSequencer.h&quot;<?linebreak?>#include &lt;string&gt;<?linebreak?>#include &lt;format&gt;<?linebreak?></programlisting><simplesect>
     <title>Variables    </title>
         <itemizedlist>
-            <listitem><para>constexpr uint8_t <link linkend="__a_d9858_8cpp_1aa592773d77686d8f7f7b1c49a0622515">BusBitShift</link> = 0</para>
-</listitem>
-            <listitem><para>constexpr bool <link linkend="__a_d9858_8cpp_1ae608804064166baae021c75b4bd3772b">ForceWriting</link> = false</para>
-</listitem>
             <listitem><para>unsigned long <link linkend="__a_d9858_8cpp_1a85b4d213de6fffcb930aec37cfa773db">AD9858MasterResetValueContents</link> [<link linkend="__a_d9858_8h_1a89debb04b626a7627663f9e047ecad53">AD9858MaxValues</link>] ={0x18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}</para>
 </listitem>
             <listitem><para>uint8_t <link linkend="__a_d9858_8cpp_1acd8b2dc0b624c3942a2705b260ad1bc5">AD9858ValueLength</link> [<link linkend="__a_d9858_8h_1a89debb04b626a7627663f9e047ecad53">AD9858MaxValues</link>] = { 1, 1, 1, 1, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 1, 1, 1, 1}</para>
@@ -41,15 +37,5 @@
 <indexterm><primary>AD9858ValueNotInBusBuffer</primary><secondary>AD9858.cpp</secondary></indexterm>
 <indexterm><primary>AD9858.cpp</primary><secondary>AD9858ValueNotInBusBuffer</secondary></indexterm>
 <para><computeroutput>const unsigned long AD9858ValueNotInBusBuffer =99999</computeroutput></para></section>
-<anchor xml:id="__a_d9858_8cpp_1aa592773d77686d8f7f7b1c49a0622515"/><section>
-    <title>BusBitShift</title>
-<indexterm><primary>BusBitShift</primary><secondary>AD9858.cpp</secondary></indexterm>
-<indexterm><primary>AD9858.cpp</primary><secondary>BusBitShift</secondary></indexterm>
-<para><computeroutput>uint8_t BusBitShift = 0<computeroutput>[constexpr]</computeroutput></computeroutput></para></section>
-<anchor xml:id="__a_d9858_8cpp_1ae608804064166baae021c75b4bd3772b"/><section>
-    <title>ForceWriting</title>
-<indexterm><primary>ForceWriting</primary><secondary>AD9858.cpp</secondary></indexterm>
-<indexterm><primary>AD9858.cpp</primary><secondary>ForceWriting</secondary></indexterm>
-<para><computeroutput>bool ForceWriting = false<computeroutput>[constexpr]</computeroutput></computeroutput></para></section>
 </section>
 </section>

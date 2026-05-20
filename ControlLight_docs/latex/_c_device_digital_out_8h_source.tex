@@ -25,7 +25,7 @@
 \DoxyCodeLine{00021\ \ \ \ \ \textcolor{comment}{//virtual\ bool\ Configure();}}
 \DoxyCodeLine{00022\ }
 \DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_c_device_digital_out_aaf2439fcb1ffaf981aa0b6b8d8fa390a}{SetDigitalOutput}}(uint8\_t\ BitNr,\ \textcolor{keywordtype}{bool}\ OnOff)\ \{}
-\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ uint16\_t\ Data\ =\ 1;}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ uint8\_t\ Data\ =\ (OnOff)\ ?\ 1\ :\ 0;}
 \DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_c_device_digital_out_a26de6154f58f7bb9a0c78a7355f27370}{SetValue}}(0,\ (uint8\_t*)\ \&Data,\ 1,\ BitNr);}
 \DoxyCodeLine{00026\ \ \ \ \ \}}
 \DoxyCodeLine{00027\ \};}

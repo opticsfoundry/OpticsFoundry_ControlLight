@@ -112,19 +112,13 @@ $(function(){initNavTree('class_c_network_client.html',''); initResizable(true);
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="_network_client_8h_source.html">NetworkClient.h</a>&gt;</code></p>
-<div class="dynheader">
-Inheritance diagram for CNetworkClient:</div>
-<div class="dyncontent">
- <div class="center">
-  <img src="class_c_network_client.png" alt=""/>
- </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a8910ea6eed68c564400450d5862630e7" id="r_a8910ea6eed68c564400450d5862630e7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8910ea6eed68c564400450d5862630e7">DebugStop</a> ()</td></tr>
 <tr class="separator:a8910ea6eed68c564400450d5862630e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c889743e59a17d585b1c14cc046a89f" id="r_a6c889743e59a17d585b1c14cc046a89f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c889743e59a17d585b1c14cc046a89f">DebugStart</a> (CString Filename)</td></tr>
-<tr class="separator:a6c889743e59a17d585b1c14cc046a89f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa31d2be69c20ce99700174dcd611168d" id="r_aa31d2be69c20ce99700174dcd611168d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa31d2be69c20ce99700174dcd611168d">DebugStart</a> (const std::string &amp;Filename)</td></tr>
+<tr class="separator:aa31d2be69c20ce99700174dcd611168d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5818c4d0f1aaa69b2bc491d0cf9dd7ae" id="r_a5818c4d0f1aaa69b2bc491d0cf9dd7ae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5818c4d0f1aaa69b2bc491d0cf9dd7ae">StopFastWrite</a> ()</td></tr>
 <tr class="separator:a5818c4d0f1aaa69b2bc491d0cf9dd7ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a123998444e8b94e06afa8123e9e0ff85" id="r_a123998444e8b94e06afa8123e9e0ff85"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a123998444e8b94e06afa8123e9e0ff85">StartFastWrite</a> ()</td></tr>
@@ -133,8 +127,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a17f3a63ba6ba201dfb151df2321a2779"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afbfb4cf24f716bb407ea9c81492d7d43" id="r_afbfb4cf24f716bb407ea9c81492d7d43"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afbfb4cf24f716bb407ea9c81492d7d43">Ready</a> ()</td></tr>
 <tr class="separator:afbfb4cf24f716bb407ea9c81492d7d43"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad966282c40b32a48a700e2ae1bd15842" id="r_ad966282c40b32a48a700e2ae1bd15842"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad966282c40b32a48a700e2ae1bd15842">ConnectSocket</a> (LPCTSTR lpszAddress, UINT port, CString SocketName)</td></tr>
-<tr class="separator:ad966282c40b32a48a700e2ae1bd15842"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade76f1386eee005c6be7cfcaa2231e5c" id="r_ade76f1386eee005c6be7cfcaa2231e5c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ade76f1386eee005c6be7cfcaa2231e5c">ConnectSocket</a> (const std::string &amp;host, unsigned int port, const std::string &amp;SocketName)</td></tr>
+<tr class="separator:ade76f1386eee005c6be7cfcaa2231e5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1eb667906194cfc5bf02c6bfc0cf1931" id="r_a1eb667906194cfc5bf02c6bfc0cf1931"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1eb667906194cfc5bf02c6bfc0cf1931">ReadDouble</a> (double &amp;Value)</td></tr>
 <tr class="separator:a1eb667906194cfc5bf02c6bfc0cf1931"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a078404ce92a9be5365035b7c2a04a307" id="r_a078404ce92a9be5365035b7c2a04a307"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a078404ce92a9be5365035b7c2a04a307">ReadBool</a> (bool &amp;Value)</td></tr>
@@ -145,32 +139,32 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ae4d8e702728214f13bd25b970248544f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a50ebd0407f16f71833f1da86df58d0" id="r_a2a50ebd0407f16f71833f1da86df58d0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2a50ebd0407f16f71833f1da86df58d0">ReadInt64</a> (unsigned long long &amp;Value)</td></tr>
 <tr class="separator:a2a50ebd0407f16f71833f1da86df58d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0e3a1bcb3c054fff461fa8cdbbb98e7" id="r_ad0e3a1bcb3c054fff461fa8cdbbb98e7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad0e3a1bcb3c054fff461fa8cdbbb98e7">SendCommand</a> (const CString &amp;comand)</td></tr>
+<tr class="memitem:ad0e3a1bcb3c054fff461fa8cdbbb98e7" id="r_ad0e3a1bcb3c054fff461fa8cdbbb98e7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad0e3a1bcb3c054fff461fa8cdbbb98e7">SendCommand</a> (const <a class="el" href="std_8h.html#a50e6b493e99e505e0cb7dfa5d8c4b36e">CString</a> &amp;comand)</td></tr>
 <tr class="separator:ad0e3a1bcb3c054fff461fa8cdbbb98e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a53a146f98ae702831a7294a2c6106d" id="r_a1a53a146f98ae702831a7294a2c6106d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1a53a146f98ae702831a7294a2c6106d">SendData</a> (uint8_t *Data, unsigned long Size)</td></tr>
-<tr class="separator:a1a53a146f98ae702831a7294a2c6106d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe87778a8f16d9124d8aa8e6bc719aa3" id="r_afe87778a8f16d9124d8aa8e6bc719aa3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe87778a8f16d9124d8aa8e6bc719aa3">SendData</a> (uint8_t *Data, unsigned long Size, bool SendReady=true)</td></tr>
+<tr class="separator:afe87778a8f16d9124d8aa8e6bc719aa3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45f8d92bbc28c4f6e810c61aa2c69bd0" id="r_a45f8d92bbc28c4f6e810c61aa2c69bd0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a45f8d92bbc28c4f6e810c61aa2c69bd0">WriteDouble</a> (double d)</td></tr>
 <tr class="separator:a45f8d92bbc28c4f6e810c61aa2c69bd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f15a752b8819c02939a66e93c85cf05" id="r_a3f15a752b8819c02939a66e93c85cf05"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3f15a752b8819c02939a66e93c85cf05">WriteInteger</a> (long i)</td></tr>
 <tr class="separator:a3f15a752b8819c02939a66e93c85cf05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a090cea8ba6a390bef4ba1e6b1d07dc24" id="r_a090cea8ba6a390bef4ba1e6b1d07dc24"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a090cea8ba6a390bef4ba1e6b1d07dc24">WriteBoolean</a> (bool b)</td></tr>
 <tr class="separator:a090cea8ba6a390bef4ba1e6b1d07dc24"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8192fdd2fd91542acb36d7b55db8850f" id="r_a8192fdd2fd91542acb36d7b55db8850f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8192fdd2fd91542acb36d7b55db8850f">WriteString</a> (CString s)</td></tr>
+<tr class="memitem:a8192fdd2fd91542acb36d7b55db8850f" id="r_a8192fdd2fd91542acb36d7b55db8850f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8192fdd2fd91542acb36d7b55db8850f">WriteString</a> (<a class="el" href="std_8h.html#a50e6b493e99e505e0cb7dfa5d8c4b36e">CString</a> s)</td></tr>
 <tr class="separator:a8192fdd2fd91542acb36d7b55db8850f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4bc6c43fd50b859143384f2263e320b9" id="r_a4bc6c43fd50b859143384f2263e320b9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4bc6c43fd50b859143384f2263e320b9">WriteChar</a> (char c)</td></tr>
 <tr class="separator:a4bc6c43fd50b859143384f2263e320b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afdb6aa09963fa6c9a14fd8ce2c87e443" id="r_afdb6aa09963fa6c9a14fd8ce2c87e443"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afdb6aa09963fa6c9a14fd8ce2c87e443">Command</a> (CString comand, bool DontWaitForReady=false)</td></tr>
+<tr class="memitem:afdb6aa09963fa6c9a14fd8ce2c87e443" id="r_afdb6aa09963fa6c9a14fd8ce2c87e443"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afdb6aa09963fa6c9a14fd8ce2c87e443">Command</a> (<a class="el" href="std_8h.html#a50e6b493e99e505e0cb7dfa5d8c4b36e">CString</a> comand, bool DontWaitForReady=false)</td></tr>
 <tr class="separator:afdb6aa09963fa6c9a14fd8ce2c87e443"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb17cdfc50e41e6ce6059018c4a2658b" id="r_aeb17cdfc50e41e6ce6059018c4a2658b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeb17cdfc50e41e6ce6059018c4a2658b">AttemptCommand</a> (CString CommandString)</td></tr>
-<tr class="separator:aeb17cdfc50e41e6ce6059018c4a2658b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac843dfb3b55b53870f6ccc0ee4d6cdad" id="r_ac843dfb3b55b53870f6ccc0ee4d6cdad"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac843dfb3b55b53870f6ccc0ee4d6cdad">GetCommand</a> (CString &amp;<a class="el" href="#afdb6aa09963fa6c9a14fd8ce2c87e443">Command</a>, double timeout_in_seconds=5)</td></tr>
+<tr class="memitem:a19ac3b738e641c7b4c2e6f69a81c0492" id="r_a19ac3b738e641c7b4c2e6f69a81c0492"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a19ac3b738e641c7b4c2e6f69a81c0492">AttemptCommand</a> (<a class="el" href="std_8h.html#a50e6b493e99e505e0cb7dfa5d8c4b36e">CString</a> CommandString, bool DontWaitForReady=false)</td></tr>
+<tr class="separator:a19ac3b738e641c7b4c2e6f69a81c0492"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac843dfb3b55b53870f6ccc0ee4d6cdad" id="r_ac843dfb3b55b53870f6ccc0ee4d6cdad"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac843dfb3b55b53870f6ccc0ee4d6cdad">GetCommand</a> (<a class="el" href="std_8h.html#a50e6b493e99e505e0cb7dfa5d8c4b36e">CString</a> &amp;<a class="el" href="#afdb6aa09963fa6c9a14fd8ce2c87e443">Command</a>, double timeout_in_seconds=5)</td></tr>
 <tr class="separator:ac843dfb3b55b53870f6ccc0ee4d6cdad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61cfe49126cdac8b353ed6608e79f178" id="r_a61cfe49126cdac8b353ed6608e79f178"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a61cfe49126cdac8b353ed6608e79f178">CNetworkClient</a> (int amode, bool aFastWrite=false)</td></tr>
 <tr class="separator:a61cfe49126cdac8b353ed6608e79f178"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae8b3e254e2b1d51d99b1c3960184f2e6" id="r_ae8b3e254e2b1d51d99b1c3960184f2e6"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae8b3e254e2b1d51d99b1c3960184f2e6">~CNetworkClient</a> ()</td></tr>
 <tr class="separator:ae8b3e254e2b1d51d99b1c3960184f2e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e9c5da89122342364e1b2698aabbf92" id="r_a9e9c5da89122342364e1b2698aabbf92"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9e9c5da89122342364e1b2698aabbf92">Debug</a> (CString filename)</td></tr>
-<tr class="separator:a9e9c5da89122342364e1b2698aabbf92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07ea9fe6812253a9c7b91551e0412e1f" id="r_a07ea9fe6812253a9c7b91551e0412e1f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a07ea9fe6812253a9c7b91551e0412e1f">Debug</a> (const std::string &amp;filename)</td></tr>
+<tr class="separator:a07ea9fe6812253a9c7b91551e0412e1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -227,8 +221,8 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="aeb17cdfc50e41e6ce6059018c4a2658b" name="aeb17cdfc50e41e6ce6059018c4a2658b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeb17cdfc50e41e6ce6059018c4a2658b">&#9670;&#160;</a></span>AttemptCommand()</h2>
+<a id="a19ac3b738e641c7b4c2e6f69a81c0492" name="a19ac3b738e641c7b4c2e6f69a81c0492"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a19ac3b738e641c7b4c2e6f69a81c0492">&#9670;&#160;</a></span>AttemptCommand()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -236,8 +230,12 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">bool CNetworkClient::AttemptCommand </td>
           <td>(</td>
-          <td class="paramtype">CString</td>          <td class="paramname"><span class="paramname"><em>CommandString</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="std_8h.html#a50e6b493e99e505e0cb7dfa5d8c4b36e">CString</a></td>          <td class="paramname"><span class="paramname"><em>CommandString</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>DontWaitForReady</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -253,7 +251,7 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">bool CNetworkClient::Command </td>
           <td>(</td>
-          <td class="paramtype">CString</td>          <td class="paramname"><span class="paramname"><em>comand</em></span>, </td>
+          <td class="paramtype"><a class="el" href="std_8h.html#a50e6b493e99e505e0cb7dfa5d8c4b36e">CString</a></td>          <td class="paramname"><span class="paramname"><em>comand</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -265,8 +263,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="ad966282c40b32a48a700e2ae1bd15842" name="ad966282c40b32a48a700e2ae1bd15842"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad966282c40b32a48a700e2ae1bd15842">&#9670;&#160;</a></span>ConnectSocket()</h2>
+<a id="ade76f1386eee005c6be7cfcaa2231e5c" name="ade76f1386eee005c6be7cfcaa2231e5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade76f1386eee005c6be7cfcaa2231e5c">&#9670;&#160;</a></span>ConnectSocket()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -274,25 +272,25 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">bool CNetworkClient::ConnectSocket </td>
           <td>(</td>
-          <td class="paramtype">LPCTSTR</td>          <td class="paramname"><span class="paramname"><em>lpszAddress</em></span>, </td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>host</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">UINT</td>          <td class="paramname"><span class="paramname"><em>port</em></span>, </td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>port</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">CString</td>          <td class="paramname"><span class="paramname"><em>SocketName</em></span>&#160;)</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>SocketName</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a9e9c5da89122342364e1b2698aabbf92" name="a9e9c5da89122342364e1b2698aabbf92"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9e9c5da89122342364e1b2698aabbf92">&#9670;&#160;</a></span>Debug()</h2>
+<a id="a07ea9fe6812253a9c7b91551e0412e1f" name="a07ea9fe6812253a9c7b91551e0412e1f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07ea9fe6812253a9c7b91551e0412e1f">&#9670;&#160;</a></span>Debug()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -300,7 +298,7 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">void CNetworkClient::Debug </td>
           <td>(</td>
-          <td class="paramtype">CString</td>          <td class="paramname"><span class="paramname"><em>filename</em></span></td><td>)</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>filename</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -308,8 +306,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a6c889743e59a17d585b1c14cc046a89f" name="a6c889743e59a17d585b1c14cc046a89f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c889743e59a17d585b1c14cc046a89f">&#9670;&#160;</a></span>DebugStart()</h2>
+<a id="aa31d2be69c20ce99700174dcd611168d" name="aa31d2be69c20ce99700174dcd611168d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa31d2be69c20ce99700174dcd611168d">&#9670;&#160;</a></span>DebugStart()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -317,7 +315,7 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">void CNetworkClient::DebugStart </td>
           <td>(</td>
-          <td class="paramtype">CString</td>          <td class="paramname"><span class="paramname"><em>Filename</em></span></td><td>)</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>Filename</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -368,7 +366,7 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">bool CNetworkClient::GetCommand </td>
           <td>(</td>
-          <td class="paramtype">CString &amp;</td>          <td class="paramname"><span class="paramname"><em>Command</em></span>, </td>
+          <td class="paramtype"><a class="el" href="std_8h.html#a50e6b493e99e505e0cb7dfa5d8c4b36e">CString</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>Command</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -495,7 +493,7 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">bool CNetworkClient::SendCommand </td>
           <td>(</td>
-          <td class="paramtype">const CString &amp;</td>          <td class="paramname"><span class="paramname"><em>comand</em></span></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="std_8h.html#a50e6b493e99e505e0cb7dfa5d8c4b36e">CString</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>comand</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -503,8 +501,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a1a53a146f98ae702831a7294a2c6106d" name="a1a53a146f98ae702831a7294a2c6106d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1a53a146f98ae702831a7294a2c6106d">&#9670;&#160;</a></span>SendData()</h2>
+<a id="afe87778a8f16d9124d8aa8e6bc719aa3" name="afe87778a8f16d9124d8aa8e6bc719aa3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe87778a8f16d9124d8aa8e6bc719aa3">&#9670;&#160;</a></span>SendData()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -517,7 +515,12 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">unsigned long</td>          <td class="paramname"><span class="paramname"><em>Size</em></span>&#160;)</td>
+          <td class="paramtype">unsigned long</td>          <td class="paramname"><span class="paramname"><em>Size</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>SendReady</em></span><span class="paramdefsep"> = </span><span class="paramdefval">true</span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -635,7 +638,7 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">bool CNetworkClient::WriteString </td>
           <td>(</td>
-          <td class="paramtype">CString</td>          <td class="paramname"><span class="paramname"><em>s</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="std_8h.html#a50e6b493e99e505e0cb7dfa5d8c4b36e">CString</a></td>          <td class="paramname"><span class="paramname"><em>s</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>

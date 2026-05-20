@@ -2,7 +2,7 @@
 <section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__a_d9852_8cpp" xml:lang="en-US">
 <title>AD9852.cpp File Reference</title>
 <indexterm><primary>AD9852.cpp</primary></indexterm>
-<programlisting linenumbering="unnumbered">#include &quot;std.h&quot;<?linebreak?>#include &quot;control.h&quot;<?linebreak?>#include &quot;AD9852.h&quot;<?linebreak?>#include &quot;ControlAPI.h&quot;<?linebreak?>#include &quot;CDeviceSequencer.h&quot;<?linebreak?></programlisting><simplesect>
+<programlisting linenumbering="unnumbered">#include &quot;AD9852.h&quot;<?linebreak?>#include &quot;CDeviceSequencer.h&quot;<?linebreak?>#include &lt;cmath&gt;<?linebreak?>#include &lt;string&gt;<?linebreak?>#include &lt;format&gt;<?linebreak?></programlisting><simplesect>
     <title>Variables    </title>
         <itemizedlist>
             <listitem><para>unsigned long <link linkend="__a_d9852_8cpp_1ade894fbf6874f7126a3a949080f77644">AD9852MasterResetValueContents</link> [<link linkend="__a_d9852_8h_1aee5b08b57ce3017953dd926bd090643f">AD9852MaxValues</link>] = { 0 , 0, 0, 0, 0,0x40, 0, 0, 0, 0,0x10,0x64,0x01,0x20, 0, 0, 0 }</para>

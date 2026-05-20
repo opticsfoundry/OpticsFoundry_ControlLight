@@ -22,5 +22,13 @@ var searchData=
   ['ad9858valuebaseaddress_19',['AD9858ValueBaseAddress',['../_a_d9858_8cpp.html#a8afbf3803c503f406fb42f66737006a3',1,'AD9858.cpp']]],
   ['ad9858valuelength_20',['AD9858ValueLength',['../_a_d9858_8cpp.html#acd8b2dc0b624c3942a2705b260ad1bc5',1,'AD9858.cpp']]],
   ['ad9858valuenotinbusbuffer_21',['AD9858ValueNotInBusBuffer',['../_a_d9858_8cpp.html#abce01e4b7e8361d9d03e9552ac5e30d0',1,'AD9858.cpp']]],
-  ['aktvaluecontents_22',['AktValueContents',['../class_c_a_d9852.html#a3c18792c7ef4dcfe7e2ac91d8890e2ad',1,'CAD9852']]]
+  ['ad9958_22',['AD9958',['../class_c_device_a_d9959.html#a5808d7615398901f28a60b2f9449f0bb',1,'CDeviceAD9959']]],
+  ['ad9959masterresetvaluecontents_23',['AD9959MasterResetValueContents',['../_a_d9959_8cpp.html#a7cf87d3ac1a8182973654e12f98b520a',1,'AD9959.cpp']]],
+  ['ad9959numberofregisters_24',['AD9959NumberOfRegisters',['../_a_d9959_8h.html#a387b88152d0188930d36aef467e9fb9f',1,'AD9959.h']]],
+  ['ad9959spibufferlength_25',['AD9959SPIBufferLength',['../_a_d9959_8h.html#ac68e8badff67a631e395bbd74036e53c',1,'AD9959.h']]],
+  ['ad9959valuebaseaddress_26',['AD9959ValueBaseAddress',['../_a_d9959_8cpp.html#aff09f9fc0d07347efcf369f6e077235c',1,'AD9959.cpp']]],
+  ['ad9959valuelength_27',['AD9959ValueLength',['../_a_d9959_8cpp.html#a8c141341211f8f38ec3d24a5a5711719',1,'AD9959.cpp']]],
+  ['ad9959valuenotinbusbuffer_28',['AD9959ValueNotInBusBuffer',['../_a_d9959_8cpp.html#ae7a2cbfee2e5c7f81156a948ffa0134f',1,'AD9959.cpp']]],
+  ['aktvaluecontents_29',['AktValueContents',['../class_c_a_d9852.html#afa71ddccb068c741598b0a41c27abad6',1,'CAD9852']]],
+  ['autoconfigjsoncache_30',['AutoConfigJSONCache',['../_control_a_p_i_8cpp.html#aa7a223291af55b91ff29cf51df3d06a2',1,'ControlAPI.cpp']]]
 ];

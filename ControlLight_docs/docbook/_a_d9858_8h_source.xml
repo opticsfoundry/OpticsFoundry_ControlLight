@@ -2,9 +2,9 @@
 <section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__a_d9858_8h_source" xml:lang="en-US">
 <title>AD9858.h</title>
 <indexterm><primary>AD9858.h</primary></indexterm>
-Go to the documentation of this file.<programlisting linenumbering="unnumbered">1 
-2 <emphasis role="preprocessor">#pragma&#32;once</emphasis>
-3 
+Go to the documentation of this file.<programlisting linenumbering="unnumbered">1 <emphasis role="preprocessor">#pragma&#32;once</emphasis>
+2 
+3 <emphasis role="preprocessor">#include&#32;&lt;cstdint&gt;</emphasis>
 4 
 5 <emphasis role="keyword">class&#32;</emphasis><link linkend="_class_c_device_sequencer">CDeviceSequencer</link>;
 6 
@@ -28,13 +28,13 @@ Go to the documentation of this file.<programlisting linenumbering="unnumbered">
 24 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">long</emphasis>&#32;BusBufferEnd;
 25 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">long</emphasis>&#32;BusBufferLength;
 26 
-27 &#32;&#32;&#32;&#32;__int64&#32;AktValueContentsWritten;
+27 &#32;&#32;&#32;&#32;int64_t&#32;AktValueContentsWritten;
 28 &#32;&#32;&#32;&#32;uint8_t&#32;AktValueNrWritten;
 29 &#32;&#32;&#32;&#32;uint8_t&#32;AktSubAddressWritten;&#32;&#32;&#32;&#32;&#32;&#32;&#32;
 30 &#32;&#32;&#32;&#32;uint8_t&#32;WritePrecision[<link linkend="__a_d9858_8h_1a89debb04b626a7627663f9e047ecad53">AD9858MaxValues</link>];
 31 
 32 &#32;&#32;&#32;&#32;
-33 &#32;&#32;&#32;&#32;__int64&#32;AktValueContents[<link linkend="__a_d9858_8h_1a89debb04b626a7627663f9e047ecad53">AD9858MaxValues</link>];&#32;<emphasis role="comment">//keeps&#32;track&#32;of&#32;Value,&#32;contains&#32;value&#32;after&#32;bus&#32;buffer&#32;has&#32;been&#32;finished&#32;to&#32;be&#32;written&#32;out</emphasis>
+33 &#32;&#32;&#32;&#32;int64_t&#32;AktValueContents[<link linkend="__a_d9858_8h_1a89debb04b626a7627663f9e047ecad53">AD9858MaxValues</link>];&#32;<emphasis role="comment">//keeps&#32;track&#32;of&#32;Value,&#32;contains&#32;value&#32;after&#32;bus&#32;buffer&#32;has&#32;been&#32;finished&#32;to&#32;be&#32;written&#32;out</emphasis>
 34 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">double</emphasis>&#32;ClockSpeed;
 35 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">double</emphasis>&#32;InputClockSpeed;
 36 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">double</emphasis>&#32;MaxFrequency;&#32;&#32;&#32;&#32;
@@ -77,17 +77,17 @@ Go to the documentation of this file.<programlisting linenumbering="unnumbered">
 73 &#32;&#32;&#32;&#32;uint8_t&#32;<link linkend="_class_c_a_d9858_1ae4595d63391732d68105b9345f0e7de0">SetFrequencyDetectModeChargePumpCurrent</link>(uint8_t&#32;aValue,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue=<emphasis role="keyword">false</emphasis>);
 74 &#32;&#32;&#32;&#32;uint8_t&#32;<link linkend="_class_c_a_d9858_1ab43815d70c99e066920c94c89bcceb26">SetFinalClosedLoopModeChargePumpCurrent</link>(uint8_t&#32;aValue,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue=<emphasis role="keyword">false</emphasis>);
 75 &#32;&#32;&#32;&#32;uint8_t&#32;<link linkend="_class_c_a_d9858_1a55f5523942d4fed31db13a182a10b7af">SetWideClosedLoopModeChargePumpCurrent</link>(uint8_t&#32;aValue,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue=<emphasis role="keyword">false</emphasis>);
-76 &#32;&#32;&#32;&#32;__int64&#32;<link linkend="_class_c_a_d9858_1a28004d2ef237bac8cdf954cb3e7c9a96">SetDeltaFrequencyWord</link>(__int64&#32;aDeltaFrequencyWord,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue=<emphasis role="keyword">false</emphasis>);
+76 &#32;&#32;&#32;&#32;int64_t&#32;<link linkend="_class_c_a_d9858_1a59afdacbcb2448fcdf98223276d5b413">SetDeltaFrequencyWord</link>(int64_t&#32;aDeltaFrequencyWord,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue=<emphasis role="keyword">false</emphasis>);
 77 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">long</emphasis>&#32;<link linkend="_class_c_a_d9858_1a824ca4beeb66e6fd97f5915765d1aae0">SetRampRateWord</link>(<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">long</emphasis>&#32;aRampRateWord,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue=<emphasis role="keyword">false</emphasis>);&#32;&#32;&#32;&#32;
 78 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">double</emphasis>&#32;<link linkend="_class_c_a_d9858_1a65740774881d4681d45ebdadce3ebbfc">SetAttenuation</link>(<emphasis role="keywordtype">double</emphasis>&#32;aValue,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue=<emphasis role="keyword">false</emphasis>);
 79 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">double</emphasis>&#32;<link linkend="_class_c_a_d9858_1a0b1839bde71aaf14f44c360cc449ac87">SetFrequency0</link>(<emphasis role="keywordtype">double</emphasis>&#32;Frequency,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue=<emphasis role="keyword">false</emphasis>);
 80 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">double</emphasis>&#32;<link linkend="_class_c_a_d9858_1a08a819a58a1efebd47b1881c48d52f50">SetFrequency1</link>(<emphasis role="keywordtype">double</emphasis>&#32;Frequency,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue=<emphasis role="keyword">false</emphasis>);
 81 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">double</emphasis>&#32;<link linkend="_class_c_a_d9858_1a25f86b7ec14c79aed86cc74ec0e94883">SetFrequency2</link>(<emphasis role="keywordtype">double</emphasis>&#32;Frequency,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue=<emphasis role="keyword">false</emphasis>);
 82 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">double</emphasis>&#32;<link linkend="_class_c_a_d9858_1a9c79047a7caf95dc6523380c1d8504e2">SetFrequency3</link>(<emphasis role="keywordtype">double</emphasis>&#32;Frequency,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue=<emphasis role="keyword">false</emphasis>);
-83 &#32;&#32;&#32;&#32;__int64&#32;<link linkend="_class_c_a_d9858_1a8b542d8d51863a395b71553ead11983d">SetFrequencyTuningWord0</link>(<emphasis role="keyword">const</emphasis>&#32;uint64_t&amp;&#32;FrequencyTuningWord,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue&#32;=&#32;<emphasis role="keyword">false</emphasis>);
-84 &#32;&#32;&#32;&#32;__int64&#32;<link linkend="_class_c_a_d9858_1a993e6832e456f5f4a8ecfd2c5890485a">SetFrequencyTuningWord1</link>(<emphasis role="keyword">const</emphasis>&#32;uint64_t&amp;&#32;FrequencyTuningWord,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue&#32;=&#32;<emphasis role="keyword">false</emphasis>);
-85 &#32;&#32;&#32;&#32;__int64&#32;<link linkend="_class_c_a_d9858_1ae6ce70b9312cf51b413985e8879ed905">SetFrequencyTuningWord2</link>(<emphasis role="keyword">const</emphasis>&#32;uint64_t&amp;&#32;FrequencyTuningWord,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue&#32;=&#32;<emphasis role="keyword">false</emphasis>);
-86 &#32;&#32;&#32;&#32;__int64&#32;<link linkend="_class_c_a_d9858_1acede500c7f0ac91c92d65925caa81aed">SetFrequencyTuningWord3</link>(<emphasis role="keyword">const</emphasis>&#32;uint64_t&amp;&#32;FrequencyTuningWord,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue&#32;=&#32;<emphasis role="keyword">false</emphasis>);
+83 &#32;&#32;&#32;&#32;int64_t&#32;<link linkend="_class_c_a_d9858_1a75680424193966613b727c6d1d9c9bef">SetFrequencyTuningWord0</link>(<emphasis role="keyword">const</emphasis>&#32;uint64_t&amp;&#32;FrequencyTuningWord,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue&#32;=&#32;<emphasis role="keyword">false</emphasis>);
+84 &#32;&#32;&#32;&#32;int64_t&#32;<link linkend="_class_c_a_d9858_1aa2bdca0ecd00b4722857d3cf261a3803">SetFrequencyTuningWord1</link>(<emphasis role="keyword">const</emphasis>&#32;uint64_t&amp;&#32;FrequencyTuningWord,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue&#32;=&#32;<emphasis role="keyword">false</emphasis>);
+85 &#32;&#32;&#32;&#32;int64_t&#32;<link linkend="_class_c_a_d9858_1abdec734960f2e7104d1e5d9ca8083549">SetFrequencyTuningWord2</link>(<emphasis role="keyword">const</emphasis>&#32;uint64_t&amp;&#32;FrequencyTuningWord,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue&#32;=&#32;<emphasis role="keyword">false</emphasis>);
+86 &#32;&#32;&#32;&#32;int64_t&#32;<link linkend="_class_c_a_d9858_1aaf3f21d14632592edcc4f5954e565002">SetFrequencyTuningWord3</link>(<emphasis role="keyword">const</emphasis>&#32;uint64_t&amp;&#32;FrequencyTuningWord,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue&#32;=&#32;<emphasis role="keyword">false</emphasis>);
 87 
 88 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">short</emphasis>&#32;<link linkend="_class_c_a_d9858_1a276564fa5abd92dfec7ac5b73536893f">SetPhaseOffsetWord0</link>(<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">short</emphasis>&#32;aPhaseOffsetWord,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue=<emphasis role="keyword">false</emphasis>);
 89 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">short</emphasis>&#32;<link linkend="_class_c_a_d9858_1a9314258070f73cfc8166d821aa05d277">SetPhaseOffsetWord1</link>(<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">short</emphasis>&#32;aPhaseOffsetWord,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue=<emphasis role="keyword">false</emphasis>);
@@ -109,7 +109,7 @@ Go to the documentation of this file.<programlisting linenumbering="unnumbered">
 105 <emphasis role="keyword">private</emphasis>:
 106 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;SetControlBit(uint8_t&#32;RegisterNr,&#32;uint8_t&#32;BitNr,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;Value,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue);
 107 &#32;&#32;&#32;&#32;uint8_t&#32;SetControlBits(uint8_t&#32;RegisterNr,&#32;uint8_t&#32;LowestBitNr,&#32;uint8_t&#32;NrBits,&#32;uint8_t&#32;Value,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue);
-108 &#32;&#32;&#32;&#32;__int64&#32;SetValue(uint8_t&#32;ValueNr,&#32;__int64&#32;Value,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue);
+108 &#32;&#32;&#32;&#32;int64_t&#32;SetValue(uint8_t&#32;ValueNr,&#32;int64_t&#32;Value,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;GetValue);
 109 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;LoadLatches();
 110 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;UpdateRegisters();
 111 &#32;&#32;&#32;&#32;<link linkend="_class_c_device_sequencer">CDeviceSequencer</link>*&#32;MyDeviceSequencer;

@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['json_0',['json',['../_control_a_p_i_8cpp.html#ab701e3ac61a85b337ec5c1abaad6742d',1,'ControlAPI.cpp']]]
+  ['clock_0',['Clock',['../std_8h.html#a0ef8d951d1ca5ab3cfaf7ab4c7a6fd80',1,'std.h']]],
+  ['cstring_1',['CString',['../std_8h.html#a50e6b493e99e505e0cb7dfa5d8c4b36e',1,'std.h']]]
 ];

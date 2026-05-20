@@ -25,7 +25,7 @@ Go to the documentation of this file.<programlisting linenumbering="unnumbered">
 21 &#32;&#32;&#32;&#32;<emphasis role="comment">//virtual&#32;bool&#32;Configure();</emphasis>
 22 
 23 &#32;&#32;&#32;&#32;<emphasis role="keyword">virtual</emphasis>&#32;<emphasis role="keywordtype">bool</emphasis>&#32;<link linkend="_class_c_device_digital_out_1aaf2439fcb1ffaf981aa0b6b8d8fa390a">SetDigitalOutput</link>(uint8_t&#32;BitNr,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;OnOff)&#32;{
-24 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;uint16_t&#32;Data&#32;=&#32;1;
+24 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;uint8_t&#32;Data&#32;=&#32;(OnOff)&#32;?&#32;1&#32;:&#32;0;
 25 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;<link linkend="_class_c_device_digital_out_1a26de6154f58f7bb9a0c78a7355f27370">SetValue</link>(0,&#32;(uint8_t*)&#32;&amp;Data,&#32;1,&#32;BitNr);
 26 &#32;&#32;&#32;&#32;}
 27 };
