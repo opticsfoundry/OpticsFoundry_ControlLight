@@ -992,8 +992,8 @@ void DemoFPGASequencerCyclicSequencing() {
 		cout << "Iteration " << CycleNr << ": ";
 		//We create sequence from scratch to update trigger settings and cycle number dependent sequence entries.
 		DemoSequence(CycleNr);
-		CLA_ExecuteSequence("c:\\data\\DebugDemoFPGASequencerCyclicSequence.txt"); //Use this version to create debug file
-		//CLA_ExecuteSequence(); //use this version to run without creating debug file
+		//CLA_ExecuteSequence("c:\\data\\DebugDemoFPGASequencerCyclicSequence.txt"); //Use this version to create debug file
+		CLA_ExecuteSequence(); //use this version to run without creating debug file
 		bool running = false;
 		unsigned long long DataPointsWritten = 0;
 		CLA_GetSequenceExecutionStatus(running, DataPointsWritten);
