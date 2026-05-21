@@ -31,7 +31,7 @@ class ConfigBuilder:
         return entry
 
     def RegisterSequencer(self, Id=0, Type="OpticsFoundrySequencerV1", IP="192.168.0.104", Port=7,
-                          Master=True, StartDelay=10, ClockFrequencyinMHz=100, FPGAClockToBusClockRatio=14,
+                          Master=True, StartDelay=10, ClockFrequencyinMHz=100, FPGAClockToBusClockRatio=15,
                           UseExternalClock=False, UseStrobeGenerator=True, UseEdgeTriggeredLatches=True, Connect=True, DebugOn=False,
                           Model=None, SN=None, RackNr=None, SlotNr=None):
         self.config["Sequencers"].append(self._add_optional_hardware_fields({

@@ -589,9 +589,19 @@ bool InitializeSystem() {
 	return true;
 }
 
+typedef enum
+{
+	E_TestAnalogInput, 
+	E_TestDigitalInput, 
+	E_TestTimeTagger,
+	E_TestNothing
+} E_TestInputType;
+
+constexpr E_TestInputType InputTestType = E_TestAnalogInput;
 
 void DemoSequence(unsigned long CycleNumber) {
 
+	//instert the addresses of your IO cards here
 	constexpr uint8_t SequencerNr = 0;
 	constexpr uint8_t DigOut_0_addr = 1;
 	constexpr uint8_t DigOut_1_addr = 2;
@@ -599,53 +609,67 @@ void DemoSequence(unsigned long CycleNumber) {
 	constexpr uint8_t AD9959_1_addr = 4;
 	constexpr uint8_t AnaOut_0_addr = 5;
 
+	//select which card you want to test
 	constexpr uint8_t DigOutAddr = DigOut_0_addr;
 	constexpr uint8_t AnaOutAddr = AnaOut_0_addr;
 	constexpr uint8_t AD9959Addr = AD9959_0_addr;
 
-
-	CLA_StartAssemblingSequence();
-	CLA_SequencerWriteSystemTimeToInputMemory(SequencerNr);
-	CLA_SequencerWriteInputMemory(SequencerNr, CycleNumber);
-	CLA_SequencerWriteInputMemory(SequencerNr, 6);  //a narker, just to see we can write to the input memory
+	CLA_StartAssemblingSequence();  //starts sequence and stores timetag. If DemoSequence is called from DemoFPGASequencerCyclicSequencing, the sequence waits after that timetag till the clock cycle counter in the FPGA reaches the target
+	CLA_SequencerWriteSystemTimeToInputMemory(SequencerNr); //a second time tag. When cycling sequences, this allows to determine the time the FPGA waited for a trigger. This time should always be reasonably large (a few 10ms at least) to accomodate timing fluctuations of the PC and the ethernet connection.
+	CLA_SequencerWriteInputMemory(SequencerNr, CycleNumber); //write current cycle number to the input memory. This is used to verify if data of the correct cycle was retrieved.
+	CLA_SequencerWriteInputMemory(SequencerNr, 6);  //a narker, just to see we can write to the input memory. Can e.g. be used to clearly, human readably, mark different sections of the input memory data stream. This is mostly good for debugging.
 	CLA_SequencerWriteInputMemory(SequencerNr, 7);  //a narker, just to see we can write to the input memory
 
 	CLA_SequencerSwitchDebugLED(SequencerNr, 1);
 	CLA_SequencerAddMarker(SequencerNr, 1);//for debug: displays marker (here "1") on ZYNQ USB port output (use Termite or similar to see it)
 	//CLA_SetDigitalOutput(SequencerNr, /*Addr*/ DigOutAddr, /* BitNr */ 0, true);
 	CLA_Wait_ms(1);
+	
+	//Thesse loops allow you to quickly check if a digital output board works. Output number N should blink N+1 times. Outputs of unaddressed cards should not change. 
 	for (int BitNr = 0; BitNr < 16; BitNr++) {
 		for (int n = 0; n < BitNr + 1; n++) {
 			CLA_SetDigitalOutput(SequencerNr, /*Addr*/ DigOutAddr, BitNr, true);
 			//CLA_SetSequencerDigitalOut(SequencerNr, 0);
 			//CLA_SwitchSequencerBuzzer(SequencerNr, false);
 			CLA_SequencerSwitchDebugLED(SequencerNr, 0);
-			CLA_Wait_ms(0.01);
+			CLA_Wait_ms(0.1);
 			CLA_SetDigitalOutput(SequencerNr, /*Addr*/ DigOutAddr, BitNr, false);
 			//CLA_SetSequencerDigitalOut(SequencerNr, 128);
 			//CLA_SwitchSequencerBuzzer(SequencerNr, true);
 			CLA_SequencerSwitchDebugLED(SequencerNr, 1);
-			CLA_Wait_ms(0.01);
+			CLA_Wait_ms(0.1);
 		}
 	}
 	CLA_SetSequencerDigitalOut(SequencerNr, 0);
+
+
 	//Test input board:
 	//for (uint8_t n = 0; n<12; n++) {
 	//	CLA_SelectRackSlot(SequencerNr, /*RackNr*/ 0, n);
 	//	CLA_Wait_ms(100);
 	//}
 	
-	//Test reliability of select rack slot
+	//At each moment only one rack slot is allowed to act as input and send data to the FPGA.
+	//This is achieved by a rack slot arbiter on the backplane.
+	//This tests the reliability of the arbiter by blinking the rack slot selection LED, available on e.g. the serial IO board. 
 	for (int j = 1; j < 5; j++) {
-		CLA_SelectRackSlot(SequencerNr, /*RackNr*/ 0, 9);
+		CLA_SelectRackSlot(SequencerNr, /*RackNr*/ 0, 5);
 		CLA_Wait_ms(50);
 		uint8_t r = 16*(rand()/RAND_MAX);
-		if (r == 9) r = 4;
+		if (r == 5) r = 4;
 		CLA_SelectRackSlot(SequencerNr, /*RackNr*/ 0, r);
 		CLA_Wait_ms(50);
 	}
 	
-	CLA_SelectRackSlot(SequencerNr, /*RackNr*/ 0, 9);
+	CLA_SelectRackSlot(SequencerNr, /*RackNr*/ 0, 5);
+
+	if (InputTestType == E_TestAnalogInput) {
+		//Test analog in with convenience function
+		//@param analog_in_type Analog in board type. 0: AQuRA MCP3208 analog in board; 1: MCP3208 12-bit ADC on SerialPortBoard; 2: ADS1256  24-bit ADC 
+		CLA_SequencerStartAnalogInAcquisition(SequencerNr, /*AnalogInType*/ 2, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 100, /*SamplingPeriod_in_ms*/ 1);
+		CLA_Wait_ms(100);
+	}
+
 
 	//Test analogIn, pedestrian way
 	//start data acquisition. This is an example for a command for which we didn't yet provide a convenience function in the DLL. 
@@ -662,28 +686,30 @@ void DemoSequence(unsigned long CycleNumber) {
 	CLA_SetValueSerialDevice(0, 0, 5, (uint8_t*)&ChannelNumber, 8); //starts the acquisition
 	*/
 
-	//Test analog in with convenience function
-	//@param analog_in_type Analog in board type. 0: AQuRA MCP3208 analog in board; 1: MCP3208 12-bit ADC on SerialPortBoard; 2: ADS1256  24-bit ADC 
-	CLA_SequencerStartAnalogInAcquisition(SequencerNr, /*AnalogInType*/ 2, /*SPI_CS*/ 0, /*AnalogInChannelNr*/ 0, /*NumberOfDataPoints*/ 100, /*SamplingPeriod_in_ms*/ 1);
-	CLA_Wait_ms(100);
-	
-	//Test repeated digital in
-	/// @param RepeatedOutInCommand the command to execute for each data point. 0: stop; 1: repeated SPI transfer; 2: repeated digital in; 3: digital in event tagger 
-	/// for 3: if dig in changes, safes dig in on input memory bit 0:7, bit 8: counter overflow, bit 9: 4-entry fifo overflow, bit 10:31: clock cycle counter; runs till stopped by setting RepeatedOutInCommand to 0 with new SequencerRepeatedOutIn command.
-	//CLA_SequencerRepeatedOutIn(SequencerNr, /*NumberOfDataPoints*/ 200, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 2);
-	//CLA_Wait_ms(200);
+	if (InputTestType == E_TestDigitalInput) {
+		//Test repeated digital in. Connect a time varying digital signal to the digital input board, available e.g. on the serial IO board.
+		//The digital port is sampled regularly and the result + time stamp stored in the input memory
+		//input_buf_mem_data[7:0] <= core_dig_in_sync;
+		//input_buf_mem_data[28:8] <= INPUT_REPEAT_nr;
+		//input_buf_mem_data[31:29] <= 3'b010;  (magic number to be more sure that this input memory entry came from digital input)
+		/// @param RepeatedOutInCommand the command to execute for each data point. 0: stop; 1: repeated SPI transfer; 2: repeated digital in; 3: digital in event tagger 
+		CLA_SequencerRepeatedOutIn(SequencerNr, /*NumberOfDataPoints*/ 200, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 2);
+		CLA_Wait_ms(100);
+	}
 
-	//Test event time tagger
-	/// @param RepeatedOutInCommand the command to execute for each data point. 0: stop; 1: repeated SPI transfer; 2: repeated digital in; 3: digital in event tagger 
-	/// for 3: if dig in changes, safes dig in on input memory bit 0:7, bit 8: counter overflow, bit 9: 4-entry fifo overflow, bit 10:31: clock cycle counter; runs till stopped by setting RepeatedOutInCommand to 0 with new SequencerRepeatedOutIn command.
-	//Output data format (32-bit words):
-	//bit 0 to 7: 8-bit input port patterm
-	//bit 8: 1 means timer overflow; this enables one to calculate the timestamp beyond the 22 bit length of the timer counter
-	//bit 9: 1 means 8-entry fifo overflow, i.e. events have been lost because BRAM wasn't fast enough to store them
-	//bit 10 to 31: timer, counting 1 up every 10ns, overflowing every 2^22 * 10ns = 41.94304 ms
-	//CLA_SequencerRepeatedOutIn(SequencerNr, /*NumberOfDataPoints*/ 1000, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 3);
-	//CLA_Wait_ms(10);
-	//CLA_SequencerRepeatedOutIn(SequencerNr, /*NumberOfDataPoints*/ 1, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 0);
+	if (InputTestType == E_TestTimeTagger) {
+		//Test event time tagger. Connect a time varying digital signal to the digital input board, avaiable e.g. on the serial IO board.
+		/// @param RepeatedOutInCommand the command to execute for each data point. 0: stop; 1: repeated SPI transfer; 2: repeated digital in; 3: digital in event tagger 
+		/// for 3: if dig in changes, safes dig in on input memory bit 0:7, bit 8: counter overflow, bit 9: 4-entry fifo overflow, bit 10:31: clock cycle counter; runs till stopped by setting RepeatedOutInCommand to 0 with new SequencerRepeatedOutIn command.
+		//Output data format (32-bit words):
+		//bit 0 to 7: 8-bit input port patterm
+		//bit 8: 1 means timer overflow; this enables one to calculate the timestamp beyond the 22 bit length of the timer counter
+		//bit 9: 1 means 8-entry fifo overflow, i.e. events have been lost because BRAM wasn't fast enough to store them
+		//bit 10 to 31: timer, counting 1 up every 10ns, overflowing every 2^22 * 10ns = 41.94304 ms
+		CLA_SequencerRepeatedOutIn(SequencerNr, /*NumberOfDataPoints*/ 1000, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 3);
+		CLA_Wait_ms(10);
+		CLA_SequencerRepeatedOutIn(SequencerNr, /*NumberOfDataPoints*/ 1, /*SamplingPeriod_in_ms*/ 1, /* RepeatedOutInCommand*/ 0);
+	}
 
 	//Test AD9959 DDS
 	CLA_Reset(SequencerNr, AD9959Addr);
@@ -723,15 +749,69 @@ void DemoSequence(unsigned long CycleNumber) {
 	}
 	CLA_SetFrequencyOfChannel(SequencerNr, AD9959Addr, 1, 0.1);//in MHz
 	CLA_Wait_ms(10);
+	//A very simple ramp procedure. ToDo: program ramp management system
 	RampVoltage(SequencerNr, /*Address*/ AnaOutAddr, /*StartVoltage*/ -10, /* TargetVoltage*/ 10, /*Duration_in_ms*/ 100, /*StepSize_in_ms*/ 0.1);
 	CLA_SequencerSwitchDebugLED(SequencerNr, 0);
 	CLA_SetDigitalOutput(SequencerNr, /*Addr*/ DigOutAddr, /* BitNr */ 0, false);
 	CLA_Wait_ms(10);
-	CLA_SequencerWriteSystemTimeToInputMemory(SequencerNr);
+	CLA_SequencerWriteSystemTimeToInputMemory(SequencerNr); //store FPGA counter as a timestamp so that one can easily determine the exact sequence duration
 	//CLA_SelectRackSlot(SequencerNr, /*RackNr*/ 0, 0);
 }
 
 
+void DemoSequenceShort(unsigned long CycleNumber) {
+	//A short test sequence for debugging
+	constexpr uint8_t SequencerNr = 0;
+	constexpr uint8_t DigOut_0_addr = 1;
+	constexpr uint8_t DigOut_1_addr = 2;
+	constexpr uint8_t AD9959_0_addr = 3;
+	constexpr uint8_t AD9959_1_addr = 4;
+	constexpr uint8_t AnaOut_0_addr = 5;
+
+	constexpr uint8_t DigOutAddr = DigOut_0_addr;
+	constexpr uint8_t AnaOutAddr = AnaOut_0_addr;
+	constexpr uint8_t AD9959Addr = AD9959_0_addr;
+
+
+	CLA_StartAssemblingSequence();
+	CLA_SequencerWriteSystemTimeToInputMemory(SequencerNr);
+	CLA_SequencerWriteInputMemory(SequencerNr, CycleNumber);
+	CLA_SequencerWriteInputMemory(SequencerNr, 6);  //a narker, just to see we can write to the input memory
+	CLA_SequencerWriteInputMemory(SequencerNr, 7);  //a narker, just to see we can write to the input memory
+
+
+	//Test AD9959 DDS
+	CLA_Reset(SequencerNr, AD9959Addr);
+	//Usually, an IOUpdate pulse is sent out automatically after each SPI command
+	//However, to program phases, we first need to send out all commands programming all channels and then finish with one IO update pulse that updates everything
+	CLA_SequencerWriteInputMemory(SequencerNr, 5);  //a narker, just to see we can write to the input memory
+	CLA_SetIOUpdateEnabled(SequencerNr, AD9959Addr, false);
+	CLA_SequencerWriteInputMemory(SequencerNr, 6);  //a narker, just to see we can write to the input memory
+	CLA_SetFrequencyOfChannel(SequencerNr, AD9959Addr, 0, 0.1);//in MHz
+	CLA_SequencerWriteInputMemory(SequencerNr, 7);  //a narker, just to see we can write to the input memory
+	CLA_SetPowerOfChannel(SequencerNr, AD9959Addr, 0, 100); // in %
+	CLA_SequencerWriteInputMemory(SequencerNr, 8);  //a narker, just to see we can write to the input memory
+	CLA_SetPhaseOfChannel(SequencerNr, AD9959Addr, 0, 0);
+	CLA_SequencerWriteInputMemory(SequencerNr, 9);  //a narker, just to see we can write to the input memory
+
+	CLA_SetFrequencyOfChannel(SequencerNr, AD9959Addr, 1, 0.1);//in MHz
+	CLA_SetPowerOfChannel(SequencerNr, AD9959Addr, 1, 100); // in %
+	CLA_SetPhaseOfChannel(SequencerNr, AD9959Addr, 1, 90);
+
+	CLA_SetFrequencyOfChannel(SequencerNr, AD9959Addr, 2, 0.1);//in MHz
+	CLA_SetPowerOfChannel(SequencerNr, AD9959Addr, 2, 100); // in %
+	CLA_SetPhaseOfChannel(SequencerNr, AD9959Addr, 2, 180);
+
+	CLA_SetFrequencyOfChannel(SequencerNr, AD9959Addr, 3, 0.1);//in MHz
+	CLA_SetPowerOfChannel(SequencerNr, AD9959Addr, 3, 100); // in %
+	//We reanable automatic IO Update. The next SPI command will be written and then an IO Update will be sent that activates all newly programmed parameter values
+	CLA_SetIOUpdateEnabled(SequencerNr, AD9959Addr, true);
+	CLA_SetPhaseOfChannel(SequencerNr, AD9959Addr, 3, 270);
+
+	CLA_Wait_ms(10);
+	CLA_SequencerWriteSystemTimeToInputMemory(SequencerNr);
+	//CLA_SelectRackSlot(SequencerNr, /*RackNr*/ 0, 0);
+}
 
 void SaveInputDataToFile(const std::string& filename,
                          const uint32_t* buffer,
@@ -745,37 +825,42 @@ void SaveInputDataToFile(const std::string& filename,
 
     for (unsigned long i = 0; i < buffer_length; ++i) {
 
-		//To test repeated digital input reading
-		//uint8_t low_byte = buffer[i];
-		//std::string bin = std::bitset<8>(low_byte).to_string();
-		//std::fprintf(file, "%lu %u %s\n", i, buffer[i], bin.c_str());
+		if (InputTestType == E_TestDigitalInput) {
+			//To test repeated digital input reading
+			uint8_t low_byte = buffer[i];
+			std::string bin = std::bitset<8>(low_byte).to_string();
+			std::fprintf(file, "%lu %u %s\n", i, buffer[i], bin.c_str());
+		}
 
+		if (InputTestType == E_TestTimeTagger) {
+			//To test digital input as event time tagger
+			uint8_t low_byte = buffer[i];
+			uint8_t second_byte = buffer[i] >> 8;
+			std::string bin = std::bitset<8>(low_byte).to_string();
+			std::string bin2 = std::bitset<8>(second_byte).to_string();
+			std::fprintf(file, "%lu %lu %s %s\n", i, buffer[i] >> 10, bin2.c_str(), bin.c_str());
+		}
 
-		//To test digital input as event time tagger
-		//uint8_t low_byte = buffer[i];
-		//uint8_t second_byte = buffer[i] >> 8;
-		//std::string bin = std::bitset<8>(low_byte).to_string();
-		//std::string bin2 = std::bitset<8>(second_byte).to_string();
-		//std::fprintf(file, "%lu %lu %s %s\n", i, buffer[i] >> 10, bin2.c_str(), bin.c_str());
+		if (InputTestType == E_TestAnalogInput) {
+			//To test analog input
+			uint8_t help = buffer[i] & 0xff;
+			std::string bin0 = std::bitset<8>(help).to_string();
+			help = (buffer[i] >> 8) & 0xff;
+			std::string bin1 = std::bitset<8>(help).to_string();
+			help = (buffer[i] >> 16) & 0xff;
 
+			std::string bin2 = std::bitset<8>(help).to_string();
+			help = (buffer[i] >> 24) & 0xff;
 
-		//To test analog input
-		uint8_t help = buffer[i] & 0xff;
-		std::string bin0 = std::bitset<8>(help).to_string();
-		help = (buffer[i] >> 8)& 0xff;
-		std::string bin1 = std::bitset<8>(help).to_string();
-		help = (buffer[i] >> 16) & 0xff;
+			std::string bin3 = std::bitset<8>(help).to_string();
 
-		std::string bin2 = std::bitset<8>(help).to_string();
-		help = (buffer[i] >> 24) & 0xff;
-
-		std::string bin3 = std::bitset<8>(help).to_string();
-
-		std::fprintf(file, "%s %s %s %s %lu %lu %lu %li \n", bin3.c_str(), bin2.c_str(), bin1.c_str(), bin0.c_str(), i, buffer[i]>>24, buffer[i] & 0xFFF, (int32_t)(buffer[i]<<8));
+			std::fprintf(file, "%s %s %s %s %lu %lu %lu %li \n", bin3.c_str(), bin2.c_str(), bin1.c_str(), bin0.c_str(), i, buffer[i] >> 24, buffer[i] & 0xFFF, (int32_t)(buffer[i] << 8));
+		}
     }
 
     std::fclose(file);
 }
+
 
 void DemoSequenceAnalyseData(unsigned long CycleNumber, uint32_t* buffer, const unsigned long& buffer_length, const unsigned long& EndTimeOfCycle, double PeriodicTriggerPeriod_in_ms) {
 	static unsigned long long PreviousFPGASystemTime = 0;
@@ -851,6 +936,7 @@ void DemoSequenceAnalyseData(unsigned long CycleNumber, uint32_t* buffer, const 
 	if (!CycleSuccessful) NumberOfTimesFailedRun++;
 }
 
+
 void DemoFPGASequencerSingleRun() {
 	if (!InitializeSystem()) {
 		return;
@@ -871,37 +957,12 @@ void DemoFPGASequencerSingleRun() {
 		CLA_WaitTillEndOfSequenceThenGetInputData(buffer, buffer_length, EndTimeOfCycle, 10);
 		DemoSequenceAnalyseData(CycleNr, (uint32_t*)buffer, buffer_length/4, EndTimeOfCycle, 0);
 
-		//Test SerialPortBoardI2Cboard with signals from PS; make sure that slot is selected.
-		//uint8_t address = 0xAB;
-		//bool I2C_success = false;
-		//CLA_TransmitI2CPort(/*I2C_port*/ 1, /*I2C_destination*/ 0, 0xFE, /*send_length*/ 1, &address, /*receive_length*/ 0, nullptr, /*I2CClockFrequencyInHz*/100000, I2C_success, /*fail_silently*/ false);
-
 		//Duration duration = Clock::now() - starttime;
 		//cout << "Duration: " << milliSeconds(duration) << " ms  Buffer length : " << buffer_length << endl;
 	}
 	CLA_Cleanup();
 }
 
-void DemoFPGASequencerSoundBuzzer() {
-	if (!InitializeSystem()) {
-		return;
-	}
-	CLA_StartAssemblingSequence();
-	//for (int n = 0; n < 10; n++) {
-		CLA_SwitchSequencerBuzzer(/*SequencerNr*/ 0, true);
-		CLA_Wait_ms(100);
- 		CLA_SwitchSequencerBuzzer(/*SequencerNr*/ 0, false);
-	//}
-	CLA_ExecuteSequence("c:\\data\\DebugDemoFPGASequencerSoundBuzzerSequence3.txt"); //Use this version to create debug file
-	//CLA_ExecuteSequence(); //use this version to run without creating debug file
-	unsigned long long DataPointsWritten = 0;
-	bool running = false;
-	CLA_GetSequenceExecutionStatus(running, DataPointsWritten);
-	uint8_t* buffer = nullptr;
-	unsigned long buffer_length = 0;
-	unsigned long EndTimeOfCycle = 0;
-	CLA_WaitTillEndOfSequenceThenGetInputData(buffer, buffer_length, EndTimeOfCycle, 10);
-}
 
 void DemoFPGASequencerCyclicSequencing() {
 	if (!InitializeSystem()) {
@@ -931,8 +992,8 @@ void DemoFPGASequencerCyclicSequencing() {
 		cout << "Iteration " << CycleNr << ": ";
 		//We create sequence from scratch to update trigger settings and cycle number dependent sequence entries.
 		DemoSequence(CycleNr);
-		//CLA_ExecuteSequence("c:\\data\\DebugDemoFPGASequencerCyclicSequence.txt"); //Use this version to create debug file
-		CLA_ExecuteSequence(); //use this version to run without creating debug file
+		CLA_ExecuteSequence("c:\\data\\DebugDemoFPGASequencerCyclicSequence.txt"); //Use this version to create debug file
+		//CLA_ExecuteSequence(); //use this version to run without creating debug file
 		bool running = false;
 		unsigned long long DataPointsWritten = 0;
 		CLA_GetSequenceExecutionStatus(running, DataPointsWritten);
@@ -956,6 +1017,52 @@ void DemoFPGASequencerCyclicSequencing() {
 	CLA_SetPeriodicTrigger_ms(0, 0);
 	CLA_Cleanup();
 }
+
+
+void DemoPSI2CCommunication() {
+	//Even without running a sequence, it is possible to communicate over I2C, using the programming systems (PS) I2C controller, i.e. the CPU is communicating, not the FPGA fabric as done with sequences
+	if (!InitializeSystem()) {
+		return;
+	}
+	//Select the slot of your serial port board.
+	CLA_StartAssemblingSequence();  //starts sequence and stores timetag.
+	CLA_SelectRackSlot(/*SequencerNr*/ 0, /*RackNr*/ 0, /*RackSlotNr*/ 9);
+	CLA_ExecuteSequence();
+	CLA_WaitTillFinished(1);
+
+	//now write a few times to the I2C port
+	for (unsigned long CycleNr = 0; CycleNr < 10; CycleNr++) {		
+		//Test SerialPortBoardI2Cboard with signals from PS; 
+		uint8_t address = 0xAB;
+		bool I2C_success = false;
+		CLA_TransmitI2CPort(/*I2C_port*/ 1, /*I2C_destination*/ 0, 0xFE, /*send_length*/ 1, &address, /*receive_length*/ 0, nullptr, /*I2CClockFrequencyInHz*/100000, I2C_success, /*fail_silently*/ false);
+		cout << "Transmission to I2C port " << ((I2C_success) ? "successful" : "not successful") << endl;
+	}
+	CLA_Cleanup();
+}
+
+
+void DemoFPGASequencerSoundBuzzer() {
+	if (!InitializeSystem()) {
+		return;
+	}
+	CLA_StartAssemblingSequence();
+	//for (int n = 0; n < 10; n++) {
+	CLA_SwitchSequencerBuzzer(/*SequencerNr*/ 0, true);
+	CLA_Wait_ms(100);
+	CLA_SwitchSequencerBuzzer(/*SequencerNr*/ 0, false);
+	//}
+	CLA_ExecuteSequence("c:\\data\\DebugDemoFPGASequencerSoundBuzzerSequence3.txt"); //Use this version to create debug file
+	//CLA_ExecuteSequence(); //use this version to run without creating debug file
+	unsigned long long DataPointsWritten = 0;
+	bool running = false;
+	CLA_GetSequenceExecutionStatus(running, DataPointsWritten);
+	uint8_t* buffer = nullptr;
+	unsigned long buffer_length = 0;
+	unsigned long EndTimeOfCycle = 0;
+	CLA_WaitTillEndOfSequenceThenGetInputData(buffer, buffer_length, EndTimeOfCycle, 10);
+}
+
 
 void DemoSmartSequencer() {
 	//Demonstration of the command interpreter available on the ZYNQ Sequencer.
@@ -1307,15 +1414,16 @@ void DemoReadConfigEEPROM() {
 }
 
 int main() {
-	//DemoFPGASequencerSoundBuzzer();
-	//DemoFPGASequencerSingleRun();
-	DemoFPGASequencerCyclicSequencing();
-	//DemoWriteConfigEEPROM();
-	//DemoReadConfigEEPROM();
-	//DemoSmartSequencer();
+	//DemoFPGASequencerSoundBuzzer();    //A very simple experimental sequence that just sounds the Z-turn's buzzer. Good as a first test. 
+	//DemoFPGASequencerSingleRun();      //An experimental sequence that tests the core functionality of all devices.
+	DemoFPGASequencerCyclicSequencing(); //A demonstration of FPGA clock cycle perfect cycling of experimental sequences, as it is nice to have to cycle optical clocks. This demo uses the same sequence as DemoFPGASequencerSingleRun();
+	//DemoReadConfigEEPROM();            //Reads the configuration EEPROMS of all connected devices and creates Python and C++ scripts that create the corresponding .json config file. The user can add details, such as DDS clock frequencies to these scripts, and then create the final config file.
+	//DemoWriteConfigEEPROM();           //A tool to write configuration EEPROMS
+	//DemoPSI2CCommunication();         //Let Z-turn's programming system (PS = CPU + integrated ports) communicate with I2C devices connected to serial port board
+	//DemoSmartSequencer();              //A demonstration of the simple interpreter programming language that is available on the Sequencer
 	
 	//Unfinished demos:
-	//DemoDDSVCO();
+	//DemoDDSVCO();                      //Unfinished demo of the fast digital VCO capability of the sequencer.
 	CLA_Cleanup();
 	return 0;
 }

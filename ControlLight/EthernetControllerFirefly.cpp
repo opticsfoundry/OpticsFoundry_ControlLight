@@ -38,7 +38,7 @@ constexpr bool MinimizeEthernetCommunicationDirectionChanges = true;
 
 CEthernetControllerFirefly::CEthernetControllerFirefly(CDeviceSequencer* _MySequencer) :
 	CNetworkClient(/*ethernet communication mode */ 3, /* FastWrite*/false) {
-	FPGAClockToBusClockRatio = 49;
+	FPGAClockToBusClockRatio = 50;
 	FPGAClockFrequencyInHz = 100000000;
 	FPGAUseExternalClock = false;
 	MySequencer = _MySequencer;
@@ -297,9 +297,9 @@ void CEthernetControllerFirefly::StartXADCAnalogInAcquisition(unsigned int chann
 	low_buffer = (INPUT_REPEAT_repeats << 8) | command;
 	high_buffer = INPUT_REPEAT_wait | (INPUT_REPEAT_trigger_secondary_interrupt_when_finished << (56-32)) | (INPUT_REPEAT_command << (57-32));
 	AddSequencerCommandToSequenceList( high_buffer, low_buffer);
-	uint32_t DelayMultiplier = FPGAClockToBusClockRatio;// floor(FPGAClockFrequencyInHz / BusFrequency - 1);
-	if (DelayMultiplier < 1) DelayMultiplier = 1;
-	AddCommandStep(0, DelayMultiplier*3-2); //CMD_STEP doing nothing, just in order to keep the time calculated by COutput aligned with the time used by the FPGA; needed because the two commands above only consume 2 FPGA cycles, but are accounted for with 2 bus cycles by COutput
+	//uint32_t DelayMultiplier = FPGAClockToBusClockRatio;// floor(FPGAClockFrequencyInHz / BusFrequency - 1);
+	//if (DelayMultiplier < 2) DelayMultiplier = 2;
+	//AddCommandStep(0, DelayMultiplier*3-1); //CMD_STEP doing nothing, just in order to keep the time calculated by COutput aligned with the time used by the FPGA; needed because the two commands above only consume 2 FPGA cycles, but are accounted for with 2 bus cycles by COutput
 }
 
 /*
@@ -410,7 +410,7 @@ void CEthernetControllerFirefly::AddCommandWriteSystemTimeToInputMemory() {
 	uint32_t low_buffer =  (0x1F & command);
 	uint32_t high_buffer = 0;
 	AddSequencerCommandToSequenceList(high_buffer, low_buffer);
-	AddCommandWait(3);//Writing FPGA time to input memory takes 4 clock cycles. We need to wait these 3 additional clock cycles, as the next command could also try to write and then we have a conflict.
+	AddCommandWait(4);//Writing FPGA time to input memory takes 4 clock cycles. We need to wait these 3 additional clock cycles, as the next command could also try to write and then we have a conflict.
 }
 
 
@@ -658,8 +658,8 @@ void CEthernetControllerFirefly::AddCommandWait(unsigned long Wait_in_FPGA_clock
 						end
 			*/
 	uint8_t command = CMD_STEP;
-	if (Wait_in_FPGA_clock_cycles == 0) Wait_in_FPGA_clock_cycles = 1;
-	uint32_t low_buffer = (Wait_in_FPGA_clock_cycles <<5 ) | command;
+	if (Wait_in_FPGA_clock_cycles <2) Wait_in_FPGA_clock_cycles = 2;
+	uint32_t low_buffer = ((Wait_in_FPGA_clock_cycles - 1) <<5 ) | command; //The FPGA firmware always adds one wait cycle, which is used to decode the command
 	uint32_t high_buffer = 0;
 	AddSequencerCommandToSequenceList( high_buffer, low_buffer);
 }
@@ -908,14 +908,14 @@ void CEthernetControllerFirefly::StartSPIAnalogInAcquisition_MCP3208(unsigned ch
 	high_buffer = INPUT_REPEAT_wait | (INPUT_REPEAT_trigger_secondary_interrupt_when_finished << (56 - 32)) | (INPUT_REPEAT_command << (57 - 32));
 	AddSequencerCommandToSequenceList( high_buffer, low_buffer);
 
-	unsigned __int32 DelayMultiplier = FPGAClockToBusClockRatio;// floor(FPGAClockFrequencyInHz / BusFrequency);
-	if (DelayMultiplier < 1) DelayMultiplier = 1;
-	if (DelayMultiplier == 1) {
-		AddCommandStep(0, DelayMultiplier * 3 - 2); //CMD_STEP doing nothing, just in order to keep the time calculated by COutput aligned with the time used by the FPGA; needed because the four commands above only consume 4 FPGA cycles, but are accounted for with 2 bus cycles by COutput
-		AddCommandStep(0, DelayMultiplier * 3 - 2); //CMD_STEP doing nothing, just in order to keep the time calculated by COutput aligned with the time used by the FPGA; needed because the four commands above only consume 4 FPGA cycles, but are accounted for with 2 bus cycles by COutput
-	} else {
-		AddCommandStep( 0, DelayMultiplier * 3 - 4); //CMD_STEP doing nothing, just in order to keep the time calculated by COutput aligned with the time used by the FPGA; needed because the four commands above only consume 4 FPGA cycles, but are accounted for with 2 bus cycles by COutput
-	}
+	//unsigned __int32 DelayMultiplier = FPGAClockToBusClockRatio;// floor(FPGAClockFrequencyInHz / BusFrequency);
+	//if (DelayMultiplier < 2) DelayMultiplier = 2;
+	//if (DelayMultiplier == 1) {
+	//	AddCommandStep(0, DelayMultiplier * 3 - 2); //CMD_STEP doing nothing, just in order to keep the time calculated by COutput aligned with the time used by the FPGA; needed because the four commands above only consume 4 FPGA cycles, but are accounted for with 2 bus cycles by COutput
+	//	AddCommandStep(0, DelayMultiplier * 3 - 2); //CMD_STEP doing nothing, just in order to keep the time calculated by COutput aligned with the time used by the FPGA; needed because the four commands above only consume 4 FPGA cycles, but are accounted for with 2 bus cycles by COutput
+	//} else {
+		//AddCommandStep( 0, DelayMultiplier * 3 - 4); //CMD_STEP doing nothing, just in order to keep the time calculated by COutput aligned with the time used by the FPGA; needed because the four commands above only consume 4 FPGA cycles, but are accounted for with 2 bus cycles by COutput
+//	}
 
 	//debugging of BRAM operation only
 	//for (unsigned long n=0;n<0xFF;n++)
@@ -1273,7 +1273,7 @@ void CEthernetControllerFirefly::WriteBufferToFile(uint32_t* buffer, unsigned lo
 							strobe_generator_state <= DELAY_CYCLE;
 						end
 			*/
-			uint32_t delay_low = static_cast<uint32_t>(CommandBits(command_word, 5, 31));
+			uint32_t delay_low = static_cast<uint32_t>(CommandBits(command_word, 5, 31)) + 1;
 			uint32_t bus_data = static_cast<uint32_t>(CommandBits(command_word, 36, 28));
 			buf += std::format(" bus = {:07X} ; delay = {:08X}", bus_data, delay_low);
 			time += delay_low * 10 * 0.000001;
@@ -1735,9 +1735,9 @@ bool CEthernetControllerFirefly::AddSequencePreamble() {
 	//Add preamble for external clock and trigger setup
 
 	uint32_t DelayMultiplier = FPGAClockToBusClockRatio;// floor(FPGAClockFrequencyInHz / BusFrequency - 1);
-	if (DelayMultiplier < 1) DelayMultiplier = 1;
+	if (DelayMultiplier < 2) DelayMultiplier = 2;
 
-	unsigned int StrobeDelay = ((DelayMultiplier + 1) / 3) - 1;
+	unsigned int StrobeDelay = ((DelayMultiplier) / 3) - 1;
 	AddCommandWriteSystemTimeToInputMemory(); //write time stamp to first command line
 	//strobe/clock output pin content: 0: clock 1: strobe, 2: low, 3: high, 4: flags_hi[31]
 	SetStrobeOptions( (FPGAUseStrobeGenerator) ? 1 : 0, StrobeDelay, StrobeDelay); // this command fills 2 command lines

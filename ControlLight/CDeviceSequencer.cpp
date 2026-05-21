@@ -62,7 +62,7 @@ CDeviceSequencer::CDeviceSequencer(
 	startDelay = _startDelay;
 	clockFrequency = _clockFrequency;
 	FPGAClockToBusClockRatio = _FPGAClockToBusClockRatio;
-	if (FPGAClockToBusClockRatio < 1) FPGAClockToBusClockRatio = 1;
+	if (FPGAClockToBusClockRatio < 2) FPGAClockToBusClockRatio = 2;
 	DefaultFPGAClockToBusClockRatio = FPGAClockToBusClockRatio;
 	CurrentFPGAClockToBusClockRatio = FPGAClockToBusClockRatio;
 	useExternalClock = _useExternalClock;
@@ -118,12 +118,12 @@ CDeviceSequencer::~CDeviceSequencer() {
 
 
 double CDeviceSequencer::GetBusFrequency_in_Hz() {
-	return MyEthernetMultiIOControllerFirefly->GetFPGAClockFrequency_in_Hz() / (CurrentFPGAClockToBusClockRatio + 1);
+	return MyEthernetMultiIOControllerFirefly->GetFPGAClockFrequency_in_Hz() / CurrentFPGAClockToBusClockRatio;
 }
 
 void CDeviceSequencer::UpdateClockRatio() {
 	if (DoUseEdgeTriggeredLatches) {
-		CurrentFPGAClockToBusClockRatio = 0 + ((2 * FPGAClockToBusClockRatio) / 3) ;
+		CurrentFPGAClockToBusClockRatio = ((2 * (FPGAClockToBusClockRatio)) / 3);
 	}
 	else {
 		CurrentFPGAClockToBusClockRatio = FPGAClockToBusClockRatio;
@@ -139,10 +139,10 @@ void CDeviceSequencer::UseEdgeTriggeredLatches(bool _UseEdgeTriggeredLatches) {
 
 void CDeviceSequencer::SetFPGAClockToBusClockRatio(const unsigned int _FPGAClockToBusClockRatio, const bool UpdateStrobeDuration) {
 	FPGAClockToBusClockRatio = (_FPGAClockToBusClockRatio > 0) ? _FPGAClockToBusClockRatio : DefaultFPGAClockToBusClockRatio;
-	if (FPGAClockToBusClockRatio < 1) FPGAClockToBusClockRatio = 1;
+	if (FPGAClockToBusClockRatio < 2) FPGAClockToBusClockRatio = 2;
 	UpdateClockRatio();
 	if (UpdateStrobeDuration) {
-		uint8_t StrobeDuration = ((FPGAClockToBusClockRatio + 1) / 3) - 1;
+		uint8_t StrobeDuration = ((FPGAClockToBusClockRatio) / 3) - 1;
 		MyEthernetMultiIOControllerFirefly->SetStrobeOptions(/* StrobeChoice: Use FPGA strobe generator */ 1, StrobeDuration, StrobeDuration);
 		Wait_ms(0.0001);//we need to wait for the strobe change to have effect
 	}
@@ -233,7 +233,7 @@ inline void CDeviceSequencer::AddBusCommandAndWait(uint32_t busdata, uint32_t de
 	const uint8_t command_mask = 0x1F;  //5 bit
 	uint8_t command = 1; //CMD_STEP
 
-	uint32_t low_buffer = ((delay & delay_mask_low) << 5) + (command_mask & command);
+	uint32_t low_buffer = ( ( (delay - 1) & delay_mask_low) << 5) + (command_mask & command);
 	uint32_t high_buffer = ((bus_data_mask & busdata) << 4) | ((delay >> 27) & delay_mask_high);
 
 	if (BufferPosition >= PCBufferSize_in_u64 / 2) {

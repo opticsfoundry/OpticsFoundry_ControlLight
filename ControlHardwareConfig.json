@@ -12,7 +12,7 @@
       "Master": true,
       "StartDelay": 10,
       "ClockFrequencyinMHz": 100,
-      "FPGAClockToBusClockRatio": 14,
+      "FPGAClockToBusClockRatio": 15,
       "UseExternalClock": false,
       "UseStrobeGenerator": true,
       "UseEdgeTriggeredLatches": true,

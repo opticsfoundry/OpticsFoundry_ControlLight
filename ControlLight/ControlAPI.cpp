@@ -1738,7 +1738,7 @@ bool CLA_InitializeMFC(bool InitializeAfx, bool InitializeAfxSocket) {
 			LOAD_VALUE(master, "Master", true);
 			LOAD_VALUE(startDelay, "StartDelay", 0);
 			LOAD_VALUE(clockFrequency, "ClockFrequency", 100000000);
-			LOAD_VALUE(FPGAClockToBusClockRatio, "FPGAClockToBusClockRatio", 49);
+			LOAD_VALUE(FPGAClockToBusClockRatio, "FPGAClockToBusClockRatio", 50);
 			LOAD_VALUE(useExternalClock, "UseExternalClock", false);
 			LOAD_VALUE(useStrobeGenerator, "UseStrobeGenerator", true);
 			LOAD_VALUE(useEdgeTriggeredLatches, "UseEdgeTriggeredLatches", true);

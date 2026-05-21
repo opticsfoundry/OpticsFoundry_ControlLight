@@ -875,6 +875,7 @@ namespace CLA { //optional, for C++ APIs, use namespace CLA, instead of precedin
 		/// @param number_of_datapoints the number of data points to read/write.
 		/// @param delay_between_datapoints_in_ms the delay between data points in ms
 		/// @param RepeatedOutInCommand the command to execute for each data point. 0: stop; 1: repeated SPI transfer; 2: repeated digital in; 3: digital in event tagger 
+		/// for 2: bits 7:0 : digital input; bits 28:8 : repeat number; bits 31:29 = b010 as magic number to identify this input memory entry came from digital input; 
 		/// for 3: if dig in changes, safes dig in on input memory bit 0:7, bit 8: counter overflow, bit 9: 4-entry fifo overflow, bit 10:31: clock cycle counter; runs till stopped by setting RepeatedOutInCommand to 0 with new SequencerRepeatedOutIn command.
 		API_EXPORT ERROR_CODE_TYPE CLA_FN(SequencerRepeatedOutIn)(const unsigned int& Sequencer, uint16_t number_of_datapoints, double delay_between_datapoints_in_ms, uint8_t RepeatedOutInCommand);
 
