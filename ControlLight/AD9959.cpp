@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "AD9959.h"
-#include "MultiWriteDevice.h"
 #include "ControlAPI.h"
 #include "CDeviceSequencer.h"
 #include "std.h"
@@ -605,8 +604,11 @@ uint32_t CAD9959::SetRegisterBits(unsigned char RegisterNr, unsigned char Lowest
     if (!Enabled) return false;
     if (((RegisterNr > ControlRegisterNr) && (!GetValue)) || ((RegisterNr > 90) && (RegisterNr != ControlRegisterNr) && (GetValue))) {
         CString buf;
-        if (GetValue) buf.Format(_T("CAD9959::SetRegisterBits : RegisterNr (%u) is not in range for reading, [0..90] or 113."), static_cast<unsigned int>(RegisterNr));
-        else buf.Format(_T("CAD9959::SetRegisterBits : RegisterNr (%u) is not in range for writing, [0..113]"), static_cast<unsigned int>(RegisterNr));
+    if (GetValue) {
+      buf = std::format(_T("CAD9959::SetRegisterBits : RegisterNr ({}) is not in range for reading, [0..90] or 113."), static_cast<unsigned int>(RegisterNr));
+    } else {
+      buf = std::format(_T("CAD9959::SetRegisterBits : RegisterNr ({}) is not in range for writing, [0..113]"), static_cast<unsigned int>(RegisterNr));
+    }
         ControlMessageBox(CStringToStdString(buf));
         return 0;
     }
@@ -614,7 +616,7 @@ uint32_t CAD9959::SetRegisterBits(unsigned char RegisterNr, unsigned char Lowest
 
     if (AD9959ValueLength[LengthTableRegisterNr] * 8 < NrBits) {
         CString buf;
-        buf.Format(_T("CAD9959::SetRegisterBits : NrBits (%u) exceeds RegisterNr (%u) length (%u)"),
+        buf = std::format(_T("CAD9959::SetRegisterBits : NrBits ({}) exceeds RegisterNr ({}) length ({})"),
             static_cast<unsigned int>(NrBits),
             static_cast<unsigned int>(RegisterNr),
             static_cast<unsigned int>(AD9959ValueLength[LengthTableRegisterNr] * 8));
@@ -650,30 +652,33 @@ uint32_t CAD9959::SetRegisterBits(unsigned char RegisterNr, unsigned char Lowest
 //ToDo: carefully check this code
 uint32_t CAD9959::SetValue(unsigned char RegisterNr, uint32_t Value, bool GetValue, bool DoIOUpdate, bool forceWrite)
 {
-    if (!Enabled) return 0;
-    if (((RegisterNr > ControlRegisterNr) && (!GetValue)) || ((RegisterNr > 90) && (RegisterNr != ControlRegisterNr) && (GetValue))) {
-        CString buf;
-        if (GetValue) buf.Format(_T("CAD9959::SetValue : RegisterNr (%u) is not in range for reading, [0..90] or 113."), static_cast<unsigned int>(RegisterNr));
-        else buf.Format(_T("CAD9959::SetValue : RegisterNr (%u) is not in range for writing, [0..113]"), static_cast<unsigned int>(RegisterNr));
-        ControlMessageBox(CStringToStdString(buf));
-        return 0;
-    }
+  if (!Enabled) return 0;
+  if (((RegisterNr > ControlRegisterNr) && (!GetValue)) || ((RegisterNr > 90) && (RegisterNr != ControlRegisterNr) && (GetValue))) {
+    CString buf;
     if (GetValue) {
-        if (RegisterNr == ControlRegisterNr) {
-            //Digital out port is not in the bus buffer, so we return the value directly
-            return ControlRegisterContent;
-        }
-        return AktValueContents[RegisterNr];
+      buf = std::format(_T("CAD9959::SetValue : RegisterNr ({}) is not in range for reading, [0..90] or 113."), static_cast<unsigned int>(RegisterNr));
+    } else {
+      buf = std::format(_T("CAD9959::SetValue : RegisterNr ({}) is not in range for writing, [0..113]"), static_cast<unsigned int>(RegisterNr));
     }
-    else {
-        if (RegisterNr < 3) {
-            SetValueDirect(RegisterNr, Value, GetValue, DoIOUpdate, forceWrite);
-            return 0;
-        }
-        if (RegisterNr == ControlRegisterNr) {
-            SetControlRegister(0, 16, Value, /*write_immediately*/ true);
-            return 0;
-        }
+    ControlMessageBox(CStringToStdString(buf));
+    return 0;
+  }
+  if (GetValue) {
+    if (RegisterNr == ControlRegisterNr) {
+      //Digital out port is not in the bus buffer, so we return the value directly
+      return ControlRegisterContent;
+    }
+    return AktValueContents[RegisterNr];
+  }
+  else {
+    if (RegisterNr < 3) {
+      SetValueDirect(RegisterNr, Value, GetValue, DoIOUpdate, forceWrite);
+      return 0;
+    }
+    if (RegisterNr == ControlRegisterNr) {
+      SetControlRegister(0, 16, Value, /*write_immediately*/ true);
+      return 0;
+    }
 
         bool WriteCh0;
         bool WriteCh1;
@@ -722,7 +727,7 @@ uint32_t CAD9959::SetValueDirect(unsigned char RegisterNr, uint32_t Value, bool 
     if (!Enabled) return 0;
     if (((RegisterNr >= 25) && (!GetValue)) || (RegisterNr >= 91)) {
         CString buf;
-        buf.Format(_T("CAD9959::SetValueDirect : RegisterNr (%u) exceeds maximum (%u)"),
+        buf = std::format(_T("CAD9959::SetValueDirect : RegisterNr ({}) exceeds maximum ({})"),
             static_cast<unsigned int>(RegisterNr),
             AD9959NumberOfRegisters - 1);
         ControlMessageBox(CStringToStdString(buf));
