@@ -4,6 +4,7 @@
 #include <afxwin.h>         // MFC core and standard components
 #include <afxsock.h>      // MFC socket extensions
 #include <afx.h>
+#include <atlconv.h>          // For CT2A (CString to std::string)
 #endif
 
 #include "include/json.hpp"
@@ -13,7 +14,6 @@ using json = nlohmann::json;
 #include "AutoConfig.h"
 
 #include "CDeviceSequencer.h"
-#include "CDeviceRack.h"
 #include "CDeviceAnalogOut.h"
 #include "CDeviceAnalogIn.h"
 #include "CDeviceAD9854.h"
@@ -21,9 +21,7 @@ using json = nlohmann::json;
 #include "CDeviceAD9858.h"
 #include "CDeviceAD9959.h"
 
-#include <format>
 #include <string>
-#include <sstream>
 #include <iostream>
 #include <fstream>
 #include <cstdint>      // for uint8_t, uint32_t, etc.
@@ -50,9 +48,7 @@ static char THIS_FILE[] = __FILE__;
 //It would be cleaner to get rid of MFC, i.e. use WinSock2 instead of CSocket and std::string instead of CString
 
 
-#include <afx.h>              // For CException
 #include <stdexcept>          // For std::runtime_error
-#include <atlconv.h>          // For CT2A (CString to std::string)
 
 
 //This macro would have to be used at the beginning and the end of each function.
@@ -65,7 +61,6 @@ e->GetErrorMessage(errorMsg, 512); \
 e->Delete(); \
 throw std::runtime_error(CT2A(errorMsg));  \
 }
-
 
 #endif
 
