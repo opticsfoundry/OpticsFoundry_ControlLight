@@ -41,7 +41,7 @@ class ConfigBuilder:
             "Port": Port,
             "Master": Master,
             "StartDelay": StartDelay,
-            "ClockFrequencyinMHz": ClockFrequencyinMHz,
+            "ClockFrequency": 1000000*ClockFrequencyinMHz,
             "FPGAClockToBusClockRatio": FPGAClockToBusClockRatio,
             "UseExternalClock": UseExternalClock,
             "UseStrobeGenerator": UseStrobeGenerator,
@@ -108,7 +108,7 @@ class ConfigBuilder:
             "Address": Address,
             "ClockFrequencyinMHz": ClockFrequencyinMHz,
             "FrequencyMultiplier": FrequencyMultiplier,
-            "AD9958": "1" if AD9958 else "0"
+            "AD9958": 1 if AD9958 else 0
         }, Model=Model, SN=SN, RackNr=RackNr, SlotNr=SlotNr))
 
     def RegisterAnalogInBoard12bit(self, Sequencer=0, Address=80, NumberChannels=4, MinVoltage=-10, MaxVoltage=10,
