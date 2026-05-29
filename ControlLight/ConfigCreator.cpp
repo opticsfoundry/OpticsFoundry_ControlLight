@@ -55,7 +55,7 @@ void ConfigCreator::RegisterSequencer(int Id, const std::string& Type, const std
 		{"Port", Port},
 		{"Master", Master},
 		{"StartDelay", StartDelay},
-		{"ClockFrequencyinMHz", ClockFrequencyinMHz},
+		{"ClockFrequency", ClockFrequencyinMHz*1000000},
 		{"FPGAClockToBusClockRatio", FPGAClockToBusClockRatio},
 		{"UseExternalClock", UseExternalClock},
 		{"UseStrobeGenerator", UseStrobeGenerator},
